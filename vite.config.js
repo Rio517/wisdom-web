@@ -13,11 +13,20 @@ export function assertProjectPort(value, service) {
   return port;
 }
 
+export function assertLocalhost(value, service) {
+  if (value !== '127.0.0.1') {
+    throw new Error(`${service} host must remain 127.0.0.1; received ${value}`);
+  }
+  return value;
+}
+
 export function readingContentPlugin() {
   return {
     name: 'wisdom-reading-content',
     transformIndexHtml(html) {
-      return html.replaceAll('<!-- READING_CONTENT -->', renderReading());
+      return html.replace(/<!-- READING_CONTENT(?::([a-z-]+))? -->/g, (_match, idPrefix) => (
+        renderReading({ idPrefix: idPrefix || 'reading' })
+      ));
     },
   };
 }
@@ -26,6 +35,8 @@ function projectPortGuard() {
   const check = config => {
     assertProjectPort(config.server.port, 'server');
     assertProjectPort(config.preview.port, 'preview');
+    assertLocalhost(config.server.host, 'server');
+    assertLocalhost(config.preview.host, 'preview');
     if (!config.server.strictPort || !config.preview.strictPort) {
       throw new Error('strictPort must remain enabled for the project development and preview servers');
     }
@@ -35,10 +46,12 @@ function projectPortGuard() {
     configResolved: check,
     configureServer(server) {
       assertProjectPort(server.config.server.port, 'server');
+      assertLocalhost(server.config.server.host, 'server');
       if (!server.config.server.strictPort) throw new Error('strictPort must remain enabled for the project development server');
     },
     configurePreviewServer(server) {
       assertProjectPort(server.config.preview.port, 'preview');
+      assertLocalhost(server.config.preview.host, 'preview');
       if (!server.config.preview.strictPort) throw new Error('strictPort must remain enabled for the project preview server');
     },
   };

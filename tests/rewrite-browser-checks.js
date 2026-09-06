@@ -29,6 +29,8 @@ async (page) => {
   const decision = page.locator('#decision-panel');
   assert(await decision.getByText('Another possible choice', { exact: true }).isVisible(), 'Missing comparison explanation');
   assert(await decision.getByText('Course prerequisite within reach', { exact: true }).isVisible(), 'Build route outcomes are missing');
+  assert(await decision.locator('#decision-steps li').count() === 3, 'Foundation steps are missing from the guided lesson');
+  assert(await decision.locator('#decision-steps').textContent().then(text => /equal parts.*equivalent fractions.*ratio.*recipe/i.test(text)), 'Foundation sequence is incomplete');
   results.push('Comparison and named outcomes');
 
   await page.getByRole('button', { name: 'See how it adds up', exact: true }).click();
@@ -38,7 +40,7 @@ async (page) => {
   assert(await decision.getByText(/Not all of this is Mika's choice/i).isVisible(), 'Circumstances are not visible');
   results.push('Layers and circumstances');
 
-  await page.getByRole('button', { name: 'Return to today', exact: true }).click();
+  await page.locator('#return-today').click();
   assert(await page.getByText('Looking ahead: age 12', { exact: true }).count() === 0, 'Return to today retains comparison');
   assert(await page.evaluate(() => new URL(location.href).searchParams.get('inspect') === null), 'Return to today does not restore URL state');
   assert(await page.locator('#moment-copy').textContent().then(text => /^Age 40:/.test(text)), 'Today context is not restored');
@@ -48,6 +50,7 @@ async (page) => {
   await page.getByRole('button', { name: 'What could help next?', exact: true }).click();
   await page.reload();
   assert(await decision.getByText('Later course intake available', { exact: true }).isVisible(), 'Reload loses repair comparison');
+  assert(await decision.locator('#decision-steps li').count() === 4, 'Repair work steps are missing from the guided lesson');
   results.push('Comparison reload');
 
   await page.getByRole('button', { name: 'Read without stepping', exact: true }).click();
@@ -68,7 +71,7 @@ async (page) => {
   results.push('Desktop and tablet layout');
 
   await page.getByLabel('Less motion').check();
-  await page.getByRole('button', { name: 'Return to today', exact: true }).click();
+  await page.locator('#return-today').click();
   assert(await page.locator('#life-map').getAttribute('data-motion') === 'settled', 'Reduced motion did not settle immediately');
   results.push('Reduced motion');
 
@@ -86,5 +89,11 @@ async (page) => {
     await fallback.close();
   }
   results.push('Canvas failure reading fallback');
+
+  await page.goto('http://127.0.0.1:4600/prototype/?age=12&selected=1&inspect=12');
+  assert(await page.getByRole('heading', { name: 'The current decision: age 12', exact: true }).isVisible(), 'Age-12 context is not distinct from ahead/back comparison');
+  await page.goto('http://127.0.0.1:4600/prototype/?age=40&selected=1&inspect=25');
+  assert(await page.locator('#return-today').getAttribute('aria-label') === 'Return to today, age 40', 'Return action does not preserve the selected today age');
+  results.push('Temporal comparison and return labels');
   return { passed: results };
 }

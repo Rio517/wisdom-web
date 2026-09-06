@@ -51,3 +51,13 @@ The target-size assertion uses a 43.9px epsilon for browser floating-point geome
 
 - The field-guide CSS is still a pragmatic mixed Tailwind/custom layer: Tailwind owns build integration, tokens and some shell utilities, but a broader shared-scale cleanup remains for Task 3.
 - The main session retains the independent visual review work, screenshots and broader regression review. This task does not claim physical-tablet/Safari verification or reader comprehension testing.
+
+## Independent-review follow-up
+
+- The resolved Vite guard now rejects non-loopback `server.host` and `preview.host` overrides as well as bad ports or disabled strict-port behavior, without opening a listener during its Node test.
+- Guided comparison now renders the shared authored `steps` list, including the equal-parts → equivalent-fractions → recipe-ratio sequence and repair work.
+- Comparison language now distinguishes looking ahead, the current age-12 decision and looking back. Return controls carry the retained today age in their accessible names.
+- Each reading instance gets a prefix-specific set of heading IDs through the build plugin. Dialog, Canvas fallback and no-JavaScript markup use local `aria-labelledby` references.
+- Hover preview clears when a pointer leaves a traveled route while staying inside the Canvas.
+
+Main-session verification after this follow-up: the saved browser suite passed all 11 groups. Main also inspected real JavaScript-enabled and JavaScript-disabled page DOMs: both had zero duplicate IDs and zero missing `aria-labelledby` references.

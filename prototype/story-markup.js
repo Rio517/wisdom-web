@@ -38,25 +38,26 @@ const renderLayer = layer => `
         <p>${escapeHTML(paragraph)}</p>`).join('')}
       </section>`;
 
-export function renderReading() {
-  return `<article aria-labelledby="reading-title">
+export function renderReading({ idPrefix = 'reading' } = {}) {
+  const id = name => `${idPrefix}-${name}`;
+  return `<article aria-labelledby="${id('reading-title')}">
     <header>
       <p>Fictional example</p>
-      <h2 id="reading-title">How choices can change later opportunities</h2>
+      <h2 id="${id('reading-title')}">How choices can change later opportunities</h2>
       <p>What Mika learns and chooses today can change what becomes practical later. This example is an explanation, not a prediction.</p>
       <p>${escapeHTML(CIRCUMSTANCES)}</p>
     </header>
-    <section aria-labelledby="moments-title">
-      <h2 id="moments-title">Mika's example life</h2>
+    <section aria-labelledby="${id('moments-title')}">
+      <h2 id="${id('moments-title')}">Mika's example life</h2>
       <ol>${MOMENTS.map(renderMoment).join('')}
       </ol>
     </section>
-    <section aria-labelledby="comparison-title">
-      <h2 id="comparison-title">Three views of the age 12 choice</h2>
+    <section aria-labelledby="${id('comparison-title')}">
+      <h2 id="${id('comparison-title')}">Three views of the age 12 choice</h2>
       <p>Equal parts can support equivalent fractions, which can support using a ratio in a recipe. This is <strong>learning that builds on learning</strong>. <strong>Compounding</strong> is a useful word for how earlier learning can help later learning; it is not a promise of a fixed growth rate.</p>${Object.values(COMPARISONS).map(renderComparison).join('')}
     </section>
-    <section aria-labelledby="layers-title">
-      <h2 id="layers-title">A choice has more than one layer</h2>${Object.values(LAYERS).map(renderLayer).join('')}
+    <section aria-labelledby="${id('layers-title')}">
+      <h2 id="${id('layers-title')}">A choice has more than one layer</h2>${Object.values(LAYERS).map(renderLayer).join('')}
     </section>
   </article>`;
 }

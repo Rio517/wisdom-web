@@ -83,6 +83,8 @@ function render(animate = false, focusHeading = false) {
   $('#overview').hidden = !state.selected;
   $('#overview').textContent = state.overview ? 'Focus on today' : 'See the whole map';
   $('#return-today').hidden = state.inspect === null;
+  $('#return-today').setAttribute('aria-label', `Return to today, age ${state.age}`);
+  $('#return-today').innerHTML = `<span aria-hidden="true">Return to today</span><span class="sr-only">Return to today, age ${state.age}</span>`;
   $('#replay').hidden = !state.selected;
   for (const link of document.querySelectorAll('.scene-links [data-scene]')) {
     link.toggleAttribute('aria-current', link.dataset.scene === state.scene);

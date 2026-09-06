@@ -17,6 +17,14 @@ function outcomeList(outcomes) {
   return list;
 }
 
+function stepList(steps) {
+  return steps.map(step => {
+    const item = document.createElement('li');
+    item.textContent = step;
+    return item;
+  });
+}
+
 export function renderDecision(state) {
   const panel = $('#decision-panel');
   const active = state.inspect === 12;
@@ -25,9 +33,12 @@ export function renderDecision(state) {
   if (!active) return;
 
   const comparison = COMPARISONS[state.comparison];
-  $('#decision-heading').textContent = `${state.age < 12 ? 'Looking ahead' : 'Looking back'}: age 12`;
+  $('#decision-heading').textContent = state.age < 12
+    ? 'Looking ahead: age 12'
+    : state.age === 12 ? 'The current decision: age 12' : 'Looking back: age 12';
   $('#decision-action').textContent = comparison.action;
   $('#decision-consequence').textContent = comparison.consequence;
+  $('#decision-steps').replaceChildren(...stepList(comparison.steps));
   $('#decision-outcomes').replaceChildren(outcomeList(comparison.outcomes));
   for (const button of document.querySelectorAll('[data-comparison]')) {
     button.setAttribute('aria-pressed', String(button.dataset.comparison === state.comparison));

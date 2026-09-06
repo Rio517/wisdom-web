@@ -66,6 +66,17 @@ test('the reading alternative includes the complete authored explanation as sema
   assert.match(html, /fictional/i);
 });
 
+test('prefixed reading instances keep heading references local and unique', () => {
+  const dialog = renderReading({ idPrefix: 'dialog' });
+  const fallback = renderReading({ idPrefix: 'fallback' });
+  const ids = [...`${dialog}${fallback}`.matchAll(/\sid="([^"]+)"/g)].map(match => match[1]);
+
+  assert.equal(new Set(ids).size, ids.length);
+  assert.match(dialog, /aria-labelledby="dialog-reading-title"/);
+  assert.match(dialog, /aria-labelledby="dialog-moments-title"/);
+  assert.match(fallback, /aria-labelledby="fallback-comparison-title"/);
+});
+
 test('reading generation escapes every special HTML character in authored text', () => {
   const original = COMPARISONS.gap.title;
   COMPARISONS.gap.title = 'A & B < C > D "quoted" \'single\'';

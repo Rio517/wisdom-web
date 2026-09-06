@@ -119,8 +119,9 @@ export function createMapView({ canvas, overlay, onInspect, onPreview, lessMotio
     for (const anchor of map.anchors) {
       const position = currentTransform.world(anchor);
       const button = targets.get(anchor.age);
+      const returning = state.selected && state.inspect !== null && anchor.age === state.age;
       const reviewing = state.selected && anchor.age <= state.age && anchor.age !== active;
-      button.setAttribute('aria-label', `${reviewing ? 'Review' : 'Explore'} age ${anchor.age}`);
+      button.setAttribute('aria-label', returning ? `Return to today, age ${anchor.age}` : `${reviewing ? 'Review' : 'Explore'} age ${anchor.age}`);
       button.setAttribute('aria-pressed', String(anchor.age === active));
       button.textContent = String(anchor.age);
       button.style.transform = `translate(${position.x}px, ${position.y}px) translate(-50%, -50%)`;
@@ -215,7 +216,10 @@ export function createMapView({ canvas, overlay, onInspect, onPreview, lessMotio
     const world = currentTransform.source({ x: event.clientX - currentTransform.rect.left, y: event.clientY - currentTransform.rect.top });
     const map = makeMap(currentState.age);
     const distance = map.past.slice(1).reduce((nearest, point, index) => Math.min(nearest, nearestDistance(world, map.past[index], point)), Infinity);
-    if (distance > 14 / currentTransform.scale) return;
+    if (distance > 14 / currentTransform.scale) {
+      if (previewAge !== null) { previewAge = null; onPreview(null); }
+      return;
+    }
     const age = map.anchors.filter(anchor => anchor.age <= currentState.age).reduce((nearest, anchor) => (
       Math.abs(anchor.x - world.x) < Math.abs(nearest.x - world.x) ? anchor : nearest
     ), map.anchors[0]).age;
