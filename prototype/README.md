@@ -4,13 +4,15 @@ This directory contains a local, dependency-free HTML/CSS/JavaScript study for t
 
 ## Run locally
 
+The Tailwind/Canvas rewrite is in progress. Every project server must use a port in **4600–4699**, with development on **4600** and build preview on **4601**, bound to `127.0.0.1`. Port conflicts must fail rather than silently selecting another port. The old port-4173 listener is stopped; do not restart it. Launch commands below are being migrated with the implementation.
+
 From the repository root:
 
 ```sh
 npm run dev
 ```
 
-Open <http://127.0.0.1:4173/prototype/>. The command uses the local Python 3 static server and installs no packages.
+The development entry is <http://127.0.0.1:4600/prototype/>. During the rewrite, check that the configured command uses the required port before launching. The replacement uses a locally installed Tailwind/Vite build, not a dependency-free Python-only workflow.
 
 Run the pure model checks with Node 22 or newer:
 

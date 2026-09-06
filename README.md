@@ -4,6 +4,8 @@ A selective, guided and animated life manual for ages 8+, starting with how choi
 
 The project is in research and design, with a narrow local HTML/SVG prototype under [`prototype/`](prototype/README.md). That study is not the production website and has not been published. Owner feedback informs [008 — Choices and consequences](docs/product/008-choices-and-consequences.md): a layered explanation and Tailwind/Canvas rewrite, not implemented yet.
 
+All project servers use ports **4600–4699** only: **4600** for development and **4601** for build preview, bound to `127.0.0.1` with strict port handling. The rewrite and command migration are in progress; see [launch instructions](prototype/README.md).
+
 ## Start here
 
 - [Current state and next steps](NEXT_STEP.md)
@@ -23,6 +25,7 @@ The project is in research and design, with a narrow local HTML/SVG prototype un
 - [006 — Storyboards and the first motion study](docs/product/006-storyboards-and-motion-study.md)
 - [007 — Interactive map prototype implementation plan](docs/product/007-interactive-map-prototype.md)
 - [008 — Choices and consequences](docs/product/008-choices-and-consequences.md)
+- [009 — Layered choices rewrite implementation plan](docs/product/009-layered-choices-implementation.md)
 - [Run the local prototype](prototype/README.md)
 - [Completed work](COMPLETED.md)
 

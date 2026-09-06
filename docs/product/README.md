@@ -11,7 +11,8 @@ Specific proposals use stable identifiers: `NNN-short-name.md`. Number documents
 | 005 | [Research library and navigation](005-research-library.md) | Proposed | 2026-09-06 |
 | 006 | [Storyboards and the first motion study](006-storyboards-and-motion-study.md) | Approved for prototyping | 2026-09-06 |
 | 007 | [Interactive map prototype implementation plan](007-interactive-map-prototype.md) | Implemented: local study; revision specified in 008 | 2026-09-06 |
-| 008 | [Choices and consequences](008-choices-and-consequences.md) | Proposed: direction approved, written specification awaiting review | 2026-09-06 |
+| 008 | [Choices and consequences](008-choices-and-consequences.md) | Approved for prototyping: implementation in progress | 2026-09-06 |
+| 009 | [Layered choices rewrite implementation plan](009-layered-choices-implementation.md) | Approved for prototyping: in progress | 2026-09-06 |
 
 Keep each document about one coherent product or delivery decision. Include the purpose, relevant requirements, proposed behavior, scope boundaries, acceptance criteria, and unresolved choices at the depth needed for review. Product requirements can be settled while the detailed solution remains proposed; make that distinction explicit.
 

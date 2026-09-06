@@ -2,6 +2,8 @@
 
 ## Current state
 
+Revision 008 is approved and implementation is in progress under [009](docs/product/009-layered-choices-implementation.md). All project servers must stay in **4600–4699**: use **4600** for development and **4601** for build preview, with strict port handling and local-only binding. The earlier port-4173 listener is stopped. Do not relaunch it. Delegate bounded work to lower-cost models; retain independent review and visual quality gates.
+
 The repository contains the project brief, a linked research library, eight numbered product documents, a sample opening, an ink-and-wash illustration study, stored interface/motion storyboards, and a working two-scene HTML/SVG prototype. The public repository is [Rio517/wisdom-web](https://github.com/Rio517/wisdom-web), with `origin` configured. Current prototype work is on the local branch `prototype/choices-map`; it has not been merged or pushed. The complete chapter, production website, approved production artwork, and site publication remain outstanding.
 
 The audience is ages 8+, with a core explanation approachable from age eight and depth for older readers. The first chapter covers choices across a lifetime, explicitly including learning that builds, carries into related activities, and can reinforce further learning. Habits/daily practice deserve a dedicated follow-up, with a short bridge in the first chapter. Relationships remain outside this release.
@@ -22,7 +24,7 @@ The central teaching gap is substantive: `makeMap(age)` currently classifies the
 
 ## Immediate next work
 
-1. Review the written specification in [008](docs/product/008-choices-and-consequences.md), then write and execute its implementation plan. The teaching direction is approved; concrete wording and interaction details are in the written review. Preserve the working prototype until its replacement is verified. Run at least two visual review/improvement loops plus behavioral checks on the rewrite before handoff. These requirements supersede the earlier barely-visible routes and looping geometry.
+1. Execute [009](docs/product/009-layered-choices-implementation.md) against approved specification [008](docs/product/008-choices-and-consequences.md). Preserve the working prototype through Git history until its replacement is verified. Run at least two visual review/improvement loops plus behavioral checks on the rewrite before handoff. These requirements supersede the earlier barely-visible routes and looping geometry.
 2. Decide how to integrate the local prototype branch. It is not pushed, merged into `main`, or published. Preserve the current work until that choice is made.
 3. Extend the narrative beyond the two prototype scenes: explicitly show how learning/choices open options, the reinforcing enjoyment loop, child/adult scenarios, recovery, and an ending. The current map does not yet animate a specific learning choice opening a new branch.
 4. Draft the brief developmental explanation and habits bridge, then adapt the prose into guided scenes. Keep the reinforcing loop understandable, with help and recovery visible. Keep evidence in the linked research buckets and adult notes.
@@ -37,7 +39,7 @@ The production proposal is Astro-generated pages on GitHub Pages, with an intera
 
 ## Run and verify
 
-From the repository root, `npm run dev` starts a local-only Python 3 static server. Open <http://127.0.0.1:4173/prototype/>. No package installation is needed. The preview can run on the existing branch without publishing anything.
+The build and launch commands are being migrated under 009. The development entry is <http://127.0.0.1:4600/prototype/>; built preview will use <http://127.0.0.1:4601/prototype/>. Ports outside 4600–4699 are prohibited, including temporary test servers. Check [prototype/README.md](prototype/README.md) for current launch readiness; do not use the old port-4173 command.
 
 `npm test` runs the ten pure-model tests. [tests/browser-checks.js](tests/browser-checks.js) is a reusable Playwright page-function suite; its invocation is documented in [prototype/README.md](prototype/README.md). It covers ten groups of interactions, including browser Back with a dialog open and preservation of a manual motion choice through OS preference changes. Both suites passed in this workspace. Review screenshots and scope limits are linked from the [browser-review index](docs/design/prototype/README.md).
 
