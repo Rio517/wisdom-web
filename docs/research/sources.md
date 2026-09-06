@@ -116,6 +116,12 @@ Jessica F. Sperber, Deborah Lowe Vandell, Greg J. Duncan, Tyler W. Watts. *Delay
 
 Supports: a preschool waiting task is not a reliable label for adult potential. Preregistered observational follow-up of 702 participants to age 26 found little robust prediction after adjustment. Confidence: high for caution about this task; not evidence that all self-regulation is irrelevant. Sample and task ceiling limit inference. Full article inspected by the teaching researcher; coordinator retrieval encountered a browser challenge.
 
+### T9 — Developmental context
+
+Harvard Center on the Developing Child. *InBrief: Executive Function*. May 20, 2012. [Official summary](https://developingchild.harvard.edu/resources/inbriefs/inbrief-executive-function/).
+
+Supports: working memory, mental flexibility, and self-control develop over childhood and beyond, with a role for experience. Confidence: high as a broad developmental synthesis; not evidence of a universal maturity cutoff or individualized age-based prediction. Official page inspected by the coordinator. Use for optional explanatory context, not an age-scoring algorithm.
+
 ## Hosting references
 
 ### H1 — Static hosting and repository plans
@@ -146,7 +152,7 @@ Astro. *Deploy your Astro Site to GitHub Pages*. Undated current documentation. 
 | Independent reading changes lifelong choices | Unestablished | No evaluation of this manual | First test comprehension and new-example application |
 | Future imagery improves general decision-making | Insufficient: T6–T7 | Different ages, tasks, and outcomes | Avoid broad efficacy claims |
 | One childhood self-control test predicts destiny | Unsupported as a teaching claim: T8 | Observational design; limited measure | Do not use it to classify readers |
-| Same presentation works equally from 7 to 11 | Unestablished | No direct test of the planned material | Test younger and older readers separately |
+| Same presentation works equally across ages 8+ | Unestablished | No direct test of the planned material or its age selector | Test readers near age eight and older readers separately |
 
 ## Search coverage and stopping rule
 

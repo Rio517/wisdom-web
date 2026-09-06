@@ -6,7 +6,7 @@ Create a small collection of excellent explanations of life lessons that childre
 
 ## Audience
 
-The primary audience is capable children aged 7–11. Use concrete examples and clear sentences while retaining complexity, interesting vocabulary, and opportunities to reason. The youngest readers may share the experience with an adult. Independent reading and deeper discussion should also be worthwhile.
+The audience is ages 8+, with a core explanation approachable from age eight and depth that remains worthwhile for older children and adults. Use concrete examples and clear sentences while retaining complexity, interesting vocabulary, and opportunities to reason. Younger readers may share the experience with an adult. Age eight is the product's entry target, not an upper limit on sophistication or a claim of identical comprehension across readers.
 
 Audience assumptions need testing with actual readers. Reading level, attention, and prior knowledge vary within any age group; a readability score cannot substitute for observing comprehension.
 
@@ -21,6 +21,9 @@ The research must test the founding idea, including its limits. It must not conv
 ## Product requirements
 
 - High quality in both content and visual execution.
+- Guided, reader-controlled progression with polished animation that explains what changes.
+- A selectable starting age or life stage for the map's “today” marker, with relevant fictional examples and optional context on child development.
+- Optional examples and deeper explanations, with a clear return to the main sequence. AI-generated video may supplement later explainers.
 - Distinct page URLs suitable for direct sharing.
 - A coherent reading path and a useful experience on a phone.
 - Research, references, and design decisions stored in this repository so a new contributor can proceed without conversation history.
@@ -35,4 +38,4 @@ Accounts, child profiles, tracking, a content-management service, a comprehensiv
 
 ## Decisions to make from concrete material
 
-The chapter proposal and sample passage provide the basis for choosing the teaching emphasis, voice, and initial visual direction. The working title is provisional. GitHub repository visibility is independent of the eventual public readership. A reuse license requires an explicit owner decision before one is added.
+The [numbered product documents](product/README.md) and sample passage provide the basis for choosing the teaching emphasis, voice, and exact visual behavior. The working title is provisional. The GitHub repository is public. A reuse license requires an explicit owner decision before one is added.

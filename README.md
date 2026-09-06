@@ -1,6 +1,6 @@
 # Wisdom
 
-A selective, illustrated life manual for curious children aged 7–11, starting with how choices shape future possibilities.
+A selective, guided and animated life manual for ages 8+, starting with how choices shape future possibilities.
 
 The project is in research and design. The website is not implemented or published.
 
@@ -10,9 +10,10 @@ The project is in research and design. The website is not implemented or publish
 - [Project brief](docs/brief.md)
 - [Research findings](docs/research/report-source.md)
 - [Sources and evidence limits](docs/research/sources.md)
-- [Choices chapter proposal](docs/choices-proposal.md)
+- [Product documents](docs/product/README.md)
+- [001 — Choices experience](docs/product/001-choices-experience.md)
 - [Sample opening](docs/content/choices-opening.md)
-- [Delivery and starter-kit assessment](docs/delivery.md)
+- [002 — Delivery architecture](docs/product/002-delivery-architecture.md)
 - [Completed work](COMPLETED.md)
 
-The intended reading experience combines stories, diagrams, thoughtful questions, and optional explanations for adults. Each chapter will have its own URL.
+The proposed experience combines a selectable starting age, animated life-path diagrams, reader-controlled steps, examples, and optional deeper explanations. Each chapter will have its own URL and a continuous reading view.

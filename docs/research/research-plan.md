@@ -2,7 +2,7 @@
 
 ## Scope
 
-The first subject in a selective life manual is how choices shape future possibilities across a lifetime. The primary readers are capable children aged 7–11; the material is also intended for general sharing. The immediate deliverable is research and a reviewable content and delivery proposal, written in Markdown in this repository.
+The first subject in a selective life manual is how choices shape future possibilities across a lifetime. The audience is ages 8+, with core explanations approachable from age eight; the material is intended for general sharing. The deliverable is research and reviewable product proposals, written in Markdown in this repository.
 
 The central question is: how can we teach children that preparation, practice, and decisions influence future options without implying that outcomes are guaranteed, that every setback is permanent, or that achievement determines a person's worth?
 
@@ -23,14 +23,12 @@ The central question is: how can we teach children that preparation, practice, a
 - [x] Synthesize the canonical research report, source ledger, editorial rules, chapter outline and sample passage, plus a proposed delivery plan.
 - [x] Verify citation support, document links, scope, current-state accuracy, and repository status.
 
-GitHub creation is a separate pending setup action, recorded in `NEXT_STEP.md`; visibility is unresolved and authentication works.
-
-Verification covers all 11 Markdown files and all 24 local links. The research team inspected the cited evidence with the access limits recorded in the source ledger. The repository has no rendered website to review; Markdown structure, scope, and current-state claims are checked.
+Repository setup and current product work are recorded in `NEXT_STEP.md`. The research team inspected the cited evidence with the access limits recorded in the source ledger. The repository has no rendered website to review; document verification covers Markdown structure, links, scope, and current-state claims.
 
 ## Research lanes
 
 1. Lifetime opportunities: skill accumulation, education pathways, selection versus causation, age-related opportunities, and recovery.
-2. Teaching decisions: middle-childhood reasoning, future thinking, self-regulation, practice and planning, plus teaching resources for ages 7–11.
+2. Teaching decisions: middle-childhood reasoning, future thinking, self-regulation, practice and planning, plus selected adolescent and adult context. Source populations retain their actual ages; the product's 8+ target does not broaden a study's findings.
 3. Coordinator: static publishing, starter-kit applicability, critical-source spot checks, integration, and artifact verification.
 
 ## Planning tools

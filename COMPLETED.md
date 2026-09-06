@@ -10,4 +10,10 @@
 - Verified available runtimes, GitHub authentication, and availability of the proposed repository name.
 - Checked all 11 Markdown files and 24 local links; reviewed citation support and documented access limits. No website visual review applies at this stage.
 
-GitHub repository creation, complete chapter writing, visual production, website implementation, and publication remain outstanding.
+- Created the public [Rio517/wisdom-web repository](https://github.com/Rio517/wisdom-web) and connected `origin`.
+- Inspected the supplied life-paths visual and incorporated its “today” boundary into the guided-animation proposal, with optional examples and future video support.
+- Organized proposals as numbered product documents with dates, status, and an index.
+- Updated the audience to 8+ and specified a selectable starting age, age-relevant examples, and optional developmental context with an additional source.
+- Verified all 12 Markdown files and 36 local links/anchors after reorganizing the product documents; checked for stale proposal paths and audience requirements.
+
+Complete chapter writing, visual production, website implementation, and site publication remain outstanding.

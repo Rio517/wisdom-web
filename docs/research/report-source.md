@@ -1,6 +1,6 @@
 # How choices shape future possibilities
 
-Audience: the author, designers, and future contributors to a life manual for children aged 7–11.
+Audience: the author, designers, and future contributors to a life manual for ages 8+, with a core explanation approachable from age eight.
 
 Research date: 2026-09-06. Scope: a focused synthesis of lifetime opportunity and age-appropriate decision teaching. English is the initial language; education examples include the United States, with broader OECD and international teaching evidence. Full provenance and limitations are in the [source ledger](sources.md).
 
@@ -67,6 +67,12 @@ Informed Health Choices is an especially relevant precedent for respecting the r
 
 Design inference: use a recurring rhythm of situation → question → explanation → new example → reflection. Let the youngest readers respond orally or draw. Add deeper questions for readers who can handle competing goals and uncertainty. These are adaptations to test, not fixed developmental categories.
 
+### Developmental context for the 8+ audience
+
+Executive-function capacities include working memory, mental flexibility, and self-control. Their development continues through the teen years and into early adulthood, and experiences and interactions affect that development. This supports explaining development alongside practice and adult help. It does not establish a uniform timetable or a single birthday when judgment becomes complete. [Harvard Center on the Developing Child, InBrief: Executive Function](https://developingchild.harvard.edu/resources/inbriefs/inbrief-executive-function/).
+
+Editorial implication: keep audience age separate from the timeline age being explored. An eight-year-old can examine a fictional adult choice without receiving adult-directed prose. Use starting ages to choose examples, not to estimate an individual's capacities or count remaining opportunities.
+
 ## 6. Connecting a lifetime idea to daily decisions
 
 A small randomized study of fifth graders found near-term benefits from identifying a desired outcome, noticing an obstacle, and making an action plan. Later-quarter differences diminished and were not statistically significant. This is a promising basis for a practical exercise, not proof of durable habit transformation. [Duckworth and colleagues, 2013](https://bpb-us-e1.wpmucdn.com/wp.nyu.edu/dist/c/6235/files/2019/02/duckworth-et-al-2013-from-fantasy-to-action.pdf).
@@ -90,6 +96,6 @@ The following are project choices informed by the evidence, not tested intervent
 
 ## Limits and next decision
 
-There is no direct evidence yet that this manual changes real-life behavior, that its metaphor works for all readers aged 7–11, or that independent use matches adult-supported learning. No trial establishes the proposed combination as a curriculum. The next useful evidence is whether children understand the mechanism and apply it without becoming fatalistic or hearing only “get better grades.”
+There is no direct evidence yet that this manual changes real-life behavior, that its metaphor works across the full 8+ audience, or that independent use matches adult-supported learning. The teaching evidence concentrates on middle childhood and selected older groups; an open-ended audience is a product choice, not proof of equal effectiveness across ages. No trial establishes the proposed combination as a curriculum. The next useful evidence is whether children understand the mechanism and apply it without becoming fatalistic or hearing only “get better grades.”
 
-The [chapter proposal](../choices-proposal.md) and [sample opening](../content/choices-opening.md) turn this research into material suitable for review. A visual storyboard and small reader check should guide the implementation plan.
+The [choices product document](../product/001-choices-experience.md) and [sample opening](../content/choices-opening.md) turn this research into material suitable for review. A visual storyboard and small reader check should guide the implementation plan.
