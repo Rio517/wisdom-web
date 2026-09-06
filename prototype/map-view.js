@@ -32,18 +32,27 @@ function partialPoints(points, progress) {
 }
 
 export function createMapView({ canvas, overlay, onInspect, onPreview, lessMotion }) {
-  const context = canvas?.getContext?.('2d');
-  if (!context) return { show() {}, cancel() {} };
+  let context;
+  try {
+    context = canvas?.getContext?.('2d');
+  } catch {
+    context = null;
+  }
+  if (!context) return { failed: true, show() {}, cancel() {} };
 
   let animation = 0;
   let currentState = null;
   let currentTransform = null;
   let previewAge = null;
+  const targets = new Map();
+  const markerLayer = document.createElement('div');
+  markerLayer.className = 'map-marker-layer';
+  overlay.append(markerLayer);
   const token = name => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
   const cancel = () => { cancelAnimationFrame(animation); animation = 0; };
   const viewportFor = state => {
     if (state.overview || !state.selected) return OVERVIEW;
-    return state.inspect === 12 ? makeMap(12).focus : makeMap(state.age).focus;
+    return state.inspect !== null ? makeMap(state.inspect).focus : makeMap(state.age).focus;
   };
 
   function resize() {
@@ -87,27 +96,60 @@ export function createMapView({ canvas, overlay, onInspect, onPreview, lessMotio
     context.setLineDash([]);
   }
 
-  function renderOverlay(map, state) {
-    const active = state.inspect ?? state.age;
-    const fragment = document.createDocumentFragment();
+  function ensureTargets(map) {
+    if (targets.size) return;
     for (const anchor of map.anchors) {
-      const position = currentTransform.world(anchor);
       const button = document.createElement('button');
       button.type = 'button';
       button.className = 'map-target';
       button.dataset.age = anchor.age;
+      button.addEventListener('click', () => onInspect(anchor.age));
+      button.addEventListener('focus', () => onPreview(anchor.age));
+      button.addEventListener('blur', () => requestAnimationFrame(() => {
+        if (!document.activeElement?.classList.contains('map-target')) onPreview(null);
+      }));
+      overlay.append(button);
+      targets.set(anchor.age, button);
+    }
+  }
+
+  function renderOverlay(map, state) {
+    ensureTargets(map);
+    const active = state.inspect ?? state.age;
+    for (const anchor of map.anchors) {
+      const position = currentTransform.world(anchor);
+      const button = targets.get(anchor.age);
       const reviewing = state.selected && anchor.age <= state.age && anchor.age !== active;
       button.setAttribute('aria-label', `${reviewing ? 'Review' : 'Explore'} age ${anchor.age}`);
       button.setAttribute('aria-pressed', String(anchor.age === active));
-      button.textContent = anchor.age === active ? `Age ${anchor.age}` : String(anchor.age);
+      button.textContent = String(anchor.age);
       button.style.transform = `translate(${position.x}px, ${position.y}px) translate(-50%, -50%)`;
       const offscreen = position.x < 22 || position.y < 22 || position.x > currentTransform.rect.width - 22 || position.y > currentTransform.rect.height - 22;
       const allowed = !state.selected || anchor.age <= state.age || (state.age === 8 && anchor.age === 12);
       button.hidden = !allowed || offscreen;
-      button.addEventListener('click', () => onInspect(anchor.age));
-      fragment.append(button);
     }
-    overlay.replaceChildren(fragment);
+    const labels = [];
+    if (state.selected) {
+      const today = currentTransform.world(map.anchor);
+      const label = document.createElement('span');
+      label.className = 'today-marker';
+      label.textContent = `Today · ${state.age}`;
+      label.style.transform = `translate(${today.x}px, ${Math.max(8, today.y - 42)}px) translate(-50%, -100%)`;
+      labels.push(label);
+    }
+    if (state.inspect === 12) {
+      comparisonRoutes(state.comparison).forEach((item, index) => {
+        const point = currentTransform.world(item.points.at(-1));
+        const marker = document.createElement('span');
+        marker.className = 'route-marker';
+        marker.dataset.routeMarker = String(index + 1);
+        marker.textContent = String(index + 1);
+        marker.setAttribute('aria-hidden', 'true');
+        marker.style.transform = `translate(${point.x}px, ${point.y}px) translate(-50%, -50%)`;
+        labels.push(marker);
+      });
+    }
+    markerLayer.replaceChildren(...labels);
   }
 
   function paint(state, travel, zoom, comparisonProgress) {
@@ -122,7 +164,7 @@ export function createMapView({ canvas, overlay, onInspect, onPreview, lessMotio
     const future = token('--color-wisdom-route-future');
     const untaken = token('--color-wisdom-route-untaken');
     const active = token('--color-wisdom-route-active');
-    const divider = token('--color-wisdom-rule');
+    const divider = token('--color-wisdom-today');
     for (const branch of map.branches) route(branch.points, state.selected && branch.state === 'untaken' ? untaken : future, 1.35, state.selected && branch.state === 'untaken' ? [2, 5] : []);
     route(map.future, future, 2);
     if (state.selected) {
@@ -130,7 +172,7 @@ export function createMapView({ canvas, overlay, onInspect, onPreview, lessMotio
       route(map.past, active, 3.2, [], travel);
       const guide = currentTransform.world(map.anchor);
       context.strokeStyle = divider;
-      context.lineWidth = 1.5;
+      context.lineWidth = 2;
       context.setLineDash([2, 6]);
       context.beginPath();
       context.moveTo(guide.x, 18);

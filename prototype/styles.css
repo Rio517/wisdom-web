@@ -9,6 +9,7 @@
   --color-wisdom-route-future: #7f9c8b;
   --color-wisdom-route-untaken: #87918b;
   --color-wisdom-route-missed: #9a6a52;
+  --color-wisdom-today: #43564d;
   --font-field: "Iowan Old Style", "Palatino Linotype", Georgia, serif;
   --font-guide: "Avenir Next", "Segoe UI", sans-serif;
 }
@@ -64,8 +65,14 @@ select { min-height: 44px; border: 1px solid #9ca99e; background: var(--color-wi
 .map-canvas-wrap { position: relative; }
 #life-map { display: block; width: 100%; aspect-ratio: 1260 / 540; touch-action: manipulation; }
 #map-overlay { position: absolute; inset: 0; pointer-events: none; }
-.map-target { position: absolute; min-width: 44px; min-height: 44px; border: 1px solid var(--color-wisdom-route-active); border-radius: 999px; background: var(--color-wisdom-page); color: var(--color-wisdom-route-active); padding: 4px 9px; pointer-events: auto; font-size: 16px; line-height: 1.1; }
-.map-target[aria-pressed="true"] { border-width: 3px; background: var(--color-wisdom-route-active); color: white; }
+.map-marker-layer { position: absolute; inset: 0; pointer-events: none; }
+.map-target { position: absolute; z-index: 0; isolation: isolate; width: 44px; min-width: 44px; height: 44px; min-height: 44px; border: 0; background: transparent; color: var(--color-wisdom-route-active); padding: 0; pointer-events: auto; font-size: 16px; line-height: 1; }
+.map-target::before { position: absolute; inset: 8px; z-index: -1; border: 1.5px solid var(--color-wisdom-route-active); border-radius: 999px; background: var(--color-wisdom-page); content: ""; }
+.map-target[aria-pressed="true"] { color: white; }
+.map-target[aria-pressed="true"]::before { border-width: 2px; background: var(--color-wisdom-route-active); }
+.today-marker, .route-marker { position: absolute; display: grid; min-width: 22px; min-height: 22px; place-items: center; background: var(--color-wisdom-page); color: var(--color-wisdom-today); font: 16px/1 var(--font-guide); white-space: nowrap; }
+.today-marker { border-bottom: 2px solid var(--color-wisdom-today); padding: 2px 5px 4px; }
+.route-marker { border: 1px solid currentColor; border-radius: 999px; color: var(--color-wisdom-route-active); font-size: 14px; }
 .map-actions { position: relative; display: flex; min-height: 44px; justify-content: end; align-items: center; gap: 22px; margin-top: 6px; }
 .motion-control { display: flex; min-height: 44px; align-items: center; gap: 8px; color: var(--color-wisdom-quiet); cursor: pointer; }
 .motion-control input { width: 17px; height: 17px; accent-color: var(--color-wisdom-route-active); }
@@ -85,7 +92,7 @@ figcaption > p { color: var(--color-wisdom-quiet); font-size: 16px; }
 .moment-list { display: flex; gap: 10px; flex-wrap: wrap; }
 .moment-list button, .layer-buttons button, .comparison-buttons button { min-height: 44px; border: 1px solid var(--color-wisdom-rule); background: transparent; padding: 8px 12px; text-align: left; }
 .moment-list button:hover, .layer-buttons button:hover, .comparison-buttons button:hover { border-color: var(--color-wisdom-route-active); }
-.comparison-entry { display: block; margin-top: 28px; }
+.comparison-entry { display: block; }
 .decision-panel { display: grid; gap: 20px; max-width: 980px; margin-top: 18px; border-top: 3px solid var(--color-wisdom-route-active); border-bottom: 1px solid var(--color-wisdom-rule); padding: 24px 0 30px; }
 .decision-panel h2 { margin: 0; font-size: 30px; }
 .decision-panel h3 { margin: 0 0 8px; font-size: 21px; }
@@ -97,6 +104,7 @@ figcaption > p { color: var(--color-wisdom-quiet); font-size: 16px; }
 .route-outcome { padding-left: 14px; border-left: 4px solid var(--color-wisdom-route-future); }
 .route-outcome[data-status="needs-work"] { border-color: var(--color-wisdom-route-untaken); }
 .route-outcome[data-status="missed"] { border-color: var(--color-wisdom-route-missed); }
+.route-outcome::before { display: inline-grid; width: 22px; height: 22px; margin-right: 8px; place-items: center; border: 1px solid currentColor; border-radius: 999px; color: var(--color-wisdom-route-active); content: attr(data-route-marker); font-size: 14px; vertical-align: middle; }
 .comparison-note { margin: 0; color: var(--color-wisdom-quiet); font: 20px/1.45 var(--font-field); }
 .inline-layer { max-width: 800px; border-left: 1px solid var(--color-wisdom-rule); padding-left: 16px; }
 .inline-layer p { margin: 0 0 10px; }

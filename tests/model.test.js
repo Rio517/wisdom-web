@@ -70,6 +70,21 @@ test('other future moments cannot be restored as memories', () => {
   });
 });
 
+test('earlier authored decisions can be inspected without turning them into the age-12 comparison', () => {
+  assert.deepEqual(readState(
+    'https://example.test/?age=40&selected=1&inspect=25&choice=repair&layers=pattern',
+  ), {
+    age: 40,
+    scene: 'possibilities',
+    selected: true,
+    overview: false,
+    inspect: 25,
+    comparison: 'gap',
+    layers: [],
+  });
+  assert.equal(transition(readState('https://example.test/?age=60&selected=1'), { inspect: 40 }).inspect, 40);
+});
+
 test('state URLs normalize all fields, preserve the hosting path and remove unknown parameters', () => {
   const url = stateURL({
     age: 40,

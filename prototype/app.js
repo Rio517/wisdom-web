@@ -31,6 +31,18 @@ const map = createMapView({
   },
 });
 
+function renderEarlierMoments() {
+  const list = $('#moment-list');
+  const available = MOMENTS.filter(moment => moment.age <= state.age);
+  list.replaceChildren(...available.map(moment => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.dataset.reviewAge = moment.age;
+    button.textContent = `Age ${moment.age}: ${moment.title}`;
+    return button;
+  }));
+}
+
 function setIndex(open, returnFocus = false) {
   $('#site-index').hidden = !open;
   $('#open-index').hidden = open;
@@ -57,6 +69,13 @@ function render(animate = false, focusHeading = false) {
   $('#possibilities-scene').hidden = !opening;
   $('#learning-scene').hidden = opening;
   $('#example-age').value = state.age;
+  const context = MOMENTS.find(moment => moment.age === (state.inspect ?? state.age));
+  $('#moment-copy').textContent = `Age ${context.age}: ${context.summary}`;
+  $('#earlier-title').textContent = state.age === 8 ? 'The starting moment' : 'Earlier decisions';
+  $('#earlier-description').textContent = state.age === 8
+    ? 'Age 12 is a separate looking-ahead example below.'
+    : 'Map targets and these controls describe the same fictional example. Choosing one keeps today unchanged.';
+  renderEarlierMoments();
   $('#past-label').textContent = state.selected ? 'The path to today' : 'A beginning';
   $('#map-instruction').textContent = state.inspect === 12
     ? 'Compare one age-12 choice while keeping today in view.'
@@ -64,6 +83,7 @@ function render(animate = false, focusHeading = false) {
   $('#overview').hidden = !state.selected;
   $('#overview').textContent = state.overview ? 'Focus on today' : 'See the whole map';
   $('#return-today').hidden = state.inspect === null;
+  $('#replay').hidden = !state.selected;
   for (const link of document.querySelectorAll('.scene-links [data-scene]')) {
     link.toggleAttribute('aria-current', link.dataset.scene === state.scene);
     link.href = stateURL({ ...state, scene: link.dataset.scene }, location.href);
@@ -92,22 +112,24 @@ function navigate(change, animate = false) {
 }
 
 function reviewMoment(age) {
-  const moment = MOMENTS.find(item => item.age === age);
-  $('#moment-copy').textContent = `Age ${age}: ${moment.summary}`;
-  $('#map-preview').textContent = `Reviewing age ${age} without changing today, age ${state.age}.`;
+  if (age === state.age) navigate({ inspect: null });
+  else navigate({ inspect: age });
 }
 
 $('#explore').addEventListener('click', () => navigate({ age: Number($('#example-age').value), selected: true }, true));
 $('#example-age').addEventListener('change', event => navigate({ age: Number(event.target.value), selected: state.selected }, state.selected));
 $('#overview').addEventListener('click', () => navigate({ overview: !state.overview }));
 $('#return-today').addEventListener('click', () => navigate({ inspect: null }));
+$('#replay').addEventListener('click', () => map.show(state, true));
 $('#comparison-entry').addEventListener('click', () => navigate({ inspect: 12 }, true));
-document.querySelectorAll('[data-review-age]').forEach(button => button.addEventListener('click', () => {
+$('#moment-list').addEventListener('click', event => {
+  const button = event.target.closest('[data-review-age]');
+  if (!button) return;
   const age = Number(button.dataset.reviewAge);
   if (!state.selected) navigate({ age, selected: true }, true);
   else if (age === 12 && (state.age >= 12 || state.age === 8)) navigate({ inspect: 12 }, true);
   else reviewMoment(age);
-}));
+});
 document.querySelectorAll('[data-comparison]').forEach(button => button.addEventListener('click', () => navigate({ comparison: button.dataset.comparison }, true)));
 document.querySelectorAll('[data-layer]').forEach(button => button.addEventListener('click', () => {
   const layers = state.layers.includes(button.dataset.layer)
@@ -165,4 +187,10 @@ document.querySelectorAll('dialog').forEach(dialog => {
 
 setIndex(!matchMedia('(max-width: 900px)').matches);
 history.replaceState(null, '', stateURL(state, location.href));
+if (map.failed) {
+  $('#life-map').hidden = true;
+  $('#map-overlay').hidden = true;
+  $('#canvas-fallback').hidden = false;
+  $('#map-preview').textContent = 'The map could not start. The complete reading explanation is available here.';
+}
 render();
