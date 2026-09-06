@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-Status: Approved for prototyping (in progress). Created: 2026-09-06. Updated: 2026-09-06.
+Status: Approved for prototyping (Task 3 verification in progress). Created: 2026-09-06. Updated: 2026-09-06.
 
 **Goal:** Replace the age-only SVG study with a beautiful Tailwind/Canvas explanation of choices, repeated practice, learning and recovery, retaining the existing reading shell's working behavior.
 
@@ -82,7 +82,7 @@ Apply this serialization to normalized state. Every field above must round-trip 
 
 **Consumes:** Task 1 interfaces above. **Produces:** `npm run dev` at 4600, `npm run build` producing static `dist/`, `npm run preview` at 4601; `/prototype/` remains the entry. `createMapView({canvas,overlay,onInspect,onPreview,lessMotion})` returns `{show(state,animate),cancel()}`. `renderDecision(state)` updates the existing semantic decision panel without replacing focused controls.
 
-- [ ] Write acceptance checks before implementation. Browser suite is the existing tool-compatible async `(page) => {}` expression; use `http://127.0.0.1:4600/prototype/` and accessible controls. Start a temporary view of the old app on 4600 if needed to observe expected missing-comparison assertions. Stop only verified project listeners, not unrelated processes.
+- [x] Write acceptance checks before implementation. Browser suite is the existing tool-compatible async `(page) => {}` expression; use `http://127.0.0.1:4600/prototype/` and accessible controls. Start a temporary view of the old app on 4600 if needed to observe expected missing-comparison assertions. Stop only verified project listeners, not unrelated processes.
 
 ```js
 await page.goto('http://127.0.0.1:4600/prototype/');
@@ -93,7 +93,7 @@ await page.getByRole('button', {name:'Build the foundation', exact:true}).click(
 if (!(await page.getByText('Another possible choice', {exact:true}).isVisible())) throw new Error('Missing comparison explanation');
 ```
 
-- [ ] Install locally built Tailwind/Vite with compatible pinned versions. Add a local plugin that replaces `<!-- READING_CONTENT -->` in HTML with `renderReading()` during dev and build. Include the result in the reading dialog and the no-script alternative without maintaining separately authored copies. Preserve root-relative asset resolution under a hosting subpath by using Vite's relative build base.
+- [x] Install locally built Tailwind/Vite with compatible pinned versions. Add a local plugin that replaces `<!-- READING_CONTENT -->` in HTML with `renderReading()` during dev and build. Include the result in the reading dialog and the no-script alternative without maintaining separately authored copies. Preserve root-relative asset resolution under a hosting subpath by using Vite's relative build base.
 
 ```js
 server: { host: '127.0.0.1', port: 4600, strictPort: true },
@@ -102,12 +102,12 @@ preview: { host: '127.0.0.1', port: 4601, strictPort: true }
 
 In addition to strict defaults, reject explicit CLI/config port overrides outside 4600–4699. Test this project-specific guard without opening forbidden listening sockets. Use Node's test runner for the guard and rendered static reading output; never test config by grepping source strings.
 
-- [ ] Rewrite the reading shell using Tailwind utilities and `@theme` tokens. Use `hidden` consistently, visible focus rings, native buttons/details/dialogs, and the existing collapsible index. Keep the learned-fractions scene and tennis detour, use Mika consistently, and preserve the About/source utilities. Opening controls retain `#example-age`, `#explore`, `#reduce-motion`; Canvas is `#life-map` with `data-motion`, HTML overlay is `#map-overlay`. Comparison buttons: “Leave the gap”, “Build the foundation”, “What could help next?”. The primary entry to comparison is “Compare a choice at age 12”.
-- [ ] Draw Canvas at device-pixel-ratio resolution with CSS-pixel coordinate transforms. Read palette from CSS custom properties. Render original background routes, dark traveled route, clear dashed untaken routes, lighter futures, a dotted today divider and localized traveling dot. Overlay native age/moment buttons transformed by the same camera; maintain readable label size and at least 44px hit areas. Hide offscreen map targets from focus, but retain the full visible earlier-moments text list.
-- [ ] Implement one requestAnimationFrame chain. New selection cancels it; scene changes, resize and reduced-motion changes cancel safely. Arrival travels then zooms; comparison traces only the affected local routes. At rest there is no animation. Pointer proximity on authored traveled segments previews the corresponding moment, with no URL mutation. Native overlay/text controls open it on click/tap/keyboard.
-- [ ] Add the authored decision panel, three comparison views, named HTML route outcomes and two inline layers. Render “Looking ahead: age 12” or “Looking back: age 12” correctly. Today remains the selected age. Gap/build/repair alter both the route geometry and labeled availability. Pattern layer shows successive practice occasions; circumstances remain visible, not relegated to an optional note. Return-to-today, overview, scene navigation and deep dives preserve the state contract.
-- [ ] Keep URL/history, modal focus restoration, skip link, manual/system motion preference behavior and tablet index trapping. Handle Canvas null/failure by retaining working HTML comparisons. No JavaScript still supplies the whole worked reading explanation. Error paths must not hide all teaching content.
-- [ ] Run model/build tests, build the static output, and the rewritten browser checks. Before handing off, verify keyboard focus retention, rapid selection, return to today, comparisons/layers/history/reload, resizing, index/dialog edge cases and reduced motion. Self-review and commit only this task.
+- [x] Rewrite the reading shell using Tailwind utilities and `@theme` tokens. Use `hidden` consistently, visible focus rings, native buttons/details/dialogs, and the existing collapsible index. Keep the learned-fractions scene and tennis detour, use Mika consistently, and preserve the About/source utilities. Opening controls retain `#example-age`, `#explore`, `#reduce-motion`; Canvas is `#life-map` with `data-motion`, HTML overlay is `#map-overlay`. Comparison buttons: “Leave the gap”, “Build the foundation”, “What could help next?”. The primary entry to comparison is “Compare a choice at age 12”.
+- [x] Draw Canvas at device-pixel-ratio resolution with CSS-pixel coordinate transforms. Read palette from CSS custom properties. Render original background routes, dark traveled route, clear dashed untaken routes, lighter futures, a dotted today divider and localized traveling dot. Overlay native age/moment buttons transformed by the same camera; maintain readable label size and at least 44px hit areas. Hide offscreen map targets from focus, but retain the full visible earlier-moments text list.
+- [x] Implement one requestAnimationFrame chain. New selection cancels it; scene changes, resize and reduced-motion changes cancel safely. Arrival travels then zooms; comparison traces only the affected local routes. At rest there is no animation. Pointer proximity on authored traveled segments previews the corresponding moment, with no URL mutation. Native overlay/text controls open it on click/tap/keyboard.
+- [x] Add the authored decision panel, three comparison views, named HTML route outcomes and two inline layers. Render “Looking ahead: age 12” or “Looking back: age 12” correctly. Today remains the selected age. Gap/build/repair alter both the route geometry and labeled availability. Pattern layer shows successive practice occasions; circumstances remain visible, not relegated to an optional note. Return-to-today, overview, scene navigation and deep dives preserve the state contract.
+- [x] Keep URL/history, modal focus restoration, skip link, manual/system motion preference behavior and tablet index trapping. Handle Canvas null/failure by retaining working HTML comparisons. No JavaScript still supplies the whole worked reading explanation. Error paths must not hide all teaching content.
+- [x] Run model/build tests, build the static output, and the rewritten browser checks. Before handing off, verify keyboard focus retention, rapid selection, return to today, comparisons/layers/history/reload, resizing, index/dialog edge cases and reduced motion. Self-review and commit only this task.
 
 ## Task 3: Two visual refinement loops, regression checks and handoff
 
@@ -115,9 +115,9 @@ In addition to strict defaults, reject explicit CLI/config port overrides outsid
 
 **Consumes:** The running Task 2 prototype and browser checks. **Produces:** a visually inspected working local rewrite with precise test evidence and clear remaining release limits.
 
-- [ ] Review before refining: capture overview, selected older age, age-12 gap/build/repair, expanded pattern layer and learning scene at the three target viewports. Inspect images and live motion. Record actual issues, then make targeted improvements. This is visual loop 1; retain before/after captures.
-- [ ] Inspect the improved result again, including label/route alignment after resize, gray-route/divider contrast, first-screen hierarchy and reading length. Make a second real improvement based on those observations; retain the second before/after capture set. New behavioral bugs require a reproducing failing check before fixing.
-- [ ] Run all Node tests and the build; run the saved Playwright suite on the development port and smoke-test built output on 4601. Test direct navigation, Canvas failure and JavaScript-disabled reading. Check console errors and overflow, and confirm the old project listener on 4173 is gone.
+- [x] Review before refining: capture overview, selected older age, age-12 gap/build/repair, expanded pattern layer and learning scene at the three target viewports. Inspect images and live motion. Record actual issues, then make targeted improvements. This is visual loop 1; retain before/after captures.
+- [x] Inspect the improved result again, including label/route alignment after resize, gray-route/divider contrast, first-screen hierarchy and reading length. Make a second real improvement based on those observations; retain the second before/after capture set. New behavioral bugs require a reproducing failing check before fixing.
+- [x] Run all Node tests and the build; run the saved Playwright suite on the development port and smoke-test built output on 4601. Test direct navigation, Canvas failure and JavaScript-disabled reading. Check console errors and overflow, and confirm the old project listener on 4173 is gone.
 
 ```sh
 npm test
@@ -125,7 +125,7 @@ npm run build
 git diff --check
 ```
 
-- [ ] Update documentation to current implementation facts: installation is now required, ports are bounded, the fictional comparison/layers exist, two actual visual loops are recorded, and browser checks are not physical-iPad or full accessibility certification. Keep source research canonical. Mark completed work only after evidence is available. Commit the verified revision and provide a local review URL without publishing.
+- [x] Update documentation to current implementation facts: installation is now required, ports are bounded, the fictional comparison/layers exist, two actual visual loops are recorded, and browser checks are not physical-iPad or full accessibility certification. Keep source research canonical. Mark completed work only after evidence is available. Commit the verified revision and provide a local review URL without publishing.
 
 ## Review gates
 

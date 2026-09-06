@@ -37,6 +37,20 @@ test('invalid shared state falls back independently to the complete authored sta
   ), DEFAULT_STATE);
 });
 
+test('valid shared fields survive when neighboring fields are invalid', () => {
+  assert.deepEqual(readState(
+    'https://example.test/?age=40&selected=no&overview=1&inspect=999&choice=build&layers=starting,unknown#learning',
+  ), {
+    age: 40,
+    scene: 'learning',
+    selected: false,
+    overview: true,
+    inspect: null,
+    comparison: 'gap',
+    layers: [],
+  });
+});
+
 test('shared state restores every field and canonicalizes layer order', () => {
   assert.deepEqual(readState(
     'https://example.test/?age=40&selected=1&overview=1&inspect=12&choice=repair&layers=starting,pattern,starting#learning',
@@ -266,6 +280,19 @@ test('comparison routes progress rightward and recovery eligibility follows its 
     for (const route of comparisonRoutes(mode)) {
       for (let index = 1; index < route.points.length; index += 1) {
         assert.ok(route.points[index].x >= route.points[index - 1].x);
+      }
+    }
+  }
+});
+
+test('every comparison route coordinate is finite and inside the authored drawing', () => {
+  for (const mode of ['gap', 'build', 'repair']) {
+    for (const route of comparisonRoutes(mode)) {
+      assert.ok(route.points.length >= 2);
+      for (const point of route.points) {
+        assert.ok(Number.isFinite(point.x) && Number.isFinite(point.y));
+        assert.ok(point.x >= OVERVIEW.x && point.x <= OVERVIEW.x + OVERVIEW.width);
+        assert.ok(point.y >= OVERVIEW.y && point.y <= OVERVIEW.y + OVERVIEW.height);
       }
     }
   }

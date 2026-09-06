@@ -5,6 +5,53 @@ const blendBox = (from, to, amount) => Object.fromEntries(
 );
 const clamp = value => Math.max(0, Math.min(1, value));
 
+const MARKER_OFFSETS = [
+  { x: 0, y: -44 },
+  { x: 40, y: -30 },
+  { x: 40, y: 30 },
+  { x: 0, y: 44 },
+  { x: -40, y: 30 },
+  { x: -40, y: -30 },
+  { x: 48, y: 0 },
+  { x: -48, y: 0 },
+];
+
+export function layoutOutcomeMarkers(endpoints, obstacles, bounds) {
+  const placed = [];
+  const inside = point => point.x >= 14 && point.x <= bounds.width - 14
+    && point.y >= 14 && point.y <= bounds.height - 14;
+  const clearance = (point, others) => others.reduce((smallest, other) => Math.min(
+    smallest, Math.hypot(point.x - other.x, point.y - other.y),
+  ), Infinity);
+
+  for (const endpoint of endpoints) {
+    const candidates = MARKER_OFFSETS.map(offset => ({
+      x: endpoint.x + offset.x,
+      y: endpoint.y + offset.y,
+    })).filter(inside);
+    const available = candidates.find(point => clearance(point, obstacles) >= 38
+      && clearance(point, placed.map(item => item.marker)) >= 32);
+    const marker = available ?? candidates.sort((a, b) => (
+      Math.min(clearance(b, obstacles), clearance(b, placed.map(item => item.marker)))
+      - Math.min(clearance(a, obstacles), clearance(a, placed.map(item => item.marker)))
+    ))[0] ?? {
+      x: Math.max(14, Math.min(bounds.width - 14, endpoint.x)),
+      y: Math.max(14, Math.min(bounds.height - 14, endpoint.y)),
+    };
+    const dx = marker.x - endpoint.x;
+    const dy = marker.y - endpoint.y;
+    placed.push({
+      endpoint: { ...endpoint },
+      marker,
+      leader: {
+        length: Math.max(0, Math.hypot(dx, dy) - 12),
+        angle: Math.atan2(dy, dx) * 180 / Math.PI,
+      },
+    });
+  }
+  return placed;
+}
+
 function nearestDistance(point, start, end) {
   const dx = end.x - start.x;
   const dy = end.y - start.y;
@@ -104,6 +151,10 @@ export function createMapView({ canvas, overlay, onInspect, onPreview, lessMotio
       button.className = 'map-target';
       button.dataset.age = anchor.age;
       button.addEventListener('click', () => onInspect(anchor.age));
+      button.addEventListener('pointerenter', () => onPreview(anchor.age));
+      button.addEventListener('pointerleave', () => {
+        if (document.activeElement !== button) onPreview(null);
+      });
       button.addEventListener('focus', () => onPreview(anchor.age));
       button.addEventListener('blur', () => requestAnimationFrame(() => {
         if (!document.activeElement?.classList.contains('map-target')) onPreview(null);
@@ -139,15 +190,33 @@ export function createMapView({ canvas, overlay, onInspect, onPreview, lessMotio
       labels.push(label);
     }
     if (state.inspect === 12) {
-      comparisonRoutes(state.comparison).forEach((item, index) => {
-        const point = currentTransform.world(item.points.at(-1));
+      const routes = comparisonRoutes(state.comparison);
+      const endpoints = routes.map(item => currentTransform.world(item.points.at(-1)));
+      const obstacles = map.anchors.map(anchor => currentTransform.world(anchor));
+      const today = currentTransform.world(map.anchor);
+      const todayLabelCenter = { x: today.x, y: Math.max(8, today.y - 42) - 14 };
+      obstacles.push(
+        todayLabelCenter,
+        { x: todayLabelCenter.x - 36, y: todayLabelCenter.y },
+        { x: todayLabelCenter.x + 36, y: todayLabelCenter.y },
+      );
+      const placements = layoutOutcomeMarkers(endpoints, obstacles, currentTransform.rect);
+      routes.forEach((item, index) => {
+        const placement = placements[index];
+        const leader = document.createElement('span');
+        leader.className = 'route-leader';
+        leader.dataset.status = item.status;
+        leader.setAttribute('aria-hidden', 'true');
+        leader.style.width = `${placement.leader.length}px`;
+        leader.style.transform = `translate(${placement.endpoint.x}px, ${placement.endpoint.y}px) rotate(${placement.leader.angle}deg)`;
         const marker = document.createElement('span');
         marker.className = 'route-marker';
+        marker.dataset.status = item.status;
         marker.dataset.routeMarker = String(index + 1);
         marker.textContent = String(index + 1);
         marker.setAttribute('aria-hidden', 'true');
-        marker.style.transform = `translate(${point.x}px, ${point.y}px) translate(-50%, -50%)`;
-        labels.push(marker);
+        marker.style.transform = `translate(${placement.marker.x}px, ${placement.marker.y}px) translate(-50%, -50%)`;
+        labels.push(leader, marker);
       });
     }
     markerLayer.replaceChildren(...labels);
@@ -213,7 +282,8 @@ export function createMapView({ canvas, overlay, onInspect, onPreview, lessMotio
 
   canvas.addEventListener('pointermove', event => {
     if (!currentState || !currentTransform || !currentState.selected) return;
-    const world = currentTransform.source({ x: event.clientX - currentTransform.rect.left, y: event.clientY - currentTransform.rect.top });
+    const liveRect = canvas.getBoundingClientRect();
+    const world = currentTransform.source({ x: event.clientX - liveRect.left, y: event.clientY - liveRect.top });
     const map = makeMap(currentState.age);
     const distance = map.past.slice(1).reduce((nearest, point, index) => Math.min(nearest, nearestDistance(world, map.past[index], point)), Infinity);
     if (distance > 14 / currentTransform.scale) {

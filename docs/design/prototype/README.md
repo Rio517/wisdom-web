@@ -1,37 +1,38 @@
-# Interactive map: browser review
+# Layered choices prototype: browser review
 
-Status: local prototype ready for owner visual review; not a production release. Reviewed: 2026-09-06.
+Status: local prototype ready for independent Task 3 review; not a production release. Reviewed: 2026-09-06.
 
-[Run the prototype](../../../prototype/README.md) · [Product scope](../../product/007-interactive-map-prototype.md) · [Visual requirements](../../product/003-visual-language-and-navigation.md)
+[Run the prototype](../../../prototype/README.md) · [Revision contract](../../product/008-choices-and-consequences.md) · [Implementation plan](../../product/009-layered-choices-implementation.md)
 
 ## Current rendered views
 
-- [Opening, desktop](opening-desktop.png): the full field of winding possibilities before selecting a moment.
-- [Selected age 40, desktop](settled-desktop.png): dark-green traveled route, faint untaken alternatives and light gray-green futures.
-- [Selected age 16, tablet landscape](settled-tablet-landscape.png).
-- [Selected age 40, tablet portrait](settled-tablet-portrait.png).
-- [Learning scene, tablet portrait](learning-tablet.png): one fictional foundation-to-application example with the existing illustration study.
+- [Opening field, desktop](rewrite/opening-desktop.png): unselected path abundance and opening hierarchy at 1440 × 1000.
+- [Selected age 40, desktop](rewrite/today-desktop.png): traveled, untaken and possible routes with the Today divider at 1440 × 1000.
+- [Build the foundation, desktop](rewrite/build-desktop.png): comparison controls beside the map and named consequences below it at 1440 × 1000.
+- [Expanded repeated-pattern layer, desktop](rewrite/pattern-desktop.png).
+- [Leave the gap, tablet landscape](rewrite/gap-landscape.png) at 1133 × 744.
+- [Supported repair, tablet portrait](rewrite/repair-tablet.png) at 744 × 1133.
+- [Learning scene, tablet portrait](rewrite/learning-tablet.png) at 744 × 1133.
+- [Learning scene, tablet landscape](rewrite/learning-landscape.png) at 1133 × 744 and [desktop](rewrite/learning-desktop.png) at 1440 × 1000.
 
-These are full-page browser captures. Pages scroll vertically; the images do not imply all content fits within one viewport. The SVG is original code-native geometry, not a tracing or rasterization of the supplied reference.
+These are full-page browser captures, so their height includes scrolling content and does not imply that every explanation fits above the fold. The learning desktop and landscape captures retain the legitimate heading focus outline immediately after scene navigation; it is not a permanent decorative border. Canvas routes are original code-native geometry; text, controls, outcome annotations and leaders are semantic HTML/CSS over the shared camera transform.
+
+## Two refinement loops
+
+The first review inspected [the initial overview](rewrite/overview-review-1.png) and [initial portrait repair view](rewrite/repair-tablet-review-1.png). It found stale age-eight context while looking back from age 40, future moments presented as earlier decisions, a weak Today divider, oversized map controls and missing consequence markers. The first improvement derived the visible moment and earlier-decision list from state, strengthened the divider and added numbered outcome annotations. [Repair landscape](rewrite/repair-landscape-review-2.png) and [repair portrait](rewrite/repair-tablet-review-2.png) record the result.
+
+The second review expanded across [overview](rewrite/overview-review-2.png), [selected Today](rewrite/today-desktop-review-2.png), [foundation plus pattern](rewrite/build-pattern-review-2.png), [gap landscape](rewrite/gap-landscape-review-2.png) and [learning portrait](rewrite/learning-tablet-review-2.png). It found the comparison controls and explanation far below the routes they changed, small narrative type, circular outcome keys that resembled age markers, an outcome hidden by age 40, a contradictory reference biography during alternate comparisons and inconsistent learner naming.
+
+The second improvement moved comparison controls immediately above the Canvas and named outcomes immediately below, followed by the action, consequence, work, circumstances and optional research note before the earlier-moment list. Narrative copy now uses a 20px reading size and secondary/control text 16px within a shared Tailwind spacing system. Outcome keys are square, use short leader lines and avoid age/Today labels deterministically; numerals remain dark while status is carried by route, border and leader. The reference biography is hidden only during comparison, while live preview feedback remains beside the map. Mika is used throughout the learning scene. The current rendered views above record this direction; [the first post-layout foundation capture](rewrite/build-desktop-review-3.png) remains as evidence of the final collision/preview correction prompted by inspection.
 
 ## Verification surface
 
-The two-scene study has been inspected at 1440 × 1000, 1133 × 744, and 744 × 1133 CSS-pixel viewports. These are browser viewport tests, not physical iPad or Safari tests. Phone design is deferred.
+The required browser viewports are 1440 × 1000, 1133 × 744 and 744 × 1133 CSS pixels. [tests/browser-checks.js](../../../tests/browser-checks.js) is the single current Playwright page-function suite. All ten groups pass: direct and historical state, rapid age/comparison retargeting, keyboard and pointer previews after scrolling, non-12 inspection, layer/scene/dialog/history restoration, skip and index focus, manual/system reduced motion, live resize and both-scene overflow, minimum control/label sizes, Canvas failure and JavaScript-disabled reading. The run reported no console errors.
 
-The browser checks in [tests/browser-checks.js](../../../tests/browser-checks.js) exercise selection, rapid retargeting, map-keyboard activation, full-map return, scene/deep-example return, history/reload, skip navigation, tablet index focus, manual/system reduced motion, live resize and viewport overflow. [Model tests](../../../tests/model.test.js) cover state normalization, share URLs, path connectivity/classification, deterministic geometry, framing and travel-before-zoom sequencing.
+All 37 Node tests pass, covering state normalization, mixed valid/invalid fallback, story/static-reading parity, finite bounded forward geometry including comparison routes, marker collision layout, project port guards and generated document order. The static build uses relative assets. Smoke testing on the strict 4601 preview covered a direct repair URL with four steps and both layers, the learning asset, JavaScript-disabled reading and null/throw Canvas failure, with no page errors or failed requests.
 
-A browser animation trace observed the dot partway along the route at approximately 162 ms and 328 ms, at its destination around 500 ms, camera focusing at approximately 662 ms, and a quiet settled state afterward. The authored duration is 750 ms. These observations establish sequence in this browser, not a universal frame-rate or device-performance guarantee.
+The browser evidence is CSS-viewport testing, not testing on a physical iPad or Safari. It is not reader-comprehension evidence or complete accessibility certification. Phone design remains deferred. The complete chapter, production font packaging, approved artwork, hosting and publication remain outside this prototype.
 
-The settled marker has no lingering halo. The active age label maintains approximately 16 CSS pixels through map zoom and viewport resizing. The meaningful copy and legend remain readable independently of the intentionally faint contextual routes. A separate JavaScript-disabled browser context displayed the static map explanation.
+## Historical views
 
-Independent code review and a scoped re-review found no remaining Critical or Important issues after the history/dialog and manual-motion preference corrections. This is a prototype-review gate, not production certification.
-
-## Review inputs
-
-The [first desktop overview](reviews/choices-desktop-review-1.png), [first desktop interaction capture](reviews/choices-desktop-settled-1.png), and [first tablet capture](reviews/choices-tablet-review-1.png) are earlier review inputs. The first interaction capture can include in-flight motion; its filename is not evidence of a settled frame.
-
-The [second desktop overview](reviews/choices-desktop-review-2.png), [second tablet capture](reviews/choices-tablet-review-2.png), and [learning input](reviews/choices-learning-tablet.png) retain the next review inputs. Concise review/improvement history belongs in [COMPLETED.md](../../../COMPLETED.md).
-
-## Remaining judgments
-
-Owner review must establish whether the map communicates freedom and the arriving-at-today transition as intended. Reader comprehension near age eight has not been tested. Production work still needs self-hosted type selection, Safari/physical-tablet checks, a complete accessibility and contrast review, the rest of the narrative, and hosting integration. The early whole-life map illustrates possibilities; it does not yet animate how a particular learning choice creates a new option.
+The earlier SVG study’s opening, settled and learning captures remain in this directory and its `reviews/` subdirectory as historical evidence. They are superseded by the rewrite contract and should not be read as the current implementation. The separate [storyboard boards](../storyboards/README.md) remain composition references rather than screenshots of working behavior.

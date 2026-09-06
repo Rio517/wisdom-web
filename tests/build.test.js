@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
 import { resolveConfig } from 'vite';
 
 test('the Vite configuration rejects ports outside the project range without starting a server', async () => {
@@ -57,4 +58,30 @@ test('the reading build plugin gives every generated reading instance unique loc
   assert.ok(ids.includes('dialog-reading-title'));
   assert.ok(ids.includes('fallback-reading-title'));
   assert.ok(ids.includes('noscript-reading-title'));
+});
+
+test('the guided comparison stays beside the routes it changes in semantic reading order', async () => {
+  const { readingContentPlugin } = await import('../vite.config.js');
+  const source = await readFile(new URL('../prototype/index.html', import.meta.url), 'utf8');
+  const transformed = readingContentPlugin().transformIndexHtml(source);
+  const positions = [
+    'data-comparison="gap"',
+    'id="life-map"',
+    'id="decision-outcomes"',
+    'id="decision-action"',
+    'id="circumstances-copy"',
+    'id="earlier-title"',
+  ].map(fragment => transformed.indexOf(fragment));
+
+  assert.ok(positions.every(position => position >= 0), 'comparison structure is complete');
+  assert.deepEqual([...positions].sort((a, b) => a - b), positions,
+    'controls, routes, outcomes, explanation and earlier moments should remain adjacent in that order');
+});
+
+test('the guided scenes use reader-facing labels and one fictional learner', async () => {
+  const source = await readFile(new URL('../prototype/index.html', import.meta.url), 'utf8');
+
+  assert.match(source, /One life, many possibilities/);
+  assert.match(source, /What becomes possible\?/);
+  assert.doesNotMatch(source, /A fictional worked example|Named route outcomes|\bAri\b/);
 });

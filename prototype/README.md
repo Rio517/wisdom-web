@@ -1,56 +1,47 @@
-# Narrow interactive map prototype
+# Layered choices prototype
 
-This directory contains a local, dependency-free HTML/CSS/JavaScript study for the implemented scope in [product document 007](../docs/product/007-interactive-map-prototype.md). It is not the complete choices chapter, the production website, or a published build. Owner feedback informs [008 — Choices and consequences](../docs/product/008-choices-and-consequences.md); that Tailwind/Canvas and narrative revision has not yet been implemented. The commands and inventory below describe the existing study.
+This directory contains the implemented local study specified by [008 — Choices and consequences](../docs/product/008-choices-and-consequences.md). Tailwind supplies the shared layout, spacing and type system; Canvas 2D draws the routes; semantic HTML supplies controls, labels and the complete reading alternative. It is not the complete choices chapter, the production website or a published build.
 
-## Run locally
+## Install and run
 
-The Tailwind/Canvas rewrite is in progress. Every project server must use a port in **4600–4699**, with development on **4600** and build preview on **4601**, bound to `127.0.0.1`. Port conflicts must fail rather than silently selecting another port. The old port-4173 listener is stopped; do not restart it. Launch commands below are being migrated with the implementation.
-
-From the repository root:
+Use Node 22.12 or newer. The verified workspace version is Node 26.7.0. From the repository root:
 
 ```sh
+npm ci
 npm run dev
 ```
 
-The development entry is <http://127.0.0.1:4600/prototype/>. During the rewrite, check that the configured command uses the required port before launching. The replacement uses a locally installed Tailwind/Vite build, not a dependency-free Python-only workflow.
+Open <http://127.0.0.1:4600/prototype/>. Development defaults to port **4600** and build preview to **4601**. Both bind only to `127.0.0.1`, reject conflicts, and reject explicit ports outside the project-wide **4600–4699** range.
 
-Run the pure model checks with Node 22 or newer:
+To build and inspect the static output:
 
 ```sh
-npm test
+npm run build
+npm run preview
 ```
+
+Then open <http://127.0.0.1:4601/prototype/>. The build uses relative asset paths so it can remain under a hosting subpath. No publication or production routing is included.
 
 ## Implemented study surface
 
-Code inspection shows a two-scene reading shell with:
+- One fictional Mika comparison at age 12: leave a learning gap, build a foundation, or work back toward a later opportunity with support.
+- Authored context at ages 8, 12, 16, 25, 40 and 60, while keeping selected “today” separate from the moment being inspected.
+- An abundant, deterministic, forward-moving route field with dark-green traveled, dashed gray untaken and gray-green possible routes; numbered square annotations connect named consequences to comparison routes.
+- A collapsible index, direct URL/history restoration, earlier-moment pointer/focus previews, keyboard controls, interruptible motion and a persistent manual less-motion choice.
+- Inline explanations for repeated occasions, accumulated learning, practical setup, a behavior-specific routine and circumstances outside Mika’s control. The optional “Why this example?” note links to the canonical research and the separate habits proposal.
+- A second learning scene using Mika consistently, plus the related-racket-sport detour.
+- One generated static reading explanation shared by the reading dialog, Canvas-failure fallback and JavaScript-disabled page.
 
-- a collapsible Choices index, About dialog, Source code link, and continuous-reading dialog;
-- authored example ages 8, 12, 16, 25, 40, and 60, preserved with selected state and scene in the URL;
-- an SVG map with abundant deterministic branches, nonlinear movement, crossings, and occasional curls;
-- a selected-state sequence in which a dot travels from the beginning at the left along the dark-green lived route to today, followed by a modest focus move;
-- barely visible gray untaken alternatives and light gray-green still-possible routes, with a legend and prose explaining that height is not a score and the map is not a prediction;
-- interruption on a new selection, replay and whole-map controls, a visible less-motion control, and immediate settled rendering when reduced motion applies;
-- keyboard-operable authored map anchors and an equivalent age selector plus “Explore this moment” button;
-- a fictional equal-parts → equivalent-fractions → recipe example, plus an optional related-racket-sport explanation with a clear return.
+## Verify
 
-The [browser review record](../docs/design/prototype/README.md) documents rendered inspection and behavioral checks. The inventory is not a claim of accessibility conformance, owner visual approval, or a complete chapter.
+Run the Node model/build/story tests and build:
 
-## Browser checks
-
-With the local server running, the session's Playwright browser tool can execute the saved page function:
-
-```js
-await tools.mcp__playwright__browser_run_code_unsafe({
-  filename: "tests/browser-checks.js"
-});
+```sh
+npm test
+npm run build
+git diff --check
 ```
 
-Run the tool with the repository root as its working directory, or supply the file's absolute path in that checkout. This tool name is session-specific. The file is an async function expression accepting a Playwright `page`; it is not an `@playwright/test` spec and does not run under `npm test`. A future agent should discover available browser tooling before invoking it. No browser test dependencies have been added to this prototype.
+With development running on 4600, execute [tests/browser-checks.js](../tests/browser-checks.js) through the session’s Playwright page-function runner. It is an async function accepting a Playwright `page`, not an `@playwright/test` file and not part of `npm test`. The saved suite covers ten groups: direct and historical state, rapid retargeting, focus/pointer previews after scroll, comparison/layer restoration, dialogs and navigation, tablet index focus, reduced motion, resize/overflow, Canvas failure and JavaScript-disabled reading. Browser tool names are session-specific; future sessions should discover the available runner.
 
-## Review boundary
-
-The minimum prototype targets are desktop and iPad mini at 1440 × 1000, 1133 × 744, and 744 × 1133 CSS pixels. Phone design is deferred. Review should cover initial path abundance, settled visual meaning, reading comfort, touch targets, keyboard behavior, repeated-input interruption, history restoration, dialogs and returns, and reduced motion.
-
-The CSS lists Source Serif 4 and Source Sans 3 as preferred family names but includes no self-hosted font files and loads no web-font service. Rendering currently uses whichever named fonts are installed, falling back to system serif and sans-serif families.
-
-The saved PNG storyboards under `docs/design/storyboards/` remain historical composition and style inputs. Their six-endpoint tree and stationary-marker motion do not define this prototype; [003](../docs/product/003-visual-language-and-navigation.md#signature-map-interaction) is the detailed visual-requirements source.
+The minimum study viewports are 1440 × 1000, 1133 × 744 and 744 × 1133 CSS pixels. These browser checks are not physical-iPad or Safari testing, reader-comprehension evidence or complete accessibility certification. Phone design remains deferred.

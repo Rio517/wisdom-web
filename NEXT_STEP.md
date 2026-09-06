@@ -2,61 +2,58 @@
 
 ## Current state
 
-Revision 008 is approved and implementation is in progress under [009](docs/product/009-layered-choices-implementation.md). All project servers must stay in **4600–4699**: use **4600** for development and **4601** for build preview, with strict port handling and local-only binding. The earlier port-4173 listener is stopped. Do not relaunch it. Delegate bounded work to lower-cost models; retain independent review and visual quality gates.
+[008 — Choices and consequences](docs/product/008-choices-and-consequences.md) is implemented as a narrow local prototype under the approved [009 implementation plan](docs/product/009-layered-choices-implementation.md). Node/build checks, the final development browser suite, built-preview smoke tests and two visual refinement loops pass; independent review remains in progress. The prototype is not the complete chapter, has not been merged or pushed, and is not published.
 
-The repository contains the project brief, a linked research library, eight numbered product documents, a sample opening, an ink-and-wash illustration study, stored interface/motion storyboards, and a working two-scene HTML/SVG prototype. The public repository is [Rio517/wisdom-web](https://github.com/Rio517/wisdom-web), with `origin` configured. Current prototype work is on the local branch `prototype/choices-map`; it has not been merged or pushed. The complete chapter, production website, approved production artwork, and site publication remain outstanding.
+The rewrite uses locally installed Tailwind and Vite, Canvas 2D routes, plain JavaScript modules and semantic HTML. It provides:
 
-The audience is ages 8+, with a core explanation approachable from age eight and depth for older readers. The first chapter covers choices across a lifetime, explicitly including learning that builds, carries into related activities, and can reinforce further learning. Habits/daily practice deserve a dedicated follow-up, with a short bridge in the first chapter. Relationships remain outside this release.
+- one fictional Mika comparison at age 12 with gap, foundation-building and supported-repair views;
+- distinct selected-today and inspected-moment state for ages 8, 12, 16, 25, 40 and 60;
+- named route consequences, repeated-choice and next-start layers, always-visible circumstances and an optional research note;
+- an abundant forward-moving route field, beginning-to-today travel, modest focus motion and collision-aware outcome annotations;
+- direct URL/history restoration, pointer/focus and click/touch/keyboard access, reduced motion, dialogs and the collapsible index;
+- one authored static explanation shared by the reading dialog, Canvas fallback and JavaScript-disabled page; and
+- the second learning scene and related-sport example, now using Mika consistently.
 
-Start with [008 — Choices and consequences](docs/product/008-choices-and-consequences.md), then the [prototype launch instructions](prototype/README.md) and [browser-reviewed views and limits](docs/design/prototype/README.md). The implemented scope is recorded in [007](docs/product/007-interactive-map-prototype.md). The opening has abundant nonlinear paths, selectable example ages, a dot traveling from the beginning to today, a modest post-arrival zoom, and distinct lived/untaken/possible route treatments. It includes a second learning scene, a related-sport example, a reading alternative, history restoration, keyboard controls and reduced motion. The prototype underwent two visual-review/improvement loops; owner feedback now informs 008, while reader comprehension testing remains outstanding.
+The audience remains ages 8+, with the core explanation approachable from age eight and useful depth for older readers. The example illustrates mechanisms rather than predicting a reader’s life. Preparation, qualifications, support, circumstances and chance all matter. Habits/daily practice remain a separate linked chapter with only a short bridge here; relationships remain outside the first release.
 
-Desktop and iPad mini are the initial targets. Browser review covers 1440 × 1000, 1133 × 744 and 744 × 1133 CSS-pixel viewports; it does not establish physical-iPad or Safari behavior. Phone design is deferred. The [older image boards](docs/design/storyboards/README.md) remain composition references, but their sparse six-endpoint tree and stationary marker are superseded by the working study. [003](docs/product/003-visual-language-and-navigation.md) is the canonical visual-requirements document; [006](docs/product/006-storyboards-and-motion-study.md) records the medium and scope boundary.
-
-The [sample opening](docs/content/choices-opening.md) remains a prose voice reference needing complete scene adaptation. The visual direction is a clean natural-history field guide, collapsible navigation, and quick purposeful map animation. The [brain plate](docs/design/README.md) is used decoratively in the prototype learning scene; it remains exploratory, not approved or anatomically validated.
-
-The [research index](docs/research/README.md) links separate learning, lifetime, decision-making/development, habits, and supporting delivery buckets. Detailed source records live with their topic. Habits includes an initial evidence base with a 2024 review, a 2025-issue trial, an August 2026 synthesis, and a learning-specific 2022 study; it is not a completed review of child habit change. See [004 — Habits](docs/product/004-habits-and-daily-practice.md). The [research reading UI](docs/product/005-research-library.md) is an optional future layer over the same Markdown; no UI exists yet.
-
-## Current review requirements
-
-The next-revision direction is approved: Tailwind for consistent layout choices, Canvas 2D for the map, and semantic HTML for labels, controls and the explanation. Three.js is not needed for this revision. Increase contrast for untaken paths and the today divider. Remove loops and backward curls while retaining wandering routes and allowing more angular bends. Fine tuning branch separation is not a current priority.
-
-The central teaching gap is substantive: `makeMap(age)` currently classifies the same authored branches by age, without a decision model. The approved direction is one worked fictional comparison that explains preparation, accumulating gaps, learning that builds and supported recovery, with other ages providing context. The story is layered: show circumstances and decisions outside the person's control, repeated homework/practice choices, and specific ways knowledge, setup and a familiar routine can help the next attempt. Do not claim a general habit of making all good choices. A simulator is a possible later project, not current scope. Earlier moments remain revisitable through hover/focus previews and click/touch/keyboard controls. [008](docs/product/008-choices-and-consequences.md) contains the written interaction and content specification awaiting review. No Tailwind migration, Canvas renderer, contrast change, or revised narrative has been implemented yet.
+The public repository is [Rio517/wisdom-web](https://github.com/Rio517/wisdom-web). Current work is on local branch `prototype/choices-map`. The complete chapter, production Astro site, approved production artwork and publication remain outstanding.
 
 ## Immediate next work
 
-1. Execute [009](docs/product/009-layered-choices-implementation.md) against approved specification [008](docs/product/008-choices-and-consequences.md). Preserve the working prototype through Git history until its replacement is verified. Run at least two visual review/improvement loops plus behavioral checks on the rewrite before handoff. These requirements supersede the earlier barely-visible routes and looping geometry.
-2. Decide how to integrate the local prototype branch. It is not pushed, merged into `main`, or published. Preserve the current work until that choice is made.
-3. Extend the narrative beyond the two prototype scenes: explicitly show how learning/choices open options, the reinforcing enjoyment loop, child/adult scenarios, recovery, and an ending. The current map does not yet animate a specific learning choice opening a new branch.
-4. Draft the brief developmental explanation and habits bridge, then adapt the prose into guided scenes. Keep the reinforcing loop understandable, with help and recovery visible. Keep evidence in the linked research buckets and adult notes.
-5. Use a short reader check near age eight and with older readers to identify misunderstandings and tune the text and map.
-6. Write the complete-chapter implementation plan after prototype review, then build and verify the first release. Select and package production fonts, check Safari and a physical tablet, and conduct a full accessibility review before publication. Pages is not enabled yet.
+1. Complete the independent acceptance/code review against 008. Resolve important findings before changing 009’s status from in progress.
+2. Obtain owner judgment on whether the fictional comparison clearly communicates action, repeated pattern, circumstances, deadline and supported recovery. Run a short comprehension check near age eight and with older readers.
+3. Decide how to integrate the local prototype branch. It is not pushed, merged into `main` or published.
+4. Extend the two-scene study into the complete choices chapter: later child/adult examples, the enjoyment/learning feedback loop, recovery, the habits bridge and an ending.
+5. Write the production implementation plan after prototype review. Select and package production fonts, test Safari and a physical tablet, perform a complete accessibility review and configure hosting before publication.
 
-When preparing the later habits chapter, extend the research on children/families, changing established habits, interruptions, and differing support needs. These gaps do not block the lifetime chapter. Test the existing Markdown library before deciding to build its optional web navigator.
-
-## Proposed technical direction
-
-The production proposal is Astro-generated pages on GitHub Pages, with an interactive guided chapter and a continuous reading view. The existing dependency-free prototype uses native HTML/CSS/ES modules and SVG; its URL retains the example age, selection and scene. The approved next direction introduces a local Tailwind/Vite build, Canvas 2D and authored comparison state without scaffolding Astro or publishing. Update the verified commands below only when that rewrite exists. See [002 — Delivery architecture](docs/product/002-delivery-architecture.md) and [008](docs/product/008-choices-and-consequences.md).
+When preparing the later habits chapter, extend research on children/families, changing established habits, interruptions and differing support needs. These gaps do not block the lifetime chapter. The existing Markdown research library remains the canonical source; no separate research UI exists.
 
 ## Run and verify
 
-The build and launch commands are being migrated under 009. The development entry is <http://127.0.0.1:4600/prototype/>; built preview will use <http://127.0.0.1:4601/prototype/>. Ports outside 4600–4699 are prohibited, including temporary test servers. Check [prototype/README.md](prototype/README.md) for current launch readiness; do not use the old port-4173 command.
+Use Node 22.12 or newer. Install dependencies, then run development on <http://127.0.0.1:4600/prototype/>:
 
-`npm test` runs the ten pure-model tests. [tests/browser-checks.js](tests/browser-checks.js) is a reusable Playwright page-function suite; its invocation is documented in [prototype/README.md](prototype/README.md). It covers ten groups of interactions, including browser Back with a dialog open and preservation of a manual motion choice through OS preference changes. Both suites passed in this workspace. Review screenshots and scope limits are linked from the [browser-review index](docs/design/prototype/README.md).
+```sh
+npm ci
+npm run dev
+```
 
-## Tooling and references
+Build and inspect static output on <http://127.0.0.1:4601/prototype/>:
 
-Verified in this workspace on 2026-09-06:
+```sh
+npm test
+npm run build
+npm run preview
+git diff --check
+```
 
-- Git repository and GitHub CLI 2.97.0; GitHub account `Rio517` authenticated through the system keyring when run outside the sandbox.
-- Node v26.7.0, Bun 1.3.14 and Python 3 available. `package.json` provides `dev` and `test`; no project dependencies are installed or needed for these commands. The browser suite uses the session's Playwright tooling separately.
-- Local starter kit at `~/code/starter-kit`. Use selected conventions described in the delivery proposal.
-- Current session has web research, image generation, and browser-control capabilities. Future sessions must discover their own available tools and read applicable skill instructions before use.
-- Built-in ImageGen produced the saved PNG style study; image metadata verifies 1254 × 1254 pixels and an alpha channel. Precise labels and controls remain HTML; routes are currently SVG and will move to Canvas in the next revision, not generated bitmap text.
-- The two selected storyboard boards are 1536 × 1024 PNGs from built-in ImageGen. Four earlier images and the exact prompt set are retained with them for review provenance. The newer working prototype has separate browser captures; neither kind of screenshot alone establishes accessibility conformance or physical-device behavior.
-- The listed in-app Browser skill path was unavailable in this session; available Playwright browser tools performed the local checks. Future sessions should rediscover available tools rather than assume this exact tool name or plugin path.
+All project development, preview and test servers must use ports **4600–4699**, bind to `127.0.0.1`, and fail on conflicts. Development defaults to **4600** and preview to **4601**. [tests/browser-checks.js](tests/browser-checks.js) is the single supported Playwright page-function suite; invocation guidance is in [prototype/README.md](prototype/README.md).
 
-The GitHub remote is configured; no live site is configured. A local GitHub authentication check inside the sandbox can report a false failure; the check outside the sandbox succeeded.
+All 37 Node tests pass. They cover state normalization, finite and bounded geometry, authored story/readout parity, project port guards and the guided document’s semantic order. The saved development browser suite passes all ten interaction groups at 1440 × 1000, 1133 × 744 and 744 × 1133 CSS pixels, including Canvas failure and JavaScript-disabled reading.
+
+## Review limits
+
+Browser viewport checks do not establish behavior on a physical iPad or Safari. They are not reader-comprehension evidence or complete accessibility certification. Phone design is deferred. The generated brain image is exploratory and decorative, not approved production art or an anatomically validated diagram. No live site is configured.
 
 ## Documentation rules
 
-Keep this file about current state and next actions. Put concise history in `COMPLETED.md`. Keep research claims and their limits in the canonical report and source ledger. Specific proposals use stable numbered files under `docs/product/`, with status and dates; maintain [the product index](docs/product/README.md). Proposals must not be described as approved or implemented until that is true.
+Keep this file about current state and next actions. Put concise history in `COMPLETED.md`. Keep research claims and limits in the canonical topic findings and ledgers. Specific proposals use stable numbered files under `docs/product/`; do not mark 009 complete until its browser and independent review gates pass.

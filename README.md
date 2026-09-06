@@ -2,9 +2,9 @@
 
 A selective, guided and animated life manual for ages 8+, starting with how choices shape future possibilities.
 
-The project is in research and design, with a narrow local HTML/SVG prototype under [`prototype/`](prototype/README.md). That study is not the production website and has not been published. Owner feedback informs [008 — Choices and consequences](docs/product/008-choices-and-consequences.md): a layered explanation and Tailwind/Canvas rewrite, not implemented yet.
+The project is in research and design, with a narrow local Tailwind/Canvas prototype under [`prototype/`](prototype/README.md). It implements the layered fictional comparison in [008 — Choices and consequences](docs/product/008-choices-and-consequences.md), but it is not the production website and has not been published.
 
-All project servers use ports **4600–4699** only: **4600** for development and **4601** for build preview, bound to `127.0.0.1` with strict port handling. The rewrite and command migration are in progress; see [launch instructions](prototype/README.md).
+All project servers use ports **4600–4699** only: **4600** for development and **4601** for build preview, bound to `127.0.0.1` with strict port handling. Install with `npm ci`; see the [launch and verification instructions](prototype/README.md).
 
 ## Start here
 
@@ -29,4 +29,4 @@ All project servers use ports **4600–4699** only: **4600** for development and
 - [Run the local prototype](prototype/README.md)
 - [Completed work](COMPLETED.md)
 
-The proposed complete experience combines a selectable example age, animated life-path diagrams, reader-controlled chapter scenes, examples, and optional deeper explanations. Learning and choices compounding are central; habits are a linked follow-up. The approved narrow prototype tests two scenes in a clean field-guide shell: an abundant branching map, a dot traveling from the left along the lived route to today, a modest focus move, and one learning example. It does not implement the complete chapter. Each eventual chapter is intended to have its own URL and a continuous reading view.
+The proposed complete experience combines a selectable example age, animated life-path diagrams, reader-controlled chapter scenes, examples, and optional deeper explanations. Learning and choices compounding are central; habits are a linked follow-up. The approved narrow prototype tests two scenes in a clean field-guide shell: an abundant branching map, a dot traveling from the left along the lived route to today, a modest focus move, one age-12 gap/build/repair comparison, layered context and one learning example. It does not implement the complete chapter. Each eventual chapter is intended to have its own URL and a continuous reading view.

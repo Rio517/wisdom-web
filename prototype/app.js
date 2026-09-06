@@ -72,6 +72,7 @@ function render(animate = false, focusHeading = false) {
   $('#example-age').value = state.age;
   const context = MOMENTS.find(moment => moment.age === (state.inspect ?? state.age));
   $('#moment-copy').textContent = `Age ${context.age}: ${context.summary}`;
+  $('.reflection').hidden = state.inspect === 12;
   $('#earlier-title').textContent = state.age === 8 ? 'The starting moment' : 'Earlier decisions';
   $('#earlier-description').textContent = state.age === 8
     ? 'Age 12 is a separate looking-ahead example below.'
@@ -126,7 +127,11 @@ $('#example-age').addEventListener('change', event => navigate({ age: Number(eve
 $('#overview').addEventListener('click', () => navigate({ overview: !state.overview }));
 $('#return-today').addEventListener('click', () => navigate({ inspect: null }));
 $('#replay').addEventListener('click', () => map.show(state, true));
-$('#comparison-entry').addEventListener('click', () => navigate({ inspect: 12 }, true));
+$('#comparison-entry').addEventListener('click', () => {
+  navigate({ inspect: 12 }, true);
+  $('#decision-heading').focus({ preventScroll: true });
+  $('#decision-panel').scrollIntoView({ block: 'start', behavior: 'instant' });
+});
 $('#moment-list').addEventListener('click', event => {
   const button = event.target.closest('[data-review-age]');
   if (!button) return;

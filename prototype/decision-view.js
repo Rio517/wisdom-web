@@ -27,8 +27,10 @@ function stepList(steps) {
 
 export function renderDecision(state) {
   const panel = $('#decision-panel');
+  const results = $('#decision-results');
   const active = state.inspect === 12;
   panel.hidden = !active;
+  results.hidden = !active;
   $('#comparison-entry').hidden = active || !state.selected;
   if (!active) return;
 

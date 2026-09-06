@@ -1,6 +1,6 @@
 # 008 — Choices and consequences
 
-Status: Approved for prototyping (implementation in progress). Created: 2026-09-06. Updated: 2026-09-06.
+Status: Approved for prototyping (implemented local study; final review in progress). Created: 2026-09-06. Updated: 2026-09-06.
 
 ## Purpose and boundary
 
@@ -8,7 +8,7 @@ Make the opening explain how choices change later opportunities, rather than onl
 
 This replaces the next-iteration requirements of [007 — Interactive map prototype](007-interactive-map-prototype.md). Retain the existing two-scene prototype, learning example, navigation, reading alternative and motion preferences while rewriting its layout in Tailwind and its map in Canvas 2D. The complete chapter, production Astro site, publication, habits chapter, videos and phone layout remain outside this revision.
 
-The written approach is approved for the next prototype. Prioritize four ideas: preparation opens options; repeated avoidance can create gaps; learning builds on earlier learning; and recovery takes work and support. Show each within circumstances the person does not wholly choose. A simulator may be considered later, after this explanation works. The concrete example and interaction contract below specify the revision, not a claim of completed behavior.
+The written approach is implemented in the local prototype. It prioritizes four ideas: preparation opens options; repeated avoidance can create gaps; learning builds on earlier learning; and recovery takes work and support. Each appears within circumstances the person does not wholly choose. A simulator may be considered later, after this explanation works. The concrete example and interaction contract below remain the revision’s acceptance contract; implementation does not establish reader comprehension or production readiness.
 
 ## A layered explanation, not a single decisive fork
 
