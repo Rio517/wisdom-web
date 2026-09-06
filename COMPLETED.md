@@ -24,4 +24,10 @@
 - Drafted separate product proposals for habits/daily practice and an optional static research-reading UI over the canonical Markdown.
 - Verified 27 Markdown files and 144 local links/anchors, confirmed all 30 source records survived the reorganization unchanged, and checked the saved illustration against its generated original. No website or animation verification applies yet.
 
-Complete chapter writing, the motion study, approved production artwork, website implementation, and site publication remain outstanding.
+- Created desktop/phone reading and four-frame marker/path boards using built-in ImageGen.
+- Review/improvement cycle 1: inspected both initial boards and revised mixed phone time direction, disconnected past alternatives, the single-level future fan, and premature future-line emphasis.
+- Review/improvement cycle 2: inspected both revised boards and corrected backward-directed past alternatives, missing phone reading controls, an unselected Today marker during the trace, faint guides, and unnecessary footer symbols. Inspected both resulting v3 boards before selecting them for owner review.
+- Saved the selected boards, four review inputs, exact prompts, current limitations, and the ImageGen-to-HTML/SVG prototype proposal. Added official prototyping and motion-accessibility guidance to the delivery source ledger.
+- Verified 30 Markdown files, 165 local links/anchors, 32 unique source records, six exact generation prompts, and unchanged copies/dimensions for all six storyboard images. These checks do not establish live UI or motion behavior.
+
+Complete chapter writing, the working motion prototype, approved production artwork, website implementation, and site publication remain outstanding.

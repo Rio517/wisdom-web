@@ -19,3 +19,15 @@ Astro. *Pages* and *Markdown in Astro*. Undated current documentation. [Pages](h
 ### H4 — Astro deployment to Pages
 
 Astro. *Deploy your Astro Site to GitHub Pages*. Undated current documentation. [Deployment guide](https://docs.astro.build/en/guides/deploy/github/). Supports GitHub Actions publishing and `site`/`base` configuration. Official page inspected. Recheck workflow versions when implementing.
+
+### H5 — Prototype fidelity follows the question
+
+GOV.UK Service Manual. *Making prototypes*. Published October 18, 2016; official guidance accessed September 6, 2026. [Guidance](https://www.gov.uk/service-manual/design/making-prototypes).
+
+Supports using different prototype forms at different stages, and code to test realistic interactions. Confidence: high as an account of professional guidance, not experimental proof that one tool produces better aesthetics. Official page inspected. The ImageGen-to-HTML/SVG sequence is this project's recommendation, not a workflow prescribed by the source.
+
+### H6 — Optional interaction animation
+
+W3C WAI. *Understanding SC 2.3.3: Animation from Interactions*, WCAG 2.2 explanatory guidance, updated September 16, 2025; accessed September 6, 2026. [Official explanation](https://www.w3.org/WAI/WCAG22/Understanding/animation-from-interactions.html).
+
+Supports allowing nonessential interaction animation to be disabled, including reduced-motion preferences. This criterion is Level AAA; the page is informative guidance, not itself a conformance test. Confidence: high for the stated accessibility principle. Official page inspected. No still mockup establishes WCAG conformance or measures vestibular comfort.

@@ -19,6 +19,7 @@ The project is in research and design. The website is not implemented or publish
 - [004 — Habits and the choices we repeat](docs/product/004-habits-and-daily-practice.md)
 - [005 — Research library and possible reading UI](docs/product/005-research-library.md)
 - [Illustration study and generation notes](docs/design/README.md)
+- [Selected interface and animation storyboards](docs/design/storyboards/README.md)
 - [Completed work](COMPLETED.md)
 
 The proposed experience combines a selectable starting age, animated life-path diagrams, reader-controlled steps, examples, and optional deeper explanations. Learning and choices compounding are central; habits are a linked follow-up. A clean field-guide reading surface surrounds quick, purposeful map animation and collapsible navigation. Each chapter will have its own URL and a continuous reading view.

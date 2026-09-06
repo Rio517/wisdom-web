@@ -7,3 +7,5 @@ Reviewed: 2026-09-06. This supporting bucket concerns the publishing platform, n
 GitHub Pages supports static HTML, CSS, and JavaScript, including multiple generated page URLs. Astro is the proposed generator. The [source notes](sources.md) link the official hosting, routing, and deployment documentation; the [delivery proposal](../../product/002-delivery-architecture.md) is the source of truth for the proposed implementation.
 
 Framework versions, build tooling, and workflow versions must be checked when implementing. The site is not built or published. Do not place implementation choices in the educational research buckets.
+
+The source ledger also includes prototype-fidelity guidance and interaction-animation accessibility guidance. [Product document 006](../../product/006-storyboards-and-motion-study.md) applies those principles to image storyboards followed by a working HTML/SVG motion study.

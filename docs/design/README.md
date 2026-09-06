@@ -1,4 +1,8 @@
-# Illustration studies
+# Design studies
+
+## Interface and motion storyboards
+
+The [selected reading and motion boards](storyboards/README.md) explore the complete reading surface and the opening marker-and-path interaction. Each selected image has undergone two visual-review/refinement cycles. They are proposed visual targets, not implemented pages or tested animation.
 
 ## Brain — ink and restrained watercolor
 

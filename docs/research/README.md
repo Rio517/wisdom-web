@@ -12,7 +12,7 @@ Read the [cross-topic synthesis](report-source.md) for the overall argument, the
 | [Lifetime opportunities](lifetime/README.md) | How do preparation, requirements, time, and recovery shape options? | [L2–L10](lifetime/sources.md) |
 | [Decision-making and development](decision-making/README.md) | How can children learn demanding decision concepts, with appropriate support? | [T1–T9](decision-making/sources.md) |
 | [Habits](habits/README.md) | How do repeated actions become easier to initiate, and how can routines change? | [B1–B4](habits/sources.md) |
-| [Delivery references](delivery/README.md) | What supports a static, multipage, interactive site? | [H1–H4](delivery/sources.md) |
+| [Delivery references](delivery/README.md) | What supports static delivery, useful prototypes, and accessible motion? | [H1–H6](delivery/sources.md) |
 
 Habits has an initial formation evidence base. Changing established habits and child/family interventions are explicit research gaps, not completed findings.
 
