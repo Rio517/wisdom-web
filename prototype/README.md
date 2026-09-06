@@ -24,7 +24,7 @@ Then open <http://127.0.0.1:4601/prototype/>. The build uses relative asset path
 
 ## Implemented study surface
 
-- One fictional Mika comparison at age 12: leave a learning gap, build a foundation, or work back toward a later opportunity with support.
+- One fictional Mika comparison at age 12: leave a learning gap, build a foundation, or work back toward a later opportunity with support. Each view includes three illustrative practice occasions in the optional pattern layer.
 - Authored context at ages 8, 12, 16, 25, 40 and 60, while keeping selected “today” separate from the moment being inspected.
 - An abundant, deterministic, forward-moving route field with dark-green traveled, dashed gray untaken and gray-green possible routes; numbered square annotations connect named consequences to comparison routes.
 - A collapsible index, direct URL/history restoration, earlier-moment pointer/focus previews, keyboard controls, interruptible motion and a persistent manual less-motion choice.

@@ -1,6 +1,6 @@
 # Layered choices prototype: browser review
 
-Status: local prototype ready for independent Task 3 review; not a production release. Reviewed: 2026-09-06.
+Status: independently reviewed local prototype, ready for owner review. Not a production release. Reviewed: 2026-09-06.
 
 [Run the prototype](../../../prototype/README.md) · [Revision contract](../../product/008-choices-and-consequences.md) · [Implementation plan](../../product/009-layered-choices-implementation.md)
 
@@ -14,8 +14,9 @@ Status: local prototype ready for independent Task 3 review; not a production re
 - [Supported repair, tablet portrait](rewrite/repair-tablet.png) at 744 × 1133.
 - [Learning scene, tablet portrait](rewrite/learning-tablet.png) at 744 × 1133.
 - [Learning scene, tablet landscape](rewrite/learning-landscape.png) at 1133 × 744 and [desktop](rewrite/learning-desktop.png) at 1440 × 1000.
+- Viewport-only details: [comparison entry, landscape](rewrite/comparison-entry-landscape.png); practice occasions for [gap](rewrite/pattern-gap-final.png), [building](rewrite/pattern-build-final.png), [repair](rewrite/pattern-repair-final.png) and [repair on tablet](rewrite/pattern-repair-tablet-final.png); [JavaScript-disabled tablet reading](rewrite/nojs-tablet.png).
 
-These are full-page browser captures, so their height includes scrolling content and does not imply that every explanation fits above the fold. The learning desktop and landscape captures retain the legitimate heading focus outline immediately after scene navigation; it is not a permanent decorative border. Canvas routes are original code-native geometry; text, controls, outcome annotations and leaders are semantic HTML/CSS over the shared camera transform.
+Except for the explicitly labeled viewport-only details, these are full-page browser captures: their height includes scrolling content and does not imply that every explanation fits above the fold. The learning desktop and landscape captures retain the legitimate heading focus outline immediately after scene navigation; it is not a permanent decorative border. Canvas routes are original code-native geometry; text, controls, outcome annotations and leaders are semantic HTML/CSS over the shared camera transform.
 
 ## Two refinement loops
 
@@ -29,7 +30,11 @@ The second improvement moved comparison controls immediately above the Canvas an
 
 The required browser viewports are 1440 × 1000, 1133 × 744 and 744 × 1133 CSS pixels. [tests/browser-checks.js](../../../tests/browser-checks.js) is the single current Playwright page-function suite. All ten groups pass: direct and historical state, rapid age/comparison retargeting, keyboard and pointer previews after scrolling, non-12 inspection, layer/scene/dialog/history restoration, skip and index focus, manual/system reduced motion, live resize and both-scene overflow, minimum control/label sizes, Canvas failure and JavaScript-disabled reading. The run reported no console errors.
 
-All 37 Node tests pass, covering state normalization, mixed valid/invalid fallback, story/static-reading parity, finite bounded forward geometry including comparison routes, marker collision layout, project port guards and generated document order. The static build uses relative assets. Smoke testing on the strict 4601 preview covered a direct repair URL with four steps and both layers, the learning asset, JavaScript-disabled reading and null/throw Canvas failure, with no page errors or failed requests.
+All 39 Node tests pass, covering state normalization, mixed valid/invalid fallback, shared practice occasions and compounding text, story/static-reading parity, finite bounded forward geometry including comparison routes, marker collision layout, project port guards and generated document order. The static build uses relative assets. Smoke testing on the strict 4601 preview covered a direct repair URL with four steps and both layers, current shared occasions and compounding text, the learning asset, JavaScript-disabled reading and null/throw Canvas failure, with no page errors or failed requests.
+
+Final-review checks cover all nine combinations of gap/build/repair and required viewport sizes: outcome rectangles remain inside the map and avoid one another, age controls and the Today label. Enter on Return to today preserves the selected age and restores visible focus at ages 12 and 40. Hover/focus previews include an authored explanatory sentence. The practice disclosure contains three labeled, forward-linked occasions for the selected comparison; the same authored records appear in static reading. These are illustrative occasions within one decision, not a streak or extra lifetime branches.
+
+The [pre-fix JavaScript-disabled tablet capture](rewrite/nojs-tablet-review.png) records the fixed index obscuring reading text. The current reading-only shell hides inactive controls and provides 20px prose with clear heading and paragraph spacing. Browser hit-testing confirms that the reading heading is unobscured. The explicit comparison entry keeps the full Canvas within the 1133 × 744 viewport after adding the short compounding explanation.
 
 The browser evidence is CSS-viewport testing, not testing on a physical iPad or Safari. It is not reader-comprehension evidence or complete accessibility certification. Phone design remains deferred. The complete chapter, production font packaging, approved artwork, hosting and publication remain outside this prototype.
 

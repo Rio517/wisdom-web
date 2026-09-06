@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-Status: Approved for prototyping (Task 3 verification in progress). Created: 2026-09-06. Updated: 2026-09-06.
+Status: Implemented (local prototype verification and independent review complete). Created: 2026-09-06. Updated: 2026-09-06.
 
 **Goal:** Replace the age-only SVG study with a beautiful Tailwind/Canvas explanation of choices, repeated practice, learning and recovery, retaining the existing reading shell's working behavior.
 
@@ -31,6 +31,8 @@ Status: Approved for prototyping (Task 3 verification in progress). Created: 202
 The abundant map is the expressive centerpiece; the layout is a quiet index and open reading surface. Use Tailwind's spacing scale, a prose measure around 60 characters, left alignment and a wider map. Meaningful layers use disclosures beneath the comparison, not a dashboard of cards. A selected age is a point in an example life, not a progress-stepper stage. Preserve this distinction in the visual hierarchy.
 
 At desktop, the header and short introduction lead to the map, with a compact explanation beneath. At tablet portrait, the index becomes the existing overlay and the toolbar wraps without shrinking controls or labels. No artwork generation is required: the map must be precise code and the existing decorative brain plate can remain in the learning scene.
+
+Repeated occasions use a short forward-linked sequence within the pattern disclosure. Its mode-specific records are shared with static reading. This keeps repetition within the same decision without introducing additional lifetime branches.
 
 ## Task 1: Authored story, state and forward-moving route model
 
@@ -130,3 +132,5 @@ git diff --check
 ## Review gates
 
 Each task has an independent specification/code review. After Task 3, review the complete revision against 008, especially semantic consequences, port guard behavior, static reading parity and state restoration. Resolve important findings and verify their fixes before handoff.
+
+- [x] Independent task reviews, whole-branch review and scoped final fix review are complete with no open findings. Final verification: 39 Node tests, all ten saved browser groups, static build and preview smoke tests. The final checks include three authored practice occasions per mode, shared compounding text, Return-to-today focus, nine comparison/viewport annotation combinations and unobscured JavaScript-disabled reading. The branch remains local, unmerged and unpublished for owner review.

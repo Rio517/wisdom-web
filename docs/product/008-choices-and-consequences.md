@@ -1,6 +1,6 @@
 # 008 — Choices and consequences
 
-Status: Approved for prototyping (implemented local study; final review in progress). Created: 2026-09-06. Updated: 2026-09-06.
+Status: Implemented (independently reviewed local study; owner review pending). Created: 2026-09-06. Updated: 2026-09-06.
 
 ## Purpose and boundary
 
