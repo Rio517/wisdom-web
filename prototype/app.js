@@ -25,6 +25,7 @@ const map = createMapView({
   },
   onInspect(age) {
     if (!state.selected) navigate({ age, selected: true }, true);
+    else if (state.inspect !== null && age === state.age) navigate({ inspect: null });
     else if (age === 12 && (state.age >= 12 || state.age === 8)) navigate({ inspect: 12 }, true);
     else if (age <= state.age) reviewMoment(age);
     else $('#map-preview').textContent = `Age ${age} is ahead of today. Use the example-age control to change the starting age.`;
@@ -103,11 +104,13 @@ function render(animate = false, focusHeading = false) {
 function navigate(change, animate = false) {
   const changedScene = change.scene && change.scene !== state.scene;
   const focusedAge = document.activeElement?.dataset.age;
+  const focusedReviewAge = document.activeElement?.dataset.reviewAge;
   state = transition(state, change);
   const url = stateURL(state, location.href);
   if (url.href !== location.href) history.pushState(null, '', url);
   render(animate, changedScene);
   if (focusedAge && !changedScene) requestAnimationFrame(() => $(`.map-target[data-age="${focusedAge}"]`)?.focus({ preventScroll: true }));
+  if (focusedReviewAge && !changedScene) $(`[data-review-age="${focusedReviewAge}"]`)?.focus({ preventScroll: true });
   if (state.selected && !changedScene) $('#status').textContent = state.inspect === 12
     ? `Age 12 is open for comparison. Today remains age ${state.age}.`
     : `Example age ${state.age} selected. The dark route is traveled, dashed gray routes were not taken, and gray-green routes remain possible.`;

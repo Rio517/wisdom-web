@@ -61,3 +61,10 @@ The target-size assertion uses a 43.9px epsilon for browser floating-point geome
 - Hover preview clears when a pointer leaves a traveled route while staying inside the Canvas.
 
 Main-session verification after this follow-up: the saved browser suite passed all 11 groups. Main also inspected real JavaScript-enabled and JavaScript-disabled page DOMs: both had zero duplicate IDs and zero missing `aria-labelledby` references.
+
+## Temporal-action round two
+
+- Clicking the selected age-12 map target while that comparison is open now returns to today before considering the ordinary age-12 comparison entry path.
+- Keyboard activation of a text-list earlier decision now restores focus synchronously to the same visible decision after its list rerenders, avoiding a transient focus drop to the document body.
+
+Main-session verification after this round: the saved browser suite again passed all 11 groups, including explicit regressions for the age-12 map return and text-list keyboard focus restoration.

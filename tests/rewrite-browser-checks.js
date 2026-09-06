@@ -92,8 +92,13 @@ async (page) => {
 
   await page.goto('http://127.0.0.1:4600/prototype/?age=12&selected=1&inspect=12');
   assert(await page.getByRole('heading', { name: 'The current decision: age 12', exact: true }).isVisible(), 'Age-12 context is not distinct from ahead/back comparison');
+  await page.locator('.map-target[data-age="12"]').click();
+  assert(await page.evaluate(() => new URL(location.href).searchParams.get('inspect') === null), 'Age-12 today target reopens comparison instead of returning today');
   await page.goto('http://127.0.0.1:4600/prototype/?age=40&selected=1&inspect=25');
   assert(await page.locator('#return-today').getAttribute('aria-label') === 'Return to today, age 40', 'Return action does not preserve the selected today age');
+  await page.locator('[data-review-age="25"]').focus();
+  await page.keyboard.press('Enter');
+  assert(await page.evaluate(() => document.activeElement?.dataset.reviewAge === '25'), 'Keyboard review loses focus when earlier decisions rerender');
   results.push('Temporal comparison and return labels');
   return { passed: results };
 }
