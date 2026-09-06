@@ -99,4 +99,4 @@ export const LAYERS = {
   },
 };
 
-export const CIRCUMSTANCES = "Not all of this is Mika's choice. The school assigns the work, and Mika does not choose what feels confusing. Available help, time, health and decisions made by adults also affect what is possible.";
+export const CIRCUMSTANCES = "Not all of this is Mika's choice. The school assigns the work, and Mika does not choose what feels confusing. Available help, time, health and decisions made by adults also affect what is possible. In the two choices below, imagine that the same useful help is available to Mika. When useful help is not available, that is different from refusing to ask, and it changes what Mika can do next.";
