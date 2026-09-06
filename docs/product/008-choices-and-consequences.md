@@ -1,6 +1,6 @@
 # 008 — Choices and consequences
 
-Status: Proposed (teaching direction and Tailwind/Canvas approach approved; written specification awaiting review). Created: 2026-09-06. Updated: 2026-09-06.
+Status: Approved for prototyping (implementation in progress). Created: 2026-09-06. Updated: 2026-09-06.
 
 ## Purpose and boundary
 
@@ -8,7 +8,7 @@ Make the opening explain how choices change later opportunities, rather than onl
 
 This replaces the next-iteration requirements of [007 — Interactive map prototype](007-interactive-map-prototype.md). Retain the existing two-scene prototype, learning example, navigation, reading alternative and motion preferences while rewriting its layout in Tailwind and its map in Canvas 2D. The complete chapter, production Astro site, publication, habits chapter, videos and phone layout remain outside this revision.
 
-The broad approach is approved. Prioritize four ideas: preparation opens options; repeated avoidance can create gaps; learning builds on earlier learning; and recovery takes work and support. Show each within circumstances the person does not wholly choose. A simulator may be considered later, after this explanation works. The concrete example and interaction contract below are the written design for review, not implemented behavior.
+The written approach is approved for the next prototype. Prioritize four ideas: preparation opens options; repeated avoidance can create gaps; learning builds on earlier learning; and recovery takes work and support. Show each within circumstances the person does not wholly choose. A simulator may be considered later, after this explanation works. The concrete example and interaction contract below specify the revision, not a claim of completed behavior.
 
 ## A layered explanation, not a single decisive fork
 
@@ -103,6 +103,8 @@ If Canvas initialization fails, retain the complete readable comparison and work
 
 No production routing or deployment is introduced. Preserve the currently working prototype through Git history and verify its replacement before handing it over. Document the changed install, development, test and build commands; do not continue claiming the rewritten prototype is dependency-free.
 
+All project servers use ports 4600–4699: development defaults to 4600 and build preview to 4601, bound to 127.0.0.1 with strict port handling. A conflict fails clearly instead of silently selecting another port.
+
 ## Evidence and editorial limits
 
 The [learning findings](../research/learning/README.md) support distinguishing useful foundations from copying, repeated avoidance and gaps, and explain why prior knowledge sometimes needs adapting. The [lifetime findings](../research/lifetime/README.md) distinguish preparation, eligibility, real timing constraints and supported recovery. The [development findings](../research/decision-making/README.md) support age-sensitive help without treating timeline age as a measure of an individual reader's capacity.
@@ -122,4 +124,4 @@ These sources support mechanisms, not Mika's exact biography or the ages attache
 - Run at least two actual visual review/improvement loops on the rewritten prototype before presenting it. Save before/after screenshots and record what changed. Inspect motion as well as settled captures; do not equate screenshots with tested animation or physical-iPad compatibility.
 - Run the build and model/browser suites, obtain an independent code review, and address important findings before handoff. Claim only the browsers and viewports actually checked.
 
-The written design is the current review artifact. After approval, write the implementation plan against this specification; the existing application has not yet been rewritten.
+The implementation plan is [009 — Layered choices rewrite](009-layered-choices-implementation.md). Approval covers the local prototype, not publication or a simulator.
