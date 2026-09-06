@@ -1,89 +1,34 @@
-import { readState, stateURL } from './model.js';
+import { readState, stateURL, transition } from './model.js';
 import { createMapView } from './map-view.js';
+import { renderDecision } from './decision-view.js';
+import { MOMENTS } from './story.js';
 
 const $ = selector => document.querySelector(selector);
 let state = readState(location.href);
 const systemMotion = matchMedia('(prefers-reduced-motion: reduce)');
 const motionControl = $('#reduce-motion');
 let manualLessMotion = false;
+let lastDialogTrigger = null;
+
 motionControl.checked = systemMotion.matches;
 motionControl.disabled = systemMotion.matches;
 motionControl.title = systemMotion.matches ? 'Enabled by your system preference' : '';
-const map = createMapView($('#life-map'), age => navigate({ age, selected: true }, true), () => manualLessMotion || systemMotion.matches);
-const ageCopy = {
-  8: 'At eight, a new interest can start with a question, a first lesson, or someone showing you how. You do not need a whole-life plan.',
-  12: 'At twelve, you might return to something you enjoy or try an unfamiliar activity. A difficult first attempt does not have to be your last.',
-  16: 'At sixteen, practicing a skill or exploring a course can help you discover what you want to learn next. Ask what preparation—and what help—you need.',
-  25: 'At twenty-five, a skill from one setting may be useful in another. You can explore a new direction while working out its costs and requirements.',
-  40: 'At forty, you bring experience to a new beginning. A change may take planning, practice, and support; the next part of life is not already written.',
-  60: 'At sixty, there can still be unfamiliar things to learn and interests to return to. What is possible depends on your circumstances, not a line in this drawing.',
-};
 
-function render(animate = false, focusHeading = false) {
-  if (focusHeading) {
-    document.querySelectorAll('dialog[open]').forEach(dialog => dialog.close());
-    if ($('#main').inert) setIndex(false);
-  }
-  const opening = state.scene === 'possibilities';
-  $('#possibilities-scene').hidden = !opening;
-  $('#learning-scene').hidden = opening;
-  $('#example-age').value = state.age;
-  $('#past-label').textContent = state.selected ? 'The path to this moment' : 'A beginning';
-  $('#moment-copy').textContent = ageCopy[state.age];
-  $('#map-instruction').textContent = state.selected ? 'One route behind you. Possibilities still ahead.' : 'Choose a moment. See the path that leads there.';
-  $('#replay').hidden = !state.selected;
-  $('#overview').hidden = !state.selected;
-  for (const link of document.querySelectorAll('.scene-links [data-scene]')) {
-    if (link.dataset.scene === state.scene) link.setAttribute('aria-current', 'step');
-    else link.removeAttribute('aria-current');
-    link.href = stateURL({ ...state, scene: link.dataset.scene }, location.href);
-  }
-  if (opening) map.show(state.age, state.selected, animate);
-  else map.cancel();
-  document.title = `${opening ? 'Many possible paths' : 'Learning builds on learning'} · Wisdom`;
-  if (focusHeading) {
-    $(`#${opening ? 'opening' : 'learning'}-title`).focus({ preventScroll: true });
-    window.scrollTo({ top: 0, behavior: 'instant' });
-  }
-}
-
-function navigate(change, animate = false) {
-  const changedScene = change.scene && change.scene !== state.scene;
-  const focusedAge = document.activeElement?.dataset.age;
-  state = { ...state, ...change };
-  const url = stateURL(state, location.href);
-  if (url.href !== location.href) history.pushState(null, '', url);
-  render(animate, changedScene);
-  if (focusedAge && !changedScene) $(`.map-anchor[data-age="${focusedAge}"]`)?.focus({ preventScroll: true });
-  if (state.selected && !changedScene) $('#status').textContent = `Example age ${state.age} selected. The path taken is dark green; untaken routes are faint; possible futures are light gray-green.`;
-}
-
-$('#explore').addEventListener('click', () => navigate({ age: Number($('#example-age').value), selected: true }, true));
-$('#example-age').addEventListener('change', event => navigate({ age: Number(event.target.value), selected: state.selected }, state.selected));
-$('#replay').addEventListener('click', () => map.show(state.age, true, true));
-$('#overview').addEventListener('click', () => map.overview());
-motionControl.addEventListener('change', () => {
-  manualLessMotion = motionControl.checked;
-  map.show(state.age, state.selected, false);
-});
-systemMotion.addEventListener('change', () => {
-  motionControl.checked = manualLessMotion || systemMotion.matches;
-  motionControl.disabled = systemMotion.matches;
-  motionControl.title = systemMotion.matches ? 'Enabled by your system preference' : '';
-  if (state.scene === 'possibilities') map.show(state.age, state.selected, false);
-});
-document.querySelectorAll('[data-scene]').forEach(control => control.addEventListener('click', event => {
-  event.preventDefault();
-  navigate({ scene: control.dataset.scene });
-}));
-$('.skip-link').addEventListener('click', event => {
-  event.preventDefault();
-  $('#main').focus();
-});
-window.addEventListener('popstate', () => { state = readState(location.href); render(false, true); });
-window.addEventListener('hashchange', () => {
-  const restored = readState(location.href);
-  if (restored.scene !== state.scene) { state = restored; render(false, true); }
+const map = createMapView({
+  canvas: $('#life-map'),
+  overlay: $('#map-overlay'),
+  lessMotion: () => manualLessMotion || systemMotion.matches,
+  onPreview(age) {
+    $('#map-preview').textContent = age === null
+      ? 'Move over the traveled route to preview an earlier moment.'
+      : `Age ${age}: ${MOMENTS.find(moment => moment.age === age)?.title ?? ''}`;
+  },
+  onInspect(age) {
+    if (!state.selected) navigate({ age, selected: true }, true);
+    else if (age === 12 && (state.age >= 12 || state.age === 8)) navigate({ inspect: 12 }, true);
+    else if (age <= state.age) reviewMoment(age);
+    else $('#map-preview').textContent = `Age ${age} is ahead of today. Use the example-age control to change the starting age.`;
+  },
 });
 
 function setIndex(open, returnFocus = false) {
@@ -102,6 +47,96 @@ function setIndex(open, returnFocus = false) {
   }
   if (returnFocus) $(open ? '#close-index' : '#open-index').focus();
 }
+
+function render(animate = false, focusHeading = false) {
+  if (focusHeading) {
+    document.querySelectorAll('dialog[open]').forEach(dialog => dialog.close());
+    if ($('#main').inert) setIndex(false);
+  }
+  const opening = state.scene === 'possibilities';
+  $('#possibilities-scene').hidden = !opening;
+  $('#learning-scene').hidden = opening;
+  $('#example-age').value = state.age;
+  $('#past-label').textContent = state.selected ? 'The path to today' : 'A beginning';
+  $('#map-instruction').textContent = state.inspect === 12
+    ? 'Compare one age-12 choice while keeping today in view.'
+    : state.selected ? 'Today is one example moment. Earlier points remain revisitable.' : 'Choose an example age to see a route to today.';
+  $('#overview').hidden = !state.selected;
+  $('#overview').textContent = state.overview ? 'Focus on today' : 'See the whole map';
+  $('#return-today').hidden = state.inspect === null;
+  for (const link of document.querySelectorAll('.scene-links [data-scene]')) {
+    link.toggleAttribute('aria-current', link.dataset.scene === state.scene);
+    link.href = stateURL({ ...state, scene: link.dataset.scene }, location.href);
+  }
+  renderDecision(state);
+  if (opening) map.show(state, animate);
+  else map.cancel();
+  document.title = `${opening ? 'Many possible paths' : 'Learning builds on learning'} · Wisdom`;
+  if (focusHeading) {
+    $(`#${opening ? 'opening' : 'learning'}-title`).focus({ preventScroll: true });
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }
+}
+
+function navigate(change, animate = false) {
+  const changedScene = change.scene && change.scene !== state.scene;
+  const focusedAge = document.activeElement?.dataset.age;
+  state = transition(state, change);
+  const url = stateURL(state, location.href);
+  if (url.href !== location.href) history.pushState(null, '', url);
+  render(animate, changedScene);
+  if (focusedAge && !changedScene) requestAnimationFrame(() => $(`.map-target[data-age="${focusedAge}"]`)?.focus({ preventScroll: true }));
+  if (state.selected && !changedScene) $('#status').textContent = state.inspect === 12
+    ? `Age 12 is open for comparison. Today remains age ${state.age}.`
+    : `Example age ${state.age} selected. The dark route is traveled, dashed gray routes were not taken, and gray-green routes remain possible.`;
+}
+
+function reviewMoment(age) {
+  const moment = MOMENTS.find(item => item.age === age);
+  $('#moment-copy').textContent = `Age ${age}: ${moment.summary}`;
+  $('#map-preview').textContent = `Reviewing age ${age} without changing today, age ${state.age}.`;
+}
+
+$('#explore').addEventListener('click', () => navigate({ age: Number($('#example-age').value), selected: true }, true));
+$('#example-age').addEventListener('change', event => navigate({ age: Number(event.target.value), selected: state.selected }, state.selected));
+$('#overview').addEventListener('click', () => navigate({ overview: !state.overview }));
+$('#return-today').addEventListener('click', () => navigate({ inspect: null }));
+$('#comparison-entry').addEventListener('click', () => navigate({ inspect: 12 }, true));
+document.querySelectorAll('[data-review-age]').forEach(button => button.addEventListener('click', () => {
+  const age = Number(button.dataset.reviewAge);
+  if (!state.selected) navigate({ age, selected: true }, true);
+  else if (age === 12 && (state.age >= 12 || state.age === 8)) navigate({ inspect: 12 }, true);
+  else reviewMoment(age);
+}));
+document.querySelectorAll('[data-comparison]').forEach(button => button.addEventListener('click', () => navigate({ comparison: button.dataset.comparison }, true)));
+document.querySelectorAll('[data-layer]').forEach(button => button.addEventListener('click', () => {
+  const layers = state.layers.includes(button.dataset.layer)
+    ? state.layers.filter(layer => layer !== button.dataset.layer)
+    : [...state.layers, button.dataset.layer];
+  navigate({ layers });
+}));
+
+motionControl.addEventListener('change', () => {
+  manualLessMotion = motionControl.checked;
+  map.show(state, false);
+});
+systemMotion.addEventListener('change', () => {
+  motionControl.checked = manualLessMotion || systemMotion.matches;
+  motionControl.disabled = systemMotion.matches;
+  motionControl.title = systemMotion.matches ? 'Enabled by your system preference' : '';
+  if (state.scene === 'possibilities') map.show(state, false);
+});
+document.querySelectorAll('[data-scene]').forEach(control => control.addEventListener('click', event => {
+  event.preventDefault();
+  navigate({ scene: control.dataset.scene });
+}));
+$('.skip-link').addEventListener('click', event => { event.preventDefault(); $('#main').focus(); });
+window.addEventListener('popstate', () => { state = readState(location.href); render(false, true); });
+window.addEventListener('hashchange', () => {
+  const restored = readState(location.href);
+  if (restored.scene !== state.scene) { state = restored; render(false, true); }
+});
+
 $('#close-index').addEventListener('click', () => setIndex(false, true));
 $('#open-index').addEventListener('click', () => setIndex(true, true));
 $('#site-index').addEventListener('keydown', event => {
@@ -113,17 +148,21 @@ $('#site-index').addEventListener('keydown', event => {
   else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
 });
 matchMedia('(max-width: 900px)').addEventListener('change', event => setIndex(!event.matches));
-setIndex(!matchMedia('(max-width: 900px)').matches);
 
 document.querySelectorAll('[data-dialog]').forEach(control => control.addEventListener('click', () => {
-  const dialog = $(`#${control.dataset.dialog}-dialog`);
-  dialog.showModal();
+  lastDialogTrigger = control;
+  $(`#${control.dataset.dialog}-dialog`).showModal();
 }));
 document.querySelectorAll('[data-close]').forEach(control => control.addEventListener('click', () => control.closest('dialog').close()));
-document.querySelectorAll('dialog').forEach(dialog => dialog.addEventListener('click', event => {
-  if (event.target !== dialog) return;
-  const rect = dialog.getBoundingClientRect();
-  if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) dialog.close();
-}));
+document.querySelectorAll('dialog').forEach(dialog => {
+  dialog.addEventListener('close', () => lastDialogTrigger?.focus({ preventScroll: true }));
+  dialog.addEventListener('click', event => {
+    if (event.target !== dialog) return;
+    const rect = dialog.getBoundingClientRect();
+    if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) dialog.close();
+  });
+});
+
+setIndex(!matchMedia('(max-width: 900px)').matches);
 history.replaceState(null, '', stateURL(state, location.href));
 render();
