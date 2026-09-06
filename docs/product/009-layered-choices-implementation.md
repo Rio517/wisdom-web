@@ -48,7 +48,7 @@ At desktop, the header and short introduction lead to the map, with a compact ex
 - `comparisonRoutes(mode)` returns authored `{id,points,label,status}` routes whose IDs correspond to outcomes in `COMPARISONS`. Gap identifies foundations requiring work and the missed first course intake. Build shows the recipe-ratio route and course readiness; repair adds named intermediate work and a later intake without reopening the missed one. Curves progress rightward; the graph differs semantically and geometrically across modes.
 - `pointOnRoute(points,progress)` clamps progress to [0,1], samples by cumulative segment length and returns a finite coordinate; zero-length/single-point routes return that point.
 
-- [ ] Write behavioral tests before model changes, run them and record RED. Catch a forgotten age reset, lost layer state, future-as-memory normalization, collapsed outcome sets, premature repair eligibility, backward geometry and incorrect length sampling. Retain existing motion tests; update obsolete SVG-string expectations to equivalent geometric behavior.
+- [x] Write behavioral tests before model changes, run them and record RED. Catch a forgotten age reset, lost layer state, future-as-memory normalization, collapsed outcome sets, premature repair eligibility, backward geometry and incorrect length sampling. Retain existing motion tests; update obsolete SVG-string expectations to equivalent geometric behavior.
 
 ```js
 assert.equal(readState('https://example.test/?age=40&selected=1&inspect=12&choice=repair&layers=pattern#learning').inspect, 12);
@@ -58,7 +58,7 @@ assert.deepEqual(pointOnRoute([{x:0,y:0},{x:3,y:0},{x:3,y:4}], 0.5), {x:3,y:0.5}
 assert.equal(comparisonRoutes('repair').find(r => r.id === 'first-intake').status, 'missed');
 ```
 
-- [ ] Implement content and pure functions. Use the exact fictional sequence in 008; summarize sentences naturally without changing mechanisms. Use monotone-x interpolated geometry (piecewise cubic easing or sampled smooth lines) with no horizontal reversal. Implement state normalization through one shared path used by parser, serializer and transition.
+- [x] Implement content and pure functions. Use the exact fictional sequence in 008; summarize sentences naturally without changing mechanisms. Use monotone-x interpolated geometry (piecewise cubic easing or sampled smooth lines) with no horizontal reversal. Implement state normalization through one shared path used by parser, serializer and transition.
 
 ```js
 const fields = new URLSearchParams({age: String(state.age)});
@@ -74,7 +74,7 @@ url.hash = state.scene === 'learning' ? 'learning' : 'possibilities';
 
 Apply this serialization to normalized state. Every field above must round-trip and each invalid field must fall back independently. Valid inspection implies selected state during URL normalization as well as transition.
 
-- [ ] Run `node --test tests/model.test.js tests/story.test.js`; verify finite bounded routes, deterministic replay, all ages, three distinct consequence views, reading generation and escaping. Self-review and commit this task only.
+- [x] Run `node --test tests/model.test.js tests/story.test.js`; verify finite bounded routes, deterministic replay, all ages, three distinct consequence views, reading generation and escaping. Self-review and commit this task only. Implemented in fe5a3ca with 26 passing tests; support-availability clarification ee81831 passed scoped re-review. Browser integration remains Task 2.
 
 ## Task 2: Tailwind build, Canvas interaction and layered reading shell
 

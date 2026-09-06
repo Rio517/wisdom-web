@@ -38,6 +38,8 @@ Tailwind CSS. *Theme variables* and *Installing Tailwind CSS with Vite*. Current
 
 Supports shared design tokens mapped to utilities and a local Vite build integration. Official pages inspected. The choice to use Tailwind's scale to constrain this project's layout is a design decision; the tool does not guarantee consistent or beautiful results. Installed version compatibility and the actual build remain to be verified during implementation.
 
+Vite's [server options](https://vite.dev/config/server-options#server-strictport) and [preview options](https://vite.dev/config/preview-options), inspected on the same date, document fixed ports and strict-port failure rather than automatic increment. The project's 4600–4699 restriction is an owner requirement and requires its own override guard; Vite defaults alone do not enforce a range.
+
 ### H8 — Canvas and semantic alternatives
 
 MDN Web Docs. *Canvas API*. Current documentation, accessed September 6, 2026. [Guide](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API).

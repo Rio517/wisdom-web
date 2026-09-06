@@ -65,6 +65,8 @@ Future video entries can reference a poster, video, captions, and transcript. No
 
 ## Publishing requirements
 
+Local development, build-preview and test listeners are restricted to **4600–4699**. Development defaults to **4600** and preview to **4601**, bound to `127.0.0.1`, with strict port handling. Reject out-of-range overrides and fail clearly on occupied ports rather than silently selecting a new port. This concerns project-run local servers, not the standard HTTPS port of the future public static host. [Vite server options](https://vite.dev/config/server-options#server-strictport), [Vite preview options](https://vite.dev/config/preview-options).
+
 Use the current official Astro GitHub Pages workflow as the starting point. Configure `site` and the repository `base` path, and deploy only the generated output. Internal links and assets must work under the project subpath as well as during local preview. [Astro's GitHub Pages deployment guide](https://docs.astro.build/en/guides/deploy/github/).
 
 Before publication, verify direct navigation and reload on every route and named scene, example-age selection and fallback, Back/Next and browser history, opening/closing deeper examples, replay/skip, tablet and desktop layout, keyboard navigation, diagram fallback, reduced motion, and source links. The main story must remain readable if the interactive script fails. Enable HTTPS and verify the actual published URL before reporting it as live. Phone support is deferred and can be reconsidered later; it is not a requirement for the initial desktop-and-iPad-mini experience.
