@@ -34,6 +34,10 @@ Now imagine another pattern. Ari still gets frustrated, but starts saying, “I 
 
 The difference is not that Ari suddenly loves every lesson. The difference is that some missing pieces start getting filled in.
 
+Then a problem clicks. Ari tries another, partly to see whether the new idea works again. Getting somewhere can make the next puzzle more inviting. Trying that puzzle gives Ari another chance to learn.
+
+That pattern is not automatic. Ari will still get stuck, need help, and sometimes want to do something else. But learning can give the next bit of learning a place to begin.
+
 Later, Ari wants to build a model bridge. Measuring and comparing sizes are part of the work. Some of that earlier learning now has a use Ari did not expect.
 
 The future has borrowed something from the past.
@@ -66,6 +70,6 @@ Your future does not need a perfect version of you. It needs you to keep noticin
 
 This opening illustrates the accumulation and prerequisite mechanisms discussed in the [research report](../research/report-source.md). Ari's outcomes are authored examples, not study results or predictions.
 
-The complete chapter must add the visual lifetime arc, an adult learning/repair example, a specific missed opportunity that cannot simply be replayed, and a closing application to a new situation. This passage is intended to test whether the voice feels substantial and inviting across the audience.
+The complete chapter must add the visual lifetime arc, a qualified tennis/related-sport transfer example, an adult learning/repair example, a specific missed opportunity that cannot simply be replayed, and a closing application to a new situation. The learning/enjoyment moment above is fictional, informed by the distinctions in the [learning research](../research/learning/README.md), not a promise of automatic progress. This passage is intended to test whether the voice feels substantial and inviting across the audience.
 
 The phrase “more to work with” describes preparation. It does not imply that every credential opens every career, that confusion reflects poor character, or that every obstacle can be removed through effort. The story's next scenes need to make support and external conditions visible through events.

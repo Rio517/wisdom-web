@@ -8,7 +8,7 @@ Guided progression, high-quality animation, optional deeper explanations, a sele
 
 Create a guided, animated explanation called **Your future has more than one path**. A persistent branching map anchors the story as the reader advances through short scenes. Follow a fictional child into possible later lives, pausing to explain what a choice changes. Offer examples and deeper explanations at the moment they become useful, with a clear return to the main sequence.
 
-The emotional destination is capable, curious agency: “What could I do next that helps?” The intellectual destination is understanding how preparation, requirements, uncertainty, and course correction interact.
+The emotional destination is capable, curious agency: “What could I do next that helps?” The intellectual destination is understanding how learning, choices, preparation, uncertainty, and course correction interact. Learning that compounds is a central explanation, not a passing motivational phrase.
 
 The main interaction decision is how readers control the pace:
 
@@ -32,13 +32,30 @@ Use an original diagram and visual language. Label the lived path, past alternat
 
 After the chapter, a reader should be able to:
 
-1. Explain one way a skill learned now could help with a later activity.
+1. Explain both how learning can build within a subject and how part of a skill can carry into a related activity.
 2. Distinguish being prepared for an opportunity from being guaranteed an outcome.
 3. Explain how a repeated pattern differs from one difficult day.
 4. Identify a way to respond when a route becomes difficult, including help or a different strategy.
 5. Explain a trade-off: choosing one worthwhile activity may mean declining another.
+6. Describe a possible loop between progress, enjoyment, and choosing to learn more, without assuming everyone must enjoy every lesson.
 
 These are proposed comprehension goals. They do not claim changes in lifelong behavior.
+
+## Central explanation: learning and choices compound
+
+Use “compounding” to mean that earlier learning can help the next learning, and choices about practice and help can sustain that process. The [learning research](../research/learning/README.md) distinguishes three mechanisms and their limits. Keep the word if it is useful; explain it through visible actions before naming it.
+
+| Mechanism | Proposed example | What the visual must show |
+| --- | --- | --- |
+| Build on what you know | Ari understands equal parts, then equivalent fractions, then uses a ratio in a model | Highlight the earlier idea being reused in the next step |
+| Carry part of a skill across | A tennis learner tries another racket sport | A possible familiar element alongside something that needs fresh practice; no instant mastery |
+| Progress can encourage another choice | A maths explanation leads to a satisfying discovery, and Ari chooses another puzzle | A small feedback loop, with an entry point for help or a different approach |
+
+These are fictional teaching examples, not individual predictions. Keep the maths chain as the main story and offer tennis as a concrete related-skill example. Avoid a multi-sport detour in the main lifetime sequence. A head start is not a guarantee, and a reinforcing loop is not a fixed rate of growth.
+
+Choices belong inside the mechanism: ask a question, try an explanation, return to practice, notice progress, decide what to attempt next. Give teaching, time, access, and encouragement visible roles. Show that someone who does not currently enjoy maths can find another explanation or goal; the diagram must not divide readers into natural enthusiasts and permanent outsiders.
+
+The first chapter includes a short bridge to habits: “How could you make it easier to return to something you want to learn?” The [dedicated habits proposal](004-habits-and-daily-practice.md) covers the fuller explanation and practical experiments. That section is a follow-up, not additional first-release scope.
 
 ## Choose where “today” begins
 
@@ -54,7 +71,7 @@ No birth date, account, or personal history is required. Allow the selected exam
 
 Offer “How do we get better at making choices?” beside childhood examples and from the chapter overview. Explain holding a plan in mind, directing attention, pausing before acting, and changing strategy through concrete situations. Introduce the term “executive function” only after the reader has an example.
 
-Development and supportive experience both matter. These capacities continue developing through adolescence and early adulthood; the [developmental context in the research report](../research/report-source.md#developmental-context-for-the-8-audience) provides the evidence and limits. Avoid a single “fully developed” birthday, readiness scores, or the suggestion that a younger child's difficulty is a character flaw.
+Development and supportive experience both matter. These capacities continue developing through adolescence and early adulthood; the [developmental research](../research/decision-making/README.md#developmental-context-for-the-8-audience) provides the evidence and limits. Avoid a single “fully developed” birthday, readiness scores, or the suggestion that a younger child's difficulty is a character flaw.
 
 Use a small example of organizing a project: an adult models the steps, the child tries with reminders, and support adjusts as the child becomes more capable. Keep this explanation optional and brief enough to rejoin the choices story. Its purpose is to explain why practice and help matter, not to introduce a separate child-development curriculum.
 
@@ -64,10 +81,10 @@ Target approximately 1,000–1,400 words across seven core scenes, with shorter 
 
 | Scene | Visible action | Explanation or optional branch |
 | --- | --- | --- |
-| 1. Here you are, today | Trace one lived path to “today,” then reveal future branches | The past is fixed; the next part is still being made |
-| 2. One skill, several paths | Zoom into learning to measure; reveal several projects it helps with | Preparation can be useful before choosing a destination; optional second example |
+| 1. Here you are, today | Place a “today” dot at an authored anchor, trace the lived path, and reveal future branches | A quick, satisfying opening interaction; the past is fixed, and the next part is still being made |
+| 2. One skill, several paths | Zoom into a maths foundation and show where it is reused | Learning builds within a subject; optional tennis example shows related-skill transfer and adaptation |
 | 3. One choice becomes part of the path | Compare asking for an explanation with hiding confusion | What changes is the next learning step; replay an alternative within the fictional example |
-| 4. The pattern begins to matter | Advance through repeated occasions and show the accumulated learning or remaining gaps | Distinguish a pattern from one difficult day; optional close-up of the mechanism |
+| 4. The pattern begins to matter | Advance through repeated occasions, then briefly focus on progress → enjoyment → another learning choice | Explain a possible reinforcing loop and a way to enter it with help; distinguish a pattern from one difficult day |
 | 5. Some routes need preparation | Pause at a later course or project requirement | Connect earlier learning to eligibility; explore what taking an extra preparation step involves |
 | 6. The map changes again | Show an outside event and a later repair route as separate beats | Chance, support, and adult learning matter; a missed event remains missed, but another route can exist |
 | 7. Your next step | Pull back to the wider map, then return attention to today | Choose a useful next action and consider its trade-off; optional deeper reflection |
@@ -100,6 +117,8 @@ Motion carries the explanation: trace the lived path, reveal a fork, follow the 
 
 Use a consistent motion language and pacing. Brief transitions should feel responsive; longer explanatory sequences need replay and skip controls. Pause visual activity while the reader considers a question or opens a deeper explanation. Avoid continuous decorative motion competing with the text.
 
+The opening map is the signature interaction described in [003](003-visual-language-and-navigation.md#signature-map-interaction). Motion should be quick, functional, and quietly impressive: an inviting marker arrival and a precise path trace, not a mandatory cinematic introduction. The first motion study must show whether it improves orientation and feels satisfying across the audience.
+
 Reduced-motion mode preserves every explanation and final diagram state using immediate changes or restrained transitions. All controls work by keyboard and touch, focus remains predictable, and no information relies on timing or sound.
 
 ## Future video explainers
@@ -118,9 +137,7 @@ Offer one core text for the whole audience. A younger reader can discuss or draw
 
 ## Visual direction
 
-Propose a contemporary illustrated atlas: expressive narrative illustrations, generous space, strong book-like typography, and crisp, readable diagrams. Warm paper tones and a restrained palette are a starting direction to compare in the storyboard. The project needs a distinctive identity rather than a copied documentation theme.
-
-Use generated raster art where it contributes character, atmosphere, and continuity. Build diagram labels, routes, controls, and information-bearing shapes in HTML/SVG so they remain precise and accessible. Preserve approved art variants and record how assets were produced. Do not bake the explanatory text into generated pictures.
+Use the clean natural-history field-guide treatment described in [003 — Visual language and navigation](003-visual-language-and-navigation.md): an open reading surface, precise diagram and callout lines, and occasional ink-and-wash specimen illustrations. The shared shell includes a collapsible left panel, expandable Choices navigation, and separate About and Source code links. Product document 003 is the source of truth for the palette, typography, illustration treatment, and panel behavior.
 
 The first visual review should show the opening, one animated fork and its deeper example, and the closing reflection at phone and desktop sizes. A short working motion study should test the transition into and back out of the example. Assess illustration consistency, reading comfort, visual hierarchy, and whether the map explains the mechanism without a spoken rescue explanation.
 
@@ -133,6 +150,8 @@ The first visual review should show the opening, one animated fork and its deepe
 - Developmental context is available as an optional deep dive, acknowledges variation, and returns to the same parent scene.
 - Continuous reading and reduced-motion modes retain the same core teaching content.
 - The future map includes preparation, outside conditions, and a credible recovery route without implying exact probabilities or a guaranteed life outcome.
+- A reader can distinguish building on a skill, carrying part of it across, and a possible learning/enjoyment loop. The loop includes help or an alternate method, not only uninterrupted progress.
+- Placing the map marker is available by keyboard and touch as well as pointer. The visual settles quickly, and no reader must wait for its flourish to navigate.
 - Phone and desktop layouts keep controls, meaningful labels, and current scene position readable.
 - Optional videos are not required for the first release or for understanding any existing explanation.
 
@@ -143,6 +162,8 @@ Use fresh scenarios to test understanding, with permission from the supervising 
 | Prompt | Useful evidence of understanding | Signal to revise |
 | --- | --- | --- |
 | “A child does not yet know what job they want. Why might learning to explain an idea still help?” | Names more than one possible use or a later learning step | Thinks the child must pick a career now |
+| “Someone plays tennis and tries a different racket sport. What might help, and what might they still need to learn?” | Distinguishes a possible head start from new practice | Assumes every technique carries across unchanged |
+| “Ari enjoys solving a maths problem and chooses another. Where could help enter this pattern if Ari gets stuck?” | Identifies an explanation, support, or changed challenge | Thinks the loop only works for children who already love maths |
 | “A well-prepared team loses when the event is interrupted. Was preparing a mistake?” | Separates useful preparation from the uncontrollable result | Treats every poor outcome as a poor decision |
 | “Someone is behind in a skill they now need. What could they try?” | Gives a concrete learning, help, or alternative-route response | Says the future is already ruined |
 | “Two interesting clubs meet at the same time. How could you choose?” | Considers interests, commitments, information, or a trial | Thinks keeping options open means doing everything |
@@ -151,9 +172,9 @@ Include readers near the eight-year-old entry target and older readers. Also tes
 
 ## First release and follow-up
 
-The first release contains the topic orientation, this complete chapter, and adult/source notes. It should have a satisfying ending and one usable reflection even before another chapter exists.
+The first release contains the topic orientation, this complete chapter, adult/source notes, and a short About page within the shared navigation shell. It should have a satisfying ending and one usable reflection even before another chapter exists.
 
-The next chapter, **Small choices, repeated**, can develop a simple routine: notice the decision, identify what matters, consider options and likely consequences, make a workable plan, and review the result. Its exercises should include obstacles, available help, and adjusting the environment. This chapter is a separate content task; do not expand the first release to write an entire habit curriculum.
+The proposed follow-up, **The choices we repeat**, connects daily decisions with habits and practical review. [Product document 004](004-habits-and-daily-practice.md) defines its scope, evidence needs, and placement. It remains a separate content task; do not expand the first release to write an entire habit curriculum.
 
 Relationships remain a separate subject. Do not add placeholders or menu entries for unwritten sections.
 

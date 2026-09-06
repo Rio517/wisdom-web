@@ -6,6 +6,9 @@ Specific proposals use stable identifiers: `NNN-short-name.md`. Number documents
 | --- | --- | --- | --- |
 | 001 | [Choices experience](001-choices-experience.md) | Proposed | 2026-09-06 |
 | 002 | [Delivery architecture](002-delivery-architecture.md) | Proposed | 2026-09-06 |
+| 003 | [Visual language and navigation](003-visual-language-and-navigation.md) | Proposed | 2026-09-06 |
+| 004 | [Habits and the choices we repeat](004-habits-and-daily-practice.md) | Proposed | 2026-09-06 |
+| 005 | [Research library and navigation](005-research-library.md) | Proposed | 2026-09-06 |
 
 Keep each document about one coherent product or delivery decision. Include the purpose, relevant requirements, proposed behavior, scope boundaries, acceptance criteria, and unresolved choices at the depth needed for review. Product requirements can be settled while the detailed solution remains proposed; make that distinction explicit.
 

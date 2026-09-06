@@ -2,19 +2,23 @@
 
 ## Current state
 
-The repository contains the project brief, research synthesis and source ledger, numbered product documents, a sample opening, and a static delivery proposal. The public repository is [Rio517/wisdom-web](https://github.com/Rio517/wisdom-web), with `origin` configured and local work on `main`. The website, artwork, and complete chapter are not implemented or published.
+The repository contains the project brief, a linked research library, five numbered product proposals, a sample opening, and one generated ink-and-wash illustration study with provenance. The public repository is [Rio517/wisdom-web](https://github.com/Rio517/wisdom-web), with `origin` configured and local work on `main`. The website, motion study, approved production artwork, and complete chapter do not yet exist.
 
-The audience is ages 8+, with a core explanation approachable from age eight and depth for older readers. The first chapter covers choices across a lifetime; daily decisions are the next linked chapter. Relationships remain outside this release.
+The audience is ages 8+, with a core explanation approachable from age eight and depth for older readers. The first chapter covers choices across a lifetime, explicitly including learning that builds, carries into related activities, and can reinforce further learning. Habits/daily practice deserve a dedicated follow-up, with a short bridge in the first chapter. Relationships remain outside this release.
 
-Start with [001 — Choices experience](docs/product/001-choices-experience.md) and [the sample opening](docs/content/choices-opening.md). The product document covers the life-paths reference, guided animation, a selectable starting age, optional examples/developmental context, and possible later video. The sample is a prose voice reference that still needs adaptation into scenes. Use [the research report](docs/research/report-source.md) for evidence and [the source ledger](docs/research/sources.md) for confidence, limitations, and search coverage.
+Start with [001 — Choices experience](docs/product/001-choices-experience.md), [003 — Visual language and navigation](docs/product/003-visual-language-and-navigation.md), and [the sample opening](docs/content/choices-opening.md). The sample remains a prose voice reference needing scene adaptation. The visual direction is a clean natural-history field guide, a collapsible left panel, and a signature quick marker-and-line interaction with restrained atmospheric emphasis. The [brain plate](docs/design/README.md) is exploratory, not approved or anatomically validated.
+
+The [research index](docs/research/README.md) links separate learning, lifetime, decision-making/development, habits, and supporting delivery buckets. Detailed source records live with their topic. Habits includes an initial evidence base with a 2024 review, a 2025-issue trial, an August 2026 synthesis, and a learning-specific 2022 study; it is not a completed review of child habit change. See [004 — Habits](docs/product/004-habits-and-daily-practice.md). The [research reading UI](docs/product/005-research-library.md) is an optional future layer over the same Markdown; no UI exists yet.
 
 ## Immediate next work
 
-1. Review product document 001 and the sample voice. Settle the scene sequence and how changing the starting age changes the worked example.
-2. Create a storyboard and short motion study: “today” and possible futures, one animated fork, an optional example and return, and the ending. Include phone and desktop layouts plus a child and adult starting point.
-3. Draft the brief developmental explanation and adapt the prose into the guided scenes, keeping supporting evidence in adult notes.
+1. Review product documents 001 and 003 with the sample voice. Settle the core maths/learning chain, qualified tennis example, starting-age examples, and opening marker behavior.
+2. Create a real-copy storyboard and short motion study in the shared reading shell. Prioritize dot placement and path tracing: quick, beautiful, informative, interruptible, and never a wait before reading. Include one example/return, the ending, phone and desktop layouts, child/adult starting points, and reduced motion.
+3. Draft the brief developmental explanation and habits bridge, then adapt the prose into guided scenes. Keep the reinforcing loop understandable, with help and recovery visible. Keep evidence in the linked research buckets and adult notes.
 4. Use a short reader check near age eight and with older readers to identify misunderstandings and tune the text and map.
 5. Write the detailed implementation plan from the selected storyboard, then build and verify the first complete chapter. Pages is not enabled yet.
+
+When preparing the later habits chapter, extend the research on children/families, changing established habits, interruptions, and differing support needs. These gaps do not block the lifetime chapter. Test the existing Markdown library before deciding to build its optional web navigator.
 
 ## Proposed technical direction
 
@@ -28,6 +32,7 @@ Verified in this workspace on 2026-09-06:
 - Node v26.7.0 and Bun 1.3.14 installed. No project dependencies or application scripts exist yet.
 - Local starter kit at `~/code/starter-kit`. Use selected conventions described in the delivery proposal.
 - Current session has web research, image generation, and browser-control capabilities. Future sessions must discover their own available tools and read applicable skill instructions before use.
+- Built-in ImageGen produced the saved PNG style study; image metadata verifies 1254 × 1254 pixels and an alpha channel. Precise labels, lines, and interactive geometry remain proposed HTML/SVG, not generated bitmap text.
 
 The GitHub remote is configured; no live site is configured. A local GitHub authentication check inside the sandbox can report a false failure; the check outside the sandbox succeeded.
 

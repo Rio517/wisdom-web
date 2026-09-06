@@ -1,5 +1,7 @@
 # Choices research plan
 
+[Research library](README.md) · [Source index and gaps](sources.md)
+
 ## Scope
 
 The first subject in a selective life manual is how choices shape future possibilities across a lifetime. The audience is ages 8+, with core explanations approachable from age eight; the material is intended for general sharing. The deliverable is research and reviewable product proposals, written in Markdown in this repository.
@@ -10,7 +12,7 @@ The central question is: how can we teach children that preparation, practice, a
 
 - English is the initial language. United States education examples reflect the initial brief; general explanations should travel across school systems.
 - Children should encounter substantial ideas through concrete stories, clear language, and optional deeper explanations.
-- The lifetime arc is the first chapter. Daily decisions are a linked follow-up. Relationships are a separate future subject.
+- The lifetime arc and learning compounding are the first chapter. Habits/daily practice are a linked follow-up. Relationships are a separate future subject.
 - Evidence about populations does not predict an individual child's life. Observational associations, causal findings, and editorial judgments need distinct labels.
 - The first research pass covers literature available by 2026-09-06. It is a focused synthesis, not a systematic review or an exhaustive curriculum evaluation.
 - Source priority: original studies and reviews, official datasets and education resources, first-party teaching programs, and official hosting documentation.
@@ -20,21 +22,23 @@ The central question is: how can we teach children that preparation, practice, a
 
 - [x] Discover primary evidence on cumulative development, education and opportunity, second chances, child decision-making, and existing teaching approaches; inspect the local starter kit and static hosting documentation.
 - [x] Follow up: reconcile conflicting findings and check the strongest proposed claims against original sources. Record gaps and limitations.
-- [x] Synthesize the canonical research report, source ledger, editorial rules, chapter outline and sample passage, plus a proposed delivery plan.
+- [x] Synthesize a cross-topic report and topic-specific findings/ledgers, editorial rules, chapter outline and sample passage, plus a proposed delivery plan.
 - [x] Verify citation support, document links, scope, current-state accuracy, and repository status.
 
-Repository setup and current product work are recorded in `NEXT_STEP.md`. The research team inspected the cited evidence with the access limits recorded in the source ledger. The repository has no rendered website to review; document verification covers Markdown structure, links, scope, and current-state claims.
+These completed items describe the focused first-chapter research, not every future topic. Repository setup and current product work are recorded in [NEXT_STEP.md](../../NEXT_STEP.md). Source records identify inspected material and access limits. The repository has no rendered website to review; document verification covers Markdown structure, links, scope, and current-state claims.
 
 ## Research lanes
 
-1. Lifetime opportunities: skill accumulation, education pathways, selection versus causation, age-related opportunities, and recovery.
-2. Teaching decisions: middle-childhood reasoning, future thinking, self-regulation, practice and planning, plus selected adolescent and adult context. Source populations retain their actual ages; the product's 8+ target does not broaden a study's findings.
-3. Coordinator: static publishing, starter-kit applicability, critical-source spot checks, integration, and artifact verification.
+1. [Learning](learning/README.md): foundations, transfer, and possible reinforcing relationships between achievement and enjoyment.
+2. [Lifetime opportunities](lifetime/README.md): education pathways, selection versus causation, time-sensitive opportunities, and recovery.
+3. [Decision-making and development](decision-making/README.md): reasoning, future thinking, self-regulation, teaching, and planning. Source populations retain their actual ages; the product's 8+ target does not broaden a study's findings.
+4. [Habits](habits/README.md): initial formation/automaticity evidence, with future child-focused change research still open.
+5. [Delivery](delivery/README.md): official static publishing references; implementation decisions stay in the delivery product document.
 
-## Planning tools
+## Further research boundary
 
-The session does not expose an `update_plan` tool. This document is the durable plan and is updated as phases finish. Research workers return evidence only; the coordinating agent owns synthesis and repository edits.
+The habits bucket explicitly separates formation evidence from the unfinished questions about children, changing established habits, interruptions, and support. Extend those areas before writing the full habits chapter; a short first-chapter bridge can use the existing qualified evidence. Refresh the literature at that point instead of describing the initial search as permanently current.
 
-## Follow-up record
+## Next useful evidence
 
-The [source ledger](sources.md) contains the claim-gap matrix, search families, access limitations, and stopping rationale. The [canonical report](report-source.md) reconciles the evidence. Reader comprehension and reaction are the next material unknowns.
+The [source index](sources.md) contains the claim-gap matrix, search families, and stopping rationale; linked topic ledgers contain access limitations. The [cross-topic synthesis](report-source.md) connects the evidence. Reader comprehension and reaction are the next material unknowns for the first chapter.
