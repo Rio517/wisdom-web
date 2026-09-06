@@ -2,7 +2,7 @@
 
 A selective, guided and animated life manual for ages 8+, starting with how choices shape future possibilities.
 
-The project is in research and design, with a narrow local HTML/SVG prototype under [`prototype/`](prototype/README.md). That study is not the production website, has not been published, and has not yet been owner-reviewed.
+The project is in research and design, with a narrow local HTML/SVG prototype under [`prototype/`](prototype/README.md). That study is not the production website and has not been published. Owner feedback informs [008 — Choices and consequences](docs/product/008-choices-and-consequences.md): a layered explanation and Tailwind/Canvas rewrite, not implemented yet.
 
 ## Start here
 
@@ -22,6 +22,7 @@ The project is in research and design, with a narrow local HTML/SVG prototype un
 - [Selected interface and animation storyboards](docs/design/storyboards/README.md)
 - [006 — Storyboards and the first motion study](docs/product/006-storyboards-and-motion-study.md)
 - [007 — Interactive map prototype implementation plan](docs/product/007-interactive-map-prototype.md)
+- [008 — Choices and consequences](docs/product/008-choices-and-consequences.md)
 - [Run the local prototype](prototype/README.md)
 - [Completed work](COMPLETED.md)
 

@@ -12,7 +12,7 @@ This is a project recommendation, consistent with guidance to choose prototype f
 
 The [stored boards and review history](../design/storyboards/README.md) remain useful records of the field-guide composition, map prominence, navigation, and desired immediacy. They are generated 1536 × 1024 PNGs, not website assets, responsive-layout evidence, a typography or contrast audit, or a demonstration of motion quality.
 
-Their six future endpoints and stationary-marker sequence are superseded by the approved prototype direction. The current map uses abundant original geometry with nonlinear rises, falls, crossings, and occasional curls. Selecting an example age sends a dot from the beginning at the left along a dark-green lived path to today; a modest zoom follows. Untaken alternatives settle into barely visible gray and still-possible futures remain light gray-green. [003](003-visual-language-and-navigation.md#signature-map-interaction) is the detailed visual-requirements source and [007](007-interactive-map-prototype.md) is the executable prototype plan.
+Their six future endpoints and stationary-marker sequence are superseded by the implemented prototype in [007](007-interactive-map-prototype.md). That study has abundant wandering geometry, a traveling dot and post-arrival focus. Owner feedback now calls for removing its curls, strengthening untaken-path/divider contrast, and adding a meaningful layered choice comparison. [003](003-visual-language-and-navigation.md#signature-map-interaction) is the detailed visual-requirements source; [008](008-choices-and-consequences.md) is the next revision's written design.
 
 The original PNGs remain unchanged historical inputs. Labels and geometry are real text and SVG in an interface, not cropped or shipped from the screenshots.
 
@@ -27,7 +27,7 @@ The original PNGs remain unchanged historical inputs. Labels and geometry are re
 
 ## Narrow working prototype
 
-The local `prototype/` study covers one reading shell, the opening map interaction, a second learning scene, one optional related-sport example, continuous-reading copy, and returns between those states. It is not the complete seven-scene chapter, a production website, or a published artifact. It has not yet been owner-reviewed.
+The local `prototype/` study covers one reading shell, the opening map interaction, a second learning scene, one optional related-sport example, continuous-reading copy, and returns between those states. It is not the complete seven-scene chapter, a production website, or a published artifact. Owner feedback is incorporated into the next-revision proposal 008, not yet into the application.
 
 Desktop and iPad mini are the minimum prototype targets: 1440 × 1000, 1133 × 744, and 744 × 1133 CSS pixels. Phone design is deferred; the phone storyboard remains historical composition research rather than an acceptance target.
 

@@ -4,7 +4,7 @@ Status: Proposed. Created: 2026-09-06. Updated: 2026-09-06.
 
 The requirements are a beautiful, very clean, content-focused interface with occasional expressive illustrations, plus a collapsible left navigation panel. The proposed treatment takes its cues from a botanical or natural-history field guide. The central map adds quick, functional, slightly futuristic animation: inviting to younger readers and satisfying to older readers. Watercolor is a candidate medium; the exact illustration treatment and production typography remain open for visual review.
 
-This document is the detailed visual-requirements source for the shared reading shell around [001 — Choices experience](001-choices-experience.md). [002 — Delivery architecture](002-delivery-architecture.md) covers routes and production boundaries. A narrow local implementation study exists under `prototype/`; it is not the complete chapter or production interface and has not been published or owner-reviewed. [006](006-storyboards-and-motion-study.md) records the storyboard handoff, and [007](007-interactive-map-prototype.md) defines the approved prototype scope.
+This document is the detailed visual-requirements source for the shared reading shell around [001 — Choices experience](001-choices-experience.md). [002 — Delivery architecture](002-delivery-architecture.md) covers routes and production boundaries. A narrow local implementation study exists under `prototype/`; it is not the complete chapter or production interface and has not been published. Owner feedback informs [008 — Choices and consequences](008-choices-and-consequences.md), the next revision's written design. [006](006-storyboards-and-motion-study.md) and [007](007-interactive-map-prototype.md) record the earlier studies.
 
 ## Visual idea
 
@@ -26,7 +26,7 @@ Reserve borders for navigation separation, a specimen inset, or a meaningful gro
 | Rule | `#D5DDD5` | Nonessential separators |
 | Active | `#2F604D` | Current selection, links, and focus treatment |
 | Possible future | `#A8BCAF` | Still-possible paths in the selected map state |
-| Untaken | `#E5E8E3` | Barely visible contextual paths that diverged before today |
+| Untaken | Replace the prototype's `#E5E8E3` during rendered review | Clearly visible gray paths that diverged before today |
 | Painted rose | `#DBADB0` | Illustration wash; not a text color |
 
 These are proposed tokens, not a tested contrast system. Meaningful graphics and controls need sufficient contrast independently of decorative rules.
@@ -38,6 +38,8 @@ Start with 20px body text, approximately 1.6 line height, and a 55–65-characte
 ## Layout and navigation
 
 The desktop composition is a quiet left index and an open reading area. The diagram can use more width than the prose. A small illustration sits near the idea it explains; it does not need to occupy every scene.
+
+The next revision uses Tailwind's shared spacing, type, responsive layout and named project tokens. Use the utility system to constrain layout decisions, not as a wrapper around the same collection of arbitrary pixel values. Canvas geometry is separate from page layout.
 
 ```text
 Navigation, collapsible          Guided explanation
@@ -66,7 +68,7 @@ At a narrow tablet viewport, the index opens as an overlay with a persistent nav
 
 ## Illustrations, callouts, and animation
 
-Generate painted specimen artwork as raster images with transparent backgrounds. Keep labels, leader lines, diagram routes, and controls in HTML/SVG. An SVG wrapper around a bitmap does not make the underlying artwork vector; preserve that distinction in asset records.
+Generate painted specimen artwork as raster images with transparent backgrounds. Keep meaningful labels and controls in HTML, and precise leader lines in code. The current map uses SVG; the approved next direction uses Canvas 2D for routes and tracing, with semantic HTML carrying the same meaning. An SVG wrapper around a bitmap does not make the underlying artwork vector; preserve that distinction in asset records.
 
 A callout must identify a real depicted element or explain an action in the diagram. Give leader lines clear endpoints and avoid crossings. On small screens, labels can move below the illustration with matching markers. Do not point abstract abilities at arbitrary brain locations; a general brain illustration can accompany a general explanation without implying anatomical localization.
 
@@ -74,9 +76,9 @@ Animate the explanatory layer: reveal the relevant line, focus a callout, trace 
 
 ## Signature map interaction
 
-The opening map is the first concrete test of the site's beauty and responsiveness. Its overview presents an abundant field of original nonlinear paths: branches rise, fall, cross, wander, and occasionally curl. The topology may take inspiration from the supplied reference, but the geometry must be original; it must not reproduce the old six-endpoint storyboard tree. Vertical position is not success or worth, and a curl may represent trying again or returning to an interest rather than backward progress.
+The opening map is the first concrete test of the site's beauty and responsiveness. Its overview presents an abundant field of original nonlinear paths: branches rise, fall, cross and wander while progressing left to right. Remove loops and backward curls; some sharper bends are acceptable. The topology may take inspiration from the supplied reference, but the geometry must be original; it must not reproduce the old six-endpoint storyboard tree. Vertical position is not success or worth. Show recovery as forward-moving work, not a loop through time.
 
-A reader chooses an authored example age. A dot then travels from the beginning at the left along the example's lived route to the selected “today” moment. That route becomes dark green; alternatives that diverged before today settle into barely visible gray; routes still possible from today remain light gray-green. After arrival, the view moves modestly closer while preserving enough context to understand future possibility. This is one semantic map transition, not a series of literal process steps.
+A reader chooses an authored example age. A dot then travels from the beginning at the left along the example's lived route to the selected “today” moment. That route becomes dark green; alternatives that diverged before today settle into clearly visible gray; routes still possible from today remain lighter gray-green. The dotted today divider must remain legible. After arrival, the view moves modestly closer while preserving enough context to understand future possibility. This is one semantic map transition, not a series of literal process steps. The named decision/comparison and layered explanation in [008](008-choices-and-consequences.md) supply its teaching purpose; age-only coloring is insufficient.
 
 Use the quiet field-guide surface as the resting state. A short-lived local halo may make the traveling dot easier to follow, but it disappears in the settled state. The route and camera motion provide the emphasis; avoid sparkles, confetti, theatrical camera flights, ambient particle clouds, permanently glowing text, or a strong zoom that hides the wider map.
 
@@ -87,13 +89,13 @@ Proposed motion beats and initial timing targets, to test rather than treat as a
 | Immediate response | Confirm the tap/click/keyboard action | Visible feedback within 100 ms |
 | Dot travels along the lived route | Connect the beginning to the example's today | Around 500 ms |
 | Modest focus move after arrival | Bring the selected moment closer without losing context | Around 250 ms |
-| Settled semantic state | Leave dark-green lived, faint-gray untaken, and light gray-green possible paths readable | Roughly 750 ms total |
+| Settled semantic state | Leave dark-green lived, visible-gray untaken, and lighter gray-green possible paths readable | Roughly 750 ms total |
 
 These are prototype targets for rendered review, not measured quality claims. The full explanation and navigation remain available while motion runs. A second selection cancels or retargets the old transition; it never queues performances. On replay, use the same short timing. Reduced motion shows the identical settled route colors and focus immediately, without travel or camera motion.
 
 Use authored, labeled anchors with generous hit areas rather than turning arbitrary coordinates into a personal life prediction. The starting-age selector chooses the scenario; the map interaction makes that scenario's “today” location visible. Provide an equivalent visible button and keyboard focus target. Do not silently change the age because a reader taps empty space. Pointer previews cannot be the only way to discover an action, and dragging is not required.
 
-The line's motion has semantic direction: the dot and dark-green past segment progress from the left-hand beginning toward today. Possible futures extend away from today; later chapter animations may grow a new learning connection from the relevant earlier skill. Region labels stay outside the camera; the age label follows its anchor and retains readable screen-space sizing through zoom and resize. The color state is supplemented by labels, line treatment, and a text explanation; the barely visible untaken field is context, not the only carrier of information.
+The line's motion has semantic direction: the dot and dark-green past segment progress from the left-hand beginning toward today. Possible futures extend away from today; the worked comparison makes relevant learning connections explicit. Region labels stay outside the camera; the age label follows its anchor and retains readable screen-space sizing through zoom and resize. Color is supplemented by labels, line treatment and a text explanation. Earlier decisions remain accessible after zoom through map targets and an equivalent text list; inspecting one does not silently move today.
 
 Beauty is an acceptance requirement, but the interaction earns its place by making selection, continuity, and cause easier to perceive. Ask readers what changed before asking whether it looked impressive. Test whether the effect feels inspiring near age eight and polished rather than childish to older readers; these are design goals, not assumed reactions.
 

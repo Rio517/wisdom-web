@@ -22,9 +22,9 @@ Introduce **habit** through a concrete cue and response, then explain **automati
 
 ## First-chapter bridge
 
-At the end of the learning loop, offer “How do I make it easier to begin again?” Show one fictional planning example: after putting away a snack plate on a chosen practice day, Ari opens the puzzle notebook left ready with a pencil. Ari can ask an adult to help select a manageable puzzle.
+The opening revision in [008 — Choices and consequences](008-choices-and-consequences.md) introduces repeated choices through the same fictional learner, Mika. Offer “See how it adds up” and “What makes the next start easier?” within the worked homework example. Show repeated opportunities to understand, seek feedback and return, while naming circumstances Mika does not control. A manageable starting example is opening the notebook with a pencil ready after a familiar daily activity, with adult help where needed. This is a proposed educational adaptation, not a validated child routine.
 
-Keep this to one small explanation with a return to the same scene. No tracking system, habit score, deadline, or promise that the routine will become automatic. The current chapter must make sense without a future page existing.
+Keep this to one small layered explanation with a return to the same scene. Distinguish accumulated understanding, practical preparation and cue-linked starting; none establishes a general habit of making good decisions in every domain. No tracking system, habit score, deadline, or promise that the routine will become automatic. The current chapter must make sense without a future page existing.
 
 ## Proposed guided explanation
 

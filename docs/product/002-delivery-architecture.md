@@ -59,7 +59,7 @@ Keep the scene state explicit: selected starting age, current scene, optional ex
 
 Author a small set of life-stage examples instead of generating a personalized future at runtime. The age selector positions the marker and chooses an appropriate authored scenario. This remains compatible with static hosting and requires no personal history or backend.
 
-Generate the guided and continuous reading views from the same authored explanations. Core text is available in static HTML. Use HTML/SVG for precise map geometry and labels, with browser animation for transitions. The current prototype uses native SVG and `requestAnimationFrame` without a library; rendered review will determine whether production needs anything more. Static hosting does not constrain animation quality.
+Generate the guided and continuous reading views from the same authored explanations. Core text is available in static HTML. The current prototype uses native SVG and `requestAnimationFrame` without a library. The approved next direction in [008](008-choices-and-consequences.md) uses locally built Tailwind layout, Canvas 2D routes and tracing, and semantic HTML labels and controls. This does not require React, Three.js, a backend or adoption of the production Astro structure. Static hosting does not constrain animation quality.
 
 Future video entries can reference a poster, video, captions, and transcript. No video service integration or generation pipeline is needed now. Optional clips must load on request and preserve the surrounding scene state.
 
@@ -71,7 +71,7 @@ Before publication, verify direct navigation and reload on every route and named
 
 Include sidebar collapse, independent Choices expansion, mobile drawer dismissal/focus, active destination highlighting, the About route, and the Source code link in the navigation checks. Opening or closing the shell must not change the selected age or current scene.
 
-Verify the signature traveling-dot animation under repeated quick selections, keyboard activation, touch, and reduced motion. It must cancel or retarget safely, carry the dot from the left along the lived route, apply only a modest zoom after arrival, settle quickly, and leave content available throughout. Prototype with HTML/SVG first; only introduce a more complex rendering layer if the motion study demonstrates a concrete need.
+Verify the signature traveling-dot animation under repeated quick selections, keyboard activation, touch, and reduced motion. It must cancel or retarget safely, carry the dot from the left along the lived route, apply only a modest zoom after arrival, settle quickly, and leave content available throughout. The existing HTML/SVG study is the baseline; verify equivalent behavior and meaningful choice consequences during the proposed Canvas rewrite in 008.
 
 Build output can include JavaScript that runs in the browser; it does not require server execution. Do not add a backend unless a future agreed feature requires one.
 

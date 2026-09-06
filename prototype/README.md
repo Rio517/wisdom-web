@@ -1,6 +1,6 @@
 # Narrow interactive map prototype
 
-This directory contains a local, dependency-free HTML/CSS/JavaScript study for the approved scope in [product document 007](../docs/product/007-interactive-map-prototype.md). It is not the complete choices chapter, the production website, or a published build. It has not yet been owner-reviewed.
+This directory contains a local, dependency-free HTML/CSS/JavaScript study for the implemented scope in [product document 007](../docs/product/007-interactive-map-prototype.md). It is not the complete choices chapter, the production website, or a published build. Owner feedback informs [008 — Choices and consequences](../docs/product/008-choices-and-consequences.md); that Tailwind/Canvas and narrative revision has not yet been implemented. The commands and inventory below describe the existing study.
 
 ## Run locally
 

@@ -10,7 +10,7 @@ Access date: 2026-09-06. Detailed records live beside their topic findings. Evid
 | L2–L10 | [Lifetime opportunities](lifetime/sources.md) |
 | T1–T9 | [Decision-making and development](decision-making/sources.md) |
 | B1–B4 | [Habits and repeated action](habits/sources.md) |
-| H1–H6 | [Hosting, prototyping, and motion accessibility](delivery/sources.md) |
+| H1–H8 | [Hosting, prototyping, layout, Canvas and motion accessibility](delivery/sources.md) |
 
 Identifiers are stable references; their prefixes do not constrain folder placement. Cross-link to an existing record instead of duplicating it.
 
@@ -23,6 +23,7 @@ Identifiers are stable references; their prefixes do not constrain folder placem
 | Enjoyment and learning can reinforce one another | Supported association: L13 | Not a guaranteed causal cycle for every learner | Test the fictional maths loop for fatalistic interpretations |
 | Useful habits form on a fixed timetable | Unsupported: B1, B3 | Wide variation; adult evidence | Avoid countdowns and automaticity deadlines |
 | Cues and stable starting contexts can support routines | Promising: B2–B4 | Associations and limited interventions; child transfer untested | Focused child/family and habit-change research before the full habits chapter |
+| One useful choice builds a general habit of good judgment | Not established by B1–B4 | Behavior-specific automaticity is not transfer to unrelated decisions | Teach specific knowledge, setup and starting-cue mechanisms; investigate broad transfer only if that claim becomes necessary |
 | Qualifications affect access | Supported locally: L3; descriptive: L2 | Selection and institutional variation | Verify each real eligibility example if added |
 | Opportunities only decrease with age | Unsupported: L4–L6, L9–L10 provide counterexamples or qualifications | Specific deadlines differ from universal closure | Investigate a particular time-limited program only if used |
 | Mindset slogans improve achievement | Mixed and small: L7–L8 | Quality criteria and context differ | No further search needed unless mindset becomes a central claim |

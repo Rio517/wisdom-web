@@ -2,7 +2,9 @@
 
 > **For agentic workers:** Use superpowers:executing-plans or superpowers:subagent-driven-development when appropriate to the task boundaries. Track the steps below; visual review remains a separate gate from automated tests.
 
-Status: Implemented (local prototype only; owner review pending). Created: 2026-09-06. Updated: 2026-09-06.
+Status: Implemented (local prototype only; owner feedback informs revision 008). Created: 2026-09-06. Updated: 2026-09-06.
+
+This document records the implemented study. [008 — Choices and consequences](008-choices-and-consequences.md) is the next revision's written design. Its approved direction replaces the looping geometry, barely visible untaken paths and age-only explanation below; it is not implemented yet.
 
 **Goal:** Test a beautiful, abundant life-path map in which a dot travels from the beginning to a selected example age, then the view gently moves closer to that moment.
 

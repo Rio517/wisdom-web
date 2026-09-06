@@ -18,6 +18,18 @@ For a learning-specific precedent, the 2022 study-habit paper used a six-week un
 
 Product inference: the first chapter needs a short bridge from accumulated learning to repeated choices. A dedicated habits explanation can teach a small, chosen action, a recognizable starting cue, manageable preparation, and a review of what helps or obstructs it. Treat these as educational adaptations to test, not a proven child intervention. Include changing an unhelpful routine and restarting after interruption; do not imply that a lapse erases learning, that habits replace judgment, or that a child must control circumstances beyond their reach. The [habits proposal](../../product/004-habits-and-daily-practice.md) defines the boundary and further research needed.
 
+## Repeated choices and the next choice
+
+The first Choices explanation needs to distinguish several ways an earlier action could make a later one easier:
+
+- **Knowledge:** understanding something can support the next learning task. This is a learning mechanism, not by itself a habit; see [learning that compounds](../learning/README.md).
+- **Practical setup:** preparing materials or arranging help can remove a particular obstacle in the fictional example. This is an editorial illustration, not an established child intervention or proof that the child controls the setting.
+- **A familiar start:** a response repeated in a stable context can be studied for increasing automaticity. B4 distinguishes initiating study from executing its demanding work; its university/app samples do not establish the same effects in children. [Stojanovic and colleagues, 2022](https://www.frontiersin.org/journals/psychology/articles/10.3389/fpsyg.2022.883795/full).
+
+The reviewed evidence does not establish a general transferable “habit of making good choices.” A familiar action can be useful or unhelpful, and a routine can become inappropriate when the situation changes. Do not translate evidence about starting a particular behavior into improved judgment across unrelated choices.
+
+For the homework example, illustrate repeated opportunities to begin, understand and seek feedback. Do not equate completed assignments with understanding, promise that repetition alone improves learning, or imply that one missed evening removes accumulated knowledge. Show adult decisions, available support and interruptions as circumstances, not moral failures. This is the bounded layered story in [008 — Choices and consequences](../../product/008-choices-and-consequences.md), not completion of the separate child habit-change research program.
+
 ## Product use
 
 The [Habits product proposal](../../product/004-habits-and-daily-practice.md) defines the first-chapter bridge and a dedicated future explanation. [Learning that compounds](../learning/README.md) explains why returning to learning can matter; habit evidence does not establish learning quality or a lifetime payoff.
