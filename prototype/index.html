@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#FCFCFA">
+  <title>Many possible paths · Wisdom</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="./styles.css">
+  <script type="module" src="./app.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to the explanation</a>
+  <button class="index-opener" id="open-index" aria-controls="site-index" aria-expanded="true" hidden>Open index</button>
+  <aside class="site-index" id="site-index" aria-label="Chapter index">
+    <div class="brand-row"><a class="brand" href="./">Wisdom<span>A field guide to life</span></a><button class="icon-button" id="close-index" aria-label="Close index" title="Close index">‹</button></div>
+    <nav aria-label="Chapters">
+      <details open><summary>Choices</summary>
+        <p class="chapter-name">The paths we make</p>
+        <ol class="scene-links">
+          <li><a href="#possibilities" data-scene="possibilities" aria-current="step">Many possible paths</a></li>
+          <li><a href="#learning" data-scene="learning">Learning builds on learning</a></li>
+        </ol>
+      </details>
+    </nav>
+    <div class="index-bottom"><p class="prototype-note">An early working study<br>Two scenes to explore</p><button class="text-button" data-dialog="about">About this guide</button><a href="https://github.com/Rio517/wisdom-web">Source code <span aria-hidden="true">↗</span></a></div>
+  </aside>
+
+  <main id="main" tabindex="-1">
+    <header class="chapter-bar"><span>Choices <span class="bar-divider" aria-hidden="true">/</span> The paths we make</span><button class="text-button" data-dialog="reading">Read without stepping</button></header>
+
+    <section id="possibilities-scene" aria-labelledby="opening-title">
+      <div class="opening-copy"><h1 id="opening-title" tabindex="-1">Your future has<br>more than one path.</h1><p class="lead">You haven’t lived the rest of your life yet.<br>There is room to learn, change direction, and try again.</p></div>
+
+      <figure class="map-plate" aria-labelledby="map-heading" aria-describedby="map-caption">
+        <div class="map-toolbar"><div><h2 id="map-heading">A moment in a life</h2><p id="map-instruction">Choose a moment. See the path that leads there.</p></div><div class="moment-controls"><label for="example-age">Example age</label><select id="example-age"><option value="8">8 years</option><option value="12">12 years</option><option value="16">16 years</option><option value="25">25 years</option><option value="40">40 years</option><option value="60">60 years</option></select><button id="explore" class="primary-button">Explore this moment</button></div></div>
+
+        <div class="map-stage">
+          <div class="map-regions" aria-hidden="true"><span id="past-label">A beginning</span><span>Many possible futures</span></div>
+          <svg id="life-map" viewBox="0 0 1260 540" role="group" aria-labelledby="map-title map-description" data-motion="ready"><title id="map-title">An illustrated life with many possible paths</title><desc id="map-description">A winding route from a beginning to an example age, with many branches beyond it. Height is not a measure of success. Select a labeled point or use the age control.</desc></svg>
+          <noscript><p class="static-explanation">Imagine a winding line from a beginning to today. Behind today are the route taken and other routes not taken. Ahead are many possible paths. The past cannot be relived, but learning, help and new choices can open different routes from here.</p></noscript>
+          <div class="map-actions"><button id="overview" class="text-button" hidden>See the whole map</button><button id="replay" class="text-button" hidden>Replay arrival</button><label class="motion-control"><input id="reduce-motion" type="checkbox"> Less motion</label></div>
+        </div>
+        <figcaption id="map-caption"><div class="map-key"><span><i class="key-line traveled"></i>The path taken</span><span><i class="key-line untaken"></i>Paths not taken</span><span><i class="key-line possible"></i>Paths still possible</span></div><p>A picture of possibilities, not a prediction. Up and down are not scores.<br>Some paths wander or loop back to an interest. The drawing is not a calendar.</p></figcaption>
+      </figure>
+
+      <div class="reflection"><p id="moment-copy">At eight, a new interest can start with a question, a first lesson, or someone showing you how. You do not need a whole-life plan.</p><p class="quiet-note">Your choices matter. So do help, circumstances, and chance.</p></div>
+      <footer class="scene-footer"><span class="scene-count">1 of 2 in this study</span><button class="next-button primary-button" data-scene="learning">Next: learning opens paths <span aria-hidden="true">→</span></button></footer>
+    </section>
+
+    <section id="learning-scene" aria-labelledby="learning-title" hidden>
+      <div class="opening-copy"><h1 id="learning-title" tabindex="-1">What you learn becomes<br>something to build on.</h1><p class="lead">Learning can compound: something you understand now<br>can help you understand something new.</p></div>
+      <div class="learning-plate"><div class="learning-intro"><h2>One idea, more ways to use it</h2><span>A fictional example</span></div><div class="learning-chain">
+        <article><div class="fraction-disc halves" aria-hidden="true"></div><h3>Notice equal parts</h3><p>Ari shares a circle equally. Each person gets one half.</p></article>
+        <span class="chain-arrow" aria-hidden="true">↗</span>
+        <article><div class="fraction-disc quarters" aria-hidden="true"></div><h3>Make a connection</h3><p>Two quarters cover the same amount as one half. Different names, the same share.</p></article>
+        <span class="chain-arrow" aria-hidden="true">↗</span>
+        <article><div class="recipe-amount" aria-hidden="true"><span>½</span><span>¼ + ¼</span></div><h3>Use it somewhere new</h3><p>A recipe needs half a cup. Ari can measure it with two quarter-cups.</p></article>
+      </div></div>
+      <div class="learning-note"><img src="../docs/design/brain-ink-wash-v1.png" width="116" height="116" alt="" loading="lazy"><div><h2>Progress can make you curious again.</h2><p>Ari enjoys figuring this out and chooses another puzzle. If it is confusing, an explanation or a different example can help. More practice is useful when it helps you understand.</p><button class="text-button underlined" data-dialog="tennis">Does learning carry into other activities?</button></div></div>
+      <p class="evidence-link">Research and limits: <a href="https://github.com/Rio517/wisdom-web/blob/main/docs/research/learning/README.md">learning that builds and carries across</a>. This example illustrates a mechanism, not a guaranteed result.</p>
+      <footer class="scene-footer"><button class="text-button" data-scene="possibilities">← Back to your moment</button><span class="scene-count">2 of 2 in this study</span></footer>
+    </section>
+    <p id="status" class="sr-only" role="status" aria-live="polite"></p>
+  </main>
+
+  <dialog id="tennis-dialog" aria-labelledby="tennis-title"><button class="dialog-close text-button" data-close>Close example</button><p class="dialog-kicker">A closer look</p><h2 id="tennis-title">A head start isn’t the same as a shortcut.</h2><p>Imagine you have practiced tennis and decide to try another racket sport. Some things may feel familiar. Other things work differently and need new practice.</p><p>Earlier learning can give you something to start from. You still have to notice what fits—and what needs changing.</p><p class="quiet-note">Research on transfer between sports is limited. It does not show that tennis makes every racket sport easy to learn.</p><a href="https://github.com/Rio517/wisdom-web/blob/main/docs/research/learning/sources.md">Read the research and its limits</a><button class="primary-button dialog-return" data-close>Return to the explanation</button></dialog>
+  <dialog id="about-dialog" aria-labelledby="about-title"><button class="dialog-close text-button" data-close>Close</button><h2 id="about-title">A few ideas worth growing up with.</h2><p>Wisdom is a working title for a selective life guide for readers aged eight and up. It combines clear explanations, examples and research notes.</p><p>This is a two-scene design prototype, not a complete chapter. The life map is an illustration, not a prediction, a count of opportunities or a ranking of lives.</p><a href="https://github.com/Rio517/wisdom-web/tree/main/docs/research">Explore the research library</a></dialog>
+  <dialog id="reading-dialog" aria-labelledby="reading-title"><button class="dialog-close text-button" data-close>Return to the guided view</button><h2 id="reading-title">The paths we make</h2><h3>Your future has more than one path.</h3><p>You haven’t lived the rest of your life yet. There is room to learn, change direction, and try again. Your choices matter. So do help, circumstances, and chance.</p><p>Imagine a winding line from a beginning to today. Behind today are the route taken and other routes not taken. Ahead are many possible paths. The past cannot be relived, but learning, help and new choices can open different routes from here. Up and down are not scores.</p><h3>Learning builds on learning.</h3><p>Earlier understanding can help with a new idea. In a fictional example, Ari learns to share a circle equally, then sees that two quarters equal one half. Ari can use that understanding to measure half a cup using two quarter-cups.</p><p>Progress can feel satisfying and encourage another challenge. When it does not, asking for help or trying a different explanation can be part of learning, too. These are possibilities, not guarantees.</p><a href="https://github.com/Rio517/wisdom-web/blob/main/docs/research/learning/README.md">Read the learning evidence</a></dialog>
+</body>
+</html>
