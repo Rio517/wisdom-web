@@ -2,7 +2,7 @@
 
 ## Interface and motion storyboards
 
-The [selected reading and motion boards](storyboards/README.md) explore the complete reading surface and the opening marker-and-path interaction. Each selected image has undergone two visual-review/refinement cycles. They are proposed visual targets, not implemented pages or tested animation.
+The [stored reading and motion boards](storyboards/README.md) explore the reading surface and earlier marker-and-path interaction. Each selected image underwent two visual-review/refinement cycles. Their sparse map and stationary-marker sequence are superseded by the [working prototype and browser review](prototype/README.md). The PNGs remain composition references rather than executable UI specifications.
 
 ## Brain — ink and restrained watercolor
 
@@ -10,7 +10,7 @@ Status: exploratory style sample, not an approved production asset or anatomical
 
 Asset: [brain-ink-wash-v1.png](brain-ink-wash-v1.png). PNG, 1254 × 1254 pixels, with an alpha channel verified using image metadata. Generated with the built-in ImageGen tool; no input image, reference artwork, or manual image edit was used. The file is an unchanged copy of the generated output. It is raster artwork, not SVG.
 
-The sample explores the [visual-language proposal](../product/003-visual-language-and-navigation.md). Its muted rose wash and fine dark contours fit the proposed specimen treatment. Interior detail is dense enough that legibility needs checking at the actual small display size. The image has not been evaluated in a rendered page, anatomically validated, or approved as the final illustration style.
+The sample explores the [visual-language proposal](../product/003-visual-language-and-navigation.md). Its muted rose wash and fine dark contours fit the proposed specimen treatment. It has been visually inspected as a small, decorative illustration in the prototype's learning scene. It has not been anatomically validated or approved as the final illustration style; it does not carry essential content or identify brain functions.
 
 Use HTML/SVG for any future labels and leader lines. Do not attach abstract learning functions to arbitrary folds. Meaningful text and diagrams must remain usable without this illustration.
 

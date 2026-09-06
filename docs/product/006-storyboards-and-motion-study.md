@@ -1,41 +1,36 @@
 # 006 — Storyboards and the first motion study
 
-Status: Proposed. Created: 2026-09-06. Updated: 2026-09-06.
+Status: Approved for prototyping. Created: 2026-09-06. Updated: 2026-09-06.
 
 ## Decision
 
-Use ImageGen to develop and review the visual direction, then HTML/SVG to test the selected interaction. These are different tests: a still can establish composition and visual ambition; a working prototype must establish timing, responsiveness, readable text, and accessible behavior.
+Use generated stills as historical visual inputs and HTML/SVG to test the actual interaction. A still can establish composition and visual ambition; only a working prototype can expose timing, interruption, responsive layout, readable text, and accessible behavior. This is an approval for the narrow prototype, not approval of the complete chapter, production architecture, visual finish, or publication.
 
 This is a project recommendation, consistent with guidance to choose prototype fidelity for the question being tested and use code for realistic interactions. [GOV.UK: Making prototypes](https://www.gov.uk/service-manual/design/making-prototypes).
 
-## Image study
+## Storyboard status and limits
 
-The [selected boards and review limits](../design/storyboards/README.md) are ready for owner review. Their existence does not imply approval of the visual direction or measured motion quality.
+The [stored boards and review history](../design/storyboards/README.md) remain useful records of the field-guide composition, map prominence, navigation, and desired immediacy. They are generated 1536 × 1024 PNGs, not website assets, responsive-layout evidence, a typography or contrast audit, or a demonstration of motion quality.
 
-Create two complementary review boards using the existing [Choices explanation](001-choices-experience.md) and [visual/motion direction](003-visual-language-and-navigation.md):
+Their six future endpoints and stationary-marker sequence are superseded by the approved prototype direction. The current map uses abundant original geometry with nonlinear rises, falls, crossings, and occasional curls. Selecting an example age sends a dot from the beginning at the left along a dark-green lived path to today; a modest zoom follows. Untaken alternatives settle into barely visible gray and still-possible futures remain light gray-green. [003](003-visual-language-and-navigation.md#signature-map-interaction) is the detailed visual-requirements source and [007](007-interactive-map-prototype.md) is the executable prototype plan.
 
-- **Reading experience:** a desktop opening with the collapsible topic index and a phone opening with reflowed content. The path map is the focal point; the small illustrated detail remains subordinate.
-- **Marker and path:** four snapshots of one unchanged map, showing ready, acknowledgment, connection tracing, and a quiet settled state. Timing labels are design targets, not measured performance.
-
-Use real short copy, a starting example age, readable labels, scene position, and Next. Make the map's past/present/future distinction explicit. It illustrates possibilities, not a count of opportunities, equal probabilities, or a success scale.
-
-Each board receives an initial visual review and revision, then a second visual review and revision, before the selected version is presented. Check the actual outputs for defects; do not count repeated generation without inspection as a review cycle. Record reproducible prompts and final image paths in design assets, with concise review history in `COMPLETED.md`.
-
-The image study is not website implementation, a responsive-layout test, a typography/contrast audit, or a demonstration of motion quality. Labels and geometry in an image must be rebuilt as real text and SVG rather than shipping screenshots as the interface.
+The original PNGs remain unchanged historical inputs. Labels and geometry are real text and SVG in an interface, not cropped or shipped from the screenshots.
 
 ## Review questions
 
-1. Is the map the memorable object while the page stays quiet and readable?
-2. Can someone find the current place, starting-age control, and next action?
-3. Is the phone composition a genuine reflow rather than a reduced desktop?
-4. Does the line reveal preserve the same underlying path and present marker?
-5. Is the acknowledgment effect localized and absent from the settled state?
-6. Do the labels avoid implying personal prediction, fixed probabilities, or ranked lives?
+1. Is the abundant wandering map the memorable object while the page stays quiet and readable?
+2. Can someone find the example-age control, understand the selected today, and reach the learning scene?
+3. Do the three route treatments communicate their meanings without reading as success scores or a literal stepper?
+4. Does the dot clearly travel from the left-hand beginning before the modest zoom begins?
+5. Do interruption, keyboard activation, touch, browser history, reduced motion, and the optional-example return preserve coherent state?
+6. Is the shell readable and usable at all three desktop/iPad target viewports with the system fallback fonts actually rendered?
 
-## Next: a narrow working prototype
+## Narrow working prototype
 
-After visual review, implement one responsive reading shell, dot placement/path tracing, and one learning example with a return. Include the same final state without animation, keyboard activation, repeated quick input, and basic history/scene behavior. Do not build the complete site or a general animation engine to test this interaction.
+The local `prototype/` study covers one reading shell, the opening map interaction, a second learning scene, one optional related-sport example, continuous-reading copy, and returns between those states. It is not the complete seven-scene chapter, a production website, or a published artifact. It has not yet been owner-reviewed.
 
-Measure and inspect the proposed 600–750 ms settling window in the browser rather than trusting the storyboard timestamps. Controls and explanations remain available throughout. Test on phone and desktop and with reduced-motion preferences. Nonessential interaction animation must be suppressible; the W3C explanation of SC 2.3.3 is useful guidance, not a claim that the mockup meets WCAG. [W3C: Animation from Interactions](https://www.w3.org/WAI/WCAG22/Understanding/animation-from-interactions.html).
+Desktop and iPad mini are the minimum prototype targets: 1440 × 1000, 1133 × 744, and 744 × 1133 CSS pixels. Phone design is deferred; the phone storyboard remains historical composition research rather than an acceptance target.
 
-Use the prototype to decide exact geometry, font sizes, motion curves, and whether a specialized animation library is warranted. The full seven-scene narrative and later habits material remain separate authoring work.
+The intended motion starts responding within 100 ms, travels for about 500 ms, then focuses for about 250 ms. Repeated input cancels the previous sequence. Reduced motion shows the same settled state immediately without travel or camera motion. Controls and explanations remain available throughout. These timings and qualities require rendered browser review; their presence in code is not verification. Nonessential interaction animation must be suppressible; the W3C explanation of SC 2.3.3 is useful guidance, not a claim that the prototype meets WCAG. [W3C: Animation from Interactions](https://www.w3.org/WAI/WCAG22/Understanding/animation-from-interactions.html).
+
+Use rendered and owner review to decide exact geometry, type packaging, font sizes, motion curves, and whether a specialized animation library is warranted. The full chapter, phone design, production integration, and later habits material remain separate work.

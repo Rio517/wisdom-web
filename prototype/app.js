@@ -5,10 +5,11 @@ const $ = selector => document.querySelector(selector);
 let state = readState(location.href);
 const systemMotion = matchMedia('(prefers-reduced-motion: reduce)');
 const motionControl = $('#reduce-motion');
+let manualLessMotion = false;
 motionControl.checked = systemMotion.matches;
 motionControl.disabled = systemMotion.matches;
 motionControl.title = systemMotion.matches ? 'Enabled by your system preference' : '';
-const map = createMapView($('#life-map'), age => navigate({ age, selected: true }, true), () => motionControl.checked || systemMotion.matches);
+const map = createMapView($('#life-map'), age => navigate({ age, selected: true }, true), () => manualLessMotion || systemMotion.matches);
 const ageCopy = {
   8: 'At eight, a new interest can start with a question, a first lesson, or someone showing you how. You do not need a whole-life plan.',
   12: 'At twelve, you might return to something you enjoy or try an unfamiliar activity. A difficult first attempt does not have to be your last.',
@@ -19,6 +20,10 @@ const ageCopy = {
 };
 
 function render(animate = false, focusHeading = false) {
+  if (focusHeading) {
+    document.querySelectorAll('dialog[open]').forEach(dialog => dialog.close());
+    if ($('#main').inert) setIndex(false);
+  }
   const opening = state.scene === 'possibilities';
   $('#possibilities-scene').hidden = !opening;
   $('#learning-scene').hidden = opening;
@@ -57,9 +62,12 @@ $('#explore').addEventListener('click', () => navigate({ age: Number($('#example
 $('#example-age').addEventListener('change', event => navigate({ age: Number(event.target.value), selected: state.selected }, state.selected));
 $('#replay').addEventListener('click', () => map.show(state.age, true, true));
 $('#overview').addEventListener('click', () => map.overview());
-motionControl.addEventListener('change', () => map.show(state.age, state.selected, false));
+motionControl.addEventListener('change', () => {
+  manualLessMotion = motionControl.checked;
+  map.show(state.age, state.selected, false);
+});
 systemMotion.addEventListener('change', () => {
-  motionControl.checked = systemMotion.matches;
+  motionControl.checked = manualLessMotion || systemMotion.matches;
   motionControl.disabled = systemMotion.matches;
   motionControl.title = systemMotion.matches ? 'Enabled by your system preference' : '';
   if (state.scene === 'possibilities') map.show(state.age, state.selected, false);

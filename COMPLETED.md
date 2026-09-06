@@ -30,4 +30,12 @@
 - Saved the selected boards, four review inputs, exact prompts, current limitations, and the ImageGen-to-HTML/SVG prototype proposal. Added official prototyping and motion-accessibility guidance to the delivery source ledger.
 - Verified 30 Markdown files, 165 local links/anchors, 32 unique source records, six exact generation prompts, and unchanged copies/dimensions for all six storyboard images. These checks do not establish live UI or motion behavior.
 
-Complete chapter writing, the working motion prototype, approved production artwork, website implementation, and site publication remain outstanding.
+- Built a local two-scene HTML/SVG prototype on `prototype/choices-map`, with a rich nonlinear map, authored age selection, traveling dot, post-arrival focus, three route states, replay/overview, a learning example and related-sport detour.
+- Updated product requirements to desktop and iPad mini first; deferred phones and superseded the sparse, stationary-marker storyboard behavior without altering the saved PNGs.
+- Browser review/improvement cycle 1: inspected desktop and tablet captures, reduced tangled branch endings while retaining abundance, and bounded focus framing to avoid empty space beyond the future.
+- Browser review/improvement cycle 2: inspected the revised map and learning scene, kept age labels readable through zoom/rotation, removed hidden keyboard targets after focus, corrected skip navigation, and refined scene focus/scroll behavior. Inspected the final desktop and tablet captures.
+- Independent code review identified contextual-dialog history and manual/system motion-preference edge cases; reproduced both with browser regressions and corrected them. Reconciled the earlier stationary-label proposal with the anchored, readable Today label required by the zooming design.
+- Verified ten model tests and ten browser interaction groups, checked a JavaScript-disabled static explanation, and observed the travel-before-zoom sequence with a quiet settled marker. Saved review inputs and final screenshots with explicit viewport, device and accessibility limits.
+- Checked all 33 Markdown files and 211 local links/anchors; no broken destinations or anchors were found. Retained research and image-study source files unchanged.
+
+Complete chapter writing, approved production artwork, production website implementation, and site publication remain outstanding. The prototype branch remains local pending integration and owner review.

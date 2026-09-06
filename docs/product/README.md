@@ -9,10 +9,11 @@ Specific proposals use stable identifiers: `NNN-short-name.md`. Number documents
 | 003 | [Visual language and navigation](003-visual-language-and-navigation.md) | Proposed | 2026-09-06 |
 | 004 | [Habits and the choices we repeat](004-habits-and-daily-practice.md) | Proposed | 2026-09-06 |
 | 005 | [Research library and navigation](005-research-library.md) | Proposed | 2026-09-06 |
-| 006 | [Storyboards and the first motion study](006-storyboards-and-motion-study.md) | Proposed | 2026-09-06 |
+| 006 | [Storyboards and the first motion study](006-storyboards-and-motion-study.md) | Approved for prototyping | 2026-09-06 |
+| 007 | [Interactive map prototype implementation plan](007-interactive-map-prototype.md) | Implemented: local study, owner review pending | 2026-09-06 |
 
 Keep each document about one coherent product or delivery decision. Include the purpose, relevant requirements, proposed behavior, scope boundaries, acceptance criteria, and unresolved choices at the depth needed for review. Product requirements can be settled while the detailed solution remains proposed; make that distinction explicit.
 
-Use `Proposed`, `Approved`, `Implemented`, or `Superseded` as the document status. Do not mark a proposal approved merely because it is committed or published. Update the same document as the proposal develops; Git preserves its history. Create a new numbered document for a distinct proposal or a substantial replacement, and link superseded documents to their successor. Avoid filename versions such as `-v2` or new dated copies of the same proposal.
+Use `Proposed`, `Approved`, `Approved for prototyping`, `Implemented`, or `Superseded` as the base document status, with a short scope qualifier when needed. “Approved for prototyping” authorizes only the bounded study described in that document; it does not imply production approval, owner acceptance of the result, publication, or completion. Do not mark a proposal approved merely because it is committed or published. Update the same document as the proposal develops; Git preserves its history. Create a new numbered document for a distinct proposal or a substantial replacement, and link superseded documents to their successor. Avoid filename versions such as `-v2` or new dated copies of the same proposal.
 
 The [project brief](../brief.md) contains durable project requirements. [Research](../research/report-source.md) and [content samples](../content/choices-opening.md) remain separate. [NEXT_STEP.md](../../NEXT_STEP.md) points to the active decision and immediate work; [COMPLETED.md](../../COMPLETED.md) records concise task history.

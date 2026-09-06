@@ -2,7 +2,7 @@
 
 A selective, guided and animated life manual for ages 8+, starting with how choices shape future possibilities.
 
-The project is in research and design. The website is not implemented or published.
+The project is in research and design, with a narrow local HTML/SVG prototype under [`prototype/`](prototype/README.md). That study is not the production website, has not been published, and has not yet been owner-reviewed.
 
 ## Start here
 
@@ -20,6 +20,9 @@ The project is in research and design. The website is not implemented or publish
 - [005 — Research library and possible reading UI](docs/product/005-research-library.md)
 - [Illustration study and generation notes](docs/design/README.md)
 - [Selected interface and animation storyboards](docs/design/storyboards/README.md)
+- [006 — Storyboards and the first motion study](docs/product/006-storyboards-and-motion-study.md)
+- [007 — Interactive map prototype implementation plan](docs/product/007-interactive-map-prototype.md)
+- [Run the local prototype](prototype/README.md)
 - [Completed work](COMPLETED.md)
 
-The proposed experience combines a selectable starting age, animated life-path diagrams, reader-controlled steps, examples, and optional deeper explanations. Learning and choices compounding are central; habits are a linked follow-up. A clean field-guide reading surface surrounds quick, purposeful map animation and collapsible navigation. Each chapter will have its own URL and a continuous reading view.
+The proposed complete experience combines a selectable example age, animated life-path diagrams, reader-controlled chapter scenes, examples, and optional deeper explanations. Learning and choices compounding are central; habits are a linked follow-up. The approved narrow prototype tests two scenes in a clean field-guide shell: an abundant branching map, a dot traveling from the left along the lived route to today, a modest focus move, and one learning example. It does not implement the complete chapter. Each eventual chapter is intended to have its own URL and a continuous reading view.

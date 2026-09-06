@@ -54,6 +54,16 @@ async (page) => {
   assert(await page.locator('#learning-scene').isVisible(), 'Reload restores scene');
   results.push('Scene, deep example, focus, history and reload');
 
+  await page.getByRole('button', { name: 'Does learning carry into other activities?' }).click();
+  await page.goBack();
+  await page.locator('#possibilities-scene').waitFor({ state: 'visible' });
+  assert(!await page.locator('#tennis-dialog').isVisible(), 'History navigation closes a contextual dialog');
+  assert(await page.evaluate(() => document.activeElement.id) === 'opening-title', 'History focuses the restored scene, not a hidden trigger');
+  await page.goForward();
+  await page.locator('#learning-scene').waitFor({ state: 'visible' });
+  assert(await page.locator('#learning-scene').isVisible(), 'Forward restores the learning scene without stale modal');
+  results.push('History while a contextual dialog is open');
+
   await page.locator('.skip-link').focus();
   await page.keyboard.press('Enter');
   assert(page.url().endsWith('#learning'), 'Skip link must preserve the current scene');
@@ -81,6 +91,11 @@ async (page) => {
   assert(await page.locator('#life-map').getAttribute('data-motion') === 'settled', 'System reduced motion immediately settles');
   assert(await page.locator('#reduce-motion').isChecked(), 'System preference is reflected in the control');
   assert(await page.locator('#reduce-motion').isDisabled(), 'UI cannot falsely claim system motion is enabled');
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await page.waitForFunction(() => !document.querySelector('#reduce-motion').disabled);
+  assert(await page.locator('#reduce-motion').isChecked(), 'A manual reduced-motion choice survives an OS preference cycle');
+  await page.locator('#example-age').selectOption('12');
+  assert(await page.locator('#life-map').getAttribute('data-motion') === 'settled', 'Restored manual choice prevents animation');
   results.push('Manual and system reduced motion');
 
   await page.setViewportSize({ width: 1440, height: 1000 });

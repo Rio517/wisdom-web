@@ -2,7 +2,7 @@
 
 Status: Proposed. Created: 2026-09-06. Updated: 2026-09-06.
 
-The public GitHub repository is approved and created. The proposed site architecture below supports [001 — Choices experience](001-choices-experience.md); the website is not yet implemented.
+The public GitHub repository is approved and created. The proposed production architecture below supports [001 — Choices experience](001-choices-experience.md); the production website is not implemented or published. A dependency-free local study under `prototype/` implements only the narrow scope in [007](007-interactive-map-prototype.md) and does not commit the production site to that prototype structure.
 
 ## Recommendation
 
@@ -59,7 +59,7 @@ Keep the scene state explicit: selected starting age, current scene, optional ex
 
 Author a small set of life-stage examples instead of generating a personalized future at runtime. The age selector positions the marker and chooses an appropriate authored scenario. This remains compatible with static hosting and requires no personal history or backend.
 
-Generate the guided and continuous reading views from the same authored explanations. Core text is available in static HTML. Use HTML/SVG for precise map geometry and labels, with browser animation for transitions. Select the animation library only after the motion study establishes the required effects; static hosting does not constrain animation quality.
+Generate the guided and continuous reading views from the same authored explanations. Core text is available in static HTML. Use HTML/SVG for precise map geometry and labels, with browser animation for transitions. The current prototype uses native SVG and `requestAnimationFrame` without a library; rendered review will determine whether production needs anything more. Static hosting does not constrain animation quality.
 
 Future video entries can reference a poster, video, captions, and transcript. No video service integration or generation pipeline is needed now. Optional clips must load on request and preserve the surrounding scene state.
 
@@ -67,11 +67,11 @@ Future video entries can reference a poster, video, captions, and transcript. No
 
 Use the current official Astro GitHub Pages workflow as the starting point. Configure `site` and the repository `base` path, and deploy only the generated output. Internal links and assets must work under the project subpath as well as during local preview. [Astro's GitHub Pages deployment guide](https://docs.astro.build/en/guides/deploy/github/).
 
-Before publication, verify direct navigation and reload on every route and named scene, starting-age selection and fallback, Back/Next and browser history, opening/closing deeper examples, replay/skip, phone and desktop layout, keyboard navigation, diagram fallback, reduced motion, and source links. The main story must remain readable if the interactive script fails. Enable HTTPS and verify the actual published URL before reporting it as live.
+Before publication, verify direct navigation and reload on every route and named scene, example-age selection and fallback, Back/Next and browser history, opening/closing deeper examples, replay/skip, tablet and desktop layout, keyboard navigation, diagram fallback, reduced motion, and source links. The main story must remain readable if the interactive script fails. Enable HTTPS and verify the actual published URL before reporting it as live. Phone support is deferred and can be reconsidered later; it is not a requirement for the initial desktop-and-iPad-mini experience.
 
 Include sidebar collapse, independent Choices expansion, mobile drawer dismissal/focus, active destination highlighting, the About route, and the Source code link in the navigation checks. Opening or closing the shell must not change the selected age or current scene.
 
-Verify the signature marker-and-line animation under repeated quick selections, keyboard activation, touch, and reduced motion. It must cancel or retarget safely, settle quickly, and leave content available throughout. Prototype with HTML/SVG first; only introduce a more complex rendering layer if the motion study demonstrates a concrete need.
+Verify the signature traveling-dot animation under repeated quick selections, keyboard activation, touch, and reduced motion. It must cancel or retarget safely, carry the dot from the left along the lived route, apply only a modest zoom after arrival, settle quickly, and leave content available throughout. Prototype with HTML/SVG first; only introduce a more complex rendering layer if the motion study demonstrates a concrete need.
 
 Build output can include JavaScript that runs in the browser; it does not require server execution. Do not add a backend unless a future agreed feature requires one.
 
@@ -92,9 +92,9 @@ Resolve these mismatches explicitly:
 ## Quality work before implementation
 
 1. Review the chapter proposal and sample voice.
-2. Produce a storyboard and motion study of the opening, one branching diagram, a deeper example and return, and the ending at phone and desktop widths.
+2. Use the existing storyboard studies as historical composition inputs and review the narrow working prototype at desktop and iPad mini sizes. Phone design is deferred for this prototype.
 3. Test whether a reader can explain the core mechanism, a trade-off, and a way to recover from a setback.
-4. Write the implementation plan around the selected storyboard, including routes, content fields, diagram states, and verification.
+4. Use [007](007-interactive-map-prototype.md) for the current prototype plan; write a separate production implementation plan only after prototype review settles the relevant choices.
 5. Implement and publish the first complete chapter, then develop the daily-decisions follow-up.
 
-The research and proposal are the current deliverable. A task-by-task software implementation plan becomes useful once the teaching sequence and visual behavior are settled.
+Research, design, and the local prototype are the current deliverables. The prototype is not the complete chapter, the production site, or a published release; a production implementation plan becomes useful once rendered and owner review settle the teaching sequence and visual behavior.

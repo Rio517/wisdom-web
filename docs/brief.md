@@ -25,14 +25,16 @@ The research must test the founding idea, including its limits. It must not conv
 - High quality in both content and visual execution.
 - A clean, content-focused natural-history field-guide aesthetic: readable type, open space, precise callouts, and occasional small painted illustrations. The exact watercolor/ink treatment remains a visual choice to test.
 - A collapsible left navigation panel with expandable Choices content, plus separate About and Source code links. Additional subjects appear as their content becomes available.
-- Guided, reader-controlled progression with quick, beautiful animation that explains what changes. The opening map should make placing a marker and tracing a connection feel satisfying, without delaying reading or adding motion for its own sake.
+- Guided, reader-controlled progression with quick, beautiful animation that explains what changes. In the approved opening prototype, choosing an example age sends a dot from the beginning at the left along the dark-green lived route to today, then modestly moves the view closer. It must not delay reading or add motion for its own sake.
 - A selectable starting age or life stage for the map's “today” marker, with relevant fictional examples and optional context on child development.
 - Optional examples and deeper explanations, with a clear return to the main sequence. AI-generated video may supplement later explainers.
 - Distinct page URLs suitable for direct sharing.
-- A coherent reading path and a useful experience on a phone.
+- A coherent reading path across the eventual experience. The narrow prototype targets desktop and iPad mini first; phone design is deferred rather than accepted by this study.
 - Research, references, and design decisions stored in a navigable, linked repository library, grouped by topic with findings, sources, evidence limits, and open questions. A future reading/navigation UI may expose the same Markdown; it must not create a second research source of truth.
 - Current-state handoff in `NEXT_STEP.md`; concise completed-work history in `COMPLETED.md`.
 - Static GitHub hosting is the initial preference; evaluate it against the actual experience required.
+
+The opening map should begin as an abundant field of original nonlinear routes inspired by the supplied reference's topology, with rises, falls, crossings, and occasional curls. After an age is selected, the lived route is dark green, past alternatives are barely visible gray, and still-possible futures are light gray-green. These are semantic map states, not steps in a literal process-stepper interface. The earlier six-endpoint and stationary-marker PNG storyboards remain historical visual inputs; [006](product/006-storyboards-and-motion-study.md) and [007](product/007-interactive-map-prototype.md) record the prototype-specific amendment.
 
 ## First-release boundary
 

@@ -2,41 +2,50 @@
 
 ## Current state
 
-The repository contains the project brief, a linked research library, six numbered product proposals, a sample opening, an ink-and-wash illustration study, and two selected interface/motion storyboard images with prompts and review inputs. The public repository is [Rio517/wisdom-web](https://github.com/Rio517/wisdom-web), with `origin` configured and local work on `main`. The website, working motion prototype, approved production artwork, and complete chapter do not yet exist.
+The repository contains the project brief, a linked research library, seven numbered product documents, a sample opening, an ink-and-wash illustration study, stored interface/motion storyboards, and a working two-scene HTML/SVG prototype. The public repository is [Rio517/wisdom-web](https://github.com/Rio517/wisdom-web), with `origin` configured. Current prototype work is on the local branch `prototype/choices-map`; it has not been merged or pushed. The complete chapter, production website, approved production artwork, and site publication remain outstanding.
 
 The audience is ages 8+, with a core explanation approachable from age eight and depth for older readers. The first chapter covers choices across a lifetime, explicitly including learning that builds, carries into related activities, and can reinforce further learning. Habits/daily practice deserve a dedicated follow-up, with a short bridge in the first chapter. Relationships remain outside this release.
 
-Start with the [selected storyboards](docs/design/storyboards/README.md), [001 — Choices experience](docs/product/001-choices-experience.md), and [003 — Visual language and navigation](docs/product/003-visual-language-and-navigation.md). The boards cover desktop/phone reading composition and four snapshots of the opening marker-and-line interaction. Each underwent two visual-review/refinement cycles and final inspection; they are ready for owner review, not approved or browser-verified. [006 — Storyboards and the first motion study](docs/product/006-storyboards-and-motion-study.md) explains the ImageGen-to-HTML/SVG workflow.
+Start with the [prototype launch instructions](prototype/README.md), [browser-reviewed views and limits](docs/design/prototype/README.md), and [007 — Interactive map prototype](docs/product/007-interactive-map-prototype.md). The opening has abundant nonlinear paths, selectable example ages, a dot traveling from the beginning to today, a modest post-arrival zoom, and distinct lived/untaken/possible route treatments. It includes a second learning scene, a related-sport example, a reading alternative, history restoration, keyboard controls and reduced motion. The prototype underwent two visual-review/improvement loops; owner review and reader comprehension testing remain pending.
 
-The [sample opening](docs/content/choices-opening.md) remains a prose voice reference needing scene adaptation. The visual direction is a clean natural-history field guide, collapsible navigation, and quick purposeful map animation. The [brain plate](docs/design/README.md) is exploratory, not approved or anatomically validated.
+Desktop and iPad mini are the initial targets. Browser review covers 1440 × 1000, 1133 × 744 and 744 × 1133 CSS-pixel viewports; it does not establish physical-iPad or Safari behavior. Phone design is deferred. The [older image boards](docs/design/storyboards/README.md) remain composition references, but their sparse six-endpoint tree and stationary marker are superseded by the working study. [003](docs/product/003-visual-language-and-navigation.md) is the canonical visual-requirements document; [006](docs/product/006-storyboards-and-motion-study.md) records the medium and scope boundary.
+
+The [sample opening](docs/content/choices-opening.md) remains a prose voice reference needing complete scene adaptation. The visual direction is a clean natural-history field guide, collapsible navigation, and quick purposeful map animation. The [brain plate](docs/design/README.md) is used decoratively in the prototype learning scene; it remains exploratory, not approved or anatomically validated.
 
 The [research index](docs/research/README.md) links separate learning, lifetime, decision-making/development, habits, and supporting delivery buckets. Detailed source records live with their topic. Habits includes an initial evidence base with a 2024 review, a 2025-issue trial, an August 2026 synthesis, and a learning-specific 2022 study; it is not a completed review of child habit change. See [004 — Habits](docs/product/004-habits-and-daily-practice.md). The [research reading UI](docs/product/005-research-library.md) is an optional future layer over the same Markdown; no UI exists yet.
 
 ## Immediate next work
 
-1. Review the selected reading and motion boards with the owner. Settle visual character and map clarity; do not mistake generated pixels for exact geometry or a tested responsive layout.
-2. Write the narrow prototype implementation plan, then build and inspect the HTML/SVG reading shell and marker/path interaction. Add one learning example with a return; test phone/desktop, keyboard, repeated input, reduced motion, and real timing. Keep it distinct from the complete site build.
-3. Extend the scene storyboard to the maths/learning chain, qualified tennis example, child/adult starting points, recovery, and ending. The selected images cover only the opening.
+1. Review the working map with the owner: does the opening convey freedom, does the arriving-at-today transition make sense, and are the three route states clear? Try ages 8 and 40, replay, and the full-map return. This is the immediate product decision, not a request to review framework choices.
+2. Decide how to integrate the local prototype branch. It is not pushed, merged into `main`, or published. Preserve the current work until that choice is made.
+3. Extend the narrative beyond the two prototype scenes: explicitly show how learning/choices open options, the reinforcing enjoyment loop, child/adult scenarios, recovery, and an ending. The current map does not yet animate a specific learning choice opening a new branch.
 4. Draft the brief developmental explanation and habits bridge, then adapt the prose into guided scenes. Keep the reinforcing loop understandable, with help and recovery visible. Keep evidence in the linked research buckets and adult notes.
 5. Use a short reader check near age eight and with older readers to identify misunderstandings and tune the text and map.
-6. Write the complete-chapter implementation plan from the selected storyboard and prototype, then build and verify the first release. Pages is not enabled yet.
+6. Write the complete-chapter implementation plan after prototype review, then build and verify the first release. Select and package production fonts, check Safari and a physical tablet, and conduct a full accessibility review before publication. Pages is not enabled yet.
 
 When preparing the later habits chapter, extend the research on children/families, changing established habits, interruptions, and differing support needs. These gaps do not block the lifetime chapter. Test the existing Markdown library before deciding to build its optional web navigator.
 
 ## Proposed technical direction
 
-Astro-generated pages on GitHub Pages, with an interactive guided chapter and a continuous reading view. Chapter URLs support named scenes and a selected example age. Exact versions, package manager, and diagram implementation are unsettled. See [002 — Delivery architecture](docs/product/002-delivery-architecture.md).
+The production proposal is Astro-generated pages on GitHub Pages, with an interactive guided chapter and a continuous reading view. The dependency-free prototype deliberately does not scaffold that site: it uses native HTML/CSS/ES modules and SVG to test the interaction first. Its URL retains the example age, selection and scene. See [002 — Delivery architecture](docs/product/002-delivery-architecture.md).
+
+## Run and verify
+
+From the repository root, `npm run dev` starts a local-only Python 3 static server. Open <http://127.0.0.1:4173/prototype/>. No package installation is needed. The preview can run on the existing branch without publishing anything.
+
+`npm test` runs the ten pure-model tests. [tests/browser-checks.js](tests/browser-checks.js) is a reusable Playwright page-function suite; its invocation is documented in [prototype/README.md](prototype/README.md). It covers ten groups of interactions, including browser Back with a dialog open and preservation of a manual motion choice through OS preference changes. Both suites passed in this workspace. Review screenshots and scope limits are linked from the [browser-review index](docs/design/prototype/README.md).
 
 ## Tooling and references
 
 Verified in this workspace on 2026-09-06:
 
 - Git repository and GitHub CLI 2.97.0; GitHub account `Rio517` authenticated through the system keyring when run outside the sandbox.
-- Node v26.7.0 and Bun 1.3.14 installed. No project dependencies or application scripts exist yet.
+- Node v26.7.0, Bun 1.3.14 and Python 3 available. `package.json` provides `dev` and `test`; no project dependencies are installed or needed for these commands. The browser suite uses the session's Playwright tooling separately.
 - Local starter kit at `~/code/starter-kit`. Use selected conventions described in the delivery proposal.
 - Current session has web research, image generation, and browser-control capabilities. Future sessions must discover their own available tools and read applicable skill instructions before use.
 - Built-in ImageGen produced the saved PNG style study; image metadata verifies 1254 × 1254 pixels and an alpha channel. Precise labels, lines, and interactive geometry remain proposed HTML/SVG, not generated bitmap text.
-- The two selected storyboard boards are 1536 × 1024 PNGs from built-in ImageGen. Four earlier images and the exact prompt set are retained with them for review provenance. Still-image review does not establish actual timing, contrast, focus behavior, or viewport fit.
+- The two selected storyboard boards are 1536 × 1024 PNGs from built-in ImageGen. Four earlier images and the exact prompt set are retained with them for review provenance. The newer working prototype has separate browser captures; neither kind of screenshot alone establishes accessibility conformance or physical-device behavior.
+- The listed in-app Browser skill path was unavailable in this session; available Playwright browser tools performed the local checks. Future sessions should rediscover available tools rather than assume this exact tool name or plugin path.
 
 The GitHub remote is configured; no live site is configured. A local GitHub authentication check inside the sandbox can report a false failure; the check outside the sandbox succeeded.
 

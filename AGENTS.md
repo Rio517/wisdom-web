@@ -27,11 +27,11 @@ Read `NEXT_STEP.md`, `docs/brief.md`, and the relevant research and proposal bef
 
 ## Delivery and quality
 
-- The current phase is research and design. Do not describe a proposed website as implemented or published.
+- The current phase is research, design, and a narrow local prototype. The code under `prototype/` is an implementation study, not the production website; it has not been published or owner-reviewed.
 - Favor a static multipage site with real page URLs; the proposed stack is documented in `docs/product/002-delivery-architecture.md`.
 - Guided progression, explanatory animation, optional examples/deep dives, and a selectable starting age on the life map are product requirements. The selected age describes an example, not a diagnosis or prediction of the reader's life. Video is a possible later medium.
 - Visuals must explain an idea accurately. Interactive diagrams need keyboard operation, a readable static alternative, and reduced-motion support.
-- Use project-specific design tokens and readable type. Verify rendered pages at phone and desktop sizes before claiming visual quality.
-- Use the clean field-guide direction and collapsible navigation in product document 003. The map's marker-and-path animation should be quick, beautiful, functional, interruptible, and readable when settled; it must not delay content. Generated art is a style study until reviewed in context.
+- Use project-specific design tokens and readable type. The prototype's minimum viewport targets are desktop and iPad mini; phone design is deferred. Verify rendered pages at the required desktop and tablet sizes before claiming visual quality.
+- Use the clean field-guide direction and collapsible navigation in product document 003. For the approved narrow prototype, draw an abundant original-reference-inspired field of nonlinear paths with rises, falls, crossings, and occasional curls. Choosing an example age sends a dot from the beginning at the left along a dark-green lived path to today, then applies a modest zoom. Untaken alternatives settle to barely visible gray and possible futures to light gray-green. This diagram state change is not a literal process stepper. The motion should be quick, beautiful, functional, interruptible, and readable when settled; it must not delay content. Product documents 006 and 007 define the prototype amendment. Generated art and the older six-endpoint, stationary-marker storyboards remain historical style inputs until reviewed in context.
 - Preserve user changes. Keep Git add, commit, and push as separate operations. Avoid unnecessary workflow or infrastructure copied from other projects.
 - Run checks proportionate to the change. Research documents need citation, link, consistency, and scope checks; interactive features need behavioral verification.

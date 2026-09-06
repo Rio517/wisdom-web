@@ -2,7 +2,7 @@
 
 Status: Proposed. Created: 2026-09-06. Updated: 2026-09-06.
 
-Guided progression, high-quality animation, optional deeper explanations, a selectable starting age, and an audience of 8+ are product requirements. The scene sequence and visual execution below are proposed for review. The chapter and site are not implemented. The [brief](../brief.md) records requirements; [research findings](../research/report-source.md) explain the evidence behind the editorial direction.
+Guided progression, high-quality animation, optional deeper explanations, a selectable example age, and an audience of 8+ are product requirements. The complete scene sequence remains proposed for review. A narrow two-scene implementation study now exists under `prototype/`; it is not the complete chapter or production site and has not been published or owner-reviewed. The [brief](../brief.md) records requirements; [research findings](../research/report-source.md) explain the evidence behind the editorial direction. [006](006-storyboards-and-motion-study.md) and [007](007-interactive-map-prototype.md) define the approved prototype slice.
 
 ## Recommended approach
 
@@ -18,7 +18,7 @@ The main interaction decision is how readers control the pace:
 | Scroll-triggered scenes | Can feel fluid within a continuous page | Scroll position can become difficult to coordinate with examples and revisiting a scene |
 | A narrated, automatically advancing presentation | Gives an authored viewing rhythm | Less room for discussion and different reading speeds; better suited to optional future clips |
 
-Use reader-controlled steps, normal scrolling within a scene, and a separate continuous reading view. Optional branches deepen a particular idea without changing the order of the core explanation.
+Use reader-controlled chapter scenes, normal scrolling within a scene, and a separate continuous reading view. Optional branches deepen a particular idea without changing the order of the core explanation. Scene navigation may show position, but the life map itself is not a literal process stepper: its lines represent illustrative routes, not a prescribed sequence of stages.
 
 ## Visual reference and central metaphor
 
@@ -61,7 +61,7 @@ The first chapter includes a short bridge to habits: “How could you make it ea
 
 Let readers choose a starting age or life stage for the explanation. The starting point refers to the map's “today” marker, not video playback time or the reader's comprehension level. A child can explore an adult starting point, and an adult can explore childhood.
 
-Propose a default starting age of eight, quick examples such as 8, 12, 16, 25, 40, and 60, and a simple age control. These are navigation conveniences, not developmental boundaries. The selector remains available after the opening; changing it returns to the opening scene for the new example with a clear transition.
+Use a default example age of eight and authored choices of 8, 12, 16, 25, 40, and 60 in the narrow prototype. These are navigation conveniences, not developmental boundaries. Choosing a moment sends a dot from the beginning at the left along the lived route to that example's “today,” then the view moves modestly closer. The selector remains available after the opening; behavior across the complete chapter remains to be settled.
 
 Preserve the core teaching sequence while adapting the situation: learning foundations in childhood, choosing preparation routes in the teens, or developing/rebuilding skills in adulthood. Where a younger-child backstory is useful, label it as a look back within the fictional example. Do not invent a personal history from the selected age or imply that an age automatically removes a branch. The earlier map can be schematic and explicitly illustrative.
 
@@ -81,7 +81,7 @@ Target approximately 1,000–1,400 words across seven core scenes, with shorter 
 
 | Scene | Visible action | Explanation or optional branch |
 | --- | --- | --- |
-| 1. Here you are, today | Place a “today” dot at an authored anchor, trace the lived path, and reveal future branches | A quick, satisfying opening interaction; the past is fixed, and the next part is still being made |
+| 1. Here you are, today | Send a dot from the beginning at the left along the lived path to an authored “today” anchor, then move modestly closer | A quick, satisfying opening interaction; the past is fixed, and the next part is still being made |
 | 2. One skill, several paths | Zoom into a maths foundation and show where it is reused | Learning builds within a subject; optional tennis example shows related-skill transfer and adaptation |
 | 3. One choice becomes part of the path | Compare asking for an explanation with hiding confusion | What changes is the next learning step; replay an alternative within the fictional example |
 | 4. The pattern begins to matter | Advance through repeated occasions, then briefly focus on progress → enjoyment → another learning choice | Explain a possible reinforcing loop and a way to enter it with help; distinguish a pattern from one difficult day |
@@ -95,11 +95,11 @@ Use one understandable skill chain across life stages, then show at least one tr
 
 The diagram is an illustration of possible mechanisms, not a simulation of actual life outcomes.
 
-Read time from left to right on wide screens and top to bottom on phones. Use childhood, teenage years, early adulthood, and later adulthood as broad stages. Avoid age-number deadlines and a vertical “success” axis.
+Read time from left to right in the approved desktop and iPad mini prototype. Phone direction and reflow are deferred. Use childhood, teenage years, early adulthood, and later adulthood as broad stages. Avoid age-number deadlines and a vertical “success” axis.
 
-Start with a small set of visible interests. Label connections with what makes the next step possible: “learns to measure,” “asks for an explanation,” “meets the course requirement.” Show a repair route that takes additional steps. Add a clearly marked outside event, such as a club closing, that changes a route independently of the character's choices.
+The opening prototype starts with an abundant field of original nonlinear routes inspired by the reference's density and topology, not its exact drawing. Paths may rise, fall, cross, wander, and occasionally curl. Curls can suggest trying again or returning to an interest; vertical position is not success or worth, and route count is not a measured number of opportunities. Later chapter scenes may label specific connections such as “learns to measure,” “asks for an explanation,” or “meets the course requirement,” show a repair route that takes additional steps, and mark an outside event such as a club closing.
 
-Keep the initial map small enough to read without panning. Reveal later portions through the guided sequence. Keep the “today” marker recognizable during movement and make it clear when time is advancing inside a fictional example. Every state needs an adjacent text explanation and a static reading/print equivalent. No information depends only on color, hover, or animation.
+Keep the full overview legible without panning. In the selected state, the traveled path is dark green, past alternatives are barely visible gray, and still-possible routes are light gray-green; a modest zoom follows the dot's arrival without erasing the wider meaning. Labels, line treatment, and adjacent prose supplement color. Every state needs a static reading/print equivalent, and no essential information depends only on color, hover, or animation.
 
 Do not use a success score, salary totals, probability percentages, a fixed number of remaining life options, or a green-versus-red ranking of occupations. Illustrate specific reachable activities and what they require.
 
@@ -117,7 +117,7 @@ Motion carries the explanation: trace the lived path, reveal a fork, follow the 
 
 Use a consistent motion language and pacing. Brief transitions should feel responsive; longer explanatory sequences need replay and skip controls. Pause visual activity while the reader considers a question or opens a deeper explanation. Avoid continuous decorative motion competing with the text.
 
-The opening map is the signature interaction described in [003](003-visual-language-and-navigation.md#signature-map-interaction). Motion should be quick, functional, and quietly impressive: an inviting marker arrival and a precise path trace, not a mandatory cinematic introduction. The first motion study must show whether it improves orientation and feels satisfying across the audience.
+The opening map is the signature interaction described in [003](003-visual-language-and-navigation.md#signature-map-interaction). Motion should be quick, functional, and quietly impressive: immediate feedback, a dot traveling from the beginning along the lived route to today, and a modest zoom after arrival, not a mandatory cinematic introduction. Repeated input interrupts the active sequence. The first working study must establish through rendered review whether this improves orientation and feels satisfying across the audience.
 
 Reduced-motion mode preserves every explanation and final diagram state using immediate changes or restrained transitions. All controls work by keyboard and touch, focus remains predictable, and no information relies on timing or sound.
 
@@ -139,7 +139,7 @@ Offer one core text for the whole audience. A younger reader can discuss or draw
 
 Use the clean natural-history field-guide treatment described in [003 — Visual language and navigation](003-visual-language-and-navigation.md): an open reading surface, precise diagram and callout lines, and occasional ink-and-wash specimen illustrations. The shared shell includes a collapsible left panel, expandable Choices navigation, and separate About and Source code links. Product document 003 is the source of truth for the palette, typography, illustration treatment, and panel behavior.
 
-The first visual review should show the opening, one animated fork and its deeper example, and the closing reflection at phone and desktop sizes. A short working motion study should test the transition into and back out of the example. Assess illustration consistency, reading comfort, visual hierarchy, and whether the map explains the mechanism without a spoken rescue explanation.
+The approved narrow prototype covers the opening map and one learning example with a clear return. Its initial viewport targets are desktop and iPad mini; phone design is deferred. Rendered review still needs to assess illustration consistency, reading comfort, visual hierarchy, touch targets, interruption, browser history, reduced motion, and whether the map explains the mechanism without a spoken rescue explanation. Code presence alone does not establish those qualities.
 
 ## Experience acceptance criteria
 
@@ -151,8 +151,8 @@ The first visual review should show the opening, one animated fork and its deepe
 - Continuous reading and reduced-motion modes retain the same core teaching content.
 - The future map includes preparation, outside conditions, and a credible recovery route without implying exact probabilities or a guaranteed life outcome.
 - A reader can distinguish building on a skill, carrying part of it across, and a possible learning/enjoyment loop. The loop includes help or an alternate method, not only uninterrupted progress.
-- Placing the map marker is available by keyboard and touch as well as pointer. The visual settles quickly, and no reader must wait for its flourish to navigate.
-- Phone and desktop layouts keep controls, meaningful labels, and current scene position readable.
+- Choosing the example moment is available by keyboard and touch as well as pointer. The dot travels along the lived path, the modest zoom follows arrival, the visual settles quickly, and no reader must wait for its flourish to navigate.
+- Desktop and iPad mini layouts keep controls and meaningful labels readable. Phone support is deferred and can be reconsidered later; it is not a requirement for this initial experience.
 - Optional videos are not required for the first release or for understanding any existing explanation.
 
 ## Reader check
@@ -180,4 +180,4 @@ Relationships remain a separate subject. Do not add placeholders or menu entries
 
 ## Next work
 
-Review the sample voice and this scene sequence, then create the storyboard and motion study. These will settle the map's exact content and interaction before a detailed implementation plan is written. See [002 — Delivery architecture](002-delivery-architecture.md) for hosting and route requirements.
+Review the local prototype against [007](007-interactive-map-prototype.md), the desktop and iPad mini viewport targets, and the teaching intent above. The older PNG storyboards remain historical composition inputs, not the current geometry or motion contract. Use the review to refine the complete chapter proposal before production implementation; [002 — Delivery architecture](002-delivery-architecture.md) covers the eventual hosting and route requirements.

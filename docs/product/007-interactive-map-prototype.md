@@ -2,7 +2,7 @@
 
 > **For agentic workers:** Use superpowers:executing-plans or superpowers:subagent-driven-development when appropriate to the task boundaries. Track the steps below; visual review remains a separate gate from automated tests.
 
-Status: Approved for prototyping; implementation in progress. Created: 2026-09-06. Updated: 2026-09-06.
+Status: Implemented (local prototype only; owner review pending). Created: 2026-09-06. Updated: 2026-09-06.
 
 **Goal:** Test a beautiful, abundant life-path map in which a dot travels from the beginning to a selected example age, then the view gently moves closer to that moment.
 
@@ -32,7 +32,7 @@ Files: `prototype/model.js`, `tests/model.test.js`, `package.json`.
 
 Interfaces: `AGES`, `makeMap(age)` returns `{spine, branches, anchor, focus}`; `readState(url)` returns `{age, scene, selected}`; `stateURL(state, url)` returns a URL; `motionFrame(elapsed, reduced)` returns `{travel, zoom, settled}`. Each spine/branch uses a native SVG path string. A branch carries its earliest divergence age so alternatives can be distinguished from paths still reachable from today. Age is normalized to the authored list.
 
-- [ ] Write and run failing tests for invalid/shared URL state, age round trips, branch reachability classification, finite bounded geometry, and the motion sequence (no zoom before arrival; immediate reduced-motion completion).
+- [x] Write and run failing tests for invalid/shared URL state, age round trips, branch reachability classification, finite bounded geometry, and the motion sequence (no zoom before arrival; immediate reduced-motion completion).
 
 ```js
 assert.deepEqual(readState('https://example.test/?age=999#unknown'),
@@ -41,8 +41,8 @@ assert.equal(motionFrame(200, false).zoom, 0);
 assert.deepEqual(motionFrame(0, true), { travel: 1, zoom: 1, settled: true });
 ```
 
-- [ ] Implement the pure functions. Use authored anchor positions and deterministic cubic curves; never treat random route counts as researched life probabilities. Categorize a branch as untaken only when its divergence precedes the selected moment.
-- [ ] Run `node --test tests/model.test.js`; all tests must pass before browser integration.
+- [x] Implement the pure functions. Use authored anchor positions and deterministic cubic curves; never treat random route counts as researched life probabilities. Categorize a branch as untaken only when its divergence precedes the selected moment.
+- [x] Run `node --test tests/model.test.js`; all tests must pass before browser integration.
 
 ## Task 2: Reading shell, interaction and example
 
@@ -50,7 +50,7 @@ Files: `prototype/index.html`, `prototype/styles.css`, `prototype/app.js`, `prot
 
 Interfaces: `createMapView(svg)` returns `{show(age, selected, animate), cancel()}`. `show` owns SVG geometry and one cancelable requestAnimationFrame chain. The app owns URL/history, the two scenes and controls. A selection records `selected: true`; loading an explicit selected URL restores the settled view without an entrance animation.
 
-- [ ] Add browser acceptance checks before implementation: the page exposes a labeled age selector and “Explore this moment”; choosing an age changes the marker/URL; changing it during travel settles at the last selection; scene return preserves selection; the sidebar can collapse and reopen; the optional example has an explicit return; reduced motion leaves no running transition.
+- [x] Add browser acceptance checks before implementation: the page exposes a labeled age selector and “Explore this moment”; choosing an age changes the marker/URL; changing it during travel settles at the last selection; scene return preserves selection; the sidebar can collapse and reopen; the optional example has an explicit return; reduced motion leaves no running transition. Initial absence checks ran against the served directory before UI implementation; the reusable multi-interaction script was assembled during browser integration and caught later regressions.
 
 ```js
 await page.getByLabel('Example age').selectOption('40');
@@ -59,10 +59,10 @@ await page.waitForFunction(() => document.querySelector('#life-map').dataset.mot
 // The selected moment is restored from the URL, not inferred from a screenshot.
 ```
 
-- [ ] Build the shared shell with real copy. Opening: “Your future has more than one path.” Explain preparation, support, circumstances and chance. Second scene: learning equal parts → equivalent fractions → adapting a recipe; identify this as a fictional example, not a forecast. Optional related-sport example states that some skills may help and others need adapting, with links to the canonical research.
-- [ ] Implement dot travel with native path length/point sampling, fade untaken paths, then modest focus transform. Keep map labels outside the camera transform. Enable click/tap on authored anchors and an equivalent button; dragging is unnecessary.
-- [ ] Inspect screenshots and interactions at desktop and iPad-sized viewports. Complete two review/improvement cycles, checking the initial abundance, settled meaning, readability, touch targets, animation interruption, keyboard, browser history and reduced motion.
-- [ ] Request independent code review, resolve important findings, rerun automated and browser checks, and update `NEXT_STEP.md` with exact launch commands and remaining scope. Record completed work only after verification.
+- [x] Build the shared shell with real copy. Opening: “Your future has more than one path.” Explain preparation, support, circumstances and chance. Second scene: learning equal parts → equivalent fractions → adapting a recipe; identify this as a fictional example, not a forecast. Optional related-sport example states that some skills may help and others need adapting, with links to the canonical research.
+- [x] Implement dot travel with native path length/point sampling, fade untaken paths, then modest focus transform. Region labels sit outside the camera transform; the age label follows its anchor with constant readable screen-space sizing. Enable click/tap on authored anchors and an equivalent button; dragging is unnecessary.
+- [x] Inspect screenshots and interactions at desktop and iPad-sized viewports. Complete two review/improvement cycles, checking the initial abundance, settled meaning, readability, touch targets, animation interruption, keyboard, browser history and reduced motion.
+- [x] Request independent code review, resolve important findings, rerun automated and browser checks, and update `NEXT_STEP.md` with exact launch commands and remaining scope. Record completed work only after verification.
 
 ## Design review against the brief
 
