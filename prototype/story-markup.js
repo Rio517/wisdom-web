@@ -1,4 +1,4 @@
-import { CIRCUMSTANCES, COMPARISONS, LAYERS, MOMENTS } from './story.js';
+import { CIRCUMSTANCES, COMPARISONS, COMPOUNDING_EXPLANATION, LAYERS, MOMENTS } from './story.js';
 
 const escapeHTML = value => String(value).replace(/[&<>"']/g, character => ({
   '&': '&amp;',
@@ -27,6 +27,10 @@ const renderComparison = comparison => `
         <ol>${comparison.steps.map(step => `
           <li>${escapeHTML(step)}</li>`).join('')}
         </ol>
+        <h4>Three illustrative occasions</h4>
+        <ol>${comparison.occasions.map(occasion => `
+          <li><strong>${escapeHTML(occasion.label)}:</strong> ${escapeHTML(occasion.text)}</li>`).join('')}
+        </ol>
         <h4>Named outcomes</h4>
         <ul>${comparison.outcomes.map(renderOutcome).join('')}
         </ul>
@@ -40,7 +44,7 @@ const renderLayer = layer => `
 
 export function renderReading({ idPrefix = 'reading' } = {}) {
   const id = name => `${idPrefix}-${name}`;
-  return `<article aria-labelledby="${id('reading-title')}">
+  return `<article class="reading-copy" aria-labelledby="${id('reading-title')}">
     <header>
       <p>Fictional example</p>
       <h2 id="${id('reading-title')}">How choices can change later opportunities</h2>
@@ -54,7 +58,8 @@ export function renderReading({ idPrefix = 'reading' } = {}) {
     </section>
     <section aria-labelledby="${id('comparison-title')}">
       <h2 id="${id('comparison-title')}">Three views of the age 12 choice</h2>
-      <p>Equal parts can support equivalent fractions, which can support using a ratio in a recipe. This is <strong>learning that builds on learning</strong>. <strong>Compounding</strong> is a useful word for how earlier learning can help later learning; it is not a promise of a fixed growth rate.</p>${Object.values(COMPARISONS).map(renderComparison).join('')}
+      <p>Equal parts can support equivalent fractions, which can support using a ratio in a recipe. This is <strong>learning that builds on learning</strong>.</p>
+      <p>${escapeHTML(COMPOUNDING_EXPLANATION)}</p>${Object.values(COMPARISONS).map(renderComparison).join('')}
     </section>
     <section aria-labelledby="${id('layers-title')}">
       <h2 id="${id('layers-title')}">A choice has more than one layer</h2>${Object.values(LAYERS).map(renderLayer).join('')}

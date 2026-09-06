@@ -117,11 +117,27 @@ figcaption > p { @apply text-base; color: var(--color-wisdom-quiet); }
 .decision-work ol { @apply my-0 pl-6; }
 .inline-layer { @apply max-w-4xl border-l pl-4; border-color: var(--color-wisdom-rule); }
 .inline-layer p { @apply mb-3 mt-0; }
+.practice-sequence { @apply mt-5 grid list-none grid-cols-3 gap-7 p-0; }
+.practice-sequence li { @apply relative border-t pt-3; border-color: var(--color-wisdom-route-future); }
+.practice-sequence li:not(:last-child)::after { position: absolute; top: -15px; right: -22px; padding: 0 4px; background: var(--color-wisdom-page); color: var(--color-wisdom-route-future); content: "→"; font: 20px/1 var(--font-guide); }
+.practice-sequence .occasion-label { color: var(--color-wisdom-route-active); font: 600 16px/1.35 var(--font-guide); }
+.practice-sequence p { @apply mb-0 mt-2; }
 .circumstances { @apply max-w-5xl border-t pt-5; border-color: var(--color-wisdom-rule); }
 .circumstances p { @apply m-0; color: var(--color-wisdom-quiet); }
 .research-note { @apply max-w-4xl border-t pt-4; border-color: var(--color-wisdom-rule); }
 .research-note summary { @apply flex items-center text-base font-semibold; color: var(--color-wisdom-route-active); }
 .research-note p { @apply mb-2 mt-3 text-base; color: var(--color-wisdom-quiet); }
+
+.reading-copy { @apply max-w-4xl; }
+.reading-copy > header, .reading-copy > section { @apply mb-12; }
+.reading-copy h2 { @apply mb-4 mt-0 text-3xl; }
+.reading-copy h3 { @apply mb-3 mt-8 text-2xl; }
+.reading-copy h4 { @apply mb-2 mt-6 text-xl; }
+.reading-copy p, .reading-copy li { font: 20px/1.6 var(--font-field); }
+.reading-copy p { @apply my-3; }
+.reading-copy ol, .reading-copy ul { @apply my-3 pl-7; }
+.reading-copy li + li { @apply mt-3; }
+.reading-copy section > section { @apply mt-10 border-t pt-2; border-color: var(--color-wisdom-rule); }
 
 .reflection { @apply mt-6 max-w-3xl; }
 .reflection > p:first-child { @apply mb-2 mt-0; font: 20px/1.6 var(--font-field); }

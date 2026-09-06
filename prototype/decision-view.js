@@ -1,4 +1,4 @@
-import { CIRCUMSTANCES, COMPARISONS, LAYERS } from './story.js';
+import { CIRCUMSTANCES, COMPARISONS, COMPOUNDING_EXPLANATION, LAYERS } from './story.js';
 
 const $ = selector => document.querySelector(selector);
 
@@ -25,6 +25,22 @@ function stepList(steps) {
   });
 }
 
+function occasionList(occasions) {
+  const list = document.createElement('ol');
+  list.className = 'practice-sequence';
+  for (const occasion of occasions) {
+    const item = document.createElement('li');
+    const label = document.createElement('span');
+    label.className = 'occasion-label';
+    label.textContent = occasion.label;
+    const copy = document.createElement('p');
+    copy.textContent = occasion.text;
+    item.append(label, copy);
+    list.append(item);
+  }
+  return list;
+}
+
 export function renderDecision(state) {
   const panel = $('#decision-panel');
   const results = $('#decision-results');
@@ -40,6 +56,7 @@ export function renderDecision(state) {
     : state.age === 12 ? 'The current decision: age 12' : 'Looking back: age 12';
   $('#decision-action').textContent = comparison.action;
   $('#decision-consequence').textContent = comparison.consequence;
+  $('#compounding-copy').textContent = COMPOUNDING_EXPLANATION;
   $('#decision-steps').replaceChildren(...stepList(comparison.steps));
   $('#decision-outcomes').replaceChildren(outcomeList(comparison.outcomes));
   for (const button of document.querySelectorAll('[data-comparison]')) {
@@ -51,11 +68,12 @@ export function renderDecision(state) {
     const content = $(`#${id}-layer`);
     button.setAttribute('aria-expanded', String(expanded));
     content.hidden = !expanded;
-    content.replaceChildren(...layer.paragraphs.map(paragraph => {
+    const paragraphs = layer.paragraphs.map(paragraph => {
       const item = document.createElement('p');
       item.textContent = paragraph;
       return item;
-    }));
+    });
+    content.replaceChildren(...paragraphs, ...(id === 'pattern' ? [occasionList(comparison.occasions)] : []));
   }
   $('#circumstances-copy').textContent = CIRCUMSTANCES;
 }

@@ -19,9 +19,10 @@ const map = createMapView({
   overlay: $('#map-overlay'),
   lessMotion: () => manualLessMotion || systemMotion.matches,
   onPreview(age) {
+    const moment = MOMENTS.find(item => item.age === age);
     $('#map-preview').textContent = age === null
       ? 'Move over the traveled route to preview an earlier moment.'
-      : `Age ${age}: ${MOMENTS.find(moment => moment.age === age)?.title ?? ''}`;
+      : `Age ${age}: ${moment?.title ?? ''} — ${moment?.preview ?? ''}`;
   },
   onInspect(age) {
     if (!state.selected) navigate({ age, selected: true }, true);
@@ -125,7 +126,10 @@ function reviewMoment(age) {
 $('#explore').addEventListener('click', () => navigate({ age: Number($('#example-age').value), selected: true }, true));
 $('#example-age').addEventListener('change', event => navigate({ age: Number(event.target.value), selected: state.selected }, state.selected));
 $('#overview').addEventListener('click', () => navigate({ overview: !state.overview }));
-$('#return-today').addEventListener('click', () => navigate({ inspect: null }));
+$('#return-today').addEventListener('click', () => {
+  navigate({ inspect: null });
+  $('#example-age').focus({ preventScroll: true });
+});
 $('#replay').addEventListener('click', () => map.show(state, true));
 $('#comparison-entry').addEventListener('click', () => {
   navigate({ inspect: 12 }, true);

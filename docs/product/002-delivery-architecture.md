@@ -2,7 +2,7 @@
 
 Status: Proposed. Created: 2026-09-06. Updated: 2026-09-06.
 
-The public GitHub repository is approved and created. The proposed production architecture below supports [001 — Choices experience](001-choices-experience.md); the production website is not implemented or published. A dependency-free local study under `prototype/` implements only the narrow scope in [007](007-interactive-map-prototype.md) and does not commit the production site to that prototype structure.
+The public GitHub repository is approved and created. The proposed production architecture below supports [001 — Choices experience](001-choices-experience.md); the production website is not implemented or published. The local study under `prototype/` now implements the approved [008 choices-and-consequences revision](008-choices-and-consequences.md) with Vite, Tailwind layout, Canvas 2D routes and semantic HTML. It remains a narrow prototype and does not commit the production site to that structure. [007](007-interactive-map-prototype.md) records the superseded first SVG study.
 
 ## Recommendation
 
@@ -59,7 +59,7 @@ Keep the scene state explicit: selected starting age, current scene, optional ex
 
 Author a small set of life-stage examples instead of generating a personalized future at runtime. The age selector positions the marker and chooses an appropriate authored scenario. This remains compatible with static hosting and requires no personal history or backend.
 
-Generate the guided and continuous reading views from the same authored explanations. Core text is available in static HTML. The current prototype uses native SVG and `requestAnimationFrame` without a library. The approved next direction in [008](008-choices-and-consequences.md) uses locally built Tailwind layout, Canvas 2D routes and tracing, and semantic HTML labels and controls. This does not require React, Three.js, a backend or adoption of the production Astro structure. Static hosting does not constrain animation quality.
+Generate the guided and continuous reading views from the same authored explanations. Core text is available in static HTML. The current prototype implements [008](008-choices-and-consequences.md) with locally built Tailwind layout, Canvas 2D routes and tracing, semantic HTML labels and controls, and `requestAnimationFrame`. It does not require React, Three.js, a backend or adoption of the production Astro structure. Static hosting does not constrain animation quality.
 
 Future video entries can reference a poster, video, captions, and transcript. No video service integration or generation pipeline is needed now. Optional clips must load on request and preserve the surrounding scene state.
 
@@ -73,7 +73,7 @@ Before publication, verify direct navigation and reload on every route and named
 
 Include sidebar collapse, independent Choices expansion, mobile drawer dismissal/focus, active destination highlighting, the About route, and the Source code link in the navigation checks. Opening or closing the shell must not change the selected age or current scene.
 
-Verify the signature traveling-dot animation under repeated quick selections, keyboard activation, touch, and reduced motion. It must cancel or retarget safely, carry the dot from the left along the lived route, apply only a modest zoom after arrival, settle quickly, and leave content available throughout. The existing HTML/SVG study is the baseline; verify equivalent behavior and meaningful choice consequences during the proposed Canvas rewrite in 008.
+Verify the signature traveling-dot animation under repeated quick selections, keyboard activation, touch, and reduced motion. It must cancel or retarget safely, carry the dot from the left along the lived route, apply only a modest zoom after arrival, settle quickly, and leave content available throughout. The current Canvas study preserves that behavior and adds the meaningful choice consequences specified in 008; the earlier HTML/SVG study remains historical baseline evidence.
 
 Build output can include JavaScript that runs in the browser; it does not require server execution. Do not add a backend unless a future agreed feature requires one.
 
@@ -94,9 +94,9 @@ Resolve these mismatches explicitly:
 ## Quality work before implementation
 
 1. Review the chapter proposal and sample voice.
-2. Use the existing storyboard studies as historical composition inputs and review the narrow working prototype at desktop and iPad mini sizes. Phone design is deferred for this prototype.
+2. Use the existing storyboard studies as historical composition inputs and continue reviewing the narrow Canvas prototype at desktop and iPad mini sizes. Phone design is deferred for this prototype.
 3. Test whether a reader can explain the core mechanism, a trade-off, and a way to recover from a setback.
-4. Use [007](007-interactive-map-prototype.md) for the current prototype plan; write a separate production implementation plan only after prototype review settles the relevant choices.
+4. Use [009](009-layered-choices-implementation.md) for the current prototype implementation record and [007](007-interactive-map-prototype.md) for the historical first study; write a separate production implementation plan only after prototype review settles the relevant choices.
 5. Implement and publish the first complete chapter, then develop the daily-decisions follow-up.
 
 Research, design, and the local prototype are the current deliverables. The prototype is not the complete chapter, the production site, or a published release; a production implementation plan becomes useful once rendered and owner review settle the teaching sequence and visual behavior.

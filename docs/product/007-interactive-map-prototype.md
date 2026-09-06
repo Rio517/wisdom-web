@@ -2,19 +2,19 @@
 
 > **For agentic workers:** Use superpowers:executing-plans or superpowers:subagent-driven-development when appropriate to the task boundaries. Track the steps below; visual review remains a separate gate from automated tests.
 
-Status: Implemented (local prototype only; owner feedback informs revision 008). Created: 2026-09-06. Updated: 2026-09-06.
+Status: Implemented historical study (superseded locally by revisions 008–009). Created: 2026-09-06. Updated: 2026-09-06.
 
-This document records the implemented study. [008 — Choices and consequences](008-choices-and-consequences.md) is the next revision's written design. Its approved direction replaces the looping geometry, barely visible untaken paths and age-only explanation below; it is not implemented yet.
+This document records the first implemented SVG study and its original constraints. [008 — Choices and consequences](008-choices-and-consequences.md) subsequently replaced its looping geometry, barely visible untaken paths and age-only explanation; the current Tailwind/Canvas implementation is recorded in [009 — Layered choices implementation](009-layered-choices-implementation.md). The details below remain useful implementation history, not the current prototype architecture.
 
-**Goal:** Test a beautiful, abundant life-path map in which a dot travels from the beginning to a selected example age, then the view gently moves closer to that moment.
+**Historical goal:** Test a beautiful, abundant life-path map in which a dot travels from the beginning to a selected example age, then the view gently moves closer to that moment.
 
-**Architecture:** A dependency-free HTML/CSS/JavaScript study with a native SVG map, separate pure geometry/state functions, and a small interruptible animation controller. This is not the complete chapter or production website. Keep the map, its meaning, and its motion together in this tightly coupled prototype; use an independent final code review.
+**Historical architecture:** A dependency-free HTML/CSS/JavaScript study with a native SVG map, separate pure geometry/state functions, and a small interruptible animation controller. This architecture has been superseded in the local prototype; it was never the complete chapter or production website.
 
-**Tech stack:** Browser-native SVG, requestAnimationFrame, ES modules, Node's built-in test runner, a local Python static server. No framework, analytics, accounts, runtime AI, or deployment.
+**Historical tech stack:** Browser-native SVG, requestAnimationFrame, ES modules, Node's built-in test runner, and a local Python static server. The current prototype instead uses Vite/Tailwind and Canvas 2D while retaining ES modules and Node tests. Neither version includes analytics, accounts, runtime AI, or deployment.
 
 **Spec:** [006 — Motion study](006-storyboards-and-motion-study.md), amended by the interaction and viewport requirements below; [003 — Visual language](003-visual-language-and-navigation.md) supplies the reading shell.
 
-## Global constraints
+## Historical global constraints
 
 - Desktop and iPad mini are the initial targets. Check 1440 × 1000, 1133 × 744 and 744 × 1133 CSS-pixel viewports; phone design is deferred. These are test viewports, not claims of physical-device testing.
 - Begin with a rich field of possibilities, not the six-ended tree in the generated storyboards. Branches wander, cross and occasionally curl. Draw original geometry rather than reproducing the supplied image.

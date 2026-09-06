@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { CIRCUMSTANCES, COMPARISONS, LAYERS, MOMENTS } from '../prototype/story.js';
+import * as story from '../prototype/story.js';
 import { renderReading } from '../prototype/story-markup.js';
 
 test('the fictional story covers every authored age without turning them into simulations', () => {
@@ -8,9 +9,27 @@ test('the fictional story covers every authored age without turning them into si
   for (const moment of MOMENTS) {
     assert.equal(typeof moment.title, 'string');
     assert.equal(typeof moment.summary, 'string');
+    assert.equal(typeof moment.preview, 'string');
+    assert.match(moment.preview, /[.!?]$/);
   }
   assert.match(MOMENTS.find(moment => moment.age === 40).summary, /time.*support.*cost/i);
   assert.match(MOMENTS.find(moment => moment.age === 60).summary, /experience/i);
+});
+
+test('each comparison authors three illustrative practice occasions', () => {
+  const labels = ['First try', 'Another occasion', 'Later check'];
+  for (const comparison of Object.values(COMPARISONS)) {
+    assert.deepEqual(comparison.occasions.map(occasion => occasion.label), labels);
+    for (const occasion of comparison.occasions) {
+      assert.equal(typeof occasion.text, 'string');
+      assert.ok(occasion.text.length > 20);
+    }
+  }
+
+  assert.match(COMPARISONS.gap.occasions.map(item => item.text).join(' '), /avoid|put.*off|skip/i);
+  assert.match(COMPARISONS.build.occasions.map(item => item.text).join(' '), /ask.*practice.*check/i);
+  assert.match(COMPARISONS.repair.occasions.map(item => item.text).join(' '), /support|help/i);
+  assert.match(COMPARISONS.repair.occasions.map(item => item.text).join(' '), /first intake.*missed/i);
 });
 
 test('all three comparisons carry actions, consequences, steps and typed outcomes', () => {
@@ -50,6 +69,13 @@ test('layers separate repeated practice from knowledge, setup and a specific rou
   assert.match(CIRCUMSTANCES, /Not all of this is Mika's choice/i);
 });
 
+test('the shared compounding explanation is cautious and concrete', () => {
+  assert.equal(typeof story.COMPOUNDING_EXPLANATION, 'string');
+  assert.match(story.COMPOUNDING_EXPLANATION, /earlier learning/i);
+  assert.match(story.COMPOUNDING_EXPLANATION, /later learning/i);
+  assert.match(story.COMPOUNDING_EXPLANATION, /not.*fixed|no fixed|not guarantee/i);
+});
+
 test('the reading alternative includes the complete authored explanation as semantic HTML', () => {
   const html = renderReading();
   assert.match(html, /^<article[ >]/);
@@ -58,11 +84,16 @@ test('the reading alternative includes the complete authored explanation as sema
   for (const comparison of Object.values(COMPARISONS)) {
     assert.ok(html.includes(comparison.title));
     for (const outcome of comparison.outcomes) assert.ok(html.includes(outcome.label));
+    for (const occasion of comparison.occasions) {
+      assert.ok(html.includes(occasion.label));
+      assert.ok(html.includes(occasion.text));
+    }
   }
   for (const layer of Object.values(LAYERS)) assert.ok(html.includes(layer.title));
   assert.match(html, /equal parts.*equivalent fractions.*ratio.*recipe/is);
   assert.match(html, /learning that builds on learning/i);
   assert.match(html, /compounding/i);
+  assert.ok(html.includes(story.COMPOUNDING_EXPLANATION));
   assert.match(html, /fictional/i);
 });
 

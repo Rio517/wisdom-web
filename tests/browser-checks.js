@@ -24,8 +24,21 @@ async (page) => {
   assert(await page.getByRole('heading', { name: 'What becomes possible?', exact: true }).isVisible(), 'Outcome explanation is missing');
   assert(await page.locator('#decision-results').getByText('Later course intake available', { exact: true }).isVisible(), 'Repair outcome is missing');
   assert(await page.locator('#decision-steps li').count() === 4, 'Repair work is incomplete');
+  assert(await page.locator('#compounding-copy').getByText(/earlier learning.*later learning/i).isVisible(), 'Guided view omits the cautious compounding explanation');
   const earlierAtForty = await page.locator('[data-review-age]').evaluateAll(nodes => nodes.map(node => Number(node.dataset.reviewAge)));
   assert(JSON.stringify(earlierAtForty) === JSON.stringify([8, 12, 16, 25, 40]), 'Earlier decisions do not match today');
+  for (const [choice, expected] of [
+    ['gap', /avoids|puts off|skips/i],
+    ['build', /asks.*practices.*checks/is],
+    ['repair', /first intake.*missed/is]
+  ]) {
+    await page.getByRole('button', { name: choice === 'gap' ? 'Leave the gap' : choice === 'build' ? 'Build the foundation' : 'What could help next?', exact: true }).click();
+    const pattern = page.locator('#pattern-layer');
+    if (await pattern.isHidden()) await page.locator('[data-layer="pattern"]').click();
+    assert(await pattern.locator('.practice-sequence > li').count() === 3, `${choice} omits its three practice occasions`);
+    assert(JSON.stringify(await pattern.locator('.occasion-label').allTextContents()) === JSON.stringify(['First try', 'Another occasion', 'Later check']), `${choice} practice labels are wrong`);
+    assert(await pattern.textContent().then(text => expected.test(text)), `${choice} practice occasions are not mode-specific`);
+  }
   results.push('Direct state, comparison adjacency and named recovery');
 
   // 2. Rapid retargeting, interruption and focus after animation.
@@ -67,9 +80,11 @@ async (page) => {
   const previewURL = page.url();
   await page.locator('.map-target[data-age="12"]').focus();
   assert(await page.locator('#map-preview').textContent().then(text => /Age 12:/.test(text)), 'Keyboard focus does not preview an earlier moment');
+  assert(await page.locator('#map-preview').textContent().then(text => /responds to a fractions gap/i.test(text)), 'Keyboard preview omits the authored explanatory sentence');
   assert(page.url() === previewURL, 'Focus preview mutates the URL');
   await page.locator('.map-target[data-age="25"]').hover();
   assert(await page.locator('#map-preview').textContent().then(text => /Age 25:/.test(text)), 'Pointer hover on an age target does not preview its moment');
+  assert(await page.locator('#map-preview').textContent().then(text => /new training easier to begin/i.test(text)), 'Pointer preview omits the authored explanatory sentence');
   assert(page.url() === previewURL, 'Age-target hover preview mutates the URL');
   await page.evaluate(() => document.querySelector('#life-map').scrollIntoView({ block: 'center' }));
   const canvasPoint = await page.evaluate(async () => {
@@ -104,6 +119,14 @@ async (page) => {
   await page.locator('[data-review-age="25"]').focus();
   await page.keyboard.press('Enter');
   assert(await page.evaluate(() => document.activeElement?.dataset.reviewAge === '25'), 'Keyboard review loses focus when the moment list rerenders');
+  for (const age of ['40', '12']) {
+    await page.goto(`${base}?age=${age}&selected=1&inspect=12&choice=build`);
+    await page.locator('#return-today').focus();
+    await page.keyboard.press('Enter');
+    assert(await page.locator('#example-age').inputValue() === age, `Return to today changes selected age ${age}`);
+    assert(await page.evaluate(() => document.activeElement?.id === 'example-age'), `Return to today loses keyboard focus at age ${age}`);
+    assert(await page.evaluate(() => new URL(location.href).searchParams.get('inspect') === null), `Return to today leaves inspection open at age ${age}`);
+  }
   await page.goto(`${base}?age=12&selected=1&inspect=12`);
   await page.locator('.map-target[data-age="12"]').click();
   assert(await page.evaluate(() => new URL(location.href).searchParams.get('inspect') === null), 'The age-12 today target reopens comparison instead of returning to today');
@@ -169,30 +192,40 @@ async (page) => {
   assert(await page.locator('#life-map').getAttribute('data-motion') === 'settled', 'Restored manual choice allows animation');
   results.push('Manual and system reduced motion');
 
-  // 9. Live resize retains alignment/readability; both scenes avoid overflow.
-  await page.goto(`${base}?age=40&selected=1&inspect=12&choice=repair`);
-  for (const viewport of [{ width: 1440, height: 1000 }, { width: 1133, height: 744 }, { width: 744, height: 1133 }]) {
-    await page.setViewportSize(viewport);
-    await afterResize();
-    assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `Possibilities overflow at ${viewport.width}`);
-    const controls = await page.locator('button:visible').evaluateAll(nodes => nodes.every(node => {
-      const rect = node.getBoundingClientRect();
-      return rect.width >= 43.9 && rect.height >= 43.9;
-    }));
-    assert(controls, `Control below 44px at ${viewport.width}`);
-    const annotationSize = await page.locator('.route-marker').first().evaluate(node => parseFloat(getComputedStyle(node).fontSize));
-    assert(annotationSize >= 16, `Outcome annotation below 16px at ${viewport.width}`);
-    const overlaps = await page.evaluate(() => {
-      const targets = [...document.querySelectorAll('.map-target:not([hidden]), .today-marker')].map(node => node.getBoundingClientRect());
-      return [...document.querySelectorAll('.route-marker')].some(node => {
-        const marker = node.getBoundingClientRect();
-        return targets.some(target => !(marker.right <= target.left + 0.1 || marker.left >= target.right - 0.1 || marker.bottom <= target.top + 0.1 || marker.top >= target.bottom - 0.1));
+  // 9. Live resize retains alignment/readability for every comparison and both scenes.
+  for (const choice of ['gap', 'build', 'repair']) {
+    await page.goto(`${base}?age=40&selected=1&inspect=12&choice=${choice}`);
+    for (const viewport of [{ width: 1440, height: 1000 }, { width: 1133, height: 744 }, { width: 744, height: 1133 }]) {
+      await page.setViewportSize(viewport);
+      await afterResize();
+      assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${choice} possibilities overflow at ${viewport.width}`);
+      const controls = await page.locator('button:visible').evaluateAll(nodes => nodes.every(node => {
+        const rect = node.getBoundingClientRect();
+        return rect.width >= 43.9 && rect.height >= 43.9;
+      }));
+      assert(controls, `Control below 44px in ${choice} at ${viewport.width}`);
+      const annotationSize = await page.locator('.route-marker').first().evaluate(node => parseFloat(getComputedStyle(node).fontSize));
+      assert(annotationSize >= 16, `${choice} outcome annotation below 16px at ${viewport.width}`);
+      const geometry = await page.evaluate(() => {
+        const intersects = (a, b) => !(a.right <= b.left + 0.1 || a.left >= b.right - 0.1 || a.bottom <= b.top + 0.1 || a.top >= b.bottom - 0.1);
+        const map = document.querySelector('.map-canvas-wrap').getBoundingClientRect();
+        const markers = [...document.querySelectorAll('.route-marker')].map(node => node.getBoundingClientRect());
+        const obstacles = [...document.querySelectorAll('.map-target:not([hidden]), .today-marker')].map(node => node.getBoundingClientRect());
+        return {
+          markerCount: markers.length,
+          allInsideMap: markers.every(marker => marker.left >= map.left - 0.1 && marker.right <= map.right + 0.1 && marker.top >= map.top - 0.1 && marker.bottom <= map.bottom + 0.1),
+          markerOverlap: markers.some((marker, index) => markers.slice(index + 1).some(other => intersects(marker, other))),
+          obstacleOverlap: markers.some(marker => obstacles.some(obstacle => intersects(marker, obstacle)))
+        };
       });
-    });
-    assert(!overlaps, `Outcome annotations overlap age controls at ${viewport.width}`);
-    await page.getByRole('button', { name: 'Next: learning opens paths' }).click();
-    assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `Learning scene overflows at ${viewport.width}`);
-    await page.getByRole('button', { name: 'Back to your moment' }).click();
+      assert(geometry.markerCount === (choice === 'repair' ? 5 : 3), `${choice} has the wrong annotation count at ${viewport.width}`);
+      assert(geometry.allInsideMap, `${choice} annotations leave the map at ${viewport.width}`);
+      assert(!geometry.markerOverlap, `${choice} annotations overlap each other at ${viewport.width}`);
+      assert(!geometry.obstacleOverlap, `${choice} annotations overlap age controls at ${viewport.width}`);
+      await page.getByRole('button', { name: 'Next: learning opens paths' }).click();
+      assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `Learning scene overflows at ${viewport.width}`);
+      await page.getByRole('button', { name: 'Back to your moment' }).click();
+    }
   }
   results.push('Resize alignment, target sizes and both-scene overflow');
 
@@ -214,8 +247,21 @@ async (page) => {
   const noJSContext = await browser.newContext({ javaScriptEnabled: false, viewport: { width: 744, height: 1133 } });
   const noJS = await noJSContext.newPage();
   await noJS.goto(base);
-  assert(await noJS.getByRole('heading', { name: 'Three views of the age 12 choice' }).isVisible(), 'No-JavaScript reading omits comparison');
-  assert(await noJS.locator('noscript').getByText(/Not all of this is Mika's choice/i).isVisible(), 'No-JavaScript reading omits circumstances');
+  const noJSReading = noJS.locator('.nojs-reading');
+  const noJSHeading = noJSReading.getByRole('heading', { name: 'Three views of the age 12 choice' });
+  assert(await noJSHeading.isVisible(), 'No-JavaScript reading omits comparison');
+  assert(await noJSReading.getByText(/Not all of this is Mika's choice/i).isVisible(), 'No-JavaScript reading omits circumstances');
+  assert(await noJSReading.locator('p').first().evaluate(node => parseFloat(getComputedStyle(node).fontSize) >= 20), 'No-JavaScript reading falls below 20px narrative type');
+  assert(await noJS.locator('#site-index, #open-index, main button, main select').evaluateAll(nodes => nodes.every(node => {
+    return node.getClientRects().length === 0;
+  })), 'No-JavaScript shell presents dead interaction controls');
+  await noJSHeading.scrollIntoViewIfNeeded();
+  const headingIsUnobscured = await noJSHeading.evaluate(node => {
+    const rect = node.getBoundingClientRect();
+    const hit = document.elementFromPoint(rect.left + rect.width / 2, rect.top + Math.min(rect.height / 2, 20));
+    return hit === node || node.contains(hit);
+  });
+  assert(headingIsUnobscured, 'No-JavaScript comparison heading is covered by fixed UI');
   await noJSContext.close();
   results.push('Canvas failure and JavaScript-disabled shared reading');
 

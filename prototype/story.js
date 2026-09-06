@@ -2,31 +2,37 @@ export const MOMENTS = [
   {
     age: 8,
     title: 'Ask when something is confusing',
+    preview: 'Early support helps Mika build a base for later learning.',
     summary: 'Mika asks for a drawing of equal parts and practices connecting the picture to a fraction. This is a starting point, not mastery of everything that follows.',
   },
   {
     age: 12,
     title: 'Return to a difficult idea',
+    preview: 'How Mika responds to a fractions gap changes which later routes stay easier to reach.',
     summary: 'Equivalent fractions are confusing. Mika repeatedly avoids the difficult problems, so the missing understanding adds another difficulty when ratios appear.',
   },
   {
     age: 16,
     title: 'Repair a gap before the next step',
+    preview: 'Support and extra work can rebuild preparation after an earlier deadline passes.',
     summary: 'Mika wants an invented design course that requires ratios. With support, Mika catches up before a later intake. Being prepared makes Mika eligible; it does not guarantee a place, and the first intake stays missed.',
   },
   {
     age: 25,
     title: 'Use learning in a new setting',
+    preview: 'Earlier foundations can make new training easier to begin.',
     summary: 'Mika learns a spreadsheet to help budget a community event. Earlier number skills help, but the tool itself still needs learning. New abilities can create new options.',
   },
   {
     age: 40,
     title: 'Make room for new learning',
+    preview: 'Time, support and cost shape which next steps fit.',
     summary: 'Mika considers a course alongside work and family responsibilities. Time, support and cost affect what is practical; forty is not a learning cutoff.',
   },
   {
     age: 60,
     title: 'Combine experience with something new',
+    preview: 'Experience can support new learning, while circumstances still matter.',
     summary: 'Mika brings practical experience to a shared project and learns an unfamiliar planning tool. Experience can help, while old methods sometimes need adapting. Future routes continue.',
   },
 ];
@@ -40,6 +46,11 @@ export const COMPARISONS = {
       'The confusing equivalent-fraction problems are left unresolved across several occasions.',
       'A recipe ratio now depends on an earlier idea that still needs work.',
       'The invented course reaches its first intake before Mika meets its ratio prerequisite.',
+    ],
+    occasions: [
+      { label: 'First try', text: 'Mika avoids the confusing fraction problems and finishes only the familiar work.' },
+      { label: 'Another occasion', text: 'Mika puts off asking about equivalent fractions, so the same gap remains.' },
+      { label: 'Later check', text: 'Mika skips the unresolved part again when ratios begin to depend on it.' },
     ],
     outcomes: [
       { id: 'fraction-foundation', label: 'Fraction foundation needs work', status: 'needs-work' },
@@ -55,6 +66,11 @@ export const COMPARISONS = {
       'Connect equal parts to equivalent fractions, then connect equivalent fractions to a ratio in a recipe.',
       'Practice adapting the recipe and check the answer with feedback.',
       'Use that preparation to become ready for the invented course prerequisite.',
+    ],
+    occasions: [
+      { label: 'First try', text: 'Mika asks for a drawing that connects equal parts to fractions.' },
+      { label: 'Another occasion', text: 'Mika practices equivalent fractions and uses feedback to correct a mistake.' },
+      { label: 'Later check', text: 'Mika checks the connection again while adapting a recipe ratio.' },
     ],
     outcomes: [
       { id: 'fraction-foundation', label: 'Fraction foundation available', status: 'available' },
@@ -72,6 +88,11 @@ export const COMPARISONS = {
       'Practice ratios by adapting a recipe.',
       'Finish the prerequisite before a later intake of the invented course.',
     ],
+    occasions: [
+      { label: 'First try', text: 'With support, Mika returns to equal parts after the first intake is already missed.' },
+      { label: 'Another occasion', text: 'Mika gets help with equivalent fractions and checks the new understanding.' },
+      { label: 'Later check', text: 'Mika practices a recipe ratio and prepares for a later intake.' },
+    ],
     outcomes: [
       { id: 'equal-parts-revisit', label: 'Equal parts revisited', status: 'needs-work' },
       { id: 'supported-fractions', label: 'Equivalent fractions learned with support', status: 'needs-work' },
@@ -81,6 +102,8 @@ export const COMPARISONS = {
     ],
   },
 };
+
+export const COMPOUNDING_EXPLANATION = 'Earlier learning can support later learning. This is one kind of compounding, not a fixed growth rate or guaranteed result.';
 
 export const LAYERS = {
   pattern: {

@@ -4,7 +4,7 @@ Status: Proposed. Created: 2026-09-06. Updated: 2026-09-06.
 
 The requirements are a beautiful, very clean, content-focused interface with occasional expressive illustrations, plus a collapsible left navigation panel. The proposed treatment takes its cues from a botanical or natural-history field guide. The central map adds quick, functional, slightly futuristic animation: inviting to younger readers and satisfying to older readers. Watercolor is a candidate medium; the exact illustration treatment and production typography remain open for visual review.
 
-This document is the detailed visual-requirements source for the shared reading shell around [001 — Choices experience](001-choices-experience.md). [002 — Delivery architecture](002-delivery-architecture.md) covers routes and production boundaries. A narrow local implementation study exists under `prototype/`; it is not the complete chapter or production interface and has not been published. Owner feedback informs [008 — Choices and consequences](008-choices-and-consequences.md), the next revision's written design. [006](006-storyboards-and-motion-study.md) and [007](007-interactive-map-prototype.md) record the earlier studies.
+This document is the detailed visual-requirements source for the shared reading shell around [001 — Choices experience](001-choices-experience.md). [002 — Delivery architecture](002-delivery-architecture.md) covers routes and production boundaries. A narrow local implementation study exists under `prototype/`; it is not the complete chapter or production interface and has not been published. The prototype now implements [008 — Choices and consequences](008-choices-and-consequences.md) through the work recorded in [009](009-layered-choices-implementation.md). [006](006-storyboards-and-motion-study.md) and [007](007-interactive-map-prototype.md) preserve the earlier study history.
 
 ## Visual idea
 
@@ -25,13 +25,13 @@ Reserve borders for navigation separation, a specimen inset, or a meaningful gro
 | Quiet text | `#596860` | Secondary labels that remain readable |
 | Rule | `#D5DDD5` | Nonessential separators |
 | Active | `#2F604D` | Current selection, links, and focus treatment |
-| Possible future | `#A8BCAF` | Still-possible paths in the selected map state |
-| Untaken | Replace the prototype's `#E5E8E3` during rendered review | Clearly visible gray paths that diverged before today |
+| Possible future | `#7F9C8B` in the current prototype | Still-possible paths in the selected map state |
+| Untaken | `#87918B` in the current prototype | Clearly visible gray paths that diverged before today |
 | Painted rose | `#DBADB0` | Illustration wash; not a text color |
 
 These are proposed tokens, not a tested contrast system. Meaningful graphics and controls need sufficient contrast independently of decorative rules.
 
-Source Serif 4 and Source Sans 3 remain production candidates; their official sources are [Source Serif](https://github.com/adobe-fonts/source-serif) and [Source Sans](https://github.com/adobe-fonts/source-sans). The local prototype does not contain self-hosted font assets or load web fonts: its CSS names those families first but renders whichever installed system fallbacks are available. Compare production candidates and actual rendered fallbacks with readers before settling or packaging the typefaces.
+Source Serif 4 and Source Sans 3 remain production candidates; their official sources are [Source Serif](https://github.com/adobe-fonts/source-serif) and [Source Sans](https://github.com/adobe-fonts/source-sans). The local prototype does not contain self-hosted font assets or load web fonts. It currently declares Iowan Old Style/Palatino/Georgia for field-guide text and Avenir Next/Segoe UI/sans-serif for guide text, using whichever listed fonts are installed. Compare production candidates and actual rendered fallbacks with readers before settling or packaging the typefaces.
 
 Start with 20px body text, approximately 1.6 line height, and a 55–65-character reading measure. Meaningful labels and navigation should normally be at least 16px. Use sentence case, moderate heading sizes, and left-aligned prose. For the narrow prototype, judge sizes and line lengths at the desktop and iPad mini targets in [007](007-interactive-map-prototype.md); phone typography remains a later production check.
 
@@ -39,7 +39,7 @@ Start with 20px body text, approximately 1.6 line height, and a 55–65-characte
 
 The desktop composition is a quiet left index and an open reading area. The diagram can use more width than the prose. A small illustration sits near the idea it explains; it does not need to occupy every scene.
 
-The next revision uses Tailwind's shared spacing, type, responsive layout and named project tokens. Use the utility system to constrain layout decisions, not as a wrapper around the same collection of arbitrary pixel values. Canvas geometry is separate from page layout.
+The current prototype uses Tailwind's shared spacing, type, responsive layout and named project tokens. The utility system constrains layout decisions while Canvas geometry remains separate from page layout.
 
 ```text
 Navigation, collapsible          Guided explanation
@@ -68,7 +68,7 @@ At a narrow tablet viewport, the index opens as an overlay with a persistent nav
 
 ## Illustrations, callouts, and animation
 
-Generate painted specimen artwork as raster images with transparent backgrounds. Keep meaningful labels and controls in HTML, and precise leader lines in code. The current map uses SVG; the approved next direction uses Canvas 2D for routes and tracing, with semantic HTML carrying the same meaning. An SVG wrapper around a bitmap does not make the underlying artwork vector; preserve that distinction in asset records.
+Generate painted specimen artwork as raster images with transparent backgrounds. Keep meaningful labels and controls in HTML, and precise leader lines in code. The current map uses Canvas 2D for routes and tracing, with semantic HTML carrying the same meaning; [007](007-interactive-map-prototype.md) records the earlier SVG version. An SVG wrapper around a bitmap does not make the underlying artwork vector; preserve that distinction in asset records.
 
 A callout must identify a real depicted element or explain an action in the diagram. Give leader lines clear endpoints and avoid crossings. On small screens, labels can move below the illustration with matching markers. Do not point abstract abilities at arbitrary brain locations; a general brain illustration can accompany a general explanation without implying anatomical localization.
 
@@ -110,4 +110,4 @@ Beauty is an acceptance requirement, but the interaction earns its place by maki
 - The traveling-dot interaction feels immediate, resolves quickly, applies only a modest post-arrival zoom, and can be interrupted without queued or conflicting traces. Touch, keyboard, and reduced-motion paths communicate the same selected state.
 - The first animation never delays access to content or requires a cinematic introduction. Essential labels remain legible and attached to their meaning; no label blurs, spins, or depends on a glow for contrast.
 
-The next review should inspect the local prototype with real copy at the desktop and iPad mini viewports in [007](007-interactive-map-prototype.md). Review the path abundance and meaning, motion interruption, focus move, system-rendered type, sidebar width, illustration scale, and reading comfort together. Code inspection and a specimen illustration are not proof that the rendered interface works.
+Further reviews should inspect the local prototype with real copy at the desktop and iPad mini viewports recorded in [007](007-interactive-map-prototype.md). Review the path abundance and meaning, comparison annotations and practice occasions, motion interruption, focus move, system-rendered type, sidebar width, illustration scale, and guided/static reading comfort together. Code inspection and a specimen illustration are not proof that the rendered interface works.

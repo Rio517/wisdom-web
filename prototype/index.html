@@ -19,6 +19,15 @@
   </aside>
 
   <main id="main" tabindex="-1" class="mx-auto max-w-screen-2xl px-8 pb-10 pt-8 lg:ml-56 lg:px-12 xl:px-16">
+    <noscript>
+      <style>
+        body { min-width: 0 !important; }
+        body > .skip-link, body > .index-opener, body > .site-index, body > dialog, main > :not(noscript) { display: none !important; }
+        main { max-width: none !important; margin: 0 !important; padding: 32px !important; }
+        .nojs-reading { display: block; max-width: 800px; margin: 0 auto; }
+      </style>
+      <section class="nojs-reading"><!-- READING_CONTENT:noscript --></section>
+    </noscript>
     <header class="chapter-bar"><span>Choices <span class="bar-divider" aria-hidden="true">/</span> The paths we make</span><button class="text-button" data-dialog="reading">Read without stepping</button></header>
 
     <section id="possibilities-scene" aria-labelledby="opening-title">
@@ -26,10 +35,10 @@
       <figure class="map-plate" aria-labelledby="map-heading" aria-describedby="map-caption">
         <div class="map-toolbar"><div><h2 id="map-heading">Mika’s example life — not a prediction</h2><p id="map-instruction">Choose an example age to see a route to today.</p></div><div class="moment-controls"><label for="example-age">Example age</label><select id="example-age"><option value="8">8 years</option><option value="12">12 years</option><option value="16">16 years</option><option value="25">25 years</option><option value="40">40 years</option><option value="60">60 years</option></select><button id="explore" class="primary-button">Explore this moment</button><button id="comparison-entry" class="comparison-entry" hidden>Compare a choice at age 12</button></div></div>
         <section id="decision-panel" class="decision-panel" aria-labelledby="decision-heading" hidden>
-          <div><p class="kicker">One moment, three possible next steps</p><h2 id="decision-heading" tabindex="-1">Looking back: age 12</h2><p class="decision-intro">Equivalent fractions can support ratios in a recipe. What happens here is about preparation and support, not a score for Mika.</p></div>
+          <div><p class="kicker">One moment, three possible next steps</p><h2 id="decision-heading" tabindex="-1">Looking back: age 12</h2><p class="decision-intro">Equivalent fractions can support ratios in a recipe. What happens here is about preparation and support, not a score for Mika.</p><p class="decision-intro" id="compounding-copy"></p></div>
           <div><p class="comparison-note">Another possible choice</p><div class="comparison-buttons" aria-label="Comparison choices"><button type="button" data-comparison="gap">Leave the gap</button><button type="button" data-comparison="build">Build the foundation</button><button type="button" data-comparison="repair">What could help next?</button></div></div>
         </section>
-        <div class="map-stage"><div class="map-regions" aria-hidden="true"><span id="past-label">A beginning</span><span>Many possible futures</span></div><div class="map-canvas-wrap"><canvas id="life-map" width="1260" height="540" role="img" aria-labelledby="map-title map-description" data-motion="ready"><span id="map-title">An illustrated life with many possible paths</span><span id="map-description">A winding route from a beginning to an example age, with branches beyond it. Height is not a measure of success.</span></canvas><div id="map-overlay" aria-label="Map moments"></div></div><noscript><!-- READING_CONTENT:noscript --></noscript><div class="map-actions"><button id="overview" class="text-button" hidden>See the whole map</button><button id="replay" class="text-button" hidden>Replay arrival</button><button id="return-today" class="text-button" hidden>Return to today</button><label class="motion-control"><input id="reduce-motion" type="checkbox"> Less motion</label></div></div>
+        <div class="map-stage"><div class="map-regions" aria-hidden="true"><span id="past-label">A beginning</span><span>Many possible futures</span></div><div class="map-canvas-wrap"><canvas id="life-map" width="1260" height="540" role="img" aria-labelledby="map-title map-description" data-motion="ready"><span id="map-title">An illustrated life with many possible paths</span><span id="map-description">A winding route from a beginning to an example age, with branches beyond it. Height is not a measure of success.</span></canvas><div id="map-overlay" aria-label="Map moments"></div></div><div class="map-actions"><button id="overview" class="text-button" hidden>See the whole map</button><button id="replay" class="text-button" hidden>Replay arrival</button><button id="return-today" class="text-button" hidden>Return to today</button><label class="motion-control"><input id="reduce-motion" type="checkbox"> Less motion</label></div></div>
         <figcaption id="map-caption"><div class="map-key"><span><i class="key-line traveled"></i>The route to today</span><span><i class="key-line untaken"></i>Routes not taken</span><span><i class="key-line possible"></i>Routes still possible</span></div><p>A picture of possibilities, not a prediction. Up and down are not scores.</p></figcaption>
         <p class="map-preview quiet-note" id="map-preview">Move over the traveled route to preview an earlier moment.</p>
         <section id="decision-results" class="decision-results" aria-labelledby="decision-heading" hidden>
