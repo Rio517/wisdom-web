@@ -1,8 +1,30 @@
-# Design studies
+# Design library
 
-## Interface and motion storyboards
+## Start here — the site
 
-The [stored reading and motion boards](storyboards/README.md) explore the reading surface and earlier marker-and-path interaction. Each selected image underwent two visual-review/refinement cycles. Their sparse map and stationary-marker sequence are superseded by the [working prototype and browser review](prototype/README.md). The PNGs remain composition references rather than executable UI specifications.
+The first complete website is [002 — Site shell and home, v01 — Launch](002-site/v01-launch/README.md): home page, lesson overview, text version, notes, about and the shared index, built in Astro with the approved field-guide look.
+
+## Choices
+
+Newest implementation for review: [v09 — Guided journey](001-choices-explainer/v09-guided-journey/README.md) ([013](../product/013-choices-guided-journey.md)). The previous live implementation is [v08 — Alfredo lesson](001-choices-explainer/v08-alfredo-lesson/README.md). The older rounds below remain design history.
+
+All Choices design work belongs to [001 — Choices explainer](001-choices-explainer/README.md). That stable study contains the numbered review rounds, their questions, dates, status and relationship to the product documents.
+
+Accepted storyboard direction is [v07 — Hiking lesson storyboard](001-choices-explainer/v07-hiking-storyboard/README.md): four reader-facing scenes, their visual states and proposed transitions. The owner accepted v04 for prototyping; v05 changes only the character name to Alfredo. This round preserves the current path algorithm and does not implement the lesson. Earlier interactive review is [v06 — Flat Canvas](001-choices-explainer/v06-flat-canvas/README.md). The [v06 artwork](001-choices-explainer/v05-reference-and-modern/dimensional-v06.png) remains a composition reference, not dimensional styling to copy. See [NEXT_STEP.md](../../NEXT_STEP.md) for the current standalone path lab; the captures below predate that tuning surface.
+
+**Earlier comparison (2026-09-07):** [opening](001-choices-explainer/v06-flat-canvas/opening-desktop-v06.png), [full context](001-choices-explainer/v06-flat-canvas/retained-desktop-v04.png), [fading alternatives](001-choices-explainer/v06-flat-canvas/fading-desktop-v04.png) and [quiet context](001-choices-explainer/v06-flat-canvas/hybrid-desktop-v04.png). These actual browser captures show heavier, higher-resolution strokes and stronger early branching, with the same network/scenario across the three visibility treatments. Two review/improvement loops are recorded in the round README. At that review, owner selection and a tuning UI were pending. A standalone tuning page now exists; those captures are historical. Tablet evidence: [portrait](001-choices-explainer/v06-flat-canvas/today-tablet-portrait-v04.png) and [landscape](001-choices-explainer/v06-flat-canvas/today-tablet-landscape-v04.png).
+
+## Naming and versioning
+
+Current implementation review: [study 001, v08 — Alfredo lesson](001-choices-explainer/v08-alfredo-lesson/README.md), the accepted hiking storyboard as a Tailwind lesson with optional map exploration.
+
+Registered code review: [study 001, v06 — Flat Canvas](001-choices-explainer/v06-flat-canvas/README.md). This round tests the accepted v06 composition as flat interactive code, not another artwork treatment. Browser captures use explicit artifact revisions.
+
+- A study has a permanent ID and subject: `001-choices-explainer`, `002-site`. Register a genuinely new subject here before creating its folder.
+- A numbered round records a distinct review question: `v05-reference-and-modern`. A refinement stays in that round; it does not create a sibling folder with another informal name.
+- An artifact has an explicit revision: `dimensional-v03.png`, followed by `dimensional-v04.png`. Keep reviewed versions unchanged. Do not use `final`, `latest` or unversioned new image filenames.
+- Each round's README identifies its purpose, related product documents, dates, status, direct image links, review limits and prompt/source files. The study index says what to review now and what is superseded.
+- Historical browser captures retain their original names inside frozen numbered rounds. Dates belong in the indexes; Git records reference-document edits. The existing versioned brain asset remains at its stable path because the local prototype uses it.
 
 ## Brain — ink and restrained watercolor
 

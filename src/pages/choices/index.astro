@@ -1,0 +1,64 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import { CHOICES_CHAPTERS, TAKEAWAYS, LESSON_PATH, UI, url } from '../../data/site.js';
+---
+<SiteLayout title="Choices — The paths we make" description="Lesson 1: how small choices add up, why not everything is yours to choose, and how to keep going when plans change. A guided journey for ages 8+." current="choices">
+  <div class="page">
+    <section class="overview-hero" aria-labelledby="lesson-title">
+      <div>
+        <p class="kicker">Lesson 1 · Choices</p>
+        <h1 id="lesson-title">The paths we make</h1>
+        <p class="page-lede">A life has more possible paths than anyone could walk. This lesson shows how the choices we repeat add up, how learning builds on learning, and how other people, help and luck shape the path too.</p>
+        <ul class="meta-row">
+          <li><Fragment set:html={UI.clock} />About 15 minutes</li>
+          <li><Fragment set:html={UI.people} />Ages 8 and up</li>
+          <li><Fragment set:html={UI.device} />Desktop and iPad</li>
+        </ul>
+        <div class="actions">
+          <a class="btn btn-primary" href={url(LESSON_PATH)}>Start the journey<Fragment set:html={UI.arrow} /></a>
+          <a class="btn btn-quiet" href={url(`${LESSON_PATH}read/`)}>Read as text</a>
+        </div>
+      </div>
+      <aside class="overview-card" aria-labelledby="keep-title">
+        <h2 id="keep-title">Three ideas to keep</h2>
+        <ul class="takeaway-list">
+          {TAKEAWAYS.map(item => (
+            <li><span set:html={item.icon} /><div><strong>{item.heading}</strong><span>{item.text}</span></div></li>
+          ))}
+        </ul>
+      </aside>
+    </section>
+
+    <section class="section" aria-labelledby="chapters-title">
+      <div class="section-head">
+        <h2 id="chapters-title">Six stops on the way</h2>
+        <a class="text-link" href={url(LESSON_PATH)}>Start from the beginning</a>
+      </div>
+      <ol class="chapter-list">
+        {CHOICES_CHAPTERS.map(chapter => (
+          <li>
+            <a href={url(chapter.href)}>
+              <span class="stop-icon" set:html={chapter.icon} />
+              <div><small>{chapter.number}</small><strong>{chapter.title}</strong><span>{chapter.text}</span></div>
+              <span class="go" set:html={UI.arrow} />
+            </a>
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    <section class="section" aria-labelledby="together-title">
+      <div class="band">
+        <div>
+          <h2 id="together-title">Reading together?</h2>
+          <p>Pause at the choices and ask what your reader would do. There are no wrong answers in the games; the point is to notice what changes.</p>
+          <p>Use the ← and → keys to move through the story, or tap the chapters at the top to jump around.</p>
+        </div>
+        <div class="link-cards">
+          <a class="link-card" href={url('/choices/notes/')}><div><strong>Notes for grown-ups</strong><span>Conversation questions and the evidence behind the lesson</span></div><Fragment set:html={UI.arrow} /></a>
+          <a class="link-card" href={url(`${LESSON_PATH}read/`)}><div><strong>Read as text</strong><span>The whole lesson on one page, easy to print</span></div><Fragment set:html={UI.arrow} /></a>
+        </div>
+      </div>
+    </section>
+  </div>
+</SiteLayout>

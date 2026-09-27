@@ -1,24 +1,12 @@
 import { defineConfig } from 'vite';
 import tailwindcss from '@tailwindcss/vite';
 import { renderReading } from './prototype/story-markup.js';
+import { renderChoicesReading } from './prototype/choices-markup.js';
+import { PORTS, assertProjectPort, assertLocalhost } from './tooling/ports.js';
 
-const MIN_PORT = 4600;
-const MAX_PORT = 4699;
+// Earlier prototype studies only. The site itself is built by Astro (astro.config.mjs).
 
-export function assertProjectPort(value, service) {
-  const port = Number(value);
-  if (!Number.isInteger(port) || port < MIN_PORT || port > MAX_PORT) {
-    throw new Error(`${service} port must be between ${MIN_PORT} and ${MAX_PORT}; received ${value}`);
-  }
-  return port;
-}
-
-export function assertLocalhost(value, service) {
-  if (value !== '127.0.0.1') {
-    throw new Error(`${service} host must remain 127.0.0.1; received ${value}`);
-  }
-  return value;
-}
+export { assertProjectPort, assertLocalhost };
 
 export function readingContentPlugin() {
   return {
@@ -26,6 +14,17 @@ export function readingContentPlugin() {
     transformIndexHtml(html) {
       return html.replace(/<!-- READING_CONTENT(?::([a-z-]+))? -->/g, (_match, idPrefix) => (
         renderReading({ idPrefix: idPrefix || 'reading' })
+      ));
+    },
+  };
+}
+
+export function choicesContentPlugin() {
+  return {
+    name: 'wisdom-choices-reading',
+    transformIndexHtml(html) {
+      return html.replace(/<!-- CHOICES_READING(?::([a-z-]+))? -->/g, (_match, idPrefix) => (
+        renderChoicesReading({ idPrefix: idPrefix || 'choices-reading' })
       ));
     },
   };
@@ -59,11 +58,11 @@ function projectPortGuard() {
 
 export default defineConfig({
   base: './',
-  plugins: [tailwindcss(), readingContentPlugin(), projectPortGuard()],
-  server: { host: '127.0.0.1', port: 4600, strictPort: true },
-  preview: { host: '127.0.0.1', port: 4601, strictPort: true },
+  plugins: [tailwindcss(), readingContentPlugin(), choicesContentPlugin(), projectPortGuard()],
+  server: { host: '127.0.0.1', port: PORTS.prototypeDev, strictPort: true },
+  preview: { host: '127.0.0.1', port: PORTS.prototypePreview, strictPort: true },
   build: {
-    outDir: 'dist',
-    rolldownOptions: { input: 'prototype/index.html' },
+    outDir: 'dist-prototype',
+    rolldownOptions: { input: { lesson: 'prototype/index.html', paths: 'prototype/path-lab.html', choices: 'prototype/choices.html' } },
   },
 });

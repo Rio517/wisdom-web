@@ -113,7 +113,7 @@ In addition to strict defaults, reject explicit CLI/config port overrides outsid
 
 ## Task 3: Two visual refinement loops, regression checks and handoff
 
-**Files:** Modify the Task 2 UI/test files only as justified by observed issues; update `prototype/README.md`, `NEXT_STEP.md`, `COMPLETED.md`, `AGENTS.md`, `docs/product/README.md`, documents 008/009 and `docs/design/prototype/README.md`. Save new screenshots under `docs/design/prototype/rewrite/`. Update the old browser suite to the current entry/interaction contract or replace its invocation with the new suite; leave no supported launch/test path on port 4173.
+**Files:** Modify the Task 2 UI/test files only as justified by observed issues; update `prototype/README.md`, `NEXT_STEP.md`, `COMPLETED.md`, `AGENTS.md`, `docs/product/README.md`, documents 008/009 and `docs/design/001-choices-explainer/v03-canvas-interaction/README.md`. Save new screenshots under `docs/design/001-choices-explainer/v03-canvas-interaction/`. Update the old browser suite to the current entry/interaction contract or replace its invocation with the new suite; leave no supported launch/test path on port 4173.
 
 **Consumes:** The running Task 2 prototype and browser checks. **Produces:** a visually inspected working local rewrite with precise test evidence and clear remaining release limits.
 

@@ -1,6 +1,25 @@
 # 002 — Delivery architecture
 
-Status: Proposed. Created: 2026-09-06. Updated: 2026-09-06.
+Status: Implemented locally (Astro site under `src/`); not yet published. Created: 2026-09-06. Updated: 2026-09-27.
+
+## Implementation (2026-09-27)
+
+The recommendation below is now implemented as an Astro 7 static site at the repository root. The owner chose the custom domain `wisdom.knyflores.com`, so the site builds at the root path (`base: '/'`) and ships `public/CNAME`.
+
+| Route | Page |
+| --- | --- |
+| `/` | Home: hero with the path-field animation, Lesson 1 feature, lesson roadmap, notes for grown-ups |
+| `/choices/` | Lesson 1 overview: three ideas to keep, the six chapters |
+| `/choices/the-paths-we-make/` | The guided journey ([013](013-choices-guided-journey.md)) |
+| `/choices/the-paths-we-make/read/` | Text version, printable, rendered from the same story module |
+| `/choices/notes/` | Notes for grown-ups (Markdown) |
+| `/about/` | About (Markdown) |
+| `404` | Not-found page |
+
+Source layout: `src/pages/`, `src/layouts/`, `src/components/` (shared index), `src/lessons/choices/` (the journey), `src/engine/` (the path network and renderer shared with the prototype studies), `src/data/site.js` (roadmap and chapter data), `src/styles/` (tokens, site and navigation CSS). The route names differ from the proposal below (`/choices/the-paths-we-make/` rather than `/choices/your-future-options/`) because the lesson title changed.
+
+Commands: `npm run dev` (4600), `npm run build`, `npm run preview` (4601); the prototype studies use `npm run dev:prototype` (4602) and `preview:prototype` (4603). Publishing needs a GitHub Pages workflow and a DNS CNAME from `wisdom` to the Pages host; both wait for the owner's go-ahead.
+
 
 The public GitHub repository is approved and created. The proposed production architecture below supports [001 — Choices experience](001-choices-experience.md); the production website is not implemented or published. The local study under `prototype/` now implements the approved [008 choices-and-consequences revision](008-choices-and-consequences.md) with Vite, Tailwind layout, Canvas 2D routes and semantic HTML. It remains a narrow prototype and does not commit the production site to that structure. [007](007-interactive-map-prototype.md) records the superseded first SVG study.
 

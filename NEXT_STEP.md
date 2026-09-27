@@ -2,57 +2,82 @@
 
 ## Current state
 
-[008 — Choices and consequences](docs/product/008-choices-and-consequences.md) is implemented as a narrow local prototype under the completed [009 implementation plan](docs/product/009-layered-choices-implementation.md). Node/build checks, the final development browser suite, built-preview smoke tests, two visual refinement loops and independent review are complete. No review findings remain open. The prototype is not the complete chapter, has not been merged or pushed, and is not published.
+**The real site exists locally.** On 2026-09-27 the owner approved the guided journey as Lesson 1 and asked for the main site. The site is now an Astro static site at the repository root, intended for `https://wisdom.knyflores.com`. It is **not published**: publishing needs a GitHub Pages workflow and a DNS record, and both wait for the owner's go-ahead.
 
-The rewrite uses locally installed Tailwind and Vite, Canvas 2D routes, plain JavaScript modules and semantic HTML. It provides:
+| Page | Local URL |
+| --- | --- |
+| Home | <http://127.0.0.1:4600/> |
+| Lesson 1 overview | <http://127.0.0.1:4600/choices/> |
+| Lesson 1 journey | <http://127.0.0.1:4600/choices/the-paths-we-make/> |
+| Text version | <http://127.0.0.1:4600/choices/the-paths-we-make/read/> |
+| Notes for grown-ups | <http://127.0.0.1:4600/choices/notes/> |
+| About | <http://127.0.0.1:4600/about/> |
 
-- one fictional Mika comparison at age 12 with gap, foundation-building and supported-repair views;
-- distinct selected-today and inspected-moment state for ages 8, 12, 16, 25, 40 and 60;
-- named route consequences, three labeled practice occasions per comparison, a next-start layer, always-visible circumstances and an optional research note;
-- an abundant forward-moving route field, beginning-to-today travel, modest focus motion and collision-aware outcome annotations;
-- direct URL/history restoration, pointer/focus and click/touch/keyboard access, reduced motion, dialogs and the collapsible index;
-- one authored static explanation shared by the reading dialog, Canvas fallback and JavaScript-disabled page; and
-- the second learning scene and related-sport example, now using Mika consistently.
+Design records:
+- Site shell and home: [002 — Site, v01 — Launch](docs/design/002-site/v01-launch/README.md).
+- The lesson: [001, v09 — Guided journey](docs/design/001-choices-explainer/v09-guided-journey/README.md).
 
-The audience remains ages 8+, with the core explanation approachable from age eight and useful depth for older readers. The example illustrates mechanisms rather than predicting a reader’s life. Preparation, qualifications, support, circumstances and chance all matter. Habits/daily practice remain a separate linked chapter with only a short bridge here; relationships remain outside the first release.
+Architecture and routes: [002 — Delivery architecture](docs/product/002-delivery-architecture.md#implementation-2026-09-27). Lesson structure: [013](docs/product/013-choices-guided-journey.md). Editable lesson copy, including the 20 life-map story sets: [choices-journey.md](docs/content/choices-journey.md).
 
-The public repository is [Rio517/wisdom-web](https://github.com/Rio517/wisdom-web). Current work is on local branch `prototype/choices-map`. The complete chapter, production Astro site, approved production artwork and publication remain outstanding.
+Lesson 1 has six chapters:
+1. The life map, with coherent story sets of example choices.
+2. Alfredo's hike, with the drag-to-sort board.
+3. Maya's two paths.
+4. The ten-afternoon game.
+5. The life-path explorer.
+6. Takeaways.
+
+The home page shows the lesson roadmap. Lessons 02–06 are listed as "in preparation" without pages or links, following the brief's rule against empty lesson pages.
+
+The shared path engine is `src/engine/`, and the lesson code is `src/lessons/choices/`. The earlier studies under `prototype/` (lesson study, `choices.html`, `path-lab.html`) import the same engine and still run on their own ports. Preserve the approved drawing.
+
+The [lesson roadmap](docs/README.md#lesson-roadmap) remains the canonical index: 01 choices and their effects; 02 habits and daily practice; 03 how we make choices; 04 what makes a happy life; 05 relationships; 06 how to learn. Preserve the later decision-making research leads there without researching them now.
+
+The public repository is [Rio517/wisdom-web](https://github.com/Rio517/wisdom-web), with local work on `prototype/choices-map`. The worktree contains substantial uncommitted code, documentation and design changes; preserve them.
 
 ## Immediate next work
 
-1. Obtain owner judgment on whether the fictional comparison clearly communicates action, repeated pattern, circumstances, deadline and supported recovery. Run a short comprehension check near age eight and with older readers.
-2. Decide how to integrate the local prototype branch. It is not pushed, merged into `main` or published.
-3. Extend the two-scene study into the complete choices chapter: later child/adult examples, the enjoyment/learning feedback loop, recovery, the habits bridge and an ending.
-4. Write the production implementation plan after prototype review. Select and package production fonts, test Safari and a physical tablet, perform a complete accessibility review and configure hosting before publication.
+1. **Owner review of the site** at the URLs above and the [v01 captures](docs/design/002-site/v01-launch/README.md).
+2. **Publish when approved.** This takes four steps:
+   - Commit the work.
+   - Add the official GitHub Pages workflow for Astro, deploying `dist/` from `main`.
+   - Enable Pages with the custom domain `wisdom.knyflores.com`.
+   - Add a DNS `CNAME` record from `wisdom` to `rio517.github.io`, then turn on HTTPS.
 
-When preparing the later habits chapter, extend research on children/families, changing established habits, interruptions and differing support needs. These gaps do not block the lifetime chapter. The existing Markdown research library remains the canonical source; no separate research UI exists.
+   Verify the live URL before calling it live. The research links on the notes and about pages resolve only after `docs/research/` is pushed.
+3. **Reader testing** near age eight and with older readers. Can they connect earlier learning to a later possibility, separate preparation from guaranteed outcomes, and name something outside Alfredo's control? Does the game read as "practice plus rest builds skills" rather than "never have fun"?
+4. **Lesson 02, Habits and daily practice**, is next. It gets a page and navigation link only when its content is complete.
+
+Open decisions: packaging web fonts (the site uses the approved system font stacks, which fall back to Palatino/Georgia and Segoe UI on non-Apple devices), a phone layout (deferred), and whether to retire the `prototype/` studies once the site is published.
 
 ## Run and verify
 
-Use Node 22.12 or newer. Install dependencies, then run development on <http://127.0.0.1:4600/prototype/>:
+The package requires Node 22.12 or newer. The stack is Astro 7 (Vite 8), compiled Tailwind 4, Canvas 2D and plain JavaScript modules.
 
 ```sh
 npm ci
-npm run dev
-```
-
-Build and inspect static output on <http://127.0.0.1:4601/prototype/>:
-
-```sh
+npm run dev        # site on http://127.0.0.1:4600 (Astro runs it in the background; `npx astro dev stop` stops it)
 npm test
-npm run build
-npm run preview
-git diff --check
+npm run build      # static output in dist/
+npm run preview    # built site on http://127.0.0.1:4601
+npm run dev:prototype   # earlier studies on http://127.0.0.1:4602/prototype/
 ```
 
-All project development, preview and test servers must use ports **4600–4699**, bind to `127.0.0.1`, and fail on conflicts. Development defaults to **4600** and preview to **4601**. [tests/browser-checks.js](tests/browser-checks.js) is the single supported Playwright page-function suite; invocation guidance is in [prototype/README.md](prototype/README.md).
+All servers stay in **4600–4699** on `127.0.0.1` and fail rather than move; `tooling/ports.js` holds the shared guard used by both configs.
 
-All 39 Node tests pass. They cover state normalization, finite and bounded geometry, authored story/readout parity including practice occasions and compounding text, project port guards and the guided document’s semantic order. The saved development browser suite passes all ten interaction groups at 1440 × 1000, 1133 × 744 and 744 × 1133 CSS pixels, including all nine comparison/viewport annotation checks, Return-to-today keyboard focus, Canvas failure and unobscured JavaScript-disabled reading.
+Verification on 2026-09-27:
+- 225 Node tests pass, and the Astro build produces 7 pages.
+- **Built site, on preview 4601:** every route returns 200 and unknown paths get the styled 404. The home hero animation completes, and all home-page links resolve.
+- **Lesson from the built files:** map labels, hike choice, sort Skip, game auto-advance and an explorer step work.
+- **Index:** the desktop sidebar collapses and the choice is remembered. On tablets and inside the lesson, the drawer traps focus, closes with Escape and returns focus.
+- **Layouts** reviewed at 1440×900, 1180×820, 1024×768 and 768×1024.
+- **Port guard:** refuses 4700 and non-local hosts.
+- The full browser QA of the lesson was last run on 2026-09-26 (two independent passes). The lesson code has since moved to `src/` but is otherwise unchanged.
 
 ## Review limits
 
-Browser viewport checks do not establish behavior on a physical iPad or Safari. They are not reader-comprehension evidence or complete accessibility certification. Phone design is deferred. The generated brain image is exploratory and decorative, not approved production art or an anatomically validated diagram. No live site is configured.
+The audience remains ages 8+; desktop and iPad mini are the viewport targets, with phone design deferred. Browser screenshots do not establish physical-device behavior, reader comprehension or complete accessibility. The research is focused, not exhaustive; consult each ledger record before strengthening a claim.
 
 ## Documentation rules
 
-Keep this file about current state and next actions. Put concise history in `COMPLETED.md`. Keep research claims and limits in the canonical topic findings and ledgers. Specific proposals use stable numbered files under `docs/product/`; mark implementation plans complete only after their required verification and independent review gates pass.
+Keep this file about current state and next actions. Put history in [COMPLETED.md](COMPLETED.md). Use the [documentation index](docs/README.md) for lesson navigation and the [research library](docs/research/README.md) for canonical findings. Keep proposal IDs and filenames stable, label unapproved ideas, and preserve the registered design-study structure.

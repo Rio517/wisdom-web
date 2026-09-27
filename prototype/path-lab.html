@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Paths — visual laboratory</title>
+  <link rel="stylesheet" href="./path-lab.css">
+  <script type="module" src="./path-lab.js"></script>
+</head>
+<body>
+  <header class="lab-header">
+    <div class="lab-title"><h1>Paths</h1><span>Visual laboratory</span></div>
+    <div class="header-actions">
+      <button id="how-it-works" type="button">How it works</button>
+      <button id="reset-lab" type="button">Reset</button>
+      <button id="copy-settings" class="solid-button" type="button">Copy settings</button>
+    </div>
+  </header>
+  <main class="lab-layout">
+    <section class="drawing" aria-label="Interactive path drawing">
+      <div class="drawing-topline">
+        <div class="model-switch" role="group" aria-label="Growth model" aria-describedby="drawing-description">
+          <button type="button" data-mode="paced" aria-pressed="true">Paced</button>
+          <button type="button" data-mode="organic" aria-pressed="false">Organic</button>
+          <button type="button" data-mode="laminar" aria-pressed="false">Laminar</button>
+        </div>
+        <p id="view-caption" class="sr-only">Many paths. One beginning.</p>
+        <ul class="path-key" aria-label="Path colors">
+          <li><i class="key-past"></i>Traveled</li>
+          <li><i class="key-future"></i>Possible</li>
+          <li><i class="key-untaken"></i>Untaken</li>
+        </ul>
+      </div>
+      <div class="canvas-frame">
+        <canvas id="path-canvas" aria-label="Branching paths from a shared beginning" aria-describedby="drawing-description"></canvas>
+        <p id="canvas-error" hidden>The drawing could not start. Reload this page to try again.</p>
+      </div>
+      <div class="timeline">
+        <div class="timeline-heading"><label for="timeline-age">Move through the map</label><output id="age-output" for="timeline-age">Beginning</output></div>
+        <input id="timeline-age" type="range" min="0" max="70" step="any" value="0" aria-label="Position in the example life" aria-describedby="timeline-scale-note">
+        <div class="timeline-scale" aria-hidden="true"><span>0</span><span>25</span><span>70</span></div>
+        <p id="timeline-scale-note" class="sr-only">The view ends at age 70. Earlier years have more room; age 25 is at the midpoint.</p>
+        <div class="timeline-stops" role="group" aria-label="Timeline stops">
+          <button type="button" data-stop="0" aria-pressed="true">Beginning</button>
+          <button type="button" data-stop="12" aria-pressed="false">Age 12</button>
+          <button type="button" data-stop="25" aria-pressed="false">Age 25</button>
+          <button type="button" data-stop="40" aria-pressed="false">Age 40</button>
+          <button type="button" data-stop="60" aria-pressed="false">Age 60</button>
+          <button type="button" data-stop="70" aria-pressed="false">Age 70</button>
+        </div>
+        <p id="drawing-description">Pick a stop, drag the timeline, or click the map. The frame stays still so you can compare.</p>
+      </div>
+      <footer class="drawing-footer"><span id="network-summary">Preparing the drawing…</span><span id="lab-status" role="status" data-busy="true">Drawing…</span></footer>
+    </section>
+    <aside class="tuning" aria-labelledby="tuning-title">
+      <div class="tuning-heading"><h2 id="tuning-title">Tune the drawing</h2><p>Change one thing. See what it does.</p></div>
+      <div class="control-tabs" role="tablist" aria-label="Drawing controls">
+        <button type="button" id="tab-branching" role="tab" data-group="Branching" aria-selected="true" aria-controls="controls-branching">Growth</button>
+        <button type="button" id="tab-forks" role="tab" data-group="Forks" aria-selected="false" tabindex="-1" aria-controls="controls-forks">Forks</button>
+        <button type="button" id="tab-shape" role="tab" data-group="Shape" aria-selected="false" tabindex="-1" aria-controls="controls-shape">Shape</button>
+        <button type="button" id="tab-style" role="tab" data-group="Style" aria-selected="false" tabindex="-1" aria-controls="controls-style">Style</button>
+      </div>
+      <div class="control-panels">
+        <section id="controls-branching" role="tabpanel" aria-labelledby="tab-branching"></section>
+        <section id="controls-forks" role="tabpanel" aria-labelledby="tab-forks" hidden></section>
+        <section id="controls-shape" role="tabpanel" aria-labelledby="tab-shape" hidden></section>
+        <section id="controls-style" role="tabpanel" aria-labelledby="tab-style" hidden></section>
+      </div>
+      <div class="visibility-control">
+        <label for="path-variant">Untaken paths</label>
+        <select id="path-variant">
+          <option value="retained">Keep until Today</option>
+          <option value="fading">Fade away</option>
+          <option value="hybrid">Keep a few faint paths</option>
+        </select>
+        <p>Every view fades gray paths out by Today. None cross the divider.</p>
+      </div>
+      <details class="seed-settings">
+        <summary>Seeds &amp; repeatability</summary>
+        <label for="map-seed">Map seed</label>
+        <input id="map-seed" type="text" maxlength="80" autocomplete="off" spellcheck="false">
+        <label for="route-seed">Route seed</label>
+        <input id="route-seed" type="text" maxlength="80" autocomplete="off" spellcheck="false">
+        <button type="button" id="new-route">Try another route</button>
+        <p>Map seed sets the branching field. Route seed chooses a path through it. Neither changes as you move through time.</p>
+      </details>
+      <p class="lab-note">A drawing experiment, not a forecast. Age taper illustrates remaining long-term flexibility—not the importance of a person’s choices.</p>
+    </aside>
+  </main>
+  <dialog id="algorithm-dialog" aria-labelledby="algorithm-title">
+    <div class="dialog-heading"><h2 id="algorithm-title">How the paths grow</h2><button type="button" data-close aria-label="Close explanation">Close</button></div>
+    <ol class="algorithm-steps">
+      <li><h3>Two ways for a line to grow.</h3><p>Paced gives each line its own next-split time, with quicker early generations. Organic asks each line whether to split as it advances in small age steps. Neither uses a shared wave pattern or a scheduled pause for the whole field.</p></li>
+      <li id="organic-rule"><h3>The Organic rule.</h3><p>Advance → look at nearby lines → calculate a split chance → make a seeded random draw → continue or create children. The branching rate combines the base rate, an age taper, a boost near the beginning or Today, and local crowding. The boost decays smoothly over its duration. Each child repeats the same rule independently.</p></li>
+      <li><h3>Open widely, then leave room between neighbors.</h3><p>Opening spread makes the first one, two or three branching rounds broad. After that, each fan scales with its number of branches: at 12° between neighbors, two branches span 12° and six span 60°. The opening spread remains the upper limit. The count resets at Today. Split chance and spacing still control frequency, independently of shape. A hard branch budget protects responsiveness; crowding nudges nearby lines apart. Crossings are allowed, but a small fork no longer forces a huge change of direction.</p></li>
+      <li><h3>Let paths leave the frame.</h3><p>Paths can spread upward and downward instead of turning along an invisible wall. They fade at the edge and stop generating just outside the frame. The branch budget stays the same; off-screen paths are not replaced by extra ones.</p></li>
+      <li><h3>Grow only through the remaining years.</h3><p>The future has a shorter horizon at later ages. Age taper can additionally reduce branching and spread; it is an adjustable illustration, not a measured law of life. Moving Today preserves the original history and regrows possible futures from that point. Gray alternatives fade completely before the Today divider.</p></li>
+    </ol>
+    <p class="dialog-note">These are controls for an illustration—not probabilities of what happens in a person's life.</p>
+  </dialog>
+  <dialog id="settings-dialog" aria-labelledby="settings-title">
+    <div class="dialog-heading"><h2 id="settings-title">Your drawing settings</h2><button type="button" data-close>Close</button></div>
+    <p>Automatic copying is unavailable. Copy this text and send it with your feedback.</p>
+    <label for="settings-output" class="sr-only">Reproducible drawing settings</label>
+    <textarea id="settings-output" readonly spellcheck="false"></textarea>
+  </dialog>
+  <noscript>This visual experiment needs JavaScript. Each path independently bends and branches; crowding influences the shape. Selecting a time highlights a fixed history and grows an illustrative fan of new futures.</noscript>
+</body>
+</html>

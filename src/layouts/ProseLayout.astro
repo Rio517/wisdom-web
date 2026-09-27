@@ -1,0 +1,19 @@
+---
+// Layout for Markdown pages (notes, about): a quiet reading column.
+import SiteLayout from './SiteLayout.astro';
+
+const { frontmatter = {} } = Astro.props;
+const path = Astro.url.pathname;
+const current = path.startsWith('/choices/notes') ? 'notes' : path.startsWith('/about') ? 'about' : '';
+---
+<SiteLayout title={frontmatter.title} description={frontmatter.description} current={current}>
+  <article class="page page-narrow">
+    <header class="page-header">
+      {frontmatter.kicker && <p class="kicker">{frontmatter.kicker}</p>}
+      <h1>{frontmatter.title}</h1>
+    </header>
+    <div class="prose">
+      <slot />
+    </div>
+  </article>
+</SiteLayout>

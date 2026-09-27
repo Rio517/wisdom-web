@@ -2,12 +2,13 @@
 
 [Research library](README.md) · [Cross-topic synthesis](report-source.md)
 
-Access date: 2026-09-06. Detailed records live beside their topic findings. Evidence descriptions are paraphrases; confidence applies to a claim in its study setting, not a prediction about an individual reader. Each entry identifies access limits. No source papers or figures are reproduced in this library.
+Access dates are recorded in each topic ledger; the circumstances search was added on 2026-09-14. Detailed records live beside their topic findings. Evidence descriptions are paraphrases; confidence applies to a claim in its study setting, not a prediction about an individual reader. Each entry identifies access limits. No source papers or figures are reproduced in this library.
 
 | Source IDs | Topic ledger |
 | --- | --- |
 | L1, L11–L13 | [Learning and transfer](learning/sources.md) |
 | L2–L10 | [Lifetime opportunities](lifetime/sources.md) |
+| C1–C22 | [Circumstances, setbacks, chance and support](circumstances/sources.md) |
 | T1–T9 | [Decision-making and development](decision-making/sources.md) |
 | B1–B4 | [Habits and repeated action](habits/sources.md) |
 | H1–H8 | [Hosting, prototyping, layout, Canvas and motion accessibility](delivery/sources.md) |
@@ -32,11 +33,14 @@ Identifiers are stable references; their prefixes do not constrain folder placem
 | Future imagery improves general decision-making | Insufficient: T6–T7 | Different ages, tasks, and outcomes | Avoid broad efficacy claims |
 | One childhood self-control test predicts destiny | Unsupported as a teaching claim: T8 | Observational design; limited measure | Do not use it to classify readers |
 | Same presentation works equally across ages 8+ | Unestablished | No direct test of the planned material or its age selector | Test readers near age eight and older readers separately |
+| Circumstances, setbacks and chance shape opportunities alongside choices | Supported in specific settings; see [C1–C22 and findings](circumstances/README.md) | Frameworks are not forecasts. Recovery varies; scarcity findings disagree across designs; short child experiments do not establish durable effects of a lesson | Test whether readers can explain choices and outside conditions together, without blame, fatalism or guaranteed recovery. Do not use this evidence to calibrate branching or an age cutoff |
 
 ## Search coverage and stopping rule
 
 Search families covered Cunha/Heckman skill formation; OECD attainment and adult training; Zimmerman admissions thresholds; adolescent tutoring; displaced-worker retraining; conflicting mindset reviews; Harvard executive-function guidance; elementary decision standards; EEF metacognition; Informed Health Choices trials; child implementation intentions; future-thinking experiments; marshmallow follow-ups; and official GitHub/Astro publishing documentation.
 
 Targeted follow-ups sought original papers, later remediation, uncertain or null effects, exact populations and denominators, current adult-aid eligibility, and limits on transfer. Additional searches covered prior knowledge, cross-sport transfer, reciprocal maths enjoyment/achievement, and habit formation, automaticity, cues and 2024–2026 publications. General intelligence, compulsory-schooling, and working-memory sources were considered during discovery but not retained where closer evidence served the question.
+
+The circumstances search covered life-course and ecological frameworks, cumulative advantage, career chance events, capabilities, outside setbacks, protective factors, scarcity findings and replications, stress, and children's explanations of inequality. Its findings and access limits are in the [circumstances bucket](circumstances/README.md). The search found short experimental explanations for children, not evidence that this manual or a comparable ages-8+ lesson changes behavior over time. It does not include the future rider-and-elephant or moral-matrix research.
 
 The first-chapter search stops because each consequential claim has support or an explicit limit and the central disagreements are bounded. Reader comprehension and response are the next material unknowns. The habits evidence is sufficient to define a follow-up proposal, not to claim a finished child-focused review: changing existing habits, family support, interruptions, and accessibility need further investigation before authoring that section. This is not a systematic review; no claim of exhaustive literature coverage or identification of every latest publication is made.

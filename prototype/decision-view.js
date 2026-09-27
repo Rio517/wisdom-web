@@ -5,11 +5,10 @@ const $ = selector => document.querySelector(selector);
 function outcomeList(outcomes) {
   const list = document.createElement('ul');
   list.className = 'grid gap-2 text-base';
-  for (const [index, outcome] of outcomes.entries()) {
+  for (const outcome of outcomes) {
     const item = document.createElement('li');
     item.dataset.outcome = outcome.id;
     item.dataset.status = outcome.status;
-    item.dataset.routeMarker = String(index + 1);
     item.className = 'route-outcome';
     item.textContent = outcome.label;
     list.append(item);

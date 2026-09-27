@@ -35,6 +35,33 @@ test('resolved Vite config guards dev and preview overrides while retaining stri
   );
 });
 
+test('the static build includes the separate visual lab as well as the existing lesson', async () => {
+  const config = await resolveConfig({}, 'build');
+  const input = config.build.rolldownOptions.input;
+  const inputs = typeof input === 'string' ? [input] : Object.values(input);
+  assert.ok(inputs.includes('prototype/index.html'));
+  assert.ok(inputs.includes('prototype/path-lab.html'));
+});
+
+test('the earlier Alfredo lesson study keeps its own built entry', async () => {
+  const config = await resolveConfig({}, 'build');
+  const inputs = Object.values(config.build.rolldownOptions.input);
+  assert.ok(inputs.includes('prototype/choices.html'));
+  assert.ok(inputs.includes('prototype/index.html'));
+  assert.ok(inputs.includes('prototype/path-lab.html'));
+});
+
+test('the Alfredo reading transform supplies complete static copy and separates IDs', async () => {
+  const { choicesContentPlugin } = await import('../vite.config.js');
+  const transformed = choicesContentPlugin().transformIndexHtml('<main><!-- CHOICES_READING --></main><dialog><!-- CHOICES_READING:dialog --></dialog>');
+  assert.match(transformed, /Alfredo/);
+  assert.match(transformed, /ranger/);
+  assert.doesNotMatch(transformed, /<!-- CHOICES_READING/);
+  const ids = [...transformed.matchAll(/\sid="([^"]+)"/g)].map(match => match[1]);
+  assert.ok(ids.length > 0);
+  assert.equal(new Set(ids).size, ids.length);
+});
+
 test('the reading build plugin injects the shared authored reading alternative', async () => {
   const { readingContentPlugin } = await import('../vite.config.js');
   const { renderReading } = await import('../prototype/story-markup.js');
@@ -84,4 +111,36 @@ test('the guided scenes use reader-facing labels and one fictional learner', asy
   assert.match(source, /One life, many possibilities/);
   assert.match(source, /What becomes possible\?/);
   assert.doesNotMatch(source, /A fictional worked example|Named route outcomes|\bAri\b/);
+});
+
+test('the site is configured for wisdom.knyflores.com on project ports', async () => {
+  const { default: config } = await import('../astro.config.mjs');
+  assert.equal(config.site, 'https://wisdom.knyflores.com');
+  assert.equal(config.base, '/');
+  assert.equal(config.server.host, '127.0.0.1');
+  assert.equal(config.server.port, 4600);
+  assert.equal(config.vite.server.strictPort, true);
+  assert.equal(config.vite.preview.strictPort, true);
+  const cname = await readFile(new URL('../public/CNAME', import.meta.url), 'utf8');
+  assert.equal(cname.trim(), 'wisdom.knyflores.com');
+  const pkg = JSON.parse(await readFile(new URL('../package.json', import.meta.url), 'utf8'));
+  assert.match(pkg.scripts.preview, /--port 4601/);
+});
+
+test('prototype studies keep their own ports and output folder', async () => {
+  const config = await resolveConfig({}, 'build');
+  assert.equal(config.server.port, 4602);
+  assert.equal(config.preview.port, 4603);
+  assert.match(config.build.outDir, /dist-prototype$/);
+});
+
+test('the lesson has pages for the journey, its text version, notes and the site shell', async () => {
+  for (const path of ['index.astro', 'about.md', '404.astro', 'choices/index.astro', 'choices/notes.md',
+    'choices/the-paths-we-make/index.astro', 'choices/the-paths-we-make/read.astro']) {
+    await readFile(new URL(`../src/pages/${path}`, import.meta.url), 'utf8');
+  }
+  const { renderJourneyReading } = await import('../src/lessons/choices/journey-story.js');
+  const reading = renderJourneyReading();
+  assert.match(reading, /Mirror Lake/);
+  assert.match(reading, /Path B Maya/);
 });

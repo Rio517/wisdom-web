@@ -1,24 +1,12 @@
 import { COMPARISONS } from './story.js';
+import { generateNetwork, projectScenario } from '../src/engine/path-network.js';
+import { generateLabFuture } from '../src/engine/lab-future.js';
 
 export const AGES = [8, 12, 16, 25, 40, 60];
-export const OVERVIEW = { x: 0, y: 0, width: 1260, height: 540 };
-
-const ALL_ANCHORS = [
-  { age: 0, x: 40, y: 270 },
-  { age: 4, x: 150, y: 290 },
-  { age: 8, x: 250, y: 245 },
-  { age: 12, x: 350, y: 295 },
-  { age: 16, x: 450, y: 247 },
-  { age: 25, x: 565, y: 268 },
-  { age: 40, x: 700, y: 220 },
-  { age: 60, x: 805, y: 258 },
-  { age: 80, x: 1015, y: 264 },
-  { age: 100, x: 1220, y: 236 },
-];
+export const OVERVIEW = { x: 0, y: 0, width: 1260, height: 740 };
 
 const LAYER_ORDER = ['pattern', 'starting'];
 const COMPARISON_IDS = ['gap', 'build', 'repair'];
-const round = value => Math.round(value * 10) / 10;
 const clamp = value => Math.max(0, Math.min(1, Number.isFinite(value) ? value : 0));
 const ease = value => value * value * (3 - 2 * value);
 const normalizeAge = value => AGES.includes(Number(value)) ? Number(value) : 8;
@@ -103,127 +91,154 @@ export function motionFrame(elapsed, reduced = false) {
   };
 }
 
-function sampleSegment(start, end, steps = 8) {
-  const points = [];
-  for (let index = 0; index <= steps; index += 1) {
-    const progress = index / steps;
-    points.push({
-      x: round(start.x + (end.x - start.x) * progress),
-      y: round(start.y + (end.y - start.y) * ease(progress)),
-    });
+const DEFAULT_NETWORK_SEED = 'choices-network-1';
+const DEFAULT_CHOICE_SEED = 'mika-example-19';
+const networkCache = new Map();
+const mapCache = new Map();
+const comparisonCache = new Map();
+const xy = point => ({ x: point.x, y: point.y });
+
+function freeze(value) {
+  if (value && typeof value === 'object' && !Object.isFrozen(value)) {
+    Object.values(value).forEach(freeze);
+    Object.freeze(value);
   }
-  return points;
+  return value;
 }
 
-function samplePolyline(nodes, steps = 6) {
-  const points = [];
-  for (let index = 1; index < nodes.length; index += 1) {
-    const segment = sampleSegment(nodes[index - 1], nodes[index], steps);
-    points.push(...(index === 1 ? segment : segment.slice(1)));
+function cached(cache, key, build, limit = 24) {
+  if (!cache.has(key)) {
+    cache.set(key, freeze(build()));
+    if (cache.size > limit) cache.delete(cache.keys().next().value);
   }
-  return points;
+  return cache.get(key);
 }
 
-function makeSpine() {
-  return samplePolyline(ALL_ANCHORS, 8);
+function networkFor(options) {
+  return cached(networkCache, JSON.stringify(options), () => generateNetwork(options), 8);
 }
 
-function makeBranches(age) {
-  const branches = [];
-  const add = (originAge, points) => branches.push({
-    originAge,
-    state: originAge < age ? 'untaken' : 'possible',
-    points,
-  });
-
-  for (let group = 1; group < ALL_ANCHORS.length - 2; group += 1) {
-    const origin = ALL_ANCHORS[group];
-    for (const side of [-1, 1]) {
-      const distance = 1220 - origin.x;
-      const forkX = round(origin.x + distance * (0.4 + group * 0.012));
-      const endBase = side < 0 ? 24 + group * 24 : 522 - group * 23;
-      const forkY = round(origin.y + (endBase - origin.y) * 0.78);
-      add(origin.age, samplePolyline([
-        origin,
-        { x: round(origin.x + (forkX - origin.x) * 0.48), y: round(origin.y - side * 30) },
-        { x: forkX, y: forkY },
-      ]));
-
-      for (let twig = 0; twig < 3; twig += 1) {
-        const midX = round(forkX + (1220 - forkX) * (0.42 + twig * 0.05));
-        const midY = round(Math.max(24, Math.min(516,
-          endBase + (twig - 1) * 17 + 12 * Math.sin(group + twig))));
-        const sway = 27 * Math.sin(group * 2.4 + twig);
-        add(origin.age, samplePolyline([
-          { x: forkX, y: forkY },
-          { x: round(forkX + (midX - forkX) * 0.52), y: round((forkY + midY) / 2 + sway) },
-          { x: midX, y: midY },
-        ]));
-
-        const endX = 1160 + ((group * 17 + twig * 13) % 60);
-        const endY = round(Math.max(24, Math.min(516,
-          midY + 16 * Math.sin(group * 2 + twig))));
-        add(origin.age, samplePolyline([
-          { x: midX, y: midY },
-          { x: round(midX + (endX - midX) * 0.5), y: round((midY + endY) / 2 - sway) },
-          { x: endX, y: endY },
-        ]));
-      }
+function atAge(points, age) {
+  if (age <= points[0].age) return { ...points[0] };
+  for (let index = 1; index < points.length; index += 1) {
+    if (points[index].age >= age) {
+      const before = points[index - 1], after = points[index];
+      const amount = (age - before.age) / (after.age - before.age);
+      return { age, x: before.x + (after.x - before.x) * amount, y: before.y + (after.y - before.y) * amount };
     }
   }
-  return branches;
+  return { ...points.at(-1) };
 }
 
-export function makeMap(value) {
+const OPTION_WORDS = new Set(['growthMode', 'boundaryMode']);
+
+function drawingOptions(input = {}) {
+  if (!input || typeof input !== 'object' || Array.isArray(input)) {
+    throw new RangeError('networkOptions must be a settings object');
+  }
+  const settings = {};
+  for (const [field, value] of Object.entries(input)) {
+    if (OPTION_WORDS.has(field)) {
+      if (typeof value !== 'string') throw new RangeError(`${field} must be a string`);
+      settings[field] = value;
+      continue;
+    }
+    if (value === null) continue;
+    if (!Number.isFinite(value)) throw new RangeError(`${field} must be a finite number`);
+    settings[field] = value;
+  }
+  return settings;
+}
+
+export function makeMap(value, scenario = {}) {
   const age = normalizeAge(value);
-  const spine = makeSpine();
-  const authoredIndex = ALL_ANCHORS.findIndex(point => point.age === age);
-  const anchorIndex = authoredIndex * 8;
-  const anchor = { ...ALL_ANCHORS[authoredIndex] };
-  return {
-    anchor,
-    anchors: ALL_ANCHORS.filter(point => AGES.includes(point.age)).map(point => ({ ...point })),
-    spine,
-    past: spine.slice(0, anchorIndex + 1),
-    future: spine.slice(anchorIndex),
-    branches: makeBranches(age),
-    focus: {
-      x: round(Math.min(220, Math.max(0, anchor.x - 310))),
-      y: 48,
-      width: 1040,
-      height: 446,
-    },
+  const networkSeed = scenario.networkSeed ?? DEFAULT_NETWORK_SEED;
+  if (typeof networkSeed !== 'string' || !networkSeed.length) {
+    throw new RangeError('networkSeed must be a non-empty string');
+  }
+  const requestedChoiceSeed = scenario.choiceSeed ?? DEFAULT_CHOICE_SEED;
+  const choiceSeed = typeof requestedChoiceSeed === 'string' ? requestedChoiceSeed : 'example';
+  const choices = Object.fromEntries(Object.entries(scenario.choices ?? {})
+    .filter(([, value]) => typeof value === 'string'));
+  const annotations = scenario.annotations ?? {};
+  const networkOptions = drawingOptions(scenario.networkOptions ?? {});
+  const fanSettings = scenario.fan && typeof scenario.fan === 'object' ? scenario.fan : null;
+  const key = JSON.stringify([age, networkSeed, choiceSeed, choices, networkOptions, fanSettings]);
+  const build = () => {
+    const network = networkFor({
+      seed: networkSeed, width: OVERVIEW.width, height: OVERVIEW.height,
+      maxAge: 100, splitMin: 5.5, splitMax: 13.5, splitProbability: 0.78, maxTips: 96,
+      openingSplitMin: 1, openingSplitMax: 3,
+      ...networkOptions,
+      // Laminar growth opens its field and spends its budget by the age in view.
+      ...(networkOptions.growthMode === 'laminar' ? { envelopeAge: Math.max(4, age) } : {}),
+    });
+    const projected = projectScenario(network, { age, choiceSeed, choices, annotations });
+    // With fan settings, the futures are a fresh fan from Today (a narrower
+    // one later in life), drawn instead of the network's own continuation.
+    const fan = fanSettings ? generateLabFuture(network, projected, fanSettings) : null;
+    return {
+      network,
+      fan,
+      anchor: { age, ...xy(projected.today) },
+      anchors: AGES.map(moment => ({ age: moment, ...xy(atAge(projected.spine, moment)) })),
+      spine: projected.spine.map(xy),
+      past: projected.past.map(xy),
+      future: projected.future.map(xy),
+      segments: projected.segments,
+      choicePoints: projected.choicePoints,
+      selections: projected.selections,
+      focus: { x: 16, y: 14, width: 1228, height: 712 },
+    };
   };
+  // Geometry stays cached; authored metadata is copied afresh, never folded
+  // into a lossy JSON cache key (for example NaN and null stringify equally).
+  return Object.keys(annotations).length ? freeze(build()) : cached(mapCache, key, build);
 }
 
-const COMPARISON_NODES = {
-  gap: {
-    'fraction-foundation': [{ x: 350, y: 295 }, { x: 435, y: 326 }, { x: 520, y: 338 }],
-    'recipe-ratio': [{ x: 520, y: 338 }, { x: 625, y: 370 }, { x: 730, y: 350 }],
-    'first-intake': [{ x: 730, y: 350 }, { x: 825, y: 380 }, { x: 920, y: 380 }],
-  },
-  build: {
-    'fraction-foundation': [{ x: 350, y: 295 }, { x: 435, y: 262 }, { x: 520, y: 250 }],
-    'recipe-ratio': [{ x: 520, y: 250 }, { x: 610, y: 226 }, { x: 700, y: 220 }],
-    'course-readiness': [{ x: 700, y: 220 }, { x: 800, y: 198 }, { x: 900, y: 204 }],
-  },
-  repair: {
-    'equal-parts-revisit': [{ x: 350, y: 295 }, { x: 425, y: 328 }, { x: 500, y: 330 }],
-    'supported-fractions': [{ x: 500, y: 330 }, { x: 575, y: 306 }, { x: 650, y: 300 }],
-    'ratio-practice': [{ x: 650, y: 300 }, { x: 725, y: 276 }, { x: 800, y: 270 }],
-    'first-intake': [{ x: 650, y: 300 }, { x: 735, y: 355 }, { x: 820, y: 370 }],
-    'later-intake': [{ x: 800, y: 270 }, { x: 910, y: 238 }, { x: 1020, y: 242 }],
-  },
-};
-
-export function comparisonRoutes(value) {
+// The comparison remains an authored lesson, not a forecast. Its small branch
+// diagram uses the same growth engine; local progress is not the life-age axis.
+export function comparisonRoutes(value, scenario = {}) {
   const mode = COMPARISON_IDS.includes(value) ? value : 'gap';
-  return COMPARISONS[mode].outcomes.map(outcome => ({
-    id: outcome.id,
-    points: samplePolyline(COMPARISON_NODES[mode][outcome.id], 6),
-    label: outcome.label,
-    status: outcome.status,
-  }));
+  const anchor = makeMap(12, scenario).anchor;
+  return cached(comparisonCache, JSON.stringify([mode, anchor.x, anchor.y]), () => {
+    const graph = networkFor({
+      seed: 'lesson-' + mode, maxTips: mode === 'repair' ? 2 : 1,
+      splitMin: 40, splitMax: 60, splitProbability: 1, crowdingSplitSuppression: 0,
+    });
+    const root = graph.nodes.find(node => node.id === graph.rootId);
+    const xScale = (OVERVIEW.width - 120 - anchor.x) / (OVERVIEW.width - 80);
+    const yScale = Math.min(0.65, (anchor.y - 30) / root.y, (OVERVIEW.height - 30 - anchor.y) / root.y);
+    const transform = point => ({
+      x: anchor.x + (point.x - root.x) * xScale,
+      y: anchor.y + (point.y - root.y) * yScale,
+    });
+    const section = (points, from, to) => [
+      atAge(points, from),
+      ...points.filter(point => point.age > from && point.age < to),
+      atAge(points, to),
+    ].map(transform);
+    let routes;
+    if (mode === 'repair') {
+      const fork = graph.choicePoints[0];
+      const work = projectScenario(graph, { age: 0, choices: { [fork.id]: fork.options[0] } }).spine;
+      const missed = projectScenario(graph, { age: 0, choices: { [fork.id]: fork.options[1] } }).spine;
+      const later = fork.age + (graph.maxAge - fork.age) * 0.5;
+      routes = [
+        section(work, 0, fork.age * 0.5),
+        section(work, fork.age * 0.5, fork.age),
+        section(work, fork.age, later),
+        section(missed, fork.age, graph.maxAge),
+        section(work, later, graph.maxAge),
+      ];
+    } else {
+      const route = projectScenario(graph, { age: 0 }).spine;
+      routes = [section(route, 0, 100 / 3), section(route, 100 / 3, 200 / 3), section(route, 200 / 3, 100)];
+    }
+    return COMPARISONS[mode].outcomes.map((outcome, index) => ({
+      id: outcome.id, label: outcome.label, status: outcome.status, points: routes[index],
+    }));
+  });
 }
 
 export function pointOnRoute(points, progress) {

@@ -1,0 +1,17 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+import { LESSON_PATH, UI, url } from '../data/site.js';
+---
+<SiteLayout title="Page not found" description="This page isn’t here.">
+  <div class="page page-narrow">
+    <header class="page-header">
+      <p class="kicker">Not found</p>
+      <h1>This path doesn’t go anywhere.</h1>
+      <p class="page-lede">The page you were looking for isn’t here. It may have moved, or the link may have a typo. Plenty of other paths are open.</p>
+      <div class="actions">
+        <a class="btn btn-primary" href={url('/')}>Go to the home page<Fragment set:html={UI.arrow} /></a>
+        <a class="btn btn-quiet" href={url(LESSON_PATH)}>Start lesson 1</a>
+      </div>
+    </header>
+  </div>
+</SiteLayout>

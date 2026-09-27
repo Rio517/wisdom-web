@@ -2,9 +2,12 @@ import { readState, stateURL, transition } from './model.js';
 import { createMapView } from './map-view.js';
 import { renderDecision } from './decision-view.js';
 import { MOMENTS } from './story.js';
+import { readMapSettings, normalizeMapSettings, mapSettingsURL, scenarioForSettings } from './map-settings.js';
 
 const $ = selector => document.querySelector(selector);
 let state = readState(location.href);
+let mapSettings = readMapSettings(location.href);
+const currentURL = (nextState = state) => mapSettingsURL(mapSettings, stateURL(nextState, location.href));
 const systemMotion = matchMedia('(prefers-reduced-motion: reduce)');
 const motionControl = $('#reduce-motion');
 let manualLessMotion = false;
@@ -18,10 +21,12 @@ const map = createMapView({
   canvas: $('#life-map'),
   overlay: $('#map-overlay'),
   lessMotion: () => manualLessMotion || systemMotion.matches,
+  getScenario: () => scenarioForSettings(mapSettings),
+  getPresentation: () => mapSettings,
   onPreview(age) {
     const moment = MOMENTS.find(item => item.age === age);
     $('#map-preview').textContent = age === null
-      ? 'Move over the traveled route to preview an earlier moment.'
+      ? state.selected ? 'Move over the traveled route to preview an earlier moment.' : 'Choose an example age to follow one possible path.'
       : `Age ${age}: ${moment?.title ?? ''} — ${moment?.preview ?? ''}`;
   },
   onInspect(age) {
@@ -64,6 +69,8 @@ function setIndex(open, returnFocus = false) {
 
 function render(animate = false, focusHeading = false) {
   if (focusHeading) {
+    // Native close events are deferred; navigation now owns focus restoration.
+    lastDialogTrigger = null;
     document.querySelectorAll('dialog[open]').forEach(dialog => dialog.close());
     if ($('#main').inert) setIndex(false);
   }
@@ -73,7 +80,14 @@ function render(animate = false, focusHeading = false) {
   $('#example-age').value = state.age;
   const context = MOMENTS.find(moment => moment.age === (state.inspect ?? state.age));
   $('#moment-copy').textContent = `Age ${context.age}: ${context.summary}`;
-  $('.reflection').hidden = state.inspect === 12;
+  $('.reflection').hidden = !state.selected || state.inspect === 12;
+  $('.earlier-moments').hidden = !state.selected;
+  $('#map-preview').textContent = state.selected
+    ? 'Move over the traveled route to preview an earlier moment.'
+    : 'Choose an example age to follow one possible path.';
+  $('#map-description').textContent = state.selected
+    ? `A winding route from birth to an example age. ${mapSettings.variant === 'retained' ? 'Gray alternatives continue beyond today, around the green possible futures.' : mapSettings.variant === 'fading' ? 'Untaken gray branches fade after their missed fork; green reachable futures remain visible.' : 'Most untaken gray branches fade, while a few faint context paths remain around the green reachable futures.'} Height is not a measure of success.`
+    : 'Many illustrated possible paths branch from birth. No route to today has been selected. Height is not a measure of success.';
   $('#earlier-title').textContent = state.age === 8 ? 'The starting moment' : 'Earlier decisions';
   $('#earlier-description').textContent = state.age === 8
     ? 'Age 12 is a separate looking-ahead example below.'
@@ -89,9 +103,12 @@ function render(animate = false, focusHeading = false) {
   $('#return-today').setAttribute('aria-label', `Return to today, age ${state.age}`);
   $('#return-today').innerHTML = `<span aria-hidden="true">Return to today</span><span class="sr-only">Return to today, age ${state.age}</span>`;
   $('#replay').hidden = !state.selected;
+  for (const button of document.querySelectorAll('[data-path-view]')) {
+    button.setAttribute('aria-pressed', String(button.dataset.pathView === mapSettings.variant));
+  }
   for (const link of document.querySelectorAll('.scene-links [data-scene]')) {
     link.toggleAttribute('aria-current', link.dataset.scene === state.scene);
-    link.href = stateURL({ ...state, scene: link.dataset.scene }, location.href);
+    link.href = currentURL({ ...state, scene: link.dataset.scene });
   }
   renderDecision(state);
   if (opening) map.show(state, animate);
@@ -108,14 +125,14 @@ function navigate(change, animate = false) {
   const focusedAge = document.activeElement?.dataset.age;
   const focusedReviewAge = document.activeElement?.dataset.reviewAge;
   state = transition(state, change);
-  const url = stateURL(state, location.href);
+  const url = currentURL();
   if (url.href !== location.href) history.pushState(null, '', url);
   render(animate, changedScene);
   if (focusedAge && !changedScene) requestAnimationFrame(() => $(`.map-target[data-age="${focusedAge}"]`)?.focus({ preventScroll: true }));
   if (focusedReviewAge && !changedScene) $(`[data-review-age="${focusedReviewAge}"]`)?.focus({ preventScroll: true });
   if (state.selected && !changedScene) $('#status').textContent = state.inspect === 12
     ? `Age 12 is open for comparison. Today remains age ${state.age}.`
-    : `Example age ${state.age} selected. The dark route is traveled, dashed gray routes were not taken, and gray-green routes remain possible.`;
+    : `Example age ${state.age} selected. The dark route is traveled, gray routes were not taken, and gray-green routes remain possible.`;
 }
 
 function reviewMoment(age) {
@@ -124,6 +141,12 @@ function reviewMoment(age) {
 }
 
 $('#explore').addEventListener('click', () => navigate({ age: Number($('#example-age').value), selected: true }, true));
+document.querySelectorAll('[data-path-view]').forEach(button => button.addEventListener('click', () => {
+  mapSettings = normalizeMapSettings({ ...mapSettings, variant: button.dataset.pathView });
+  const url = currentURL();
+  if (url.href !== location.href) history.pushState(null, '', url);
+  render();
+}));
 $('#example-age').addEventListener('change', event => navigate({ age: Number(event.target.value), selected: state.selected }, state.selected));
 $('#overview').addEventListener('click', () => navigate({ overview: !state.overview }));
 $('#return-today').addEventListener('click', () => {
@@ -167,7 +190,11 @@ document.querySelectorAll('[data-scene]').forEach(control => control.addEventLis
   navigate({ scene: control.dataset.scene });
 }));
 $('.skip-link').addEventListener('click', event => { event.preventDefault(); $('#main').focus(); });
-window.addEventListener('popstate', () => { state = readState(location.href); render(false, true); });
+window.addEventListener('popstate', () => {
+  state = readState(location.href);
+  mapSettings = readMapSettings(location.href);
+  render(false, true);
+});
 window.addEventListener('hashchange', () => {
   const restored = readState(location.href);
   if (restored.scene !== state.scene) { state = restored; render(false, true); }
@@ -200,7 +227,7 @@ document.querySelectorAll('dialog').forEach(dialog => {
 });
 
 setIndex(!matchMedia('(max-width: 900px)').matches);
-history.replaceState(null, '', stateURL(state, location.href));
+history.replaceState(null, '', currentURL());
 if (map.failed) {
   $('#life-map').hidden = true;
   $('#map-overlay').hidden = true;

@@ -10,9 +10,10 @@ Read the [cross-topic synthesis](report-source.md) for the overall argument, the
 | --- | --- | --- |
 | [Learning that compounds](learning/README.md) | How does earlier learning help later learning, and when does transfer fail? | [L1, L11–L13](learning/sources.md) |
 | [Lifetime opportunities](lifetime/README.md) | How do preparation, requirements, time, and recovery shape options? | [L2–L10](lifetime/sources.md) |
+| [Circumstances, setbacks and chance](circumstances/README.md) | How do outside conditions shape opportunities, and what can support recovery? | [C1–C22](circumstances/sources.md) |
 | [Decision-making and development](decision-making/README.md) | How can children learn demanding decision concepts, with appropriate support? | [T1–T9](decision-making/sources.md) |
 | [Habits](habits/README.md) | How do repeated actions become easier to initiate, and how can routines change? | [B1–B4](habits/sources.md) |
-| [Delivery references](delivery/README.md) | What supports static delivery, useful prototypes, and accessible motion? | [H1–H6](delivery/sources.md) |
+| [Delivery references](delivery/README.md) | What supports static delivery, useful prototypes, and accessible motion? | [H1–H8](delivery/sources.md) |
 
 Habits has an initial formation evidence base. Changing established habits and child/family interventions are explicit research gaps, not completed findings.
 
@@ -28,6 +29,9 @@ research/
     README.md               Findings, use, and open questions
     sources.md              Claim-specific provenance and limits
   lifetime/
+    README.md
+    sources.md
+  circumstances/
     README.md
     sources.md
   decision-making/

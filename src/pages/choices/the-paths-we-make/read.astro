@@ -1,0 +1,23 @@
+---
+import SiteLayout from '../../../layouts/SiteLayout.astro';
+import { renderJourneyReading } from '../../../lessons/choices/journey-story.js';
+import { DAYS, ACTIVITIES } from '../../../lessons/choices/journey-game.js';
+import { LESSON_PATH, UI, url } from '../../../data/site.js';
+
+const gameDays = DAYS.map(day => ({ ...day, options: day.options.map(id => ACTIVITIES[id]) }));
+const reading = renderJourneyReading({ gameDays });
+---
+<SiteLayout title="The paths we make — text version" description="The whole of Lesson 1, Choices — The paths we make, as one page of text: easy to read aloud or print." current="read">
+  <article class="page page-narrow">
+    <header class="page-header">
+      <p class="kicker">Lesson 1 · Choices · Text version</p>
+      <h1>The paths we make</h1>
+      <p class="page-lede">The whole lesson on one page, with the pictures described in words. Good for reading aloud, printing, or reading without the animations.</p>
+      <div class="actions">
+        <a class="btn btn-primary" href={url(LESSON_PATH)}>Open the guided journey<Fragment set:html={UI.arrow} /></a>
+        <button class="btn btn-quiet" type="button" onclick="window.print()">Print</button>
+      </div>
+    </header>
+    <div class="prose" set:html={reading} />
+  </article>
+</SiteLayout>

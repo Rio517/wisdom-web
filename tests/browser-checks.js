@@ -14,6 +14,89 @@ async (page) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.emulateMedia({ reducedMotion: 'no-preference' });
 
+  // Inspect the actual Canvas strokes, not only the CSS of its containing element.
+  await page.addInitScript(() => {
+    if (window.__wisdomCanvasHookInstalled) return;
+    window.__wisdomCanvasHookInstalled = true;
+    window.__mapStrokes = [];
+    const stroke = CanvasRenderingContext2D.prototype.stroke;
+    const clear = CanvasRenderingContext2D.prototype.clearRect;
+    CanvasRenderingContext2D.prototype.clearRect = function (...args) {
+      if (this.canvas.id === 'life-map') window.__mapStrokes = [];
+      return clear.apply(this, args);
+    };
+    CanvasRenderingContext2D.prototype.stroke = function (...args) {
+      if (this.canvas.id === 'life-map') window.__mapStrokes.push({
+        color: this.strokeStyle, width: this.lineWidth, dash: this.getLineDash(),
+        shadow: this.shadowBlur, offsetX: this.shadowOffsetX, offsetY: this.shadowOffsetY,
+      });
+      return stroke.apply(this, args);
+    };
+  });
+  await page.goto(`${base}?age=40&selected=1`);
+  assert(await page.evaluate(() => {
+    const tokens = getComputedStyle(document.documentElement);
+    const colors = ['active', 'future', 'untaken'].map(state => tokens.getPropertyValue(`--color-wisdom-route-${state}`).trim());
+    colors.push(tokens.getPropertyValue('--color-wisdom-today').trim());
+    const paths = window.__mapStrokes;
+    const untaken = tokens.getPropertyValue('--color-wisdom-route-untaken').trim();
+    return paths.length > 70 && paths.every(path => typeof path.color === 'string' && colors.includes(path.color)
+      && path.shadow === 0 && path.offsetX === 0 && path.offsetY === 0)
+      && paths.filter(path => path.color === untaken).every(path => path.width >= 2 && path.dash.length === 0);
+  }), 'Canvas routes must use flat, uniform strokes without shadows or volume gradients');
+  assert(await page.evaluate(async () => {
+    const { makeMap } = await import('./model.js');
+    const { readMapSettings, scenarioForSettings } = await import('./map-settings.js');
+    const map = makeMap(40, scenarioForSettings(readMapSettings(location.href)));
+    const tokens = getComputedStyle(document.documentElement);
+    const strokeCount = state => window.__mapStrokes.filter(path => path.color === tokens.getPropertyValue(`--color-wisdom-route-${state}`).trim()).length;
+    return strokeCount('active') === 1
+      && strokeCount('future') === map.segments.filter(segment => segment.state === 'possible' && segment.points.length > 1).length
+      && strokeCount('untaken') === map.segments.filter(segment => segment.state === 'untaken' && segment.points.length > 1).length;
+  }), 'Canvas must draw each graph segment once and stitch completed history into one dark route');
+
+  // Flat composition: semantic controls without numbered dots or endpoint badges.
+  await page.goto(`${base}?age=40&selected=1&inspect=12`);
+  await settled();
+  assert(await page.locator('.map-target').evaluateAll(nodes => nodes.every(node => !node.textContent.trim())), 'Map dots must not contain visible numbers');
+  assert(await page.locator('.route-marker').count() === 0, 'Empty endpoint badges must be replaced by named callouts');
+  assert(await page.locator('.map-target').evaluateAll(nodes => nodes.every(node => /age \d+/.test(node.getAttribute('aria-label')))), 'Unnumbered moments must retain accessible names');
+  assert(await page.locator('.today-marker').evaluate(node => {
+    const rect = node.getBoundingClientRect();
+    const canvas = document.querySelector('#life-map').getBoundingClientRect();
+    return rect.top >= canvas.bottom - 32 && rect.bottom <= canvas.bottom + 1;
+  }), 'Today belongs at the bottom of the divider');
+  assert(await page.locator('.map-key').evaluate(node => {
+    const rect = node.getBoundingClientRect();
+    const canvas = document.querySelector('#life-map').getBoundingClientRect();
+    return rect.bottom <= canvas.top && rect.right >= canvas.right - 24;
+  }), 'The compact map key belongs at the upper right');
+  assert(await page.locator('.map-target, .route-label, #life-map').evaluateAll(nodes => nodes.every(node => {
+    const style = getComputedStyle(node);
+    return style.boxShadow === 'none' && style.textShadow === 'none' && style.backgroundImage === 'none';
+  })), 'Map elements must be flat, without shading');
+  results.push('Flat map, unnumbered accessible dots and upper-right key');
+
+  // Visibility is presentation only; the same example and geometry survive it.
+  await page.goto(`${base}?age=40&selected=1`);
+  assert(await page.locator('[data-path-view]').count() === 3, 'The three comparison views must be switchable');
+  assert(await page.locator('#life-map').evaluate(canvas => canvas.width >= canvas.getBoundingClientRect().width * 2 - 1), 'Canvas needs at least 2x backing resolution for smoother thin curves');
+  const anchorsBeforeView = await page.locator('.map-target').evaluateAll(nodes => nodes.map(node => node.style.transform));
+  const retainedDrawing = await page.locator('#life-map').evaluate(canvas => canvas.toDataURL());
+  await page.locator('[data-path-view="fading"]').click();
+  assert(await page.locator('[data-path-view="fading"]').getAttribute('aria-pressed') === 'true', 'The active fading view is not announced');
+  assert(await page.locator('#life-map').evaluate(canvas => canvas.toDataURL()) !== retainedDrawing, 'The fading view must materially change the rendered drawing');
+  const fadingDrawing = await page.locator('#life-map').evaluate(canvas => canvas.toDataURL());
+  await page.locator('[data-path-view="hybrid"]').click();
+  assert(await page.locator('#life-map').evaluate(canvas => canvas.toDataURL()) !== fadingDrawing, 'Hybrid must retain visible context beyond the fading view');
+  assert(JSON.stringify(await page.locator('.map-target').evaluateAll(nodes => nodes.map(node => node.style.transform))) === JSON.stringify(anchorsBeforeView), 'Visibility variants moved the actual example route');
+  assert(await page.locator('#example-age').inputValue() === '40', 'Visibility controls changed the example age');
+  await page.reload();
+  assert(await page.locator('[data-path-view="hybrid"]').getAttribute('aria-pressed') === 'true', 'Reload must restore the chosen visibility view');
+  await page.goBack();
+  assert(await page.locator('[data-path-view="fading"]').getAttribute('aria-pressed') === 'true', 'Back must restore the previous visibility view');
+  results.push('Higher-resolution Canvas and stable, restorable visibility variants');
+
   // 1. Current entry, direct state restoration and map-adjacent comparison semantics.
   await page.goto(`${base}?age=40&selected=1&inspect=12&choice=repair`);
   assert(await page.locator('#example-age').inputValue() === '40', 'Direct navigation loses today');
@@ -43,7 +126,17 @@ async (page) => {
 
   // 2. Rapid retargeting, interruption and focus after animation.
   await page.goto(base);
+  assert(await page.locator('.reflection').isHidden() && await page.locator('.earlier-moments').isHidden(), 'The initial field must not present an age-eight biography before a moment is selected');
+  assert(await page.locator('#map-description').textContent().then(text => /from birth/.test(text) && !/Gray alternatives/.test(text)), 'The initial accessible description must describe the unselected field');
+  assert(await page.locator('#map-preview').textContent().then(text => !/traveled route/.test(text)), 'The initial instructions refer to a route that has not been selected');
   await page.getByLabel('Example age', { exact: true }).selectOption('40');
+  const arrival = await page.evaluate(() => {
+    document.querySelector('#explore').click();
+    const target = document.querySelector('.map-target[data-age="40"]');
+    return { motion: document.querySelector('#life-map').dataset.motion, opacity: getComputedStyle(target, '::before').opacity };
+  });
+  assert(arrival.motion === 'traveling' && arrival.opacity === '0', 'The destination dot appears before the traveler arrives');
+  await settled();
   await page.getByRole('button', { name: 'Explore this moment', exact: true }).focus();
   await page.keyboard.press('Enter');
   await settled();
@@ -89,18 +182,20 @@ async (page) => {
   await page.evaluate(() => document.querySelector('#life-map').scrollIntoView({ block: 'center' }));
   const canvasPoint = await page.evaluate(async () => {
     const { makeMap, OVERVIEW } = await import('/prototype/model.js');
+    const { readMapSettings, scenarioForSettings } = await import('/prototype/map-settings.js');
     const canvas = document.querySelector('#life-map');
     const rect = canvas.getBoundingClientRect();
     const scale = Math.min(rect.width / OVERVIEW.width, rect.height / OVERVIEW.height);
     const offsetX = (rect.width - OVERVIEW.width * scale) / 2;
     const offsetY = (rect.height - OVERVIEW.height * scale) / 2;
-    const point = makeMap(40).past.reduce((nearest, item) => (
-      Math.abs(item.x - 610) < Math.abs(nearest.x - 610) ? item : nearest
-    ));
-    const clientX = rect.left + offsetX + point.x * scale;
-    const clientY = rect.top + offsetY + point.y * scale;
-    if (document.elementFromPoint(clientX, clientY) !== canvas) throw new Error('Past-route test point is obstructed');
-    return { x: clientX, y: clientY };
+    const map = makeMap(40, scenarioForSettings(readMapSettings(location.href)));
+    for (const point of map.past) {
+      const closest = map.anchors.filter(anchor => anchor.age <= 40).reduce((a, b) => Math.abs(point.x - a.x) < Math.abs(point.x - b.x) ? a : b);
+      const x = rect.left + offsetX + point.x * scale;
+      const y = rect.top + offsetY + point.y * scale;
+      if (closest.age === 25 && document.elementFromPoint(x, y) === canvas) return { x, y };
+    }
+    throw new Error('No unobstructed age-25 route segment is available for pointer inspection');
   });
   await page.mouse.move(canvasPoint.x, canvasPoint.y);
   assert(await page.locator('#map-preview').textContent().then(text => /Age 25:/.test(text)), 'Pointer preview is misaligned after scrolling');
@@ -164,6 +259,14 @@ async (page) => {
   await page.keyboard.press('Enter');
   assert(page.url().endsWith('#learning'), 'Skip link changes the current scene');
   assert(await page.evaluate(() => document.activeElement?.id === 'main'), 'Skip link does not focus content');
+  await page.getByRole('button', { name: 'Does learning carry into other activities?' }).click();
+  await page.evaluate(() => {
+    document.querySelector('[data-scene="possibilities"]').click();
+    document.querySelector('[data-scene="learning"]').click();
+    document.querySelector('.skip-link').click();
+  });
+  await afterResize();
+  assert(await page.evaluate(() => document.activeElement?.id === 'main'), 'A deferred dialog-close event steals focus after scene navigation');
   results.push('Dialog Back behavior and scene-preserving skip link');
 
   // 7. Tablet index traps focus and dismisses with Escape.
@@ -204,21 +307,24 @@ async (page) => {
         return rect.width >= 43.9 && rect.height >= 43.9;
       }));
       assert(controls, `Control below 44px in ${choice} at ${viewport.width}`);
-      const annotationSize = await page.locator('.route-marker').first().evaluate(node => parseFloat(getComputedStyle(node).fontSize));
+      const annotationSize = await page.locator('.route-outcome').first().evaluate(node => parseFloat(getComputedStyle(node).fontSize));
       assert(annotationSize >= 16, `${choice} outcome annotation below 16px at ${viewport.width}`);
       const geometry = await page.evaluate(() => {
         const intersects = (a, b) => !(a.right <= b.left + 0.1 || a.left >= b.right - 0.1 || a.bottom <= b.top + 0.1 || a.top >= b.bottom - 0.1);
         const map = document.querySelector('.map-canvas-wrap').getBoundingClientRect();
-        const markers = [...document.querySelectorAll('.route-marker')].map(node => node.getBoundingClientRect());
+        const labels = [...document.querySelectorAll('.route-label')];
+        const markers = labels.map(node => node.getBoundingClientRect());
         const obstacles = [...document.querySelectorAll('.map-target:not([hidden]), .today-marker')].map(node => node.getBoundingClientRect());
         return {
           markerCount: markers.length,
+          namedMapping: labels.every(label => label.textContent === document.querySelector(`.route-outcome[data-outcome="${label.dataset.outcome}"]`)?.textContent),
           allInsideMap: markers.every(marker => marker.left >= map.left - 0.1 && marker.right <= map.right + 0.1 && marker.top >= map.top - 0.1 && marker.bottom <= map.bottom + 0.1),
           markerOverlap: markers.some((marker, index) => markers.slice(index + 1).some(other => intersects(marker, other))),
           obstacleOverlap: markers.some(marker => obstacles.some(obstacle => intersects(marker, obstacle)))
         };
       });
       assert(geometry.markerCount === (choice === 'repair' ? 5 : 3), `${choice} has the wrong annotation count at ${viewport.width}`);
+      assert(geometry.namedMapping, `${choice} map callouts do not match the named consequences at ${viewport.width}`);
       assert(geometry.allInsideMap, `${choice} annotations leave the map at ${viewport.width}`);
       assert(!geometry.markerOverlap, `${choice} annotations overlap each other at ${viewport.width}`);
       assert(!geometry.obstacleOverlap, `${choice} annotations overlap age controls at ${viewport.width}`);

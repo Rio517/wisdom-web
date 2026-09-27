@@ -1,0 +1,23 @@
+/* Wisdom design tokens: the approved field-guide palette and type. */
+@theme {
+  --color-index: #f5f8f3;
+  --color-paper: #fbfbf8;
+  --color-paper-deep: #f2f5f0;
+  --color-ink: #23302d;
+  --color-quiet: #5a6961;
+  --color-rule: #dbe2da;
+  --color-forest: #285442;
+  --color-forest-deep: #1d3f31;
+  --color-sage: #8daa91;
+  --color-mist: #c5cec8;
+  --color-lake: #5f8fa3;
+  --color-lake-soft: #d6e6ea;
+  --color-sun: #e0a93b;
+  --color-sun-soft: #f7ead0;
+  --color-clay: #9a5f3e;
+  --color-clay-soft: #f1e2d8;
+  --color-cello: #8a5a33;
+  --color-cello-soft: #efe3d6;
+  --font-field: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  --font-guide: "Avenir Next", AvenirNext, "Segoe UI", system-ui, sans-serif;
+}

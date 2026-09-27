@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#fcfcfa">
+  <title>Choices — The paths we make · Wisdom</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="./choices.css">
+  <script type="module" src="./choices.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#choices-main">Skip to the lesson</a>
+  <button class="index-opener" id="open-index" type="button" aria-controls="site-index" aria-expanded="true" hidden>Open index</button>
+  <aside class="site-index" id="site-index" aria-label="Lesson index">
+    <div class="index-heading">
+      <a class="brand" href="./choices.html">Wisdom<span>A field guide to life</span></a>
+      <button class="icon-button" id="close-index" type="button" aria-label="Close index" title="Close index">‹</button>
+    </div>
+    <nav class="chapter-navigation" aria-label="Choices topics">
+      <details open>
+        <summary>Choices</summary>
+        <p class="chapter-name">The paths we make</p>
+        <ol class="topic-links">
+          <li><a href="#more-than-one-path" data-topic-scene="possibilities">Many possible paths</a></li>
+          <li><a href="#small-choices-add-up" data-topic-scene="accumulation">Choices add up</a></li>
+          <li><a href="#not-everything-is-yours-to-choose" data-topic-scene="control">Outside your control</a></li>
+        </ol>
+        <details class="example-index">
+          <summary>Example: Alfredo’s hikes</summary>
+          <ol class="topic-links">
+            <li><a href="#alfredo-hikes" data-topic-scene="example">Begin the example</a></li>
+            <li><a href="#small-actions-add-up" data-topic-scene="steps">The first setback</a></li>
+            <li><a href="#what-happened-before" data-topic-scene="later">Take the learning with you</a></li>
+            <li><a href="#plans-meet-world" data-topic-scene="world">Resilience</a></li>
+          </ol>
+        </details>
+      </details>
+    </nav>
+    <div class="index-bottom">
+      <p class="prototype-note">A local implementation study<br>Fictional example · Ages 8+</p>
+      <button class="text-button" type="button" data-dialog="about">About this guide</button>
+      <a href="https://github.com/Rio517/wisdom-web/tree/main/docs/research">Research and sources <span aria-hidden="true">↗</span></a>
+      <a href="https://github.com/Rio517/wisdom-web">Source code <span aria-hidden="true">↗</span></a>
+    </div>
+  </aside>
+  <button class="index-backdrop" id="index-backdrop" type="button" aria-label="Close lesson index" hidden></button>
+
+  <main id="choices-main" tabindex="-1">
+    <noscript>
+      <style>
+        body { min-width: 0 !important; }
+        body > :not(main), main > :not(#reading-dialog) { display: none !important; }
+        main { margin: 0 !important; padding: 24px !important; }
+        #reading-dialog { display: block !important; position: static !important; width: min(860px, 100%) !important; max-height: none !important; margin: 0 auto !important; border: 0 !important; padding: 0 !important; }
+        #reading-dialog .dialog-close, #reading-dialog .guided-reading-note { display: none !important; }
+        #reading-dialog .nojs-note { display: block !important; }
+      </style>
+    </noscript>
+
+    <header class="chapter-bar">
+      <span>Choices <span class="bar-divider" aria-hidden="true">/</span> The paths we make</span>
+      <button class="text-button" id="read-whole-lesson" type="button">Read whole lesson</button>
+    </header>
+
+    <div class="guided-lesson" id="guided-lesson">
+      <section class="lesson-shell" id="story-view" aria-label="Guided lesson">
+        <article class="story-column" id="choices-scene" aria-labelledby="choices-scene-title"></article>
+
+        <section class="visual-column" aria-label="Lesson illustration">
+          <div class="visual-heading">
+            <span id="visual-eyebrow">The life map</span>
+            <span id="visual-context">Many possibilities</span>
+          </div>
+
+          <div class="map-frame" id="map-frame">
+            <div class="map-canvas-wrap">
+              <canvas id="choices-canvas" width="1260" height="740" role="img" aria-labelledby="choices-map-title choices-map-description">
+                <span id="choices-map-title">An illustrated life with many possible paths</span>
+                <span id="choices-map-description">A connected field of fictional paths. Height is not a score, and each branch is a possibility rather than a prediction.</span>
+              </canvas>
+              <canvas id="choices-overlay" width="1260" height="740" aria-label="Interactive map choices"></canvas>
+            </div>
+            <div class="map-key" aria-label="Map key">
+              <span><i class="key-line traveled" aria-hidden="true"></i>Path taken</span>
+              <span><i class="key-line possible" aria-hidden="true"></i>Possible next</span>
+              <span><i class="key-line untaken" aria-hidden="true"></i>Not taken</span>
+              <span class="preview-key"><i class="key-line preview" aria-hidden="true"></i>Preview</span>
+            </div>
+            <p class="map-caption" id="map-caption">Many possible paths—an illustration, not a prediction or score. Height has no meaning.</p>
+          </div>
+
+          <div class="trail-frame" id="trail-frame" hidden></div>
+          <div class="weather-frame" id="weather-frame" hidden></div>
+        </section>
+      </section>
+
+      <section class="exploration-shell" id="exploration-view" aria-labelledby="exploration-title" hidden>
+        <header class="exploration-header">
+          <div>
+            <p class="kicker">Optional exploration · fictional paths</p>
+            <h1 id="exploration-title" tabindex="-1">Try a path. Revisit a choice.</h1>
+            <p>Exploring this illustration does not describe or rewrite your life.</p>
+          </div>
+          <button class="primary-button" id="resume-story" type="button">Resume story</button>
+        </header>
+        <div class="exploration-grid">
+          <div class="exploration-map-slot"></div>
+          <aside class="choice-panel" aria-labelledby="map-choices-title">
+            <form id="age-form" class="age-form">
+              <label for="example-age">Example age</label>
+              <div>
+                <input id="example-age" name="age" type="number" inputmode="numeric" min="0" max="70" step="1" value="25" required>
+                <button class="quiet-button" id="confirm-age" type="submit">Show age</button>
+              </div>
+              <p id="age-help">Changing the field does nothing until you choose Show age.</p>
+            </form>
+            <div class="choice-navigation">
+              <button class="quiet-button" id="map-previous" type="button">← Previous choice</button>
+              <button class="quiet-button" id="map-next" type="button">Next choice →</button>
+            </div>
+            <h2 id="map-choices-title">Choices at this fork</h2>
+            <p class="choice-help">Focus or select a choice to preview it in blue. Use the separate button to confirm.</p>
+            <div id="map-choice-list" class="map-choice-list" role="list"></div>
+            <section id="map-preview-panel" class="map-preview-panel" aria-live="polite" hidden>
+              <h3 id="map-preview-title">Path preview</h3>
+              <p id="map-preview-description"></p>
+              <button class="primary-button" id="use-previewed-path" type="button">Use this path</button>
+              <button class="text-button" id="revisit-earlier-fork" type="button" hidden>Revisit earlier fork</button>
+            </section>
+            <p id="map-status" class="map-status" role="status" aria-live="polite"></p>
+          </aside>
+        </div>
+      </section>
+
+      <section id="canvas-fallback" class="canvas-fallback" hidden>
+        <h1>The illustrated map is unavailable.</h1>
+        <p>The complete lesson is still available below.</p>
+      </section>
+    </div>
+
+    <p id="choices-status" class="sr-only" role="status" aria-live="polite"></p>
+
+    <dialog id="about-dialog" aria-labelledby="about-title">
+      <button class="dialog-close text-button" type="button" data-close>Close</button>
+      <h2 id="about-title">A few ideas worth growing up with.</h2>
+      <p>Wisdom is a selective guide for readers aged eight and up. This local prototype explains how choices can affect later possibilities, while circumstances, support and chance also matter.</p>
+      <p>The path field is an illustration, not a prediction, score or complete account of a life.</p>
+    </dialog>
+
+    <dialog id="reading-dialog" aria-labelledby="choices-reading-reading-title">
+      <button class="dialog-close text-button" type="button" data-close>Return to guided view</button>
+      <p class="guided-reading-note">The same lesson in one continuous reading.</p>
+      <p class="nojs-note" hidden>JavaScript is off, so the complete reading is shown without the interactive map.</p>
+      <!-- CHOICES_READING -->
+    </dialog>
+  </main>
+</body>
+</html>

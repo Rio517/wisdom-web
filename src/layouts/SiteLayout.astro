@@ -1,0 +1,38 @@
+---
+import '../styles/site.css';
+import BaseLayout from './BaseLayout.astro';
+import SiteNav from '../components/SiteNav.astro';
+import { SITE, UI, url } from '../data/site.js';
+
+interface Props { title?: string; description?: string; current?: string }
+const { title, description, current } = Astro.props;
+---
+<BaseLayout title={title} description={description}>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="site-shell" data-nav="open">
+    <SiteNav current={current} />
+    <button class="nav-opener" type="button" data-nav-open><Fragment set:html={UI.menu} />Index</button>
+    <div class="site-main">
+      <header class="site-topbar">
+        <button class="nav-opener" type="button" data-nav-open aria-label="Open the index"><Fragment set:html={UI.menu} />Index</button>
+        <a class="brand" href={url('/')}><span class="brand-name">{SITE.name}</span></a>
+      </header>
+      <main id="main" tabindex="-1">
+        <slot />
+        <div class="page" style="padding-top: 0; padding-bottom: 40px;">
+          <footer class="site-footer">
+            <p>{SITE.name} is a work in progress. The people in its examples are made up, and its pictures explain ideas; they don’t predict anyone’s life.</p>
+            <nav aria-label="Footer">
+              <a href={url('/about/')}>About</a>
+              <a href={SITE.source}>Source code</a>
+            </nav>
+          </footer>
+        </div>
+      </main>
+    </div>
+  </div>
+  <script>
+    import { initSiteNav } from '../components/site-nav.js';
+    initSiteNav();
+  </script>
+</BaseLayout>

@@ -1,12 +1,12 @@
 # 004 — Habits and the choices we repeat
 
-Status: Proposed. Created: 2026-09-06. Updated: 2026-09-06.
+Status: Proposed explanation; separate lesson and next priority agreed. Created: 2026-09-06. Updated: 2026-09-14.
 
 ## Purpose and placement
 
 Explain how someone can make a useful action easier to return to, and how to change a routine that no longer helps. Habits deserve a dedicated, linked explanation for ages 8+, rather than only a footnote in the lifetime chapter.
 
-Recommended placement: a follow-up chapter within Choices, provisionally called **The choices we repeat**, connected to daily decisions. The first lifetime chapter includes a short bridge and optional explanation; the full chapter follows later. Its own shareable page can eventually grow into a Habits subject if enough distinct content warrants that hierarchy. Do not add an empty navigation destination now.
+Placement: its own lesson immediately after Choices–Paths and before “How we make choices,” as recorded in the [lesson roadmap](../README.md#lesson-roadmap). Habits has higher near-term priority than decision psychology for the intended readers. A small, complete lesson is worthwhile; it does not need to become a long chapter. The current lifetime lesson may include a short bridge, but that does not replace this separate explanation. Do not add an empty navigation destination now.
 
 The [habits research bucket](../research/habits/README.md) is the source of truth for findings, citations, and unfinished research. This proposal describes an educational experience, not a tested behavior-change program.
 

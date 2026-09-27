@@ -10,7 +10,7 @@ This is a project recommendation, consistent with guidance to choose prototype f
 
 ## Storyboard status and limits
 
-The [stored boards and review history](../design/storyboards/README.md) remain useful records of the field-guide composition, map prominence, navigation, and desired immediacy. They are generated 1536 × 1024 PNGs, not website assets, responsive-layout evidence, a typography or contrast audit, or a demonstration of motion quality.
+The [stored boards and review history](../design/001-choices-explainer/v01-reading-and-motion/README.md) remain useful records of the field-guide composition, map prominence, navigation, and desired immediacy. They are generated 1536 × 1024 PNGs, not website assets, responsive-layout evidence, a typography or contrast audit, or a demonstration of motion quality.
 
 Their six future endpoints and stationary-marker sequence were first superseded by the SVG prototype in [007](007-interactive-map-prototype.md). That study established abundant wandering geometry, a traveling dot and post-arrival focus. The current Canvas revision removes its curls, strengthens untaken-path/divider contrast, and adds the meaningful layered choice comparison defined in [008](008-choices-and-consequences.md) and implemented through [009](009-layered-choices-implementation.md). [003](003-visual-language-and-navigation.md#signature-map-interaction) remains the detailed visual-requirements source.
 

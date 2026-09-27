@@ -2,7 +2,7 @@
 
 [Research library](README.md) · [Source index and evidence gaps](sources.md)
 
-Audience: authors, designers, and future contributors to a life manual for ages 8+. Research date: 2026-09-06. This is a focused cross-topic synthesis, not a systematic review or an evaluated curriculum. Detailed findings and source records live in the linked buckets.
+Audience: authors, designers, and future contributors to a life manual for ages 8+. Initial synthesis: 2026-09-06; circumstances links added: 2026-09-14. This is a focused cross-topic synthesis, not a systematic review or an evaluated curriculum. Detailed findings, review dates and source records live in the linked buckets.
 
 ## Executive answer
 
@@ -20,10 +20,13 @@ The chapter should make preparation feel consequential and worthwhile, while sho
 | --- | --- | --- |
 | Earlier learning can help later learning | [Learning, transfer, and possible reinforcing loops](learning/README.md) | Make the mechanism of compounding visible |
 | Preparation affects reachable opportunities | [Education, time, and course correction](lifetime/README.md) | Show prerequisites, uncertainty, and credible repair |
+| Outside conditions also change opportunities and outcomes | [Circumstances, setbacks, chance and support](circumstances/README.md) | Explain concrete barriers and help; do not treat outcomes as a verdict on effort or character |
 | Serious concepts need examples and support | [Decision-making and development](decision-making/README.md) | Use guided scenes, optional depth, and reader checks |
 | Returning to useful actions needs its own explanation | [Habits: initial findings and unanswered questions](habits/README.md) | Include a brief bridge now; develop the full habits chapter later |
 
 The buckets are complementary. A skill is not a credential; a choice is not an outcome; a plan is not a habit; habitual initiation is not the same as learning well. These distinctions keep the lifetime story concrete without turning it into a universal success formula.
+
+The current Choices–Paths lesson explains effects and accumulation. Research about decision-making helps authors understand the limits of the evidence; it is not a requirement to teach decision psychology here. Habits is a separate next lesson; “How we make choices” follows it, as recorded in the [lesson roadmap](../README.md#lesson-roadmap).
 
 ## Editorial consequences
 

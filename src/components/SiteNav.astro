@@ -1,0 +1,53 @@
+---
+// The shared site index: a sidebar on wide screens, a drawer on tablets and
+// inside the full-screen lesson. Only written lessons get links.
+import { SITE, LESSONS, LESSON_PATH, UI, url } from '../data/site.js';
+
+interface Props { current?: string; mode?: 'sidebar' | 'drawer'; id?: string }
+const { current = '', mode = 'sidebar', id = 'site-nav' } = Astro.props;
+const soon = LESSONS.filter(lesson => lesson.status !== 'available');
+const pages = [
+  { key: 'choices', label: 'About this lesson', href: '/choices/' },
+  { key: 'lesson', label: 'The paths we make', href: LESSON_PATH },
+  { key: 'read', label: 'Read as text', href: `${LESSON_PATH}read/` },
+  { key: 'notes', label: 'Notes for grown-ups', href: '/choices/notes/' },
+];
+const choicesOpen = ['choices', 'lesson', 'read', 'notes'].includes(current) || current === 'home';
+---
+<nav class="site-nav" id={id} data-mode={mode} data-open="false" aria-label="Site index">
+  <div class="nav-head">
+    <a class="brand" href={url('/')} aria-current={current === 'home' ? 'page' : undefined}>
+      <span class="brand-name">{SITE.name}</span>
+      <span class="brand-tag">{SITE.tagline}</span>
+    </a>
+    <button class="nav-close" type="button" data-nav-close aria-label={mode === 'drawer' ? 'Close the index' : 'Hide the index'}>
+      <span class="icon-collapse" set:html={UI.collapse} /><span class="icon-close" set:html={UI.close} />
+    </button>
+  </div>
+
+  <div>
+    <p class="nav-section-label" id={`${id}-lessons`}>Lessons</p>
+    <ul class="nav-lessons" aria-labelledby={`${id}-lessons`}>
+      <li class="nav-lesson">
+        <details open={choicesOpen}>
+          <summary><span class="lesson-num">01</span>Choices<span class="chevron" set:html={UI.chevron} /></summary>
+          <ul class="nav-pages">
+            {pages.map(page => (
+              <li><a href={url(page.href)} aria-current={current === page.key ? 'page' : undefined}>{page.label}</a></li>
+            ))}
+          </ul>
+        </details>
+      </li>
+    </ul>
+    <ul class="nav-soon" aria-label="Lessons in preparation">
+      {soon.map(lesson => <li><span class="lesson-num">{lesson.number}</span>{lesson.title}</li>)}
+    </ul>
+    <p class="nav-soon-note">In preparation</p>
+  </div>
+
+  <div class="nav-utility">
+    <a href={url('/about/')} aria-current={current === 'about' ? 'page' : undefined}>About</a>
+    <a href={SITE.research}>Research and sources <span class="sr-only">(opens GitHub)</span><Fragment set:html={UI.external} /></a>
+    <a href={SITE.source}>Source code <span class="sr-only">(opens GitHub)</span><Fragment set:html={UI.external} /></a>
+  </div>
+</nav>
