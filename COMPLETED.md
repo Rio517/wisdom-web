@@ -136,3 +136,9 @@ At the end of that 2026-09-07 pass, the redesigned short lesson, owner visual se
 - A Sonnet worker drafted the notes and About pages from the research; they were reviewed and edited.
 - Design study 002 was registered with v01 captures after two review loops (headline balance, drawer icon, hero stacking below 1280 px).
 - 225 Node tests and the Astro build pass. The built site was checked on preview 4601. Updated AGENTS.md, 002 and 013 for the owner's approval. Not committed or published.
+- Published:
+  - Committed the site and the branch's earlier work, pushed `prototype/choices-map`, and fast-forwarded `main`.
+  - Added the GitHub Pages workflow (tests, Astro build, deploy) and enabled Pages in workflow mode with the custom domain `wisdom.knyflores.com`.
+  - The first run passed tests, build and deploy. All routes return 200 from GitHub's Pages servers.
+  - DNS at Namecheap still needs the `wisdom` CNAME; HTTPS is enforced after the certificate is issued.
+
