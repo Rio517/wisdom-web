@@ -4,7 +4,7 @@
 
 **The site is deployed.** On 2026-09-27 the owner approved the guided journey as Lesson 1 and asked for the main site. It is an Astro static site at the repository root. `main` deploys to GitHub Pages through `.github/workflows/deploy.yml` (tests, build, deploy), with the custom domain `wisdom.knyflores.com` set in the Pages settings. Every route was verified from GitHub's Pages servers.
 
-**Waiting on the HTTPS certificate:** the Namecheap `CNAME` (`wisdom` → `rio517.github.io.`) is live and GitHub reports the domain valid and HTTPS-eligible, so the site answers on `http://wisdom.knyflores.com/`. On 2026-09-30 GitHub had not yet issued the certificate. Once it has, enforce HTTPS (`gh api -X PUT repos/Rio517/wisdom-web/pages -F https_enforced=true`) and check `https://wisdom.knyflores.com/`. If no certificate appears within a day, remove and re-add the custom domain in the Pages settings to restart issuance.
+**Live at <https://wisdom.knyflores.com/>** since 2026-09-30. The Namecheap `CNAME` (`wisdom` → `rio517.github.io.`) is in place; GitHub issued the certificate (expires 2026-12-29, renewed automatically) after the custom domain was removed and re-added, and HTTPS is enforced, so `http://` redirects.
 
 | Page | Local URL |
 | --- | --- |
@@ -44,7 +44,7 @@ The public repository is [Rio517/wisdom-web](https://github.com/Rio517/wisdom-we
 
 1. **Owner review of the site** at the URLs above and the [v01 captures](docs/design/002-site/v01-launch/README.md), including the i18n change before it is committed.
 2. **Keep translations in step:** any change to English text updates all four catalogs in the same change (`npm test` enforces parity); recheck German layouts afterwards.
-3. **Finish going live:** enforce HTTPS once the certificate is issued, and verify the `https://` URL. Optionally, verify `knyflores.com` in GitHub account settings (Pages → verified domains) so no other account can claim the subdomain.
+3. **Domain protection (optional):** verify `knyflores.com` in GitHub account settings (Pages → verified domains) so no other account can claim the subdomain.
 4. **Reader testing** near age eight and with older readers. Can they connect earlier learning to a later possibility, separate preparation from guaranteed outcomes, and name something outside Alfredo's control? Does the game read as "practice plus rest builds skills" rather than "never have fun"?
 5. **Lesson 02, Habits and daily practice**, is next. It gets a page and navigation link only when its content is complete.
 
