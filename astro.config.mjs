@@ -2,6 +2,7 @@ import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 import { PORTS, assertProjectPort, assertLocalhost } from './tooling/ports.js';
 import { LOCALES, DEFAULT_LOCALE } from './src/i18n/config.js';
+import dialectoInContext from './tooling/dialecto-in-context.mjs';
 
 /** Refuse to run the site outside 4600–4699 on 127.0.0.1. */
 function portGuard() {
@@ -20,7 +21,7 @@ export default defineConfig({
   site: 'https://wisdom.knyflores.com',
   base: '/',
   server: { host: '127.0.0.1', port: PORTS.siteDev },
-  integrations: [portGuard()],
+  integrations: [portGuard(), dialectoInContext()],
   devToolbar: { enabled: false },
   build: { format: 'directory' },
   // English at the root, other languages under /es/, /de/, /fr/ (see src/i18n/config.js).
