@@ -1,7 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createLifeTree, LIFE_END, LIFE_START } from '../src/lessons/choices/journey-explore.js';
-import { CHOICE_BANDS, labelsForFork, bandFor } from '../src/lessons/choices/journey-choices.js';
+import { CHOICE_BANDS, labelsForFork, bandFor, bandChoices, mapStory, STORY_COUNT, STORY_SHAPE } from '../src/lessons/choices/journey-choices.js';
+import { getTranslator } from '../src/i18n/index.js';
+import { LOCALES } from '../src/i18n/config.js';
 
 function walk(tree, pick = () => 0) {
   const path = [tree.get('r')];
@@ -86,19 +88,32 @@ test('labels come from the right age band, with family choices only for young ch
   assert.equal(bandFor(4).by, 'family');
   assert.equal(bandFor(12).by, undefined);
   const { labels } = labelsForFork(12, 'k', 3);
-  assert.ok(labels.every(label => bandFor(12).choices.includes(label)));
-  assert.ok(CHOICE_BANDS.every(band => band.choices.length >= 8));
+  assert.ok(labels.every(label => bandChoices(bandFor(12)).includes(label)));
+  assert.ok(CHOICE_BANDS.every(band => band.items.length >= 8));
 });
 
-test('map stories: twenty complete sets, each internally distinct', async () => {
-  const { MAP_STORIES } = await import('../src/lessons/choices/journey-choices.js');
-  assert.ok(MAP_STORIES.length >= 20);
-  for (const story of MAP_STORIES) {
-    assert.equal(story.taken.length, 2);
-    assert.equal(story.untaken.length, 3);
-    assert.equal(story.build.length, 3);
-    assert.equal(story.fresh.length, 3);
-    const all = [...story.taken, ...story.untaken, ...story.build, ...story.fresh];
-    assert.equal(new Set(all).size, all.length, all.join(', '));
+test('forks draw the same choices in every language, only the words differ', () => {
+  const english = labelsForFork(30, 'fork', 3, [], getTranslator('en')).labels;
+  for (const locale of LOCALES) {
+    const t = getTranslator(locale);
+    for (const each of CHOICE_BANDS) assert.equal(new Set(bandChoices(each, t)).size, each.items.length, `${locale} ${each.id} labels are distinct`);
+    const labels = labelsForFork(30, 'fork', 3, [], t).labels;
+    const band = bandFor(30);
+    const index = label => bandChoices(band, t).indexOf(label);
+    assert.deepEqual(labels.map(index), english.map(label => bandChoices(band).indexOf(label)), locale);
+  }
+});
+
+test('map stories: twenty complete sets, each internally distinct in every language', () => {
+  assert.ok(STORY_COUNT >= 20);
+  for (const locale of LOCALES) {
+    const t = getTranslator(locale);
+    for (let index = 0; index < STORY_COUNT; index += 1) {
+      const story = mapStory(index, t);
+      for (const [part, count] of Object.entries(STORY_SHAPE)) assert.equal(story[part].length, count);
+      const all = Object.values(story).flat();
+      assert.equal(new Set(all).size, all.length, `${locale}: ${all.join(', ')}`);
+      assert.ok(all.every(label => !label.startsWith('map.story')), `${locale} story ${index + 1} is complete`);
+    }
   }
 });

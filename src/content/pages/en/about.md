@@ -1,5 +1,4 @@
 ---
-layout: ../layouts/ProseLayout.astro
 title: About Wisdom
 description: What Wisdom is, how each lesson is researched and made, what's here now, and what's planned next, with links to the research and source code.
 kicker: About

@@ -1,4 +1,7 @@
 import { LEARNED } from './journey-story.js';
+import { t } from '../../i18n/runtime.js';
+
+const tx = key => String(t(key)).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;');
 import { ICONS } from './journey-icons.js';
 import { tween, ease, wait } from './journey-motion.js';
 
@@ -67,21 +70,21 @@ function sceneSVG() {
   <path class="trail-closed-seg" id="whatif" d="${MAIN}" style="stroke-dasharray: 3 9"/>
   <g transform="translate(628 505) rotate(-14)"><rect x="-22" y="-10" width="44" height="20" rx="3" fill="#b59a78"/><path d="M-22 -10 h44 M-22 10 h44" stroke="#7b6a55" stroke-width="3"/></g>
   <g transform="translate(66 650)"><path d="M-22 0 V-20 L0 -38 L22 -20 V0 Z" fill="#fbfbf8" stroke="#285442" stroke-width="3" stroke-linejoin="round"/><rect x="-6" y="-14" width="12" height="14" fill="#285442"/></g>
-  <text class="place-label" x="66" y="684" text-anchor="middle">Trailhead</text>
-  <text class="place-label" x="1010" y="206" text-anchor="middle">Mirror Lake</text>
-  <text class="place-label small" x="398" y="494" text-anchor="middle" id="rock-label">Big rock</text>
-  <text class="place-label small" x="736" y="646">Stream</text>
-  <text class="place-label" x="1082" y="598" text-anchor="middle" id="falls-label">Waterfall</text>
-  <g id="loop-labels" class="fade-item"><path class="trail-dash" d="M112 664 C 120 700, 140 730, 150 742 M112 664 C 180 690, 260 730, 292 758 M112 664 C 240 680, 400 700, 442 742"/><text class="place-label small" x="200" y="784" text-anchor="middle">Park loop</text><text class="place-label small" x="344" y="800" text-anchor="middle">Hill loop</text><text class="place-label small" x="494" y="784" text-anchor="middle">River walk</text></g>
-  <g id="turn-flag" class="fade-item"><path d="M0 0 V-40" stroke="#9a5f3e" stroke-width="3" stroke-linecap="round"/><path d="M0 -40 L24 -33 L0 -26 Z" fill="#9a5f3e"/><text class="place-label small clay" x="10" y="20" id="turn-flag-text">Half the water gone</text></g>
-  <g id="whatif-note" class="fade-item"><text class="place-label clay" x="860" y="300" text-anchor="end">No water left for the way home</text></g>
+  <text class="place-label" x="66" y="684" text-anchor="middle">${tx('hike.trailhead')}</text>
+  <text class="place-label" x="1010" y="206" text-anchor="middle">${tx('hike.lake')}</text>
+  <text class="place-label small" x="398" y="494" text-anchor="middle" id="rock-label">${tx('hike.rock')}</text>
+  <text class="place-label small" x="736" y="646">${tx('hike.stream')}</text>
+  <text class="place-label" x="1082" y="598" text-anchor="middle" id="falls-label">${tx('hike.waterfall')}</text>
+  <g id="loop-labels" class="fade-item"><path class="trail-dash" d="M112 664 C 120 700, 140 730, 150 742 M112 664 C 180 690, 260 730, 292 758 M112 664 C 240 680, 400 700, 442 742"/><text class="place-label small" x="200" y="784" text-anchor="middle">${tx('hike.loopPark')}</text><text class="place-label small" x="344" y="800" text-anchor="middle">${tx('hike.loopHill')}</text><text class="place-label small" x="494" y="784" text-anchor="middle">${tx('hike.loopRiver')}</text></g>
+  <g id="turn-flag" class="fade-item"><path d="M0 0 V-40" stroke="#9a5f3e" stroke-width="3" stroke-linecap="round"/><path d="M0 -40 L24 -33 L0 -26 Z" fill="#9a5f3e"/><text class="place-label small clay" x="10" y="20" id="turn-flag-text">${tx('hike.halfWater')}</text></g>
+  <g id="whatif-note" class="fade-item"><text class="place-label clay" x="860" y="300" text-anchor="end">${tx('hike.noWater')}</text></g>
   <g id="storm" class="fade-item">
     <path d="M740 262 a26 26 0 0 1 36 -34 a34 34 0 0 1 62 8 a24 24 0 0 1 20 42 h-104 a20 20 0 0 1 -14 -16z" fill="#9fb1b8"/>
     <g class="rain">${Array.from({ length: 12 }, (_, i) => `<line x1="${752 + i * 9}" y1="${286 + (i % 3) * 8}" x2="${746 + i * 9}" y2="${300 + (i % 3) * 8}"/>`).join('')}</g>
   </g>
   <g id="closed-sign" class="fade-item" transform="translate(760 402)">
     <path d="M-12 -12 L12 12 M12 -12 L-12 12" stroke="#9a5f3e" stroke-width="5" stroke-linecap="round"/>
-    <text class="place-label clay" x="22" y="-16">Trail closed</text>
+    <text class="place-label clay" x="22" y="-16">${tx('hike.trailClosed')}</text>
   </g>
   <g id="ranger" class="fade-item" transform="translate(560 478) scale(1.8)">
     <path d="M-3 0 V-8 M3 0 V-8" stroke="#3b4a44" stroke-width="2.6" stroke-linecap="round"/>
@@ -89,10 +92,10 @@ function sceneSVG() {
     <circle cx="0" cy="-27" r="4.8" fill="#c99a74"/>
     <path d="M-9 -30 h18 M-5 -30 q5 -8 10 0" stroke="#4d5e36" stroke-width="3" fill="#4d5e36" stroke-linecap="round"/>
   </g>
-  <text id="ranger-label" class="place-label small fade-item" x="560" y="412" text-anchor="middle">Ranger</text>
+  <text id="ranger-label" class="place-label small fade-item" x="560" y="412" text-anchor="middle">${tx('hike.ranger')}</text>
   <g id="ranger-bubble" class="fade-item" transform="translate(300 376)">
     <rect x="0" y="0" width="236" height="46" rx="16" fill="white" stroke="#dbe2da"/><path d="M204 45 l24 18 l-6 -18z" fill="white"/>
-    <text x="118" y="29" text-anchor="middle" class="place-label small" style="fill:#23302d;stroke:none">Try the Waterfall Trail!</text>
+    <text x="118" y="29" text-anchor="middle" class="place-label small" style="fill:#23302d;stroke:none">${tx('hike.rangerTip')}</text>
   </g>
   <g id="picnic" class="fade-item" transform="translate(996 556)"><rect x="-26" y="-10" width="52" height="20" rx="3" fill="#e0a93b" transform="skewX(-20)"/><path d="M-24 0 h48 M-8 -10 v20 M8 -10 v20" stroke="#f7ead0" stroke-width="3" transform="skewX(-20)"/></g>
   ${walkersMarkup()}
@@ -102,8 +105,8 @@ function sceneSVG() {
 export function createHikeScene(root) {
   root.innerHTML = `${sceneSVG()}
   <div class="backpack" aria-hidden="true">
-    <h2>${ICONS.backpack} Backpack</h2>
-    <div class="water"><div class="bottles" id="bottles"></div><span id="water-label">Water</span></div>
+    <h2>${ICONS.backpack} ${tx('hike.backpack')}</h2>
+    <div class="water"><div class="bottles" id="bottles"></div><span id="water-label">${tx('hike.water')}</span></div>
     <ul class="learned" id="learned"></ul>
   </div>
   <div class="sort-board" id="sort-board" hidden></div>`;
@@ -147,7 +150,7 @@ export function createHikeScene(root) {
     learned = ids;
     learnedEl.innerHTML = ids.length
       ? ids.map(id => `<li class="${fresh.includes(id) ? 'is-new' : ''}">${ICONS[LEARNED[id].icon === 'rest' ? 'restSmall' : LEARNED[id].icon]}${LEARNED[id].label}</li>`).join('')
-      : '<li class="learned-empty" style="background:none;padding:0;color:#5a6961">Things they learn will go here.</li>';
+      : `<li class="learned-empty" style="background:none;padding:0;color:#5a6961">${tx('hike.learnedEmpty')}</li>`;
   }
   function renderBottles(count, fill) {
     if (bottlesEl.children.length !== count) {
@@ -157,7 +160,7 @@ export function createHikeScene(root) {
       bottle.style.setProperty('--fill', String(Math.max(0, fill)));
       bottle.dataset.low = String(fill <= 0.25);
     }
-    $('#water-label').textContent = fill <= 0.12 ? 'Nearly empty' : fill <= 0.55 ? 'Half gone' : 'Water';
+    $('#water-label').textContent = t(fill <= 0.12 ? 'hike.waterEmpty' : fill <= 0.55 ? 'hike.waterHalf' : 'hike.water');
   }
 
   const STATE = {
@@ -200,7 +203,7 @@ export function createHikeScene(root) {
       path.style.opacity = String(loopAmount || 0);
     });
     $('#turn-flag-text').textContent = id === 'retry' || id === 'closed' || id === 'respond' || id === 'sort'
-      ? 'Turned back here last time' : 'Half the water gone';
+      ? t('hike.turnedBack') : t('hike.halfWater');
     walkers.classList.remove('walking');
   }
 
@@ -269,7 +272,7 @@ export function createHikeScene(root) {
       loops.forEach(({ path }) => { path.style.opacity = '0.35'; });
       show('#loop-labels', false);
       if (!(await walk({ path: main, length: mainLength, from: 0, to: bridge - 0.012, duration: 4200, token, trace: $('#walked-second'), bottles: { count: 4, from: 1, to: 0.72 } }))) return;
-      $('#turn-flag-text').textContent = 'Turned back here last time';
+      $('#turn-flag-text').textContent = t('hike.turnedBack');
       return;
     }
     if (beatId === 'closed' && sequential && from === 'retry') {

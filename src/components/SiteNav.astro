@@ -1,53 +1,60 @@
 ---
 // The shared site index: a sidebar on wide screens, a drawer on tablets and
 // inside the full-screen lesson. Only written lessons get links.
-import { SITE, LESSONS, LESSON_PATH, UI, url } from '../data/site.js';
+import { SITE, LESSON_PATH, UI, href, lessonsFor } from '../data/site.js';
+import { getTranslator } from '../i18n/index.js';
+import LanguageSwitch from './LanguageSwitch.astro';
+import DraftNote from './DraftNote.astro';
 
-interface Props { current?: string; mode?: 'sidebar' | 'drawer'; id?: string }
-const { current = '', mode = 'sidebar', id = 'site-nav' } = Astro.props;
-const soon = LESSONS.filter(lesson => lesson.status !== 'available');
+interface Props { current?: string; mode?: 'sidebar' | 'drawer'; id?: string; locale: string }
+const { current = '', mode = 'sidebar', id = 'site-nav', locale } = Astro.props;
+const t = getTranslator(locale);
+const soon = lessonsFor(t).filter(lesson => lesson.status !== 'available');
 const pages = [
-  { key: 'choices', label: 'About this lesson', href: '/choices/' },
-  { key: 'lesson', label: 'The paths we make', href: LESSON_PATH },
-  { key: 'read', label: 'Read as text', href: `${LESSON_PATH}read/` },
-  { key: 'notes', label: 'Notes for grown-ups', href: '/choices/notes/' },
+  { key: 'choices', label: t('nav.aboutLesson'), path: '/choices/' },
+  { key: 'lesson', label: t('nav.lesson'), path: LESSON_PATH },
+  { key: 'read', label: t('nav.read'), path: `${LESSON_PATH}read/` },
+  { key: 'notes', label: t('nav.notes'), path: '/choices/notes/' },
 ];
-const choicesOpen = ['choices', 'lesson', 'read', 'notes'].includes(current) || current === 'home';
+const choicesOpen = ['choices', 'lesson', 'read', 'notes', 'home'].includes(current);
 ---
-<nav class="site-nav" id={id} data-mode={mode} data-open="false" aria-label="Site index">
+<nav class="site-nav" id={id} data-mode={mode} data-open="false" aria-label={t('nav.label')}
+  data-label-close={t('nav.close')} data-label-hide={t('nav.hide')}>
   <div class="nav-head">
-    <a class="brand" href={url('/')} aria-current={current === 'home' ? 'page' : undefined}>
-      <span class="brand-name">{SITE.name}</span>
-      <span class="brand-tag">{SITE.tagline}</span>
+    <a class="brand" href={href(locale, '/')} aria-current={current === 'home' ? 'page' : undefined}>
+      <span class="brand-name">{t('site.name')}</span>
+      <span class="brand-tag">{t('site.tagline')}</span>
     </a>
-    <button class="nav-close" type="button" data-nav-close aria-label={mode === 'drawer' ? 'Close the index' : 'Hide the index'}>
+    <button class="nav-close" type="button" data-nav-close aria-label={mode === 'drawer' ? t('nav.close') : t('nav.hide')}>
       <span class="icon-collapse" set:html={UI.collapse} /><span class="icon-close" set:html={UI.close} />
     </button>
   </div>
 
   <div>
-    <p class="nav-section-label" id={`${id}-lessons`}>Lessons</p>
+    <p class="nav-section-label" id={`${id}-lessons`}>{t('nav.lessons')}</p>
     <ul class="nav-lessons" aria-labelledby={`${id}-lessons`}>
       <li class="nav-lesson">
         <details open={choicesOpen}>
-          <summary><span class="lesson-num">01</span>Choices<span class="chevron" set:html={UI.chevron} /></summary>
+          <summary><span class="lesson-num">01</span>{t('nav.choices')}<span class="chevron" set:html={UI.chevron} /></summary>
           <ul class="nav-pages">
             {pages.map(page => (
-              <li><a href={url(page.href)} aria-current={current === page.key ? 'page' : undefined}>{page.label}</a></li>
+              <li><a href={href(locale, page.path)} aria-current={current === page.key ? 'page' : undefined}>{page.label}</a></li>
             ))}
           </ul>
         </details>
       </li>
     </ul>
-    <ul class="nav-soon" aria-label="Lessons in preparation">
+    <ul class="nav-soon" aria-label={t('nav.inPreparationLabel')}>
       {soon.map(lesson => <li><span class="lesson-num">{lesson.number}</span>{lesson.title}</li>)}
     </ul>
-    <p class="nav-soon-note">In preparation</p>
+    <p class="nav-soon-note">{t('nav.inPreparation')}</p>
   </div>
 
   <div class="nav-utility">
-    <a href={url('/about/')} aria-current={current === 'about' ? 'page' : undefined}>About</a>
-    <a href={SITE.research}>Research and sources <span class="sr-only">(opens GitHub)</span><Fragment set:html={UI.external} /></a>
-    <a href={SITE.source}>Source code <span class="sr-only">(opens GitHub)</span><Fragment set:html={UI.external} /></a>
+    <a href={href(locale, '/about/')} aria-current={current === 'about' ? 'page' : undefined}>{t('nav.about')}</a>
+    <a href={SITE.research}>{t('nav.research')} <span class="sr-only">{t('nav.opensGithub')}</span><Fragment set:html={UI.external} /></a>
+    <a href={SITE.source}>{t('nav.source')} <span class="sr-only">{t('nav.opensGithub')}</span><Fragment set:html={UI.external} /></a>
+    <LanguageSwitch locale={locale} label={t('nav.language')} variant="nav" />
+    {mode === 'drawer' && <DraftNote locale={locale} class="nav-draft-note" />}
   </div>
 </nav>

@@ -1,10 +1,10 @@
 # Choices — The paths we make (guided journey)
 
-Status: Draft 03 proposal for owner review. Created: 2026-09-26. Updated: 2026-09-26.
+Status: Draft 03, the text of Lesson 1 on the site. Created: 2026-09-26. Updated: 2026-09-30.
 
-This is the editable copy for the [guided journey study](../product/013-choices-guided-journey.md) at [journey.html](http://127.0.0.1:4600/prototype/journey.html). The live words come from `prototype/journey-story.js`, `prototype/journey-game.js` and `prototype/journey-choices.js`. Edit here first, then a code pass copies changes across. [Draft 02](choices-story.md) remains the current text of the earlier lesson page.
+This is the readable copy of [Lesson 1](../product/013-choices-guided-journey.md). The live words are in `src/i18n/messages/en.json`, and the translations sit beside it (see [014](../product/014-languages.md)). Edit either here or in the catalog; after a code pass, regenerate this file with `npm run copy:lesson`. [Draft 02](choices-story.md) is the text of the earlier lesson study.
 
-People, places and choices are fictional examples. The pictures are not predictions or measurements.
+A guided lesson for readers aged eight and up. The people and places are fictional examples. The pictures are illustrations, not predictions or measurements.
 
 ## Many paths
 

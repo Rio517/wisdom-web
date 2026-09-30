@@ -1,17 +1,52 @@
 ---
+// GitHub Pages serves one 404.html for every language. It renders in English
+// and switches its words when the missing address sits under /es/, /de/ or /fr/.
 import SiteLayout from '../layouts/SiteLayout.astro';
-import { LESSON_PATH, UI, url } from '../data/site.js';
+import { LESSON_PATH, UI, href } from '../data/site.js';
+import { getTranslator } from '../i18n/index.js';
+import { LOCALES, DEFAULT_LOCALE, LOCALE_TAGS } from '../i18n/config.js';
+
+const locale = DEFAULT_LOCALE;
+const t = getTranslator(locale);
+const KEYS = ['title', 'kicker', 'heading', 'lede', 'home', 'lesson'];
+const words = Object.fromEntries(LOCALES.map(code => {
+  const tr = getTranslator(code);
+  return [code, {
+    lang: LOCALE_TAGS[code],
+    text: Object.fromEntries(KEYS.map(key => [key, tr(`notFound.${key}`)])),
+    home: href(code, '/'),
+    lesson: href(code, LESSON_PATH),
+    site: tr('site.name'),
+  }];
+}));
 ---
-<SiteLayout title="Page not found" description="This page isn’t here.">
+<SiteLayout title={t('notFound.title')} description={t('notFound.description')} locale={locale} noindex>
   <div class="page page-narrow">
     <header class="page-header">
-      <p class="kicker">Not found</p>
-      <h1>This path doesn’t go anywhere.</h1>
-      <p class="page-lede">The page you were looking for isn’t here. It may have moved, or the link may have a typo. Plenty of other paths are open.</p>
+      <p class="kicker" data-nf="kicker">{t('notFound.kicker')}</p>
+      <h1 data-nf="heading">{t('notFound.heading')}</h1>
+      <p class="page-lede" data-nf="lede">{t('notFound.lede')}</p>
       <div class="actions">
-        <a class="btn btn-primary" href={url('/')}>Go to the home page<Fragment set:html={UI.arrow} /></a>
-        <a class="btn btn-quiet" href={url(LESSON_PATH)}>Start lesson 1</a>
+        <a class="btn btn-primary" data-nf="home" href={href(locale, '/')}><span>{t('notFound.home')}</span><Fragment set:html={UI.arrow} /></a>
+        <a class="btn btn-quiet" data-nf="lesson" href={href(locale, LESSON_PATH)}>{t('notFound.lesson')}</a>
       </div>
     </header>
   </div>
+  <script type="application/json" id="not-found-words" set:html={JSON.stringify(words).replaceAll('<', '\\u003c')} />
+  <script>
+    import { localeFromPath } from '../i18n/config.js';
+
+    const code = localeFromPath(location.pathname);
+    const words = JSON.parse(document.getElementById('not-found-words').textContent)[code];
+    if (code !== 'en' && words) {
+      document.documentElement.lang = words.lang;
+      document.title = `${words.text.title} · ${words.site}`;
+      for (const element of document.querySelectorAll('[data-nf]')) {
+        const key = element.dataset.nf;
+        const target = element.querySelector('span') ?? element;
+        target.textContent = words.text[key];
+        if (key === 'home' || key === 'lesson') element.href = words[key];
+      }
+    }
+  </script>
 </SiteLayout>

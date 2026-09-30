@@ -1,0 +1,8 @@
+---
+import ProseLayout from '../../../layouts/ProseLayout.astro';
+import { localeStaticPaths } from '../../../i18n/config.js';
+
+export const getStaticPaths = localeStaticPaths;
+const { locale } = Astro.props;
+---
+<ProseLayout locale={locale} slug="choices/notes" current="notes" />

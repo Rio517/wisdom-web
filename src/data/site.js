@@ -1,12 +1,11 @@
-// Site-wide content: the lesson roadmap and the Choices lesson's chapters.
-// The lesson's own words live in src/lessons/choices/journey-story.js.
-import { CHAPTERS, beatList } from '../lessons/choices/journey-story.js';
+// Site-wide structure: the lesson roadmap and the Choices lesson's chapters.
+// Words come from the message catalogs (site.*); pass a translator from
+// src/i18n/index.js (build) so each page renders in its own language.
+import { chaptersFor, beatList } from '../lessons/choices/journey-story.js';
 import { ICONS } from '../lessons/choices/journey-icons.js';
+import { localizePath } from '../i18n/config.js';
 
 export const SITE = {
-  name: 'Wisdom',
-  tagline: 'A field guide to life',
-  description: 'Short, illustrated lessons about how life works—for readers eight and up, and the grown-ups beside them.',
   source: 'https://github.com/Rio517/wisdom-web',
   research: 'https://github.com/Rio517/wisdom-web/tree/main/docs/research',
 };
@@ -17,67 +16,51 @@ export function url(path = '/') {
   return `${base.replace(/\/$/, '')}${path.startsWith('/') ? path : `/${path}`}`;
 }
 
+/** A link to `path` in `locale`: href('de', '/choices/') → /de/choices/. */
+export const href = (locale, path) => url(localizePath(path, locale));
+
 export const LESSON_PATH = '/choices/the-paths-we-make/';
 
 /** The six planned lessons, in reading order. Only available ones get pages. */
-export const LESSONS = [
-  {
-    number: '01', id: 'choices', status: 'available', href: '/choices/',
-    title: 'Choices — The paths we make',
-    summary: 'How small choices add up over time, and how circumstances, support and chance shape the path too.',
-  },
-  {
-    number: '02', id: 'habits', status: 'next',
-    title: 'Habits and daily practice',
-    summary: 'How little routines grow, how to change the ones that don’t help, and how to start again after a break.',
-  },
-  {
-    number: '03', id: 'deciding', status: 'planned',
-    title: 'How we make choices',
-    summary: 'What really goes on when we decide, and how to think up better options before choosing one.',
-  },
-  {
-    number: '04', id: 'happiness', status: 'planned',
-    title: 'What makes a happy life',
-    summary: 'What seems to help people live well, and what the evidence can and can’t tell us.',
-  },
-  {
-    number: '05', id: 'relationships', status: 'planned',
-    title: 'Relationships',
-    summary: 'How the way we treat each other shapes our friendships and the people around us.',
-  },
-  {
-    number: '06', id: 'learning', status: 'planned',
-    title: 'How to learn',
-    summary: 'Ways of learning that help new things stick.',
-  },
+const LESSON_DATA = [
+  { number: '01', id: 'choices', status: 'available', path: '/choices/' },
+  { number: '02', id: 'habits', status: 'next' },
+  { number: '03', id: 'deciding', status: 'planned' },
+  { number: '04', id: 'happiness', status: 'planned' },
+  { number: '05', id: 'relationships', status: 'planned' },
+  { number: '06', id: 'learning', status: 'planned' },
 ];
 
-export const STATUS_LABEL = { available: 'Ready to read', next: 'Coming next', planned: 'Planned' };
+export function lessonsFor(t) {
+  return LESSON_DATA.map(lesson => ({
+    ...lesson,
+    title: t(`site.lesson.${lesson.id}.title`),
+    summary: t(`site.lesson.${lesson.id}.summary`),
+    statusLabel: t(`site.status.${lesson.status}`),
+    href: lesson.path ? href(t.locale, lesson.path) : undefined,
+  }));
+}
 
-const CHAPTER_DETAILS = {
-  paths: { icon: 'map', text: 'A life has many possible paths. Watch one of them unfold.' },
-  hike: { icon: 'backpack', text: 'Alfredo plans a hike, turns back, learns, and meets something he can’t control.' },
-  skills: { icon: 'soccerSmall', text: 'One girl, two paths: how practice builds on practice.' },
-  play: { icon: 'celloSmall', text: 'Spend ten afternoons and watch what builds up.' },
-  explore: { icon: 'eye', text: 'Choose a whole life path, from age three to seventy.' },
-  wrap: { icon: 'leaf', text: 'Three ideas to keep.' },
-};
+const CHAPTER_ICONS = { paths: 'map', hike: 'backpack', skills: 'soccerSmall', play: 'celloSmall', explore: 'eye', wrap: 'leaf' };
 
-const firstFragment = new Map();
-for (const item of beatList()) if (!firstFragment.has(item.chapter.id)) firstFragment.set(item.chapter.id, item.fragment);
+export function choicesChaptersFor(t) {
+  const chapters = chaptersFor(t);
+  const firstFragment = new Map();
+  for (const item of beatList(chapters)) if (!firstFragment.has(item.chapter.id)) firstFragment.set(item.chapter.id, item.fragment);
+  return chapters.map((chapter, index) => ({
+    id: chapter.id,
+    number: String(index + 1).padStart(2, '0'),
+    title: chapter.title,
+    text: t(`site.chapter.${chapter.id}.text`),
+    icon: ICONS[CHAPTER_ICONS[chapter.id]] ?? '',
+    href: `${href(t.locale, LESSON_PATH)}#${firstFragment.get(chapter.id)}`,
+  }));
+}
 
-export const CHOICES_CHAPTERS = CHAPTERS.map((chapter, index) => ({
-  id: chapter.id,
-  number: String(index + 1).padStart(2, '0'),
-  title: chapter.title,
-  text: CHAPTER_DETAILS[chapter.id]?.text ?? '',
-  icon: ICONS[CHAPTER_DETAILS[chapter.id]?.icon] ?? '',
-  href: `${LESSON_PATH}#${firstFragment.get(chapter.id)}`,
-}));
-
-export const TAKEAWAYS = CHAPTERS.find(chapter => chapter.id === 'wrap').beats[0].takeaways
-  .map(item => ({ ...item, icon: ICONS[item.icon] }));
+export function takeawaysFor(t) {
+  return chaptersFor(t).find(chapter => chapter.id === 'wrap').beats[0].takeaways
+    .map(item => ({ ...item, icon: ICONS[item.icon] }));
+}
 
 /** Small interface icons (stroke-based, decorative). */
 const ui = body => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${body}</svg>`;
@@ -94,4 +77,5 @@ export const UI = {
   text: ui('<path d="M5 6h14M5 10h14M5 14h9M5 18h11"/>'),
   check: ui('<path d="M5 12.5l4.2 4L19 7"/>'),
   book: ui('<path d="M5 5.5A2.5 2.5 0 0 1 7.5 3H19v15H7.5A2.5 2.5 0 0 0 5 20.5z"/><path d="M5 20.5A2.5 2.5 0 0 1 7.5 18H19"/>'),
+  globe: ui('<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.4 2.5 3.5 5.3 3.5 8.5s-1.1 6-3.5 8.5c-2.4-2.5-3.5-5.3-3.5-8.5s1.1-6 3.5-8.5z"/>'),
 };

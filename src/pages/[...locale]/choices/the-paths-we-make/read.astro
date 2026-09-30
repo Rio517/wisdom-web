@@ -1,0 +1,27 @@
+---
+import SiteLayout from '../../../../layouts/SiteLayout.astro';
+import { renderJourneyReading } from '../../../../lessons/choices/journey-story.js';
+import { daysWithLabels } from '../../../../lessons/choices/journey-game.js';
+import { LESSON_PATH, UI, href } from '../../../../data/site.js';
+import { getTranslator } from '../../../../i18n/index.js';
+import { localeStaticPaths } from '../../../../i18n/config.js';
+
+export const getStaticPaths = localeStaticPaths;
+const { locale } = Astro.props;
+const t = getTranslator(locale);
+const reading = renderJourneyReading({ t, gameDays: daysWithLabels(t) });
+---
+<SiteLayout title={t('read.title')} description={t('read.description')} current="read" locale={locale}>
+  <article class="page page-narrow">
+    <header class="page-header">
+      <p class="kicker">{t('read.kicker')}</p>
+      <h1>{t('lesson.ui.title')}</h1>
+      <p class="page-lede">{t('read.lede')}</p>
+      <div class="actions">
+        <a class="btn btn-primary" href={href(locale, LESSON_PATH)}>{t('read.open')}<Fragment set:html={UI.arrow} /></a>
+        <button class="btn btn-quiet" type="button" onclick="window.print()">{t('read.print')}</button>
+      </div>
+    </header>
+    <div class="prose" set:html={reading} />
+  </article>
+</SiteLayout>

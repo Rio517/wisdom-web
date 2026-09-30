@@ -1,0 +1,25 @@
+---
+// Links to this page in the other languages, each named in its own language.
+// Renders nothing while only one language is offered (drafts stay unlinked).
+import { LOCALE_NAMES, LOCALE_TAGS, stripLocale, switcherLocales } from '../i18n/config.js';
+import { UI, href } from '../data/site.js';
+
+interface Props { locale: string; label: string; variant?: 'nav' | 'footer' }
+const { locale, label, variant = 'footer' } = Astro.props;
+const path = stripLocale(Astro.url.pathname);
+const codes = switcherLocales(locale);
+---
+{codes.length > 1 && (
+  <div class:list={['lang-block', `lang-block-${variant}`]}>
+    {variant === 'nav' && <span class="lang-label" aria-hidden="true"><Fragment set:html={UI.globe} />{label}</span>}
+    <nav class="lang-switch" aria-label={label}>
+      <ul>
+        {codes.map(code => (
+          <li>
+            <a href={href(code, path)} hreflang={LOCALE_TAGS[code]} lang={LOCALE_TAGS[code]} aria-current={code === locale ? 'true' : undefined}>{LOCALE_NAMES[code]}</a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  </div>
+)}

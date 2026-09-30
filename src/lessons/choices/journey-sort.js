@@ -1,6 +1,9 @@
 // Drag-or-tap sorting activity: "What was in their control?"
 // Self-contained component. No dependencies besides the shared icon set.
+import { t } from '../../i18n/runtime.js';
 import { ICONS } from './journey-icons.js';
+
+const esc = value => String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;');
 
 const DRAG_THRESHOLD = 6;
 
@@ -17,9 +20,9 @@ function seedRotation(id) {
 }
 
 function verdictText(card, correct, forced) {
-  if (forced) return 'That one belongs on the other side.';
-  if (correct) return card.mine ? 'Yes — that was their choice.' : 'Yes — that was outside their control.';
-  return card.mine ? 'Hmm — could they choose that? Try the other side.' : 'Hmm — could they really choose that? Try the other side.';
+  if (forced) return t('sort.verdict.forced');
+  if (correct) return card.mine ? t('sort.verdict.rightMine') : t('sort.verdict.rightNot');
+  return card.mine ? t('sort.verdict.wrongMine') : t('sort.verdict.wrongNot');
 }
 
 export function createSortBoard(container, { cards, results = {}, doneText, onChange = () => {} }) {
@@ -35,28 +38,28 @@ export function createSortBoard(container, { cards, results = {}, doneText, onCh
   let destroyed = false;
 
   container.innerHTML = `
-    <section class="sort-bin sort-bin-mine" data-mine="true" aria-label="Their choice">
-      <h2 class="sort-bin-title">${ICONS.backpack}<span>Their choice</span></h2>
+    <section class="sort-bin sort-bin-mine" data-mine="true" aria-label="${esc(t('sort.binMine'))}">
+      <h2 class="sort-bin-title">${ICONS.backpack}<span>${esc(t('sort.binMine'))}</span></h2>
       <ul class="sort-bin-list"></ul>
-      <button type="button" class="sort-bin-target sr-only">Place the selected card here — their choice</button>
+      <button type="button" class="sort-bin-target sr-only">${esc(t('sort.placeMine'))}</button>
     </section>
     <div class="sort-centre">
       <div class="sort-intro">
-        <p class="sort-instruction">Drag each card to a side.</p>
-        <p class="sort-hint">Or tap a card, then tap a side.<span class="sr-only"> With a keyboard, focus a card and press the left or right arrow.</span></p>
+        <p class="sort-instruction">${esc(t('sort.instruction'))}</p>
+        <p class="sort-hint">${esc(t('sort.hint'))}<span class="sr-only"> ${esc(t('sort.keyboardHint'))}</span></p>
       </div>
-      <div class="sort-pile" role="group" aria-label="Cards to sort"></div>
+      <div class="sort-pile" role="group" aria-label="${esc(t('sort.pileLabel'))}"></div>
       <p class="sort-verdict" aria-live="polite"></p>
-      <button type="button" class="sort-skip">Skip — show the answers</button>
+      <button type="button" class="sort-skip">${esc(t('sort.skip'))}</button>
       <div class="sort-complete" hidden>
-        <h3 class="sort-complete-heading" tabindex="-1">All sorted</h3>
+        <h3 class="sort-complete-heading" tabindex="-1">${esc(t('sort.allSorted'))}</h3>
         <p class="sort-complete-text"></p>
       </div>
     </div>
-    <section class="sort-bin sort-bin-not" data-mine="false" aria-label="Outside their control">
-      <h2 class="sort-bin-title">${ICONS.weather}<span>Outside their control</span></h2>
+    <section class="sort-bin sort-bin-not" data-mine="false" aria-label="${esc(t('sort.binNot'))}">
+      <h2 class="sort-bin-title">${ICONS.weather}<span>${esc(t('sort.binNot'))}</span></h2>
       <ul class="sort-bin-list"></ul>
-      <button type="button" class="sort-bin-target sr-only">Place the selected card here — outside their control</button>
+      <button type="button" class="sort-bin-target sr-only">${esc(t('sort.placeNot'))}</button>
     </section>
     <p class="sort-announce sr-only" aria-live="polite"></p>`;
   container.setAttribute('data-local-keys', '');
@@ -129,7 +132,7 @@ export function createSortBoard(container, { cards, results = {}, doneText, onCh
     li.appendChild(label);
     if (forced) {
       const note = document.createElement('small');
-      note.textContent = 'moved here';
+      note.textContent = t('sort.movedHere');
       li.appendChild(note);
     }
     return li;
@@ -147,7 +150,7 @@ export function createSortBoard(container, { cards, results = {}, doneText, onCh
   }
 
   function announce(card) {
-    announceEl.textContent = `‘${card.label}’ — ${card.mine ? 'their choice' : 'outside their control'}.`;
+    announceEl.textContent = t(card.mine ? 'sort.announceMine' : 'sort.announceNot', { card: card.label });
   }
 
   function focusAfterPlacement() {

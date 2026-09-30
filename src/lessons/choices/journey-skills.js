@@ -1,30 +1,26 @@
 import { ICONS, person } from './journey-icons.js';
 import { SKILL_GROUPS, TRANSFERS, FOUNDATIONS, MAYA_PATTERNS, mayaSeasons, transferLevels, practiseSeason, levelWord } from './journey-game.js';
 import { wait } from './journey-motion.js';
+import { t } from '../../i18n/runtime.js';
+
+const esc = value => String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;');
 
 const GROUP_ICON = { soccer: 'soccerSmall', cello: 'celloSmall', basketball: 'basketball', guitar: 'guitar' };
 
 /** Skill box markup shared by Maya’s lanes and the game. */
 export function skillBoxMarkup({ id, group, title, skills, owner = '' }) {
-  return `<section class="skill-box" id="${id}" data-group="${group}" aria-label="${owner ? `${owner}: ` : ''}${title} skills">
-    <header><h3>${ICONS[GROUP_ICON[group]] ?? ''}<span class="box-title">${title}</span></h3><span class="box-note"></span></header>
+  const boxLabel = owner ? t('skills.boxLabelOwner', { owner, title }) : t('skills.boxLabel', { title });
+  return `<section class="skill-box" id="${id}" data-group="${group}" aria-label="${esc(boxLabel)}">
+    <header><h3>${ICONS[GROUP_ICON[group]] ?? ''}<span class="box-title">${esc(title)}</span></h3><span class="box-note"></span></header>
     ${skills.map(skill => `<div class="skill-row" data-skill="${skill.id}">
-      <span class="skill-name">${skill.label}</span>
-      <div class="meter" data-group="${group}" role="meter" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="${owner ? `${owner}, ` : ''}${skill.label}">
+      <span class="skill-name">${esc(skill.label)}</span>
+      <div class="meter" data-group="${group}" role="meter" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="${esc(owner ? t('skills.meterLabelOwner', { owner, skill: skill.label }) : skill.label)}">
         <i class="carried" style="--level:0"></i><i class="fill" style="--level:0;--from:0"></i><i class="ghost" hidden></i>
       </div>
-      <span class="skill-meta"><span class="skill-word">Just starting</span>
-      <span class="boost-note">${FOUNDATIONS[skill.id] && FOUNDATIONS[skill.id] !== skill.id ? `↑ helped by ${labelFor(FOUNDATIONS[skill.id]).toLowerCase()}` : ''}</span></span>
+      <span class="skill-meta"><span class="skill-word">${esc(levelWord(0))}</span>
+      <span class="boost-note">${FOUNDATIONS[skill.id] && FOUNDATIONS[skill.id] !== skill.id ? esc(t(`skills.boost.${skill.id}`)) : ''}</span></span>
     </div>`).join('')}
   </section>`;
-}
-
-function labelFor(skillId) {
-  for (const group of Object.values(SKILL_GROUPS)) {
-    const found = group.skills.find(skill => skill.id === skillId);
-    if (found) return found.label;
-  }
-  return skillId;
 }
 
 /** Update a box's meters. `carried` is the part brought from another skill. */
@@ -43,12 +39,12 @@ export function setSkillBox(box, levels, { carried = {}, ghost = null } = {}) {
     meter.setAttribute('aria-valuenow', String(Math.round(level * 100)));
     const word = levelWord(level);
     const headStart = carry > 0.08;
-    meter.setAttribute('aria-valuetext', headStart ? `${word}, with a head start` : word);
-    row.querySelector('.skill-word').textContent = headStart ? `${word} · head start` : word;
+    meter.setAttribute('aria-valuetext', headStart ? t('skills.withHeadStart', { word }) : word);
+    row.querySelector('.skill-word').textContent = headStart ? t('skills.headStartShort', { word }) : word;
   }
 }
 
-const SEASON_LABELS = ['Start', 'Season 1', 'Season 2', 'Season 3', 'Basketball'];
+const seasonLabels = () => [t('skills.start'), t('skills.season', { n: 1 }), t('skills.season', { n: 2 }), t('skills.season', { n: 3 }), t('game.group.basketball')];
 
 export function createSkillsScene(root) {
   const soccer = SKILL_GROUPS.soccer.skills;
@@ -57,33 +53,35 @@ export function createSkillsScene(root) {
   const transfer = { a: transferLevels(seasons.a.at(-1).levels, 'basketball'), b: transferLevels(seasons.b.at(-1).levels, 'basketball') };
   const late = { a: practiseSeason(transfer.a, MAYA_PATTERNS.a, 0.05), b: practiseSeason(transfer.b, MAYA_PATTERNS.a, 0.05) };
 
-  const lane = key => `<article class="lane lane-${key}" aria-label="${key === 'a' ? 'Path A: Maya keeps practising' : 'Path B: Maya mostly skips'}">
+  const owner = key => t(`skills.owner.${key}`);
+  const lane = key => `<article class="lane lane-${key}" aria-label="${esc(t(`skills.laneLabel.${key}`))}">
       <div class="lane-who">${person({ shirt: key === 'a' ? '#285442' : '#5f8fa3', ball: true })}
-        <strong>Path ${key.toUpperCase()}</strong><span>${key === 'a' ? 'Keeps practising' : 'Mostly skips'}</span></div>
+        <strong>${esc(t(`skills.path.${key}`))}</strong><span>${esc(t(`skills.pathNote.${key}`))}</span></div>
       <div class="calendar">
-        <p class="calendar-title">Weeks she practised</p>
-        <div class="calendar-rows">${[1, 2, 3].map(season => `<div class="calendar-row" data-season="${season}"><small>Season ${season}</small>${MAYA_PATTERNS[key].map(() => '<span class="week"></span>').join('')}<span class="growth" data-level="0"></span></div>`).join('')}
-          <div class="calendar-row basket-row" data-season="4" hidden><small>Basketball</small>${MAYA_PATTERNS.a.map(() => '<span class="week" data-kind="basket"></span>').join('')}<span class="growth" data-level="0"></span></div>
+        <p class="calendar-title">${esc(t('skills.weeksPractised'))}</p>
+        <div class="calendar-rows">${[1, 2, 3].map(season => `<div class="calendar-row" data-season="${season}"><small>${esc(t('skills.season', { n: season }))}</small><span class="calendar-track">${MAYA_PATTERNS[key].map(() => '<span class="week"></span>').join('')}<span class="growth" data-level="0"></span></span></div>`).join('')}
+          <div class="calendar-row basket-row" data-season="4" hidden><small>${esc(t('game.group.basketball'))}</small><span class="calendar-track">${MAYA_PATTERNS.a.map(() => '<span class="week" data-kind="basket"></span>').join('')}<span class="growth" data-level="0"></span></span></div>
         </div>
       </div>
-      <div class="lane-box" id="lane-box-${key}">${skillBoxMarkup({ id: `box-${key}`, group: 'soccer', title: 'Soccer', skills: soccer, owner: `Path ${key.toUpperCase()} Maya` })}</div>
+      <div class="lane-box" id="lane-box-${key}">${skillBoxMarkup({ id: `box-${key}`, group: 'soccer', title: t('game.group.soccer'), skills: soccer, owner: owner(key) })}</div>
     </article>`;
 
   root.innerHTML = `<div class="season-bar">
-      <label id="season-label">Time</label>
+      <label id="season-label">${esc(t('skills.time'))}</label>
       <div class="season-steps" role="group" aria-labelledby="season-label"><span class="season-fill"></span>
-        ${SEASON_LABELS.map((label, index) => `<button class="season-step" type="button" data-season="${index}" aria-pressed="false"><i></i>${label}</button>`).join('')}
+        ${seasonLabels().map((label, index) => `<button class="season-step" type="button" data-season="${index}" aria-pressed="false"><i></i>${esc(label)}</button>`).join('')}
       </div>
+      <span class="scrub-hint">${esc(t('skills.scrubHint'))}</span>
     </div>
     <div class="lanes-wrap">
       <svg class="fork" viewBox="0 0 100 400" preserveAspectRatio="none" aria-hidden="true">
         <path class="fork-a" d="M6 200 C 50 200, 50 100, 100 100" vector-effect="non-scaling-stroke"/>
         <path class="fork-b" d="M6 200 C 50 200, 50 300, 100 300" vector-effect="non-scaling-stroke"/>
       </svg>
-      <div class="fork-start"><span class="fork-dot"></span><span>Maya, 8</span></div>
+      <div class="fork-start"><span class="fork-dot"></span><span>${esc(t('skills.forkStart'))}</span></div>
       <div class="lanes" data-split="false">${lane('a')}${lane('b')}</div>
     </div>
-    <p class="illustration-note skills-note">Illustration only. The bars show an idea, not a measurement.</p>`;
+    <p class="illustration-note skills-note">${esc(t('skills.illustration'))}</p>`;
 
   const $ = selector => root.querySelector(selector);
   const lanes = $('.lanes');
@@ -118,7 +116,7 @@ export function createSkillsScene(root) {
       if (rowSeason <= 3 && rowSeason <= upTo) level = growthWord(total(seasons[key][rowSeason].levels) - total(seasons[key][rowSeason - 1].levels));
       if (rowSeason === 4 && late) level = growthWord(total(lateLevels[key]) - total(transfer[key]));
       badge.dataset.level = String(level);
-      badge.innerHTML = level ? `<span class="growth-long">grew </span>${['', 'a little', 'more', 'a lot'][level]}` : '';
+      badge.innerHTML = level ? `<span class="growth-long">${esc(t('skills.grew'))} </span>${esc(t(`skills.growth${level}`))}` : '';
     });
   }
 
@@ -156,10 +154,10 @@ export function createSkillsScene(root) {
     for (const key of ['a', 'b']) {
       const holder = $(`#lane-box-${key}`);
       holder.innerHTML = next === 'soccer'
-        ? skillBoxMarkup({ id: `box-${key}`, group: 'soccer', title: 'Soccer', skills: soccer, owner: `Path ${key.toUpperCase()} Maya` })
-        : skillBoxMarkup({ id: `box-${key}`, group: 'basketball', title: 'Basketball', skills: basketball, owner: `Path ${key.toUpperCase()} Maya` });
+        ? skillBoxMarkup({ id: `box-${key}`, group: 'soccer', title: t('game.group.soccer'), skills: soccer, owner: owner(key) })
+        : skillBoxMarkup({ id: `box-${key}`, group: 'basketball', title: t('game.group.basketball'), skills: basketball, owner: owner(key) });
       if (animate) holder.firstElementChild.classList.add('flip');
-      if (next === 'basketball') holder.querySelector('.box-note').textContent = 'striped = from soccer';
+      if (next === 'basketball') holder.querySelector('.box-note').textContent = t('skills.stripedNote');
     }
   }
 

@@ -2,23 +2,15 @@
 // It shows an idea—practice builds, and related skills make later practice
 // count for more—without claiming real rates. No numbers are shown to readers.
 
+import { t as runtimeT } from '../../i18n/runtime.js';
+
+// Labels are read from the message catalog (game.*). The getters use the
+// page's language; build-time code passes an explicit translator to the helpers.
+const withLabel = (item, key) => Object.defineProperty(item, 'label', { get: () => runtimeT(key), enumerable: true });
+
 export const SKILL_GROUPS = {
-  soccer: {
-    label: 'Soccer',
-    skills: [
-      { id: 'ballControl', label: 'Ball control' },
-      { id: 'passing', label: 'Passing' },
-      { id: 'positioning', label: 'Positioning' },
-    ],
-  },
-  cello: {
-    label: 'Cello',
-    skills: [
-      { id: 'reading', label: 'Reading music' },
-      { id: 'rhythm', label: 'Rhythm' },
-      { id: 'fingers', label: 'Finger skill' },
-    ],
-  },
+  soccer: withLabel({ skills: ['ballControl', 'passing', 'positioning'].map(id => withLabel({ id }, `game.skill.${id}`)) }, 'game.group.soccer'),
+  cello: withLabel({ skills: ['reading', 'rhythm', 'fingers'].map(id => withLabel({ id }, `game.skill.${id}`)) }, 'game.group.cello'),
 };
 
 // Which skill gives each skill “a place to stand”.
@@ -31,57 +23,84 @@ export const FOUNDATIONS = {
   fingers: 'rhythm',
 };
 
+const transferSkill = skill => Object.defineProperty(withLabel(skill, `game.skill.${skill.id}`), 'note',
+  { get: () => runtimeT(`game.skill.${skill.id}.carry`), enumerable: true });
+
 export const TRANSFERS = {
-  basketball: {
-    label: 'Basketball',
+  basketball: withLabel({
     from: 'soccer',
     skills: [
-      { id: 'court', label: 'Court sense', source: 'positioning', share: 0.6, note: 'Knowing where to stand carries across.' },
-      { id: 'bPassing', label: 'Passing', source: 'passing', share: 0.55, note: 'Seeing a teammate who is free carries across.' },
-      { id: 'dribbling', label: 'Dribbling with hands', source: 'ballControl', share: 0.12, note: 'Hands instead of feet—mostly new.' },
-    ],
-  },
-  guitar: {
-    label: 'Guitar',
+      { id: 'court', source: 'positioning', share: 0.6 },
+      { id: 'bPassing', source: 'passing', share: 0.55 },
+      { id: 'dribbling', source: 'ballControl', share: 0.12 },
+    ].map(transferSkill),
+  }, 'game.group.basketball'),
+  guitar: withLabel({
     from: 'cello',
     skills: [
-      { id: 'gReading', label: 'Reading music', source: 'reading', share: 0.7, note: 'Notes on the page are the same.' },
-      { id: 'gRhythm', label: 'Rhythm', source: 'rhythm', share: 0.7, note: 'Keeping the beat carries across.' },
-      { id: 'gFingers', label: 'Finger skill', source: 'fingers', share: 0.35, note: 'Pressing strings helps, but frets and strumming are new.' },
-    ],
-  },
+      { id: 'gReading', source: 'reading', share: 0.7 },
+      { id: 'gRhythm', source: 'rhythm', share: 0.7 },
+      { id: 'gFingers', source: 'fingers', share: 0.35 },
+    ].map(transferSkill),
+  }, 'game.group.guitar'),
 };
 
-export const ACTIVITIES = {
-  soccerPractice: { label: 'Go to soccer practice', icon: 'soccer', group: 'soccer', gains: { ballControl: 0.05, passing: 0.09, positioning: 0.09 } },
-  drillPractice: { label: 'Go to practice', icon: 'soccer', group: 'soccer', gains: { ballControl: 0.05, passing: 0.14, positioning: 0.1 } },
-  kickBall: { label: 'Kick the ball against the wall', icon: 'ball', group: 'soccer', gains: { ballControl: 0.11 } },
-  hallwayDribble: { label: 'Dribble a ball in the hallway', icon: 'ball', group: 'soccer', gains: { ballControl: 0.1 } },
-  celloPractice: { label: 'Practise cello for 15 minutes', icon: 'cello', group: 'cello', gains: { reading: 0.04, rhythm: 0.04, fingers: 0.1 } },
-  celloSolo: { label: 'Practise cello on your own', icon: 'cello', group: 'cello', gains: { reading: 0.05, rhythm: 0.04, fingers: 0.1 } },
-  celloLesson: { label: 'Go to your cello lesson', icon: 'cello', group: 'cello', gains: { reading: 0.1, rhythm: 0.08, fingers: 0.05 } },
-  video: { label: 'Goof off with videos', icon: 'screen', rest: true },
-  nap: { label: 'Take a nap', icon: 'rest', rest: true },
-  tag: { label: 'Play tag with friends', icon: 'friends', rest: true },
-  fort: { label: 'Build a blanket fort', icon: 'fort', rest: true },
-  game: { label: 'Play the new video game', icon: 'screen', rest: true },
-  rest: { label: 'Rest', icon: 'rest', rest: true },
-  comic: { label: 'Read a comic', icon: 'book', rest: true },
-  friend: { label: 'Go to your friend’s house', icon: 'friends', rest: true },
+const ACTIVITY_DATA = {
+  soccerPractice: { icon: 'soccer', group: 'soccer', gains: { ballControl: 0.05, passing: 0.09, positioning: 0.09 } },
+  drillPractice: { icon: 'soccer', group: 'soccer', gains: { ballControl: 0.05, passing: 0.14, positioning: 0.1 } },
+  kickBall: { icon: 'ball', group: 'soccer', gains: { ballControl: 0.11 } },
+  hallwayDribble: { icon: 'ball', group: 'soccer', gains: { ballControl: 0.1 } },
+  celloPractice: { icon: 'cello', group: 'cello', gains: { reading: 0.04, rhythm: 0.04, fingers: 0.1 } },
+  celloSolo: { icon: 'cello', group: 'cello', gains: { reading: 0.05, rhythm: 0.04, fingers: 0.1 } },
+  celloLesson: { icon: 'cello', group: 'cello', gains: { reading: 0.1, rhythm: 0.08, fingers: 0.05 } },
+  video: { icon: 'screen', rest: true },
+  nap: { icon: 'rest', rest: true },
+  tag: { icon: 'friends', rest: true },
+  fort: { icon: 'fort', rest: true },
+  game: { icon: 'screen', rest: true },
+  rest: { icon: 'rest', rest: true },
+  comic: { icon: 'book', rest: true },
+  friend: { icon: 'friends', rest: true },
 };
+export const ACTIVITIES = Object.fromEntries(Object.entries(ACTIVITY_DATA)
+  .map(([id, activity]) => [id, withLabel({ ...activity }, `game.activity.${id}`)]));
 
-export const DAYS = [
-  { label: 'Monday', situation: 'Soccer practice is at four. Your cello is leaning in the corner.', options: ['soccerPractice', 'celloPractice', 'video'] },
-  { label: 'Tuesday', situation: 'Cello lesson today. School was long and you’re a bit tired.', options: ['celloLesson', 'kickBall', 'nap'] },
-  { label: 'Wednesday', situation: 'Your friends are playing tag in the park.', options: ['tag', 'celloPractice', 'kickBall'] },
-  { label: 'Thursday', situation: 'Rain! Soccer practice is cancelled.', chance: 'Chance', options: ['hallwayDribble', 'celloPractice', 'fort'] },
-  { label: 'Friday', situation: 'Soccer practice—and a new video game just came out.', options: ['soccerPractice', 'game', 'celloPractice'] },
-  { label: 'Monday', situation: 'You slept badly and you’re really tired.', options: ['rest', 'soccerPractice', 'celloPractice'] },
-  { label: 'Tuesday', situation: 'Your cello teacher is ill. No lesson today.', chance: 'Chance', options: ['celloSolo', 'kickBall', 'comic'] },
-  { label: 'Wednesday', situation: 'Soccer practice. A friend asks you to come over instead.', options: ['soccerPractice', 'friend', 'celloPractice'] },
-  { label: 'Thursday', situation: 'Your coach is teaching a new passing drill today.', chance: 'Lucky break', options: ['drillPractice', 'celloPractice', 'rest'] },
-  { label: 'Friday', situation: 'Last afternoon! There’s a match on Saturday and a cello concert next month.', options: ['soccerPractice', 'celloPractice', 'rest'] },
+const DAY_DATA = [
+  { weekday: 'mon', options: ['soccerPractice', 'celloPractice', 'video'] },
+  { weekday: 'tue', options: ['celloLesson', 'kickBall', 'nap'] },
+  { weekday: 'wed', options: ['tag', 'celloPractice', 'kickBall'] },
+  { weekday: 'thu', chance: 'chance', options: ['hallwayDribble', 'celloPractice', 'fort'] },
+  { weekday: 'fri', options: ['soccerPractice', 'game', 'celloPractice'] },
+  { weekday: 'mon', options: ['rest', 'soccerPractice', 'celloPractice'] },
+  { weekday: 'tue', chance: 'chance', options: ['celloSolo', 'kickBall', 'comic'] },
+  { weekday: 'wed', options: ['soccerPractice', 'friend', 'celloPractice'] },
+  { weekday: 'thu', chance: 'lucky', options: ['drillPractice', 'celloPractice', 'rest'] },
+  { weekday: 'fri', options: ['soccerPractice', 'celloPractice', 'rest'] },
 ];
+
+/** A day's words in a given language: weekday, situation, and the chance tag if any. */
+export function dayText(index, t = runtimeT) {
+  const day = DAY_DATA[index];
+  return {
+    label: t(`game.weekday.${day.weekday}`),
+    situation: t(`game.day${index + 1}.situation`),
+    chance: day.chance ? t(`game.chance.${day.chance}`) : undefined,
+  };
+}
+
+export const DAYS = DAY_DATA.map((day, index) => Object.defineProperties({ options: day.options, weekday: day.weekday }, {
+  label: { get: () => dayText(index).label, enumerable: true },
+  situation: { get: () => dayText(index).situation, enumerable: true },
+  chance: { get: () => dayText(index).chance, enumerable: true },
+}));
+
+/** Every day with its options' labels, for the text version of the lesson. */
+export function daysWithLabels(t = runtimeT) {
+  return DAY_DATA.map((day, index) => ({
+    ...dayText(index, t),
+    options: day.options.map(id => ({ id, label: t(`game.activity.${id}`) })),
+  }));
+}
 
 export const MAX_ENERGY = 3;
 export const GAME_SCALE = 1.5;
@@ -154,12 +173,12 @@ export function replayChoices(choiceIds = []) {
   return state;
 }
 
-export function levelWord(level) {
-  if (level < 0.06) return 'Just starting';
-  if (level < 0.25) return 'Learning';
-  if (level < 0.5) return 'Getting there';
-  if (level < 0.75) return 'Getting good';
-  return 'Strong';
+export function levelWord(level, t = runtimeT) {
+  if (level < 0.06) return t('game.level.starting');
+  if (level < 0.25) return t('game.level.learning');
+  if (level < 0.5) return t('game.level.gettingThere');
+  if (level < 0.75) return t('game.level.good');
+  return t('game.level.strong');
 }
 
 export function transferLevels(levels, transferId) {
@@ -167,7 +186,7 @@ export function transferLevels(levels, transferId) {
   return Object.fromEntries(transfer.skills.map(skill => [skill.id, round((levels[skill.source] ?? 0) * skill.share)]));
 }
 
-export function summarize(state) {
+export function summarize(state, t = runtimeT) {
   const counts = { soccer: 0, cello: 0, rest: 0, tired: 0 };
   for (const entry of state.history) {
     const activity = ACTIVITIES[entry.activity];
@@ -176,12 +195,12 @@ export function summarize(state) {
     if (entry.tired) counts.tired += 1;
   }
   const lines = [];
-  if (counts.soccer && counts.cello) lines.push(`You split your time: ${counts.soccer} for soccer, ${counts.cello} for cello. Both grew—neither as far as if you had picked one.`);
-  else if (counts.soccer) lines.push(`You gave ${counts.soccer} afternoons to soccer. It grew a lot; the cello waited.`);
-  else if (counts.cello) lines.push(`You gave ${counts.cello} afternoons to the cello. It grew a lot; soccer waited.`);
-  else lines.push('You rested every afternoon. Nothing new was built—but you can start any day.');
-  if (counts.rest) lines.push(`You rested or played ${counts.rest === 1 ? 'once' : `${counts.rest} times`}. Fun and rest matter too.`);
-  if (counts.tired) lines.push(`${counts.tired === 1 ? 'Once' : `${counts.tired} times`} you practised while worn out, so less of it stuck.`);
+  if (counts.soccer && counts.cello) lines.push(t('game.summary.split', { soccer: counts.soccer, cello: counts.cello }));
+  else if (counts.soccer) lines.push(t('game.summary.soccerOnly', { count: counts.soccer }));
+  else if (counts.cello) lines.push(t('game.summary.celloOnly', { count: counts.cello }));
+  else lines.push(t('game.summary.none'));
+  if (counts.rest) lines.push(t('game.summary.rest', { count: counts.rest }));
+  if (counts.tired) lines.push(t('game.summary.tired', { count: counts.tired }));
   return { counts, lines };
 }
 

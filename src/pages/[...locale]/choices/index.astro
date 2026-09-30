@@ -1,0 +1,71 @@
+---
+import SiteLayout from '../../../layouts/SiteLayout.astro';
+import { LESSON_PATH, UI, href, choicesChaptersFor, takeawaysFor } from '../../../data/site.js';
+import { getTranslator } from '../../../i18n/index.js';
+import { localeStaticPaths } from '../../../i18n/config.js';
+
+export const getStaticPaths = localeStaticPaths;
+const { locale } = Astro.props;
+const t = getTranslator(locale);
+const link = path => href(locale, path);
+---
+<SiteLayout title={t('overview.title')} description={t('overview.description')} current="choices" locale={locale}>
+  <div class="page">
+    <section class="overview-hero" aria-labelledby="lesson-title">
+      <div>
+        <p class="kicker">{t('overview.kicker')}</p>
+        <h1 id="lesson-title">{t('overview.heading')}</h1>
+        <p class="page-lede">{t('overview.lede')}</p>
+        <ul class="meta-row">
+          <li><Fragment set:html={UI.clock} />{t('home.meta.time')}</li>
+          <li><Fragment set:html={UI.people} />{t('overview.meta.ages')}</li>
+          <li><Fragment set:html={UI.device} />{t('home.meta.devices')}</li>
+        </ul>
+        <div class="actions">
+          <a class="btn btn-primary" href={link(LESSON_PATH)}>{t('home.startJourney')}<Fragment set:html={UI.arrow} /></a>
+          <a class="btn btn-quiet" href={link(`${LESSON_PATH}read/`)}>{t('home.readText')}</a>
+        </div>
+      </div>
+      <aside class="overview-card" aria-labelledby="keep-title">
+        <h2 id="keep-title">{t('overview.keep')}</h2>
+        <ul class="takeaway-list">
+          {takeawaysFor(t).map(item => (
+            <li><span set:html={item.icon} /><div><strong>{item.heading}</strong><span>{item.text}</span></div></li>
+          ))}
+        </ul>
+      </aside>
+    </section>
+
+    <section class="section" aria-labelledby="chapters-title">
+      <div class="section-head">
+        <h2 id="chapters-title">{t('overview.stops')}</h2>
+        <a class="text-link" href={link(LESSON_PATH)}>{t('overview.fromStart')}</a>
+      </div>
+      <ol class="chapter-list">
+        {choicesChaptersFor(t).map(chapter => (
+          <li>
+            <a href={chapter.href}>
+              <span class="stop-icon" set:html={chapter.icon} />
+              <div><small>{chapter.number}</small><strong>{chapter.title}</strong><span>{chapter.text}</span></div>
+              <span class="go" set:html={UI.arrow} />
+            </a>
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    <section class="section" aria-labelledby="together-title">
+      <div class="band">
+        <div>
+          <h2 id="together-title">{t('overview.together.title')}</h2>
+          <p>{t('overview.together.text1')}</p>
+          <p>{t('overview.together.text2')}</p>
+        </div>
+        <div class="link-cards">
+          <a class="link-card" href={link('/choices/notes/')}><div><strong>{t('home.card.notes.title')}</strong><span>{t('overview.card.notes.text')}</span></div><Fragment set:html={UI.arrow} /></a>
+          <a class="link-card" href={link(`${LESSON_PATH}read/`)}><div><strong>{t('home.readText')}</strong><span>{t('overview.card.read.text')}</span></div><Fragment set:html={UI.arrow} /></a>
+        </div>
+      </div>
+    </section>
+  </div>
+</SiteLayout>

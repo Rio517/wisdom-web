@@ -1,34 +1,38 @@
 ---
-import '../../../lessons/choices/journey.css';
-import BaseLayout from '../../../layouts/BaseLayout.astro';
-import SiteNav from '../../../components/SiteNav.astro';
-import { renderJourneyReading } from '../../../lessons/choices/journey-story.js';
-import { DAYS, ACTIVITIES } from '../../../lessons/choices/journey-game.js';
-import { SITE, UI, url } from '../../../data/site.js';
+import '../../../../lessons/choices/journey.css';
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import SiteNav from '../../../../components/SiteNav.astro';
+import { renderJourneyReading } from '../../../../lessons/choices/journey-story.js';
+import { daysWithLabels } from '../../../../lessons/choices/journey-game.js';
+import { UI, href } from '../../../../data/site.js';
+import { getTranslator } from '../../../../i18n/index.js';
+import { localeStaticPaths } from '../../../../i18n/config.js';
 
-const gameDays = DAYS.map(day => ({ ...day, options: day.options.map(id => ACTIVITIES[id]) }));
-const reading = renderJourneyReading({ gameDays });
+export const getStaticPaths = localeStaticPaths;
+const { locale } = Astro.props;
+const t = getTranslator(locale);
+const reading = renderJourneyReading({ t, gameDays: daysWithLabels(t) });
 ---
-<BaseLayout title="The paths we make" description="A guided journey about how choices add up, how learning builds on learning, and how circumstances shape the path too. For ages 8+.">
-  <a class="skip-link" href="#narration">Skip to the story text</a>
-  <SiteNav current="lesson" mode="drawer" />
+<BaseLayout title={t('lesson.ui.title')} description={t('lessonPage.description')} locale={locale} clientMessages>
+  <a class="skip-link" href="#narration">{t('lesson.ui.skipToStory')}</a>
+  <SiteNav current="lesson" mode="drawer" locale={locale} />
   <header class="journey-header">
     <div class="journey-home">
-      <button class="journey-menu" type="button" data-nav-open aria-label="Open the site index"><Fragment set:html={UI.menu} /></button>
-      <a class="journey-brand" href={url('/')}>{SITE.name} <span>{SITE.tagline}</span></a>
+      <button class="journey-menu" type="button" data-nav-open aria-label={t('lesson.ui.openIndex')}><Fragment set:html={UI.menu} /></button>
+      <a class="journey-brand" href={href(locale, '/')}>{t('site.name')} <span>{t('site.tagline')}</span></a>
     </div>
-    <nav class="chapter-trail" aria-label="Chapters">
+    <nav class="chapter-trail" aria-label={t('lesson.ui.chapters')}>
       <svg class="trail-line" viewBox="0 0 1000 40" preserveAspectRatio="none" aria-hidden="true">
         <path id="trail-base"/>
         <path id="trail-done"/>
       </svg>
       <ol id="chapter-list"></ol>
     </nav>
-    <button class="quiet-link" id="open-reading" type="button">Read as text</button>
+    <button class="quiet-link" id="open-reading" type="button">{t('lesson.ui.readAsText')}</button>
   </header>
 
   <main class="journey" id="journey">
-    <section class="stage" id="stage" aria-label="Illustration">
+    <section class="stage" id="stage" aria-label={t('lesson.ui.illustration')}>
       <div class="scene scene-paths" id="scene-paths" data-scene="paths">
         <div class="map-stack">
           <canvas id="map-base" aria-hidden="true"></canvas>
@@ -36,7 +40,7 @@ const reading = renderJourneyReading({ gameDays });
           <canvas id="map-fx" aria-hidden="true"></canvas>
           <div class="map-callouts" id="map-callouts" aria-hidden="true"></div>
         </div>
-        <div class="map-key" id="map-key" hidden aria-hidden="true"><span><i class="k-taken"></i>Path so far</span><span><i class="k-untaken"></i>Not taken</span><span><i class="k-possible"></i>Still possible</span></div>
+        <div class="map-key" id="map-key" hidden aria-hidden="true"><span><i class="k-taken"></i>{t('lesson.ui.keyTaken')}</span><span><i class="k-untaken"></i>{t('lesson.ui.keyUntaken')}</span><span><i class="k-possible"></i>{t('lesson.ui.keyPossible')}</span></div>
       </div>
       <div class="scene scene-hike" id="scene-hike" data-scene="hike" hidden></div>
       <div class="scene scene-skills" id="scene-skills" data-scene="skills" hidden></div>
@@ -53,12 +57,12 @@ const reading = renderJourneyReading({ gameDays });
         <div class="beat-extra" id="beat-extra"></div>
       </div>
       <footer class="narration-controls">
-        <ol class="beat-dots" id="beat-dots" aria-label="Steps in this chapter"></ol>
+        <ol class="beat-dots" id="beat-dots" aria-label={t('lesson.ui.stepsInChapter')}></ol>
         <div class="nav-buttons">
-          <button class="back-button" id="back" type="button">Back</button>
-          <button class="next-button" id="next" type="button">Next</button>
+          <button class="back-button" id="back" type="button">{t('lesson.ui.back')}</button>
+          <button class="next-button" id="next" type="button">{t('lesson.ui.next')}</button>
         </div>
-        <p class="key-hint">Use ← and → keys to move through the story.</p>
+        <p class="key-hint">{t('lesson.ui.keyHint')}</p>
       </footer>
     </aside>
   </main>
@@ -66,8 +70,8 @@ const reading = renderJourneyReading({ gameDays });
   <p class="sr-only" id="announcer" role="status" aria-live="polite"></p>
 
   <dialog id="reading-dialog" aria-labelledby="journey-reading-title">
-    <button class="quiet-link dialog-close" type="button" data-close>Back to the journey</button>
-    <div class="nojs-note">JavaScript is off, so the whole lesson is shown as text.</div>
+    <button class="quiet-link dialog-close" type="button" data-close>{t('lesson.ui.backToJourney')}</button>
+    <div class="nojs-note">{t('lesson.ui.noJs')}</div>
     <Fragment set:html={reading} />
   </dialog>
   <noscript>
@@ -81,8 +85,8 @@ const reading = renderJourneyReading({ gameDays });
   </noscript>
 
   <script>
-    import '../../../lessons/choices/journey.js';
-    import { initSiteNav } from '../../../components/site-nav.js';
+    import '../../../../lessons/choices/journey.js';
+    import { initSiteNav } from '../../../../components/site-nav.js';
     initSiteNav();
   </script>
 </BaseLayout>

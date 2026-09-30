@@ -2,30 +2,38 @@
 import '../styles/site.css';
 import BaseLayout from './BaseLayout.astro';
 import SiteNav from '../components/SiteNav.astro';
-import { SITE, UI, url } from '../data/site.js';
+import LanguageSwitch from '../components/LanguageSwitch.astro';
+import DraftNote from '../components/DraftNote.astro';
+import { SITE, UI, href } from '../data/site.js';
+import { getTranslator } from '../i18n/index.js';
 
-interface Props { title?: string; description?: string; current?: string }
-const { title, description, current } = Astro.props;
+interface Props { title?: string; description?: string; current?: string; locale: string; clientMessages?: boolean | string[]; noindex?: boolean }
+const { title, description, current, locale, clientMessages = false, noindex = false } = Astro.props;
+const t = getTranslator(locale);
 ---
-<BaseLayout title={title} description={description}>
-  <a class="skip-link" href="#main">Skip to content</a>
+<BaseLayout title={title} description={description} locale={locale} clientMessages={clientMessages} noindex={noindex}>
+  <a class="skip-link" href="#main">{t('common.skipToContent')}</a>
   <div class="site-shell" data-nav="open">
-    <SiteNav current={current} />
-    <button class="nav-opener" type="button" data-nav-open><Fragment set:html={UI.menu} />Index</button>
+    <SiteNav current={current} locale={locale} />
+    <button class="nav-opener" type="button" data-nav-open><Fragment set:html={UI.menu} />{t('nav.index')}</button>
     <div class="site-main">
       <header class="site-topbar">
-        <button class="nav-opener" type="button" data-nav-open aria-label="Open the index"><Fragment set:html={UI.menu} />Index</button>
-        <a class="brand" href={url('/')}><span class="brand-name">{SITE.name}</span></a>
+        <button class="nav-opener" type="button" data-nav-open aria-label={t('nav.open')}><Fragment set:html={UI.menu} />{t('nav.index')}</button>
+        <a class="brand" href={href(locale, '/')}><span class="brand-name">{t('site.name')}</span></a>
       </header>
       <main id="main" tabindex="-1">
+        <DraftNote locale={locale} />
         <slot />
         <div class="page" style="padding-top: 0; padding-bottom: 40px;">
           <footer class="site-footer">
-            <p>{SITE.name} is a work in progress. The people in its examples are made up, and its pictures explain ideas; they don’t predict anyone’s life.</p>
-            <nav aria-label="Footer">
-              <a href={url('/about/')}>About</a>
-              <a href={SITE.source}>Source code</a>
-            </nav>
+            <p>{t('footer.note')}</p>
+            <div class="footer-links">
+              <nav aria-label={t('footer.label')}>
+                <a href={href(locale, '/about/')}>{t('nav.about')}</a>
+                <a href={SITE.source}>{t('nav.source')}</a>
+              </nav>
+              <LanguageSwitch locale={locale} label={t('nav.language')} />
+            </div>
           </footer>
         </div>
       </main>

@@ -2,7 +2,7 @@
 
 The documentation is divided into lesson folders and folders used across the whole guide.
 
-Current lesson to edit: [Choices — The paths we make (guided journey)](content/choices-journey.md). It is Lesson 1 of the site (see [002](product/002-delivery-architecture.md#implementation-2026-09-27)); the earlier Draft 02 is [choices-story.md](content/choices-story.md).
+Current lesson to edit: [Choices — The paths we make (guided journey)](content/choices-journey.md). It is Lesson 1 of the site (see [002](product/002-delivery-architecture.md#implementation-2026-09-27)); the earlier Draft 02 is [choices-story.md](content/choices-story.md). The site's words, including the draft Spanish, German and French translations, live in message catalogs described in [014 — Languages](product/014-languages.md).
 
 ## Lesson roadmap
 

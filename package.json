@@ -7,6 +7,7 @@
     "build": "astro build",
     "preview": "astro preview --port 4601",
     "test": "node --test tests/*.test.js",
+    "copy:lesson": "node tooling/lesson-copy.mjs",
     "dev:prototype": "vite",
     "build:prototype": "vite build",
     "preview:prototype": "vite preview"
@@ -19,5 +20,8 @@
   },
   "engines": {
     "node": ">=22.12.0"
+  },
+  "dependencies": {
+    "intl-messageformat": "12.1.2"
   }
 }

@@ -1,19 +1,27 @@
 ---
-// Layout for Markdown pages (notes, about): a quiet reading column.
+// A quiet reading column for a Markdown page from the `pages` collection,
+// in the page's language when a translation exists, otherwise English.
+import { getEntry, render } from 'astro:content';
 import SiteLayout from './SiteLayout.astro';
+import { DEFAULT_LOCALE } from '../i18n/config.js';
 
-const { frontmatter = {} } = Astro.props;
-const path = Astro.url.pathname;
-const current = path.startsWith('/choices/notes') ? 'notes' : path.startsWith('/about') ? 'about' : '';
+interface Props { locale: string; slug: string; current?: string }
+const { locale, slug, current = '' } = Astro.props;
+const entry = (await getEntry('pages', `${locale}/${slug}`)) ?? (await getEntry('pages', `${DEFAULT_LOCALE}/${slug}`));
+if (!entry) throw new Error(`Missing Markdown page "${slug}"`);
+const { Content } = await render(entry);
+const { title, description, kicker } = entry.data;
+// A page still waiting for its translation is marked as English for screen readers and search.
+const lang = entry.id.startsWith(`${locale}/`) ? undefined : DEFAULT_LOCALE;
 ---
-<SiteLayout title={frontmatter.title} description={frontmatter.description} current={current}>
-  <article class="page page-narrow">
+<SiteLayout title={title} description={description} current={current} locale={locale}>
+  <article class="page page-narrow" lang={lang}>
     <header class="page-header">
-      {frontmatter.kicker && <p class="kicker">{frontmatter.kicker}</p>}
-      <h1>{frontmatter.title}</h1>
+      {kicker && <p class="kicker">{kicker}</p>}
+      <h1>{title}</h1>
     </header>
     <div class="prose">
-      <slot />
+      <Content />
     </div>
   </article>
 </SiteLayout>

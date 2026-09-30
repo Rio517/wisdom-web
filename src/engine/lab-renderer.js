@@ -316,7 +316,7 @@ export function createLabRenderer(canvas) {
       const todayX = selected && todayAnchor
         ? currentView.world(todayAnchor).x : Infinity;
       if (todayX - position.x >= 100) {
-        label('Beginning', position.x, rect.height - 14, 'center');
+        label(settings.labels?.beginning ?? 'Beginning', position.x, rect.height - 14, 'center');
       }
     }
 
@@ -337,7 +337,7 @@ export function createLabRenderer(canvas) {
         dot(pointAtAge(projection.spine, age), 3);
       }
       if (!projection.routeExited) dot(projection.today, 6);
-      label(`Today · ${projection.age}`, today.x, rect.height - 14, 'center');
+      label(settings.labels?.today ? settings.labels.today(projection.age) : `Today · ${projection.age}`, today.x, rect.height - 14, 'center');
     }
 
     canvas.dataset.age = String(projection?.age ?? 0);

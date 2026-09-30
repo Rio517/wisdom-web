@@ -296,7 +296,8 @@ h1, h2, h3, h4 { font-family: var(--font-field); font-weight: 500; }
 .season-step[aria-pressed="true"] i { transform: scale(1.25); }
 .season-step:not(:disabled):hover { color: var(--color-forest); }
 .season-step:disabled { cursor: default; }
-.scene-skills[data-scrub="true"] .season-bar::after { content: "Tap a season to compare"; @apply ml-2 rounded-full px-3 py-1 text-[12px] font-semibold; background: var(--color-sun-soft); color: #7a5412; }
+.scrub-hint { display: none; }
+.scene-skills[data-scrub="true"] .scrub-hint { display: inline-block; @apply ml-2 rounded-full px-3 py-1 text-[12px] font-semibold; background: var(--color-sun-soft); color: #7a5412; }
 .lanes-wrap { @apply relative grid min-h-0; grid-template-columns: 78px minmax(0, 1fr); }
 .fork { position: absolute; left: 0; top: 0; width: 78px; height: 100%; overflow: visible; }
 .fork path { fill: none; stroke-width: 4; stroke-linecap: round; transition: stroke-dashoffset 900ms cubic-bezier(.3,.7,.2,1); stroke-dasharray: 300; stroke-dashoffset: 0; }
@@ -325,9 +326,13 @@ h1, h2, h3, h4 { font-family: var(--font-field); font-weight: 500; }
 .lane-who span { @apply block text-[13px] leading-snug; color: var(--color-quiet); }
 .calendar { @apply min-w-0; }
 .calendar-title { @apply mb-2 mt-0 text-[13px] font-semibold; color: var(--color-quiet); }
-.calendar-rows { @apply grid gap-2; }
-.calendar-row { @apply flex items-center; gap: 3px; }
-.calendar-row small { @apply w-[66px] shrink-0 text-[12px]; color: var(--color-quiet); }
+/* Rows share one label column (subgrid), so a longer word in any language widens every row's label alike. */
+.calendar-rows { @apply grid gap-y-2; grid-template-columns: max-content minmax(0, 1fr); column-gap: 8px; }
+.calendar-row { @apply grid items-center; grid-column: 1 / -1; grid-template-columns: subgrid; }
+.calendar-row small { @apply text-[12px] whitespace-nowrap; min-width: 58px; color: var(--color-quiet); }
+.calendar-track { @apply flex min-w-0 items-center; gap: 3px; }
+.calendar-track .week { flex: 0 1 auto; min-width: 6px; height: auto; aspect-ratio: 1; } /* squares shrink before the badge spills into the skill box */
+.calendar-track .growth { flex: none; }
 .week { width: clamp(10px, 1.05vw, 15px); height: clamp(10px, 1.05vw, 15px); flex: none; border-radius: 5px; background: var(--color-paper-deep); border: 1.5px solid var(--color-rule); transition: background 200ms, border-color 200ms; }
 .week[data-on="true"] { background: var(--color-forest); border-color: var(--color-forest); }
 .lane-b .week[data-on="true"] { background: #4f8196; border-color: #4f8196; }
@@ -351,7 +356,7 @@ h1, h2, h3, h4 { font-family: var(--font-field); font-weight: 500; }
 .skill-box.flip { animation: flip 640ms cubic-bezier(.3,.7,.2,1) both; }
 @keyframes flip { 0% { transform: perspective(600px) rotateX(0); } 45% { transform: perspective(600px) rotateX(90deg); opacity: .3; } 55% { transform: perspective(600px) rotateX(-90deg); opacity: .3; } 100% { transform: perspective(600px) rotateX(0); opacity: 1; } }
 .skill-row { @apply grid items-center gap-x-3; grid-template-columns: 104px 1fr; padding: 3px 0; }
-.skill-row .skill-name { @apply text-[14px] leading-tight; }
+.skill-row .skill-name { @apply text-[14px] leading-tight; hyphens: auto; overflow-wrap: break-word; } /* long compounds (German) break at syllables */
 .skill-meta { grid-column: 2; @apply mt-1 flex flex-wrap items-baseline justify-between gap-x-2 gap-y-0.5 text-[12px] leading-none; }
 .skill-word { color: var(--color-quiet); white-space: nowrap; }
 .meter { position: relative; height: 14px; border-radius: 99px; background: white; border: 1px solid var(--color-rule); overflow: hidden; }
@@ -415,9 +420,12 @@ dialog::backdrop { background: #23302d66; }
   .lane-who span { font-size: 11px; }
   .growth { padding: 2px 6px; }
   .growth-long { display: none; }
-  .week { width: 8px; height: 8px; border-radius: 3px; }
-  .calendar-row { gap: 2px; }
-  .calendar-row small { width: 52px; font-size: 11px; }
+  .week { width: 10px; height: 10px; border-radius: 3px; }
+  /* Labels sit above their weeks, so a longer word in any language leaves the squares room. */
+  .calendar-rows { grid-template-columns: minmax(0, 1fr); row-gap: 7px; }
+  .calendar-row { row-gap: 2px; }
+  .calendar-row small { min-width: 0; font-size: 11px; line-height: 1.2; }
+  .calendar-track { gap: 2px; }
   .skill-box { padding: 10px 12px; }
   .skill-row { grid-template-columns: 74px 1fr; }
   .skill-row .skill-name { font-size: 13px; }
@@ -436,6 +444,7 @@ dialog::backdrop { background: #23302d66; }
   body { overflow: auto; }
   .journey { height: auto; grid-template-columns: 1fr; }
   .stage { margin: 0 16px; height: 56vh; min-height: 470px; }
+  .stage:has(> .scene-skills:not([hidden])) { height: max(56vh, 680px); } /* two lanes of skill boxes need the room */
   .narration { padding: 8px 24px 28px; }
   .narration-body { overflow: visible; }
   .chapter-stop .stop-label { font-size: 12px; }

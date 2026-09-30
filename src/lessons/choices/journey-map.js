@@ -4,7 +4,8 @@ import { generateNetwork } from '../../engine/path-network.js';
 import { createLabRenderer, fitOverview } from '../../engine/lab-renderer.js';
 import { canvasBitmap } from '../../engine/path-presentation.js';
 import { tween, ease, wait } from './journey-motion.js';
-import { MAP_STORIES } from './journey-choices.js';
+import { STORY_COUNT, mapStory } from './journey-choices.js';
+import { t } from '../../i18n/runtime.js';
 
 const STORY_AGE = 12;
 const FOREST = '#285442';
@@ -67,9 +68,11 @@ export function createPathsScene(root, { labels = true } = {}) {
   let clusterCache = null;
   // One story set per visit; ?story=N pins one for review.
   const storyParam = Number(new URLSearchParams(location.search).get('story'));
-  const storyIndex = Number.isInteger(storyParam) && storyParam >= 1 && storyParam <= MAP_STORIES.length
-    ? storyParam - 1 : Math.floor(Math.random() * MAP_STORIES.length);
-  const story = MAP_STORIES[storyIndex];
+  const storyIndex = Number.isInteger(storyParam) && storyParam >= 1 && storyParam <= STORY_COUNT
+    ? storyParam - 1 : Math.floor(Math.random() * STORY_COUNT);
+  const story = mapStory(storyIndex);
+  // The Canvas renderer's own labels, in the page's language.
+  const renderSettings = { ...LAB_DEFAULTS, labels: { beginning: t('map.beginning'), today: age => t('map.today', { age }) } };
   root.dataset.story = String(storyIndex + 1);
 
   const data = () => {
@@ -83,8 +86,8 @@ export function createPathsScene(root, { labels = true } = {}) {
     if (failed) return;
     const { network, projection } = data();
     if (!overview) overview = generateNetwork(networkOptionsForLab(LAB_DEFAULTS, { today: STORY_AGE }));
-    baseRenderer.paint(overview, projection, LAB_DEFAULTS, false);
-    todayRenderer.paint(network, projection, LAB_DEFAULTS, true);
+    baseRenderer.paint(overview, projection, renderSettings, false);
+    todayRenderer.paint(network, projection, renderSettings, true);
   }
 
   function chooseClosed() {
@@ -161,7 +164,7 @@ export function createPathsScene(root, { labels = true } = {}) {
       fx.beginPath(); fx.arc(birth.x, birth.y, ring, 0, Math.PI * 2);
       fx.strokeStyle = `rgba(40,84,66,${0.45 * (1 - pulsePhase)})`; fx.lineWidth = 2; fx.stroke();
       fx.fillStyle = '#5a6961'; fx.font = '500 15px "Avenir Next", AvenirNext, "Segoe UI", sans-serif';
-      fx.textAlign = 'center'; fx.fillText('Beginning', birth.x, birth.y + 40);
+      fx.textAlign = 'center'; fx.fillText(t('map.beginning'), birth.x, birth.y + 40);
       return;
     }
     if (fxMode === 'travel') {
@@ -221,7 +224,7 @@ export function createPathsScene(root, { labels = true } = {}) {
   }
 
   const LABELS = {
-    closed: ['The team was full', 'The class was cancelled', 'The family moved away'],
+    closed: [t('map.closed.teamFull'), t('map.closed.classCancelled'), t('map.closed.familyMoved')],
   };
 
   function chip(text, point, tone, index, placed, { dx = 0, dy = -14 } = {}) {
@@ -283,9 +286,9 @@ export function createPathsScene(root, { labels = true } = {}) {
       title.style.left = `${birth.x + 64}px`;
       title.style.top = `${birth.y}px`;
       const question = document.createElement('strong');
-      question.textContent = 'Where can a life go?';
+      question.textContent = t('map.coverQuestion');
       const hint = document.createElement('span');
-      hint.textContent = 'Every life starts somewhere. Press Begin to see the paths.';
+      hint.textContent = t('map.coverHint');
       title.append(question, hint);
       callouts.append(title);
       return;
@@ -363,7 +366,7 @@ export function createPathsScene(root, { labels = true } = {}) {
       const green = projection.segments.filter(segment => segment.state === 'possible')
         .map(segment => pointAtAge(segment.points, 40)).filter(Boolean).map(point => v.world(point))
         .sort((a, b) => Math.abs(a.y - r.height / 2) - Math.abs(b.y - r.height / 2))[0];
-      if (green) chip('Still open', green, 'possible', 0, placed);
+      if (green) chip(t('map.stillOpen'), green, 'possible', 0, placed);
     }
   }
 

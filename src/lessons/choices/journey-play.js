@@ -5,36 +5,37 @@ import {
 } from './journey-game.js';
 import { skillBoxMarkup, setSkillBox } from './journey-skills.js';
 import { prefersReducedMotion } from './journey-motion.js';
+import { t } from '../../i18n/runtime.js';
 
 const escapeHTML = value => String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;');
-const KIND = { soccer: 'Soccer', cello: 'Cello' };
-const labelOf = id => Object.values(SKILL_GROUPS).flatMap(group => group.skills).find(skill => skill.id === id)?.label ?? id;
 const ADVANCE_DELAY = 650;
 
 /** "Afternoon 3 of 10 · Wednesday" — pure, so a reader-facing label is easy to check without a DOM. */
 export function dayLabel(index) {
   const day = DAYS[index];
-  return `Afternoon ${index + 1} of ${DAYS.length} · ${day.label}`;
+  return t('play.dayLabel', { n: index + 1, total: DAYS.length, weekday: day.label });
 }
 
 /** The small kind caption under an activity button: "Soccer" / "Cello" / "Rest & fun". */
 export function activityKind(activity) {
-  return activity.rest ? 'Rest & fun' : (KIND[activity.group] ?? '');
+  return activity.rest ? t('play.kindRest') : t(`game.group.${activity.group}`);
 }
 
 /** The sentence(s) describing what a day's choice built, cost or rested. */
 export function resultMessage(result) {
-  if (result.rest) return 'Energy back up. Nothing new was built today—and rest is part of doing well.';
+  if (result.rest) return t('play.result.rest');
   const parts = [];
-  const grown = Object.entries(result.gains).filter(([, gain]) => gain > 0).map(([id]) => labelOf(id).toLowerCase());
-  if (grown.length) parts.push(`Your ${grown.join(', ')} grew.`);
+  // Whole sentences per activity and per boost pair, so every language can
+  // keep its own grammar (German capitals, gendered possessives).
+  const grown = Object.entries(result.gains).filter(([, gain]) => gain > 0).map(([id]) => id);
+  const all = Object.keys(ACTIVITIES[result.activity]?.gains ?? {});
+  if (grown.length === all.length && grown.length) parts.push(t(`play.result.grew.${result.activity}`));
+  else if (grown.length) parts.push(t('play.result.grewSome', { skills: new Intl.ListFormat(t.locale, { type: 'conjunction' }).format(grown.map(id => t(`game.skill.${id}`))) }));
   if (result.boosts.length) {
     const boost = result.boosts.find(item => item.from !== item.skill) ?? result.boosts[0];
-    parts.push(boost.from === boost.skill
-      ? `What you already know made it count for more.`
-      : `Your ${labelOf(boost.from).toLowerCase()} helped your ${labelOf(boost.skill).toLowerCase()} grow faster.`);
+    parts.push(boost.from === boost.skill ? t('play.result.selfBoost') : t(`play.result.boost.${boost.skill}`));
   }
-  if (result.tired) parts.push('You were worn out, so less of it stuck.');
+  if (result.tired) parts.push(t('play.result.tired'));
   return parts.join(' ');
 }
 
@@ -42,7 +43,7 @@ export function resultMessage(result) {
 export function announceText(index, entry) {
   const day = DAYS[index];
   const activity = ACTIVITIES[entry.activity];
-  return `${day.label}: ${activity.label}. ${resultMessage(entry)}`;
+  return t('play.announce', { weekday: day.label, activity: activity.label, result: resultMessage(entry) });
 }
 
 /** The first not-yet-chosen day in a choices array (or its length, if every day is chosen). */
@@ -179,7 +180,8 @@ export function createPlayScene(root) {
     button.dataset.chosen = String(Boolean(activity));
     button.dataset.state = isFuture ? 'future' : isCurrent ? 'current' : 'done';
     button.disabled = isFuture;
-    const label = `${day.label}${index >= 5 ? ', week 2' : ''}: ${activity ? activity.label : isCurrent ? 'today' : 'not chosen yet'}`;
+    const status = activity ? activity.label : isCurrent ? t('play.rail.today') : t('play.rail.notYet');
+    const label = t(index >= 5 ? 'play.rail.labelWeek2' : 'play.rail.label', { weekday: day.label, status });
     button.setAttribute('aria-label', label);
     const icon = button.querySelector('.play-rail-icon');
     icon.innerHTML = activity ? ICONS[activity.icon] : '';
@@ -193,21 +195,21 @@ export function createPlayScene(root) {
     li.classList.toggle('is-complete', complete);
     li.classList.toggle('is-future', !complete);
     if (!complete) {
-      body.innerHTML = '<p class="play-end-placeholder">Your summary appears after the tenth afternoon.</p>';
+      body.innerHTML = `<p class="play-end-placeholder">${escapeHTML(t('play.end.placeholder'))}</p>`;
       return;
     }
     const summary = summarize(state);
     body.innerHTML = `<ul class="play-summary-list">${summary.lines.map(line => `<li>${escapeHTML(line)}</li>`).join('')}</ul>
-      <h3 class="play-end-subheading">What carries over</h3>
-      <p>Now imagine you try something new: basketball and guitar. Some of what you built comes with you; the striped part is your head start. The rest is new learning.</p>
+      <h3 class="play-end-subheading">${escapeHTML(t('play.end.carries'))}</h3>
+      <p>${escapeHTML(t('play.end.carriesText'))}</p>
       <div class="play-transfer-grid">
-        <div>${skillBoxMarkup({ id: 'play-transfer-basketball', group: 'basketball', title: 'Basketball', skills: TRANSFERS.basketball.skills })}
+        <div>${skillBoxMarkup({ id: 'play-transfer-basketball', group: 'basketball', title: t('game.group.basketball'), skills: TRANSFERS.basketball.skills })}
           <p class="carry-note">${TRANSFERS.basketball.skills.map(skill => escapeHTML(skill.note)).join(' ')}</p></div>
-        <div>${skillBoxMarkup({ id: 'play-transfer-guitar', group: 'guitar', title: 'Guitar', skills: TRANSFERS.guitar.skills })}
+        <div>${skillBoxMarkup({ id: 'play-transfer-guitar', group: 'guitar', title: t('game.group.guitar'), skills: TRANSFERS.guitar.skills })}
           <p class="carry-note">${TRANSFERS.guitar.skills.map(skill => escapeHTML(skill.note)).join(' ')}</p></div>
       </div>
-      <div class="play-end-actions"><button type="button" class="solid-pill" data-action="play-again">Play again with different choices</button></div>
-      <p class="illustration-note">Illustration only. Real transfer depends on the skills, the teaching and the person.</p>`;
+      <div class="play-end-actions"><button type="button" class="solid-pill" data-action="play-again">${escapeHTML(t('play.end.again'))}</button></div>
+      <p class="illustration-note">${escapeHTML(t('play.end.note'))}</p>`;
     requestAnimationFrame(() => requestAnimationFrame(() => {
       for (const id of ['basketball', 'guitar']) {
         const levels = transferLevels(state.levels, id);
@@ -227,11 +229,11 @@ export function createPlayScene(root) {
     if (!panel) return;
     if (!panel.querySelector('.skills-panel')) {
       panel.innerHTML = `<div class="skills-panel">
-        ${skillBoxMarkup({ id: 'play-soccer', group: 'soccer', title: 'Soccer', skills: SKILL_GROUPS.soccer.skills, owner: 'You' })}
-        ${skillBoxMarkup({ id: 'play-cello', group: 'cello', title: 'Cello', skills: SKILL_GROUPS.cello.skills, owner: 'You' })}
-        <div class="energy"><div><strong>Energy</strong><small id="energy-word"></small></div>
-          <div class="energy-leaves" role="meter" aria-label="Energy" aria-valuemin="0" aria-valuemax="${MAX_ENERGY}" id="energy-meter">${Array.from({ length: MAX_ENERGY }, () => ICONS.leaf).join('')}</div></div>
-        <p class="illustration-note">Illustration only—no real scores.</p>
+        ${skillBoxMarkup({ id: 'play-soccer', group: 'soccer', title: t('game.group.soccer'), skills: SKILL_GROUPS.soccer.skills, owner: t('play.you') })}
+        ${skillBoxMarkup({ id: 'play-cello', group: 'cello', title: t('game.group.cello'), skills: SKILL_GROUPS.cello.skills, owner: t('play.you') })}
+        <div class="energy"><div><strong>${escapeHTML(t('play.energy'))}</strong><small id="energy-word"></small></div>
+          <div class="energy-leaves" role="meter" aria-label="${escapeHTML(t('play.energy'))}" aria-valuemin="0" aria-valuemax="${MAX_ENERGY}" id="energy-meter">${Array.from({ length: MAX_ENERGY }, () => ICONS.leaf).join('')}</div></div>
+        <p class="illustration-note">${escapeHTML(t('play.noScores'))}</p>
       </div>`;
     }
     const soccer = panel.querySelector('#play-soccer');
@@ -248,7 +250,7 @@ export function createPlayScene(root) {
         const row = panel.querySelector(`.skill-row[data-skill="${id}"]`);
         const chip = document.createElement('span');
         chip.className = 'gain-chip';
-        chip.textContent = flash.boosts.some(item => item.skill === id && item.from !== id) ? 'boost!' : 'grew';
+        chip.textContent = flash.boosts.some(item => item.skill === id && item.from !== id) ? t('play.chip.boost') : t('play.chip.grew');
         row?.append(chip);
       }
     }
@@ -256,10 +258,10 @@ export function createPlayScene(root) {
     leaves.forEach((leaf, index) => leaf.setAttribute('data-on', String(index < state.energy)));
     const meter = panel.querySelector('#energy-meter');
     meter.setAttribute('aria-valuenow', String(state.energy));
-    const word = state.energy === 0 ? 'Worn out—rest helps' : state.energy === MAX_ENERGY ? 'Full of beans' : 'Okay';
+    const word = t(state.energy === 0 ? 'play.energy.empty' : state.energy === MAX_ENERGY ? 'play.energy.full' : 'play.energy.okay');
     meter.setAttribute('aria-valuetext', word);
     panel.querySelector('#energy-word').textContent = word;
-    panel.querySelector('.illustration-note').textContent = `Illustration only—no real scores.${ghost ? ' Thin lines mark your last try.' : ''}`;
+    panel.querySelector('.illustration-note').textContent = ghost ? t('play.noScoresGhost') : t('play.noScores');
   }
 
   function chooseActivity(index, activityId) {
@@ -330,18 +332,18 @@ export function createPlayScene(root) {
   }
 
   function build() {
-    root.innerHTML = `<ol class="play-feed" aria-label="Ten afternoons">
+    root.innerHTML = `<ol class="play-feed" aria-label="${escapeHTML(t('play.feedLabel'))}">
       <li class="play-card play-intro" data-role="intro" aria-labelledby="play-intro-heading">
-        <h2 id="play-intro-heading">Ten afternoons. What will you do with them?</h2>
-        <p>Pick one thing each afternoon. Your skills are on the right—practice builds them, and rest helps it stick. Some days, things happen that you didn't choose.</p>
+        <h2 id="play-intro-heading">${escapeHTML(t('play.intro.heading'))}</h2>
+        <p>${escapeHTML(t('play.intro.text'))}</p>
       </li>
       ${DAYS.map((day, index) => dayCardMarkup(day, index)).join('')}
       <li class="play-card play-end" data-role="end" aria-labelledby="play-end-heading">
-        <h2 id="play-end-heading">Your summary</h2>
+        <h2 id="play-end-heading">${escapeHTML(t('play.end.heading'))}</h2>
         <div data-role="end-body"></div>
       </li>
     </ol>
-    <ol class="play-rail" aria-label="Your ten afternoons">${DAYS.map((_, index) => railTileMarkup(index)).join('')}</ol>
+    <ol class="play-rail" aria-label="${escapeHTML(t('play.railLabel'))}">${DAYS.map((_, index) => railTileMarkup(index)).join('')}</ol>
     <p class="sr-only" role="status" aria-live="polite" data-role="live"></p>`;
     feed = root.querySelector('.play-feed');
     rail = root.querySelector('.play-rail');

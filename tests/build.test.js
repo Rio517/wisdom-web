@@ -135,12 +135,22 @@ test('prototype studies keep their own ports and output folder', async () => {
 });
 
 test('the lesson has pages for the journey, its text version, notes and the site shell', async () => {
-  for (const path of ['index.astro', 'about.md', '404.astro', 'choices/index.astro', 'choices/notes.md',
-    'choices/the-paths-we-make/index.astro', 'choices/the-paths-we-make/read.astro']) {
+  for (const path of ['[...locale]/index.astro', '[...locale]/about.astro', '404.astro', '[...locale]/choices/index.astro',
+    '[...locale]/choices/notes.astro', '[...locale]/choices/the-paths-we-make/index.astro', '[...locale]/choices/the-paths-we-make/read.astro']) {
     await readFile(new URL(`../src/pages/${path}`, import.meta.url), 'utf8');
   }
+  for (const page of ['about.md', 'choices/notes.md']) await readFile(new URL(`../src/content/pages/en/${page}`, import.meta.url), 'utf8');
   const { renderJourneyReading } = await import('../src/lessons/choices/journey-story.js');
   const reading = renderJourneyReading();
   assert.match(reading, /Mirror Lake/);
   assert.match(reading, /Path B Maya/);
+});
+
+test('every page is built in every language from one set of routes', async () => {
+  const { LOCALES, localeStaticPaths } = await import('../src/i18n/config.js');
+  const paths = localeStaticPaths();
+  assert.deepEqual(paths.map(path => path.props.locale), LOCALES);
+  assert.equal(paths.find(path => path.props.locale === 'en').params.locale, undefined);
+  const config = await readFile(new URL('../astro.config.mjs', import.meta.url), 'utf8');
+  assert.match(config, /i18n:\s*\{\s*locales: LOCALES, defaultLocale: DEFAULT_LOCALE, routing: \{ prefixDefaultLocale: false \}/);
 });

@@ -1,0 +1,13 @@
+---
+// Shown only on pages in a draft language, with a way back to the English page.
+import { isPublished, stripLocale } from '../i18n/config.js';
+import { href } from '../data/site.js';
+import { getTranslator } from '../i18n/index.js';
+
+interface Props { locale: string; class?: string }
+const { locale, class: className = 'draft-note' } = Astro.props;
+const t = getTranslator(locale);
+---
+{!isPublished(locale) && (
+  <p class={className}>{t('site.draft.notice')} <a href={href('en', stripLocale(Astro.url.pathname))} hreflang="en">{t('site.draft.english')}</a></p>
+)}

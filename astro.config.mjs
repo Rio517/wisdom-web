@@ -1,6 +1,7 @@
 import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 import { PORTS, assertProjectPort, assertLocalhost } from './tooling/ports.js';
+import { LOCALES, DEFAULT_LOCALE } from './src/i18n/config.js';
 
 /** Refuse to run the site outside 4600–4699 on 127.0.0.1. */
 function portGuard() {
@@ -22,6 +23,8 @@ export default defineConfig({
   integrations: [portGuard()],
   devToolbar: { enabled: false },
   build: { format: 'directory' },
+  // English at the root, other languages under /es/, /de/, /fr/ (see src/i18n/config.js).
+  i18n: { locales: LOCALES, defaultLocale: DEFAULT_LOCALE, routing: { prefixDefaultLocale: false } },
   vite: {
     plugins: [tailwindcss()],
     server: { strictPort: true },

@@ -1,6 +1,6 @@
 # 002 — Delivery architecture
 
-Status: Implemented locally (Astro site under `src/`); not yet published. Created: 2026-09-06. Updated: 2026-09-27.
+Status: Implemented (Astro site under `src/`), deployed to GitHub Pages; the custom domain's DNS record is pending. Created: 2026-09-06. Updated: 2026-09-30.
 
 ## Implementation (2026-09-27)
 
@@ -16,9 +16,11 @@ The recommendation below is now implemented as an Astro 7 static site at the rep
 | `/about/` | About (Markdown) |
 | `404` | Not-found page |
 
-Source layout: `src/pages/`, `src/layouts/`, `src/components/` (shared index), `src/lessons/choices/` (the journey), `src/engine/` (the path network and renderer shared with the prototype studies), `src/data/site.js` (roadmap and chapter data), `src/styles/` (tokens, site and navigation CSS). The route names differ from the proposal below (`/choices/the-paths-we-make/` rather than `/choices/your-future-options/`) because the lesson title changed.
+Every route is also built under `/es/`, `/de/` and `/fr/` from the same page files; English stays at the root. Languages, catalogs and the draft/published gate are specified in [014 — Languages and localization](014-languages.md).
 
-Commands: `npm run dev` (4600), `npm run build`, `npm run preview` (4601); the prototype studies use `npm run dev:prototype` (4602) and `preview:prototype` (4603). Publishing needs a GitHub Pages workflow and a DNS CNAME from `wisdom` to the Pages host; both wait for the owner's go-ahead.
+Source layout: `src/pages/[...locale]/`, `src/i18n/` (languages, message catalogs, translators), `src/content/pages/<locale>/` (Markdown pages), `src/layouts/`, `src/components/` (shared index), `src/lessons/choices/` (the journey), `src/engine/` (the path network and renderer shared with the prototype studies), `src/data/site.js` (roadmap and chapter data), `src/styles/` (tokens, site and navigation CSS). The route names differ from the proposal below (`/choices/the-paths-we-make/` rather than `/choices/your-future-options/`) because the lesson title changed.
+
+Commands: `npm run dev` (4600), `npm run build`, `npm run preview` (4601); the prototype studies use `npm run dev:prototype` (4602) and `preview:prototype` (4603). `main` deploys through `.github/workflows/deploy.yml` (tests, build, GitHub Pages). The domain needs a DNS CNAME from `wisdom` to `rio517.github.io`.
 
 
 The public GitHub repository is approved and created. The proposed production architecture below supports [001 — Choices experience](001-choices-experience.md); the production website is not implemented or published. The local study under `prototype/` now implements the approved [008 choices-and-consequences revision](008-choices-and-consequences.md) with Vite, Tailwind layout, Canvas 2D routes and semantic HTML. It remains a narrow prototype and does not commit the production site to that structure. [007](007-interactive-map-prototype.md) records the superseded first SVG study.

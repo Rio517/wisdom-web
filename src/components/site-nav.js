@@ -28,7 +28,7 @@ export function initSiteNav() {
     const drawer = narrow.matches;
     if (!drawer && nav.dataset.open === 'true') close({ restore: false });
     nav.dataset.mode = drawer ? 'drawer' : 'sidebar';
-    nav.querySelector('[data-nav-close]')?.setAttribute('aria-label', drawer ? 'Close the index' : 'Hide the index');
+    nav.querySelector('[data-nav-close]')?.setAttribute('aria-label', drawer ? nav.dataset.labelClose : nav.dataset.labelHide);
   }
 
   function open(trigger) {
@@ -45,7 +45,7 @@ export function initSiteNav() {
     backdrop = document.createElement('button');
     backdrop.type = 'button';
     backdrop.className = 'nav-backdrop';
-    backdrop.setAttribute('aria-label', 'Close the index');
+    backdrop.setAttribute('aria-label', nav.dataset.labelClose);
     backdrop.tabIndex = -1;
     backdrop.addEventListener('click', () => close());
     nav.before(backdrop);

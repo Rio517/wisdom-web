@@ -1,4 +1,5 @@
 import { CHAPTERS, beatList } from './journey-story.js';
+import { t } from '../../i18n/runtime.js';
 import { ICONS } from './journey-icons.js';
 import { createToken, prefersReducedMotion, wait } from './journey-motion.js';
 import { createPathsScene } from './journey-map.js';
@@ -32,7 +33,7 @@ Object.values(roots).forEach(root => { root.hidden = true; });
 if (scenes.paths.failed) {
   const fallback = document.createElement('p');
   fallback.className = 'stage-note';
-  fallback.textContent = 'The life map drawing is unavailable in this browser. The story text and the other pictures still work, and Read as text has everything.';
+  fallback.textContent = t('lesson.ui.mapUnavailable');
   roots.paths.prepend(fallback);
 }
 
@@ -82,7 +83,7 @@ function renderChoice(item) {
     <div aria-live="polite">${option ? `<p class="choice-feedback" data-tone="${option.story ? 'story' : 'other'}">${escapeHTML(option.feedback)}</p>` : ''}</div>`;
 }
 
-const SORT_DONE = 'They couldn’t choose the storm or the closed trail. They could choose how to prepare, when to turn back, what to practise and who to ask for help.';
+const SORT_DONE = t('lesson.sort.done');
 
 function renderSortProgress(item) {
   const results = sorted.get(item.beat.id) ?? {};
@@ -90,7 +91,7 @@ function renderSortProgress(item) {
   const done = count === item.beat.sort.length;
   return `<div aria-live="polite">${done
     ? `<p class="sort-summary">${escapeHTML(SORT_DONE)}</p>`
-    : `<p class="beat-note">${count} of ${item.beat.sort.length} sorted. Drag each card to a side—or tap Skip to see the answers.</p>`}</div>`;
+    : `<p class="beat-note">${escapeHTML(t('lesson.sort.progress', { count, total: item.beat.sort.length }))}</p>`}</div>`;
 }
 
 const sortItem = beats.find(entry => entry.beat.sort);
@@ -107,7 +108,9 @@ const sortBoard = createSortBoard(scenes.hike.sortBoard, {
 function renderNarration(item, { animate }) {
   const { beat, chapter, beatIndex } = item;
   const body = $('#narration-body');
-  $('#beat-kicker').textContent = `${beat.kicker}${chapter.beats.length > 1 ? ` · ${beatIndex + 1} of ${chapter.beats.length}` : ''}`;
+  $('#beat-kicker').textContent = chapter.beats.length > 1
+    ? t('lesson.ui.kickerStep', { kicker: beat.kicker, step: beatIndex + 1, total: chapter.beats.length })
+    : beat.kicker;
   $('#beat-heading').textContent = beat.heading;
   const paragraphs = beat.game ? [] : beat.body;
   $('#narration').dataset.compact = String(Boolean(beat.game));
@@ -124,9 +127,9 @@ function renderNarration(item, { animate }) {
   if (beat.explore) scenes.explore.mountPanel(extra);
   if (beat.takeaways) {
     extra.innerHTML = `<ul class="takeaways">${beat.takeaways.map(entry => `<li>${ICONS[entry.icon]}<div><strong>${escapeHTML(entry.heading)}</strong><span>${escapeHTML(entry.text)}</span></div></li>`).join('')}</ul>
-      <div class="end-actions"><button class="pill-button" type="button" data-end="play">Play the afternoons again</button>
-      <button class="pill-button" type="button" data-end="restart">Start from the beginning</button>
-      <button class="pill-button" type="button" data-end="explore">Explore a life path</button></div>`;
+      <div class="end-actions"><button class="pill-button" type="button" data-end="play">${escapeHTML(t('lesson.ui.playAgain'))}</button>
+      <button class="pill-button" type="button" data-end="restart">${escapeHTML(t('lesson.ui.restart'))}</button>
+      <button class="pill-button" type="button" data-end="explore">${escapeHTML(t('lesson.ui.explore'))}</button></div>`;
   }
   if (animate && !prefersReducedMotion()) {
     body.classList.remove('is-changing');
@@ -140,7 +143,7 @@ function renderControls(item) {
   const { chapter, beatIndex } = item;
   $('#beat-dots').innerHTML = chapter.beats.map((beat, position) => {
     const globalIndex = beats.findIndex(entry => entry.chapter === chapter && entry.beatIndex === position);
-    return `<li><button type="button" data-beat="${globalIndex}" aria-label="Step ${position + 1}: ${escapeHTML(beat.heading)}" ${position === beatIndex ? 'aria-current="step"' : ''} data-seen="${seen.has(globalIndex)}"></button></li>`;
+    return `<li><button type="button" data-beat="${globalIndex}" aria-label="${escapeHTML(t('lesson.ui.stepLabel', { step: position + 1, heading: beat.heading }))}" ${position === beatIndex ? 'aria-current="step"' : ''} data-seen="${seen.has(globalIndex)}"></button></li>`;
   }).join('');
   $('#beat-dots').hidden = chapter.beats.length < 2;
   $('#back').disabled = index === 0;
@@ -149,7 +152,7 @@ function renderControls(item) {
   next.hidden = isLast;
   const upcoming = beats[index + 1];
   next.textContent = item.beat.next
-    ?? (upcoming && upcoming.chapter !== item.chapter ? `Next: ${upcoming.chapter.short ?? upcoming.chapter.title}` : 'Next');
+    ?? (upcoming && upcoming.chapter !== item.chapter ? t('lesson.ui.nextChapter', { chapter: upcoming.chapter.short ?? upcoming.chapter.title }) : t('lesson.ui.next'));
   next.dataset.emphasis = String(index === 0);
 }
 
@@ -196,12 +199,13 @@ async function go(target, { animate = true, focus = 'none', history = 'replace' 
     else window.history.replaceState(null, '', fragment);
   }
   const titleHeading = item.beat.heading.replace(/\.$/, '');
-  document.title = titleHeading === 'The paths we make' ? titleHeading : `${titleHeading} · The paths we make`;
+  const lessonTitle = t('lesson.ui.title');
+  document.title = titleHeading === lessonTitle ? `${lessonTitle} · ${t('site.name')}` : `${titleHeading} · ${lessonTitle}`;
   updateTrail(item.chapterIndex);
   renderNarration(item, { animate });
   renderControls(item);
   $('#stage-description').textContent = item.beat.alt ?? '';
-  $('#announcer').textContent = `${item.chapter.title}, step ${item.beatIndex + 1} of ${item.chapter.beats.length}: ${item.beat.heading}`;
+  $('#announcer').textContent = t('lesson.ui.announce', { chapter: item.chapter.title, step: item.beatIndex + 1, total: item.chapter.beats.length, heading: item.beat.heading });
   if (focus === 'heading') $('#beat-heading').focus({ preventScroll: true });
   if (focus === 'next' && !$('#next').hidden) $('#next').focus({ preventScroll: true });
 

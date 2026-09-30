@@ -142,3 +142,14 @@ At the end of that 2026-09-07 pass, the redesigned short lesson, owner visual se
   - The first run passed tests, build and deploy. All routes return 200 from GitHub's Pages servers.
   - DNS at Namecheap still needs the `wisdom` CNAME; HTTPS is enforced after the certificate is issued.
 
+
+## 2026-09-30
+
+- Internationalized the site ([014](docs/product/014-languages.md)):
+  - **Routing:** one set of pages under `src/pages/[...locale]/`, built for English at `/` and Spanish, German and French under `/es/`, `/de/`, `/fr/`. Astro's i18n config, `<html lang>`, canonical links, `hreflang` among published languages, and a shared 404 that switches language on the client.
+  - **Catalogs:** every word moved out of the lesson code, site data and pages into `src/i18n/messages/<locale>.json` (804 keys, ICU MessageFormat via `intl-messageformat`, whole sentences, `Intl.ListFormat` for lists). Pages embed only their own language for browser scripts. About and Notes for grown-ups became a per-language content collection.
+  - **Publishing gate:** `LOCALE_STATUS` keeps Spanish, German and French as drafts: built and reachable by URL, `noindex`, not linked from English pages, marked with a draft notice. The language switcher (sidebar, drawer, footer) appears only where more than one language is offered.
+  - **Tooling:** `tests/i18n.test.js` checks key and argument parity, plural fallbacks, untranslated leftovers and Markdown coverage. `npm run copy:lesson` regenerates the lesson copy from the catalog; the regenerated English matched the previous copy word for word.
+- Three Sonnet workers drafted the Spanish, German and French catalogs and pages. After review, reader-directed gendered forms were made neutral (Spanish, French), skill-level labels became agreement-free, and several awkward phrasings, the German lesson title and the Spanish/French "helped by" notes were revised. None has had a native review.
+- Layout fixes found in the four-language browser pass: German compounds hyphenate in skill names; Maya's practice calendars share one label column (subgrid) and put labels above the weeks on tablets; the Skills scene gets more height in portrait, which also fixes an existing English overflow at 768×1024; the "in preparation" list and language pills space properly when titles wrap.
+- Verified all four languages at 1440×900, 1024×768 and 768×1024 in the browser: every page, all 20 lesson steps, the ten-afternoon game and the explorer to its end, with no raw keys, no clipped or overflowing text and no console errors. 240 Node tests and the Astro build (25 pages) pass. Not committed.

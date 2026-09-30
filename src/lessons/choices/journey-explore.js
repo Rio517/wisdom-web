@@ -2,6 +2,7 @@ import { hash, labelsForFork, closedReason } from './journey-choices.js';
 import { timelinePositionForAge } from '../../engine/lab-settings.js';
 import { canvasBitmap } from '../../engine/path-presentation.js';
 import { tween, ease, prefersReducedMotion } from './journey-motion.js';
+import { t } from '../../i18n/runtime.js';
 
 export const LIFE_START = 3;
 export const LIFE_END = 70;
@@ -133,11 +134,11 @@ const escapeHTML = value => String(value).replaceAll('&', '&amp;').replaceAll('<
 
 export function createExploreScene(root) {
   root.innerHTML = `<div class="explore-stage">
-      <canvas class="explore-canvas" role="img" aria-label="A map of example life choices. Use the choice buttons to pick a path."></canvas>
-      <div class="explore-chips" role="group" aria-label="Choices at this fork"></div>
+      <canvas class="explore-canvas" role="img" aria-label="${escapeHTML(t('explore.canvasLabel'))}"></canvas>
+      <div class="explore-chips" role="group" aria-label="${escapeHTML(t('explore.chipsLabel'))}"></div>
       <div class="explore-hover" hidden></div>
       <div class="explore-tools">
-        <button type="button" class="tool-button" data-tool="zoom">See the whole life</button>
+        <button type="button" class="tool-button" data-tool="zoom">${escapeHTML(t('explore.seeWhole'))}</button>
       </div>
       <div class="explore-end" hidden></div>
     </div>`;
@@ -278,7 +279,7 @@ export function createExploreScene(root) {
       context.beginPath(); context.moveTo(x, 10); context.lineTo(x, size.height - 30); context.stroke(); context.restore();
       label(`${age}`, { x, y: size.height - 11 }, { color: '#5a6961', fontSize: 12, align: 'center', weight: 600, force: true });
     }
-    label('Age', { x: 16, y: size.height - 11 }, { color: '#5a6961', fontSize: 12, weight: 600, force: true });
+    label(t('explore.age'), { x: 16, y: size.height - 11 }, { color: '#5a6961', fontSize: 12, weight: 600, force: true });
 
     const nodesOnPath = path.map(id => tree.get(id));
     const here = currentNode();
@@ -371,7 +372,7 @@ export function createExploreScene(root) {
       chipsLayer.dataset.fork = here.id;
       chipsLayer.innerHTML = options.map((option, index) => option.closed
         ? `<button type="button" class="choice-chip is-closed" aria-disabled="true" data-closed="${option.id}" style="--i:${index}"><span class="chip-x" aria-hidden="true">✕</span><span><strong>${escapeHTML(option.label)}</strong><small>${escapeHTML(option.reason)}</small></span></button>`
-        : `<button type="button" class="choice-chip" data-option="${option.id}" style="--i:${index}">${option.byFamily ? '<small>Chosen by family</small>' : ''}<strong>${escapeHTML(option.label)}</strong></button>`).join('');
+        : `<button type="button" class="choice-chip" data-option="${option.id}" style="--i:${index}">${option.byFamily ? `<small>${escapeHTML(t('explore.byFamilyChip'))}</small>` : ''}<strong>${escapeHTML(option.label)}</strong></button>`).join('');
     }
     options.forEach((option, index) => {
       const chip = chipsLayer.children[index];
@@ -451,7 +452,7 @@ export function createExploreScene(root) {
     path = [...path, option.id];
     tree.layoutAhead(option.id);
     chipsLayer.dataset.fork = '';
-    announce(`Age ${Math.round(here.age)}: ${option.label}.`);
+    announce(t('explore.announceChoice', { age: Math.round(here.age), choice: option.label }));
     renderPanel();
     if (option.age >= LIFE_END - 0.01) { finish(); return; }
     paint();
@@ -467,7 +468,7 @@ export function createExploreScene(root) {
     tree.layoutAhead(forkId);
     endCard.hidden = true;
     overview = false;
-    zoomButton.textContent = 'See the whole life';
+    zoomButton.textContent = t('explore.seeWhole');
     preview = null; hoverBack = null; hoverTip.hidden = true;
     chipsLayer.dataset.fork = '';
     renderPanel();
@@ -480,18 +481,18 @@ export function createExploreScene(root) {
 
   function finish() {
     overview = true;
-    zoomButton.textContent = 'Zoom back in';
+    zoomButton.textContent = t('explore.zoomIn');
     const chosen = path.slice(1);
     const closedSeen = path.slice(0, -1).filter(id => tree.children(id).some(child => child.closed)).length;
     endCard.hidden = false;
-    endCard.innerHTML = `<h2 tabindex="-1">One life, one path</h2>
-      <p>You made ${chosen.length} choices${closedSeen ? `, and ${closedSeen === 1 ? 'once' : `${closedSeen} times`} a way was closed by something you didn’t choose` : ''}.</p>
-      <p>Every gray line is a life that could have happened instead.</p>
-      <div class="end-buttons"><button type="button" class="solid-pill" data-tool="again">Try a different life</button>
-      <button type="button" class="pill-button" data-tool="back-one">Go back one choice</button></div>`;
+    endCard.innerHTML = `<h2 tabindex="-1">${escapeHTML(t('explore.end.heading'))}</h2>
+      <p>${escapeHTML(t('explore.end.summary', { choices: chosen.length, closed: closedSeen }))}</p>
+      <p>${escapeHTML(t('explore.end.gray'))}</p>
+      <div class="end-buttons"><button type="button" class="solid-pill" data-tool="again">${escapeHTML(t('explore.end.again'))}</button>
+      <button type="button" class="pill-button" data-tool="back-one">${escapeHTML(t('explore.end.backOne'))}</button></div>`;
     animateCamera(cameraFor(currentNode(), 1), 1100);
     endCard.querySelector('h2').focus({ preventScroll: true });
-    announce('You reached age 70. The map zooms out to show your whole path.');
+    announce(t('explore.announceEnd'));
   }
 
   function restart() {
@@ -501,7 +502,7 @@ export function createExploreScene(root) {
     newTree();
     overview = false;
     endCard.hidden = true;
-    zoomButton.textContent = 'See the whole life';
+    zoomButton.textContent = t('explore.seeWhole');
     chipsLayer.dataset.fork = '';
     camera = cameraFor(currentNode(), closeZoom());
     renderPanel();
@@ -520,17 +521,17 @@ export function createExploreScene(root) {
     const here = currentNode();
     const items = nodesOnPath.slice(1).map((node, index) => {
       const fork = nodesOnPath[index];
-      return `<li><button type="button" class="timeline-step" data-back="${fork.id}" aria-label="Age ${Math.round(fork.age)}: ${escapeHTML(node.label)}. Go back and choose again.">
-        <span class="timeline-age">${Math.round(fork.age)}</span><span class="timeline-label">${escapeHTML(node.label)}${node.byFamily ? ' <small>by family</small>' : ''}</span></button></li>`;
+      return `<li><button type="button" class="timeline-step" data-back="${fork.id}" aria-label="${escapeHTML(t('explore.stepLabel', { age: Math.round(fork.age), choice: node.label }))}">
+        <span class="timeline-age">${Math.round(fork.age)}</span><span class="timeline-label">${escapeHTML(node.label)}${node.byFamily ? ` <small>${escapeHTML(t('explore.byFamily'))}</small>` : ''}</span></button></li>`;
     }).join('');
     panel.innerHTML = `<div class="explore-panel">
       <div class="explore-now">${here.age >= LIFE_END - 0.01
-        ? '<strong>You reached 70.</strong> Look back at the whole path.'
-        : `<strong>Age ${Math.round(here.age)}.</strong> ${path.length === 1 ? 'Hover a path to see where it could lead, then pick a choice.' : 'What next? Pick a choice on the map.'}`}</div>
-      <h2 class="timeline-title">Your path so far</h2>
-      ${items ? `<ol class="timeline">${items}</ol><p class="timeline-hint">Tap a step to go back and choose differently.</p>` : '<p class="timeline-empty">Your choices will appear here.</p>'}
-      <div class="explore-actions"><button type="button" class="pill-button" data-tool="again">Start a new life</button></div>
-      <p class="illustration-note">Every label is a made-up example.</p>
+        ? `<strong>${escapeHTML(t('explore.now.endStrong'))}</strong> ${escapeHTML(t('explore.now.end'))}`
+        : `<strong>${escapeHTML(t('explore.now.age', { age: Math.round(here.age) }))}</strong> ${escapeHTML(t(path.length === 1 ? 'explore.now.first' : 'explore.now.next'))}`}</div>
+      <h2 class="timeline-title">${escapeHTML(t('explore.timeline.title'))}</h2>
+      ${items ? `<ol class="timeline">${items}</ol><p class="timeline-hint">${escapeHTML(t('explore.timeline.hint'))}</p>` : `<p class="timeline-empty">${escapeHTML(t('explore.timeline.empty'))}</p>`}
+      <div class="explore-actions"><button type="button" class="pill-button" data-tool="again">${escapeHTML(t('explore.newLife'))}</button></div>
+      <p class="illustration-note">${escapeHTML(t('explore.madeUp'))}</p>
       <p class="sr-only explore-live" aria-live="polite"></p>
     </div>`;
     const list = panel.querySelector('.timeline');
@@ -549,7 +550,7 @@ export function createExploreScene(root) {
       preview = nextPreview;
       hoverBack = nextBack;
       hoverTip.hidden = !nextBack;
-      if (nextBack) hoverTip.textContent = `Go back and choose: ${nextBack.label}`;
+      if (nextBack) hoverTip.textContent = t('explore.goBackTo', { choice: nextBack.label });
       paint();
     }
     if (!hoverTip.hidden) {
@@ -573,7 +574,7 @@ export function createExploreScene(root) {
       closed.classList.remove('nope');
       void closed.offsetWidth;
       closed.classList.add('nope');
-      announce(`That way is closed: ${tree.get(closed.dataset.closed).reason}.`);
+      announce(t('explore.closedAnnounce', { reason: tree.get(closed.dataset.closed).reason }));
     }
   });
   const previewChip = event => {
@@ -590,7 +591,7 @@ export function createExploreScene(root) {
     const tool = event.target.closest('[data-tool]')?.dataset.tool;
     if (tool === 'zoom') {
       overview = !overview;
-      zoomButton.textContent = overview ? 'Zoom back in' : 'See the whole life';
+      zoomButton.textContent = t(overview ? 'explore.zoomIn' : 'explore.seeWhole');
       preview = null;
       stopPulse();
       animateCamera(cameraFor(currentNode(), zoomTarget()), 800).then(() => { paint(); if (!overview) startPulse(); });

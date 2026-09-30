@@ -1,5 +1,4 @@
 ---
-layout: ../../layouts/ProseLayout.astro
 title: Notes for grown-ups
 description: A short guide for the adult reading Lesson 1 with a child, covering what it teaches, how to talk about it, and what the research does and doesn't support.
 kicker: Lesson 1 · Choices
