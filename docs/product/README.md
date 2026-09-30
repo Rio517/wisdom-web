@@ -17,7 +17,7 @@ Specific proposals use stable identifiers: `NNN-short-name.md`. Number documents
 | 011 | [Choices hiking storyboard](011-choices-hiking-storyboard.md) | Approved for prototyping: v04 accepted; character Alfredo | 2026-09-14 |
 | 012 | [Alfredo lesson implementation](012-choices-lesson-implementation.md) | Implemented locally; owner review pending | 2026-09-14 |
 | 013 | [Choices guided journey](013-choices-guided-journey.md) | Approved as Lesson 1; implemented in the site; not published | 2026-09-27 |
-| 014 | [Languages and localization](014-languages.md) | Implemented locally: English published; Spanish, German and French are unreviewed drafts | 2026-09-30 |
+| 014 | [Languages and localization](014-languages.md) | Implemented and published: English, Spanish, German and French (translations AI-drafted, no native review) | 2026-09-30 |
 
 Keep each document about one coherent product or delivery decision. Include the purpose, relevant requirements, proposed behavior, scope boundaries, acceptance criteria, and unresolved choices at the depth needed for review. Product requirements can be settled while the detailed solution remains proposed; make that distinction explicit.
 

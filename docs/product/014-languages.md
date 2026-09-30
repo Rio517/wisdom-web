@@ -1,6 +1,6 @@
 # 014 — Languages and localization
 
-Status: Implemented locally. English is published; Spanish, German and French are unreviewed draft translations. Created: 2026-09-30. Updated: 2026-09-30.
+Status: Implemented and published. English, Spanish, German and French are all live; the three translations are AI-drafted and were published by the owner without native review. Created: 2026-09-30. Updated: 2026-09-30.
 
 The site is written in English and translated into Spanish, German and French. This document is the reference for how languages work in the code, how to change words, how to add or review a translation, and what a translation tool needs to support. It extends [002 — Delivery architecture](002-delivery-architecture.md).
 
@@ -23,10 +23,10 @@ Each page sets `<html lang>`, and an English Markdown page shown in place of a m
 
 `LOCALE_STATUS` in `src/i18n/config.js` marks each language `published` or `draft`.
 
-- **Draft** pages are built and reachable by their URL for review. They carry `noindex`, English pages don't link to them, and they are left out of `hreflang` alternates. On a draft page the language switcher offers every language so a reviewer can compare.
+- **Draft** pages are built and reachable by their URL. They carry `noindex` and a draft notice, published pages don't link to them, and they are left out of `hreflang` alternates. On a draft page the language switcher offers every language so a reviewer can compare. Use this for a new language while it is being written.
 - **Published** pages appear in the language switcher (sidebar and footer) and in `hreflang` alternates. The switcher is hidden while only one language is published.
 
-A language moves to `published` only after a fluent reader has reviewed its catalog and Markdown pages. The current drafts were written by an AI model on 2026-09-30 from the English source, following the rules below. They have not been reviewed by a native speaker.
+Spanish, German and French were written by an AI model on 2026-09-30 from the English source, following the rules below, and reviewed by the AI lead for gender-neutral address, agreement, tone and layout. On 2026-09-30 the owner published all three and decided they will not get a further native review.
 
 ## Where words live
 
@@ -95,26 +95,26 @@ Layout still needs a visual check in each language after a copy change, especial
 
 ## Changing words
 
-Edit `en.json` (or the lesson copy, then carry the change into `en.json`), update the same key in every other catalog, run `npm test` and `npm run copy:lesson`. A changed English message makes the old translations stale; until a translator has updated them, note the key in the review list below.
+Edit `en.json` (or the lesson copy, then carry the change into `en.json`), update the same key in every other catalog, run `npm test` and `npm run copy:lesson`. A changed English message makes the old translations stale; until a translator has updated them, list the key under the language's judgment calls below so it is updated in the next translation pass.
 
-## Review status
+## Translation status
 
-| Language | Catalog | Markdown pages | Reviewed by a fluent reader |
+| Language | Catalog | Markdown pages | Status |
 | --- | --- | --- | --- |
 | English | Source | Source | — |
-| Spanish (neutral international) | Draft, 2026-09-30 | Draft | No |
-| German | Draft, 2026-09-30 | Draft | No |
-| French | Draft, 2026-09-30 | Draft | No |
+| Spanish (neutral international) | AI-drafted, 2026-09-30 | AI-drafted | Published without native review |
+| German | AI-drafted, 2026-09-30 | AI-drafted | Published without native review |
+| French | AI-drafted, 2026-09-30 | AI-drafted | Published without native review |
 
-Draft pages show a short notice ("This translation is a draft…") with a link to the English page, both on site pages and in the lesson's index drawer.
+Draft pages, when a language has that status, show a short notice ("This translation is a draft…") with a link to the English page, both on site pages and in the lesson's index drawer.
 
-Open questions for review: whether to use regional variants (for example `es-419` and `es-ES`) and whether the brand name should stay *Wisdom* in every language.
+Open questions: whether to use regional variants (for example `es-419` and `es-ES`) and whether the brand name should stay *Wisdom* in every language.
 
-### What a reviewer should check
+### Known judgment calls
 
 Every language:
 - The reader is addressed informally and without grammatical gender (the reader could be anyone). Named characters keep their gender: Alfredo is masculine, Maya feminine; the unnamed twelve-year-old on the life map is "a person" (*persona*, *Person*, *personne*).
-- Short labels were shortened to fit the layout; some life-map and explorer chips were reworded freely. Read the chips for tone. `node tooling/lesson-copy.mjs <code>` prints the whole lesson for reading.
+- Short labels were shortened to fit the layout; some life-map and explorer chips were reworded freely. `node tooling/lesson-copy.mjs <code>` prints the whole lesson for reading.
 - Links to English-only material (the research library, the source code, cited papers) are marked "(in English)".
 
 Spanish (neutral international):
@@ -124,10 +124,10 @@ Spanish (neutral international):
 
 German:
 - Lesson title *Die Wege, die wir gehen*; tagline *Ein Wegweiser fürs Leben*.
-- School clubs are *-AG*; some occupations use the generic masculine (*Elektriker*, *Dolmetscher*). Decide whether to switch to paired or neutral forms.
+- School clubs are *-AG*; some occupations use the generic masculine (*Elektriker*, *Dolmetscher*) because paired forms don't fit the short labels.
 - Life paths are *Weg*; the hike's trail is *Pfad*. Skill names: *Ballgefühl*, *Stellungsspiel*, *Spielsinn*, *Handdribbling*, *Notenlesen*, *Fingertechnik*.
 
 French:
 - Lesson title *Les chemins qu’on trace*; *foot*, *basket*, *violoncelle*; "Path A Maya" is *la Maya du Chemin A*.
-- Typography (« », no-break spaces before : ; ! ?) was applied by script; check it in the interactive scenes.
-- The adult notes also use *tu*; decide whether they should use *vous*.
+- Typography (« », no-break spaces before : ; ! ?) was applied by script and checked in the interactive scenes.
+- The adult notes also use *tu*, for one voice across the site.

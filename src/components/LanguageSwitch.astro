@@ -23,3 +23,10 @@ const codes = switcherLocales(locale);
     </nav>
   </div>
 )}
+<script>
+  // Keep the reader on the same lesson step (#fragment) when switching language.
+  document.addEventListener('click', event => {
+    const link = event.target instanceof Element ? event.target.closest('.lang-switch a') : null;
+    if (link instanceof HTMLAnchorElement && location.hash) link.hash = location.hash;
+  });
+</script>

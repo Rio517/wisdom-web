@@ -4,7 +4,7 @@
 
 **The site is deployed.** On 2026-09-27 the owner approved the guided journey as Lesson 1 and asked for the main site. It is an Astro static site at the repository root. `main` deploys to GitHub Pages through `.github/workflows/deploy.yml` (tests, build, deploy), with the custom domain `wisdom.knyflores.com` set in the Pages settings. Every route was verified from GitHub's Pages servers.
 
-**Waiting on DNS:** add a `CNAME` record at Namecheap (host `wisdom`, value `rio517.github.io.`). Once GitHub issues the certificate, enforce HTTPS (`gh api -X PUT repos/Rio517/wisdom-web/pages -F https_enforced=true`) and check `https://wisdom.knyflores.com/` before calling it live. Until then, the github.io address redirects to the domain, which doesn't resolve yet.
+**Waiting on the HTTPS certificate:** the Namecheap `CNAME` (`wisdom` → `rio517.github.io.`) is live and GitHub reports the domain valid and HTTPS-eligible, so the site answers on `http://wisdom.knyflores.com/`. On 2026-09-30 GitHub had not yet issued the certificate. Once it has, enforce HTTPS (`gh api -X PUT repos/Rio517/wisdom-web/pages -F https_enforced=true`) and check `https://wisdom.knyflores.com/`. If no certificate appears within a day, remove and re-add the custom domain in the Pages settings to restart issuance.
 
 | Page | Local URL |
 | --- | --- |
@@ -14,9 +14,9 @@
 | Text version | <http://127.0.0.1:4600/choices/the-paths-we-make/read/> |
 | Notes for grown-ups | <http://127.0.0.1:4600/choices/notes/> |
 | About | <http://127.0.0.1:4600/about/> |
-| Spanish, German, French drafts | <http://127.0.0.1:4600/es/>, <http://127.0.0.1:4600/de/>, <http://127.0.0.1:4600/fr/> (same paths below each) |
+| Spanish, German, French | <http://127.0.0.1:4600/es/>, <http://127.0.0.1:4600/de/>, <http://127.0.0.1:4600/fr/> (same paths below each) |
 
-**Languages (2026-09-30):** the site is internationalized ([014](docs/product/014-languages.md)). English is the source and the only published language. Spanish, German and French are complete AI-drafted translations marked `draft` in `src/i18n/config.js`: they build and open by URL, but English pages don't link to them and they are `noindex`. The i18n work is not committed or deployed.
+**Languages (2026-09-30):** the site is internationalized ([014](docs/product/014-languages.md)). English is the source. Spanish, German and French are AI-drafted translations that the owner published on 2026-09-30 without native review; the language switcher (sidebar, footer, lesson drawer) links all four. The i18n work was deployed on 2026-09-30 (`19c6854`), together with a separate commit (`33078e8`) adding the dev-only Dialecto in-context editor (`tooling/dialecto-in-context.mjs`, inert unless `DIALECTO_URL` and `DIALECTO_REPO` are set).
 
 Design records:
 - Site shell and home: [002 — Site, v01 — Launch](docs/design/002-site/v01-launch/README.md).
@@ -43,12 +43,12 @@ The public repository is [Rio517/wisdom-web](https://github.com/Rio517/wisdom-we
 ## Immediate next work
 
 1. **Owner review of the site** at the URLs above and the [v01 captures](docs/design/002-site/v01-launch/README.md), including the i18n change before it is committed.
-2. **Native review of each translation**, using the checklist in [014](docs/product/014-languages.md#what-a-reviewer-should-check). Publish a language by setting it to `published` in `src/i18n/config.js`, then check the switcher and `hreflang` on the built site.
-3. **Finish going live:** add the DNS record above, enforce HTTPS, and verify the live URL. Optionally, verify `knyflores.com` in GitHub account settings (Pages → verified domains) so no other account can claim the subdomain.
+2. **Keep translations in step:** any change to English text updates all four catalogs in the same change (`npm test` enforces parity); recheck German layouts afterwards.
+3. **Finish going live:** enforce HTTPS once the certificate is issued, and verify the `https://` URL. Optionally, verify `knyflores.com` in GitHub account settings (Pages → verified domains) so no other account can claim the subdomain.
 4. **Reader testing** near age eight and with older readers. Can they connect earlier learning to a later possibility, separate preparation from guaranteed outcomes, and name something outside Alfredo's control? Does the game read as "practice plus rest builds skills" rather than "never have fun"?
 5. **Lesson 02, Habits and daily practice**, is next. It gets a page and navigation link only when its content is complete.
 
-Open decisions: which translations to publish and whether to use regional variants (see 014), packaging web fonts (the site uses the approved system font stacks, which fall back to Palatino/Georgia and Segoe UI on non-Apple devices), a phone layout (deferred), and whether to retire the `prototype/` studies once the site is published.
+Open decisions: whether to use regional language variants (see 014), packaging web fonts (the site uses the approved system font stacks, which fall back to Palatino/Georgia and Segoe UI on non-Apple devices), a phone layout (deferred), and whether to retire the `prototype/` studies once the site is published.
 
 ## Run and verify
 
@@ -65,7 +65,7 @@ npm run dev:prototype   # earlier studies on http://127.0.0.1:4602/prototype/
 
 All servers stay in **4600–4699** on `127.0.0.1` and fail rather than move; `tooling/ports.js` holds the shared guard used by both configs.
 
-Verification on 2026-09-30 (i18n): 240 Node tests and the Astro build (25 pages) pass. In the browser, all four languages were checked at 1440×900, 1024×768 and 768×1024: every page, all 20 lesson steps, the game and the explorer, with no raw message keys, clipped text or console errors. The built preview confirmed the draft gate (notice, `noindex`, no switcher on English pages) and the language-aware 404.
+Verification on 2026-09-30 (i18n): 240 Node tests and the Astro build (25 pages) pass. In the browser, all four languages were checked at 1440×900, 1024×768 and 768×1024: every page, all 20 lesson steps, the game and the explorer, with no raw message keys, clipped text or console errors. The built preview confirmed the language-aware 404 and, before publication, the draft gate.
 
 Verification on 2026-09-27:
 - 225 Node tests pass, and the Astro build produces 7 pages.

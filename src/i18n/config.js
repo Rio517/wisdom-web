@@ -10,11 +10,11 @@ export const LOCALE_NAMES = { en: 'English', es: 'Español', de: 'Deutsch', fr: 
 export const LOCALE_TAGS = { en: 'en', es: 'es', de: 'de', fr: 'fr' };
 
 /**
- * A draft language is built and reachable by its URL for review, but English
- * pages don't link to it and search engines are asked not to index it.
- * Change a language to 'published' once a native speaker has reviewed it.
+ * A draft language is built and reachable by its URL, but other pages don't
+ * link to it, search engines are asked not to index it, and it carries a
+ * draft notice. Published languages appear in the switcher and hreflang.
  */
-export const LOCALE_STATUS = { en: 'published', es: 'draft', de: 'draft', fr: 'draft' };
+export const LOCALE_STATUS = { en: 'published', es: 'published', de: 'published', fr: 'published' };
 export const isPublished = locale => LOCALE_STATUS[locale] === 'published';
 
 /** Languages the switcher offers on a page: published ones, plus every draft while reviewing a draft. */
