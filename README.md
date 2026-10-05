@@ -6,6 +6,23 @@ The current local prototype explains life’s possibilities, how choices add up,
 
 All project servers use ports **4600–4699** only: **4600** for development and **4601** for build preview, bound to `127.0.0.1` with strict port handling. Install with `npm ci`; see the [launch and verification instructions](prototype/README.md).
 
+## Coding agents (Claude Code, Codex)
+
+The agent setup is in the repo, so it works for anyone who clones it:
+
+- **Instructions:** `AGENTS.md` is the whole setup: scope, content rules,
+  documentation layout and how to verify work. Read it and `NEXT_STEP.md`
+  before changing anything. Claude Code and Codex both read `AGENTS.md`.
+- **No MCP servers, hooks or skills are committed.** The site is a static
+  Astro build, so there is no running app for an agent to query.
+- **Browsers:** bring your own headless Playwright or Chrome DevTools MCP to
+  check pages at desktop and tablet size.
+
+What you bring yourself: Claude Code and/or Codex, signed in; Node and npm
+(Node 22.12 or later, see `engines` in `package.json`). The site and the
+prototypes use ports 4600 to 4603 on `127.0.0.1`. Nothing here depends on a
+particular machine or a parent folder.
+
 ## Start here
 
 - [Current state and next steps](NEXT_STEP.md)
