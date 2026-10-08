@@ -9,15 +9,7 @@
       "Bash(npm run preview:*)",
       "Bash(npm run copy:lesson:*)",
       "Bash(npx astro dev stop:*)",
-      "Bash(node --test:*)",
-      "Bash(curl -I:*)",
-      "Bash(curl -s:*)",
-      "Bash(curl -sf:*)",
       "Bash(git add:*)",
-      "Bash(git diff:*)",
-      "Bash(git log:*)",
-      "Bash(git show:*)",
-      "Bash(git status:*)",
       "Bash(lsof:*)"
     ],
     "ask": [
