@@ -12,9 +12,15 @@ The agent setup is in the repo, so it works for anyone who clones it:
 
 - **Instructions:** `AGENTS.md` is the whole setup: scope, content rules,
   documentation layout and how to verify work. Read it and `NEXT_STEP.md`
-  before changing anything. Claude Code and Codex both read `AGENTS.md`.
-- **No MCP servers, hooks or skills are committed.** The site is a static
-  Astro build, so there is no running app for an agent to query.
+  before changing anything. Codex reads `AGENTS.md`; Claude Code reads
+  `CLAUDE.md`, which imports it.
+- **Agents:** `.claude/agents/design-reviewer.md` judges rendered pages
+  against the design records after a visual change, in a fresh context.
+- **Permissions:** `.claude/settings.json` allows the routine npm and git
+  read commands and asks before a force push or a push to `main` (which
+  deploys).
+- **No MCP servers or hooks are committed.** The site is a static Astro
+  build, so there is no running app for an agent to query.
 - **Browsers:** bring your own headless Playwright or Chrome DevTools MCP to
   check pages at desktop and tablet size.
 
