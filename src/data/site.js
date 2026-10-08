@@ -37,6 +37,7 @@ export function lessonsFor(t) {
     title: t(`site.lesson.${lesson.id}.title`),
     summary: t(`site.lesson.${lesson.id}.summary`),
     statusLabel: t(`site.status.${lesson.status}`),
+    tip: lesson.status === 'available' ? undefined : t(`site.soonTip.${lesson.status}`),
     href: lesson.path ? href(t.locale, lesson.path) : undefined,
   }));
 }

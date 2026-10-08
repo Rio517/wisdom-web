@@ -33,7 +33,6 @@ for (let i = 2; i < stops.length; i += 1) trail += ` S ${stops[i].x - third} ${i
           <canvas id="map-fx" aria-hidden="true"></canvas>
           <div id="map-callouts" aria-hidden="true"></div>
         </div>
-        <button class="hero-replay" type="button" hidden>{t('home.playAgain')}</button>
         <figcaption class="hero-caption">{t('home.mapCaption')}</figcaption>
       </figure>
     </section>
@@ -86,7 +85,8 @@ for (let i = 2; i < stops.length; i += 1) trail += ` S ${stops[i].x - third} ${i
           <li data-status={lesson.status}>
             <span class="road-num" aria-hidden="true">{lesson.number}</span>
             <div>
-              <h3>{lesson.href ? <a href={lesson.href}>{lesson.title}</a> : lesson.title}</h3>
+              <h3>{lesson.href ? <a href={lesson.href}>{lesson.title}</a> : <button class="road-soon soon-trigger" type="button" aria-describedby={`road-tip-${lesson.id}`}>{lesson.title}</button>}</h3>
+              {lesson.tip && <span class="soon-tip" role="tooltip" id={`road-tip-${lesson.id}`} hidden>{lesson.tip}</span>}
               <p>{lesson.summary}</p>
             </div>
             <span class="status-pill" data-status={lesson.status}>{lesson.statusLabel}</span>
@@ -121,7 +121,6 @@ for (let i = 2; i < stops.length; i += 1) trail += ` S ${stops[i].x - third} ${i
     import { createToken, prefersReducedMotion, wait } from '../../lessons/choices/journey-motion.js';
 
     const figure = document.querySelector('.hero-map');
-    const replay = figure?.querySelector('.hero-replay');
     if (figure) {
       const scene = createPathsScene(figure, { labels: false });
       let token = createToken();
@@ -129,7 +128,6 @@ for (let i = 2; i < stops.length; i += 1) trail += ` S ${stops[i].x - third} ${i
         token.cancel();
         token = createToken();
         const run = token;
-        replay.hidden = true;
         if (scene.failed) return;
         if (prefersReducedMotion()) { scene.show('travel', { animate: false }); return; }
         scene.show('cover', { animate: false });
@@ -137,9 +135,7 @@ for (let i = 2; i < stops.length; i += 1) trail += ` S ${stops[i].x - third} ${i
         await scene.show('many', { from: 'cover', animate: true, token: run });
         if (run.cancelled || !(await wait(300, run))) return;
         await scene.show('travel', { from: 'many', animate: true, token: run });
-        if (!run.cancelled) replay.hidden = false;
       };
-      replay.addEventListener('click', play);
       play();
     }
   </script>
