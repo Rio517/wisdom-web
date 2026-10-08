@@ -12,12 +12,12 @@ Calm field guide: near-white page, flat, quiet. Code wins over older docs.
 - `forest` lived route, current state, links, buttons; `forest-deep` hover.
 - `sage` futures, list markers; `mist` untaken, inactive.
 - `lake` focus ring only (3px, offset 3px).
-- `sun` draft notices; `clay` closed or lost paths.
+- `sun` draft notices; `clay` closed or lost paths; `cello` the game's cello meter.
 - `*-soft` tints: backgrounds only.
 
 ## Type
 - `font-field` (Iowan Old Style, Palatino, Georgia): headings (weight 500), prose (`.prose` 20px/1.62, 68ch), ledes.
-- `font-guide` (Avenir Next, Segoe UI): UI, labels, buttons (600). No web fonts.
+- `font-guide` (Avenir Next, Segoe UI): UI, labels, buttons (600). No web fonts yet: Source Serif 4 / Sans 3 are candidates, an open owner decision.
 - Idioms: sentence case, left-aligned, tight negative tracking on big headings, small `.kicker` above titles.
 
 ## Controls and spacing
@@ -43,7 +43,7 @@ Calm field guide: near-white page, flat, quiet. Code wins over older docs.
 - Grids of decorative cards, confetti, glow, sparkles, ambient particles, theatrical zoom.
 - Loops or backward curls in routes; color alone as meaning.
 - Hardcoded age coordinates; synchronized waves in the path field.
-- Invented palettes; Inter, Source or other web fonts.
+- Invented palettes; Inter or other generic UI fonts.
 
 ## Pointers and verifying
 - Tokens: `src/styles/tokens.css`. Look: `docs/product/003-visual-language-and-navigation.md`. Records: `docs/design/README.md` (`002-site/v01-launch`, `001-choices-explainer/v09-guided-journey`).
