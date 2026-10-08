@@ -16,6 +16,8 @@ The agent setup is in the repo, so it works for anyone who clones it:
   `CLAUDE.md`, which imports it.
 - **Agents:** `.claude/agents/design-reviewer.md` judges rendered pages
   against the design records after a visual change, in a fresh context.
+- **Skills:** `.claude/skills/wisdom-design/SKILL.md` condenses the design
+  system (tokens, motifs, hard rules, what to avoid) and loads on any UI work.
 - **Permissions:** `.claude/settings.json` allows the project's npm scripts
   and `git add`, and asks before a force push or a push to `main` (which
   deploys).
