@@ -18,6 +18,9 @@ The agent setup is in the repo, so it works for anyone who clones it:
   against the design records after a visual change, in a fresh context.
 - **Skills:** `.claude/skills/wisdom-design/SKILL.md` condenses the design
   system (tokens, motifs, hard rules, what to avoid) and loads on any UI work.
+- **Voice:** `.claude/skills/wisdom-voice/SKILL.md` sets the narrator's voice,
+  the reading level for ages 8 to 12 and how words move through the four
+  catalogs; it loads whenever Wisdom words are written or changed.
 - **Permissions:** `.claude/settings.json` allows the project's npm scripts
   and `git add`, and asks before a force push or a push to `main` (which
   deploys).
