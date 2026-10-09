@@ -96,11 +96,11 @@ function sceneSVG() {
   <path class="trail-closed-seg" id="whatif" d="${MAIN}" style="stroke-dasharray: 3 9"/>
   <g transform="translate(628 505) rotate(-14)"><rect x="-24" y="-11" width="48" height="22" rx="3" fill="#b59a78"/><path d="M-24 -11 h48 M-24 11 h48" stroke="#7b6a55" stroke-width="3"/><path d="M-12 -11 v22 M0 -11 v22 M12 -11 v22" stroke="#7b6a55" stroke-width="1.5"/></g>
   <g transform="translate(66 650)"><path d="M-22 0 V-20 L0 -38 L22 -20 V0 Z" fill="#fbfbf8" stroke="#285442" stroke-width="3" stroke-linejoin="round"/><rect x="-6" y="-14" width="12" height="14" fill="#285442"/></g>
-  <text class="place-label" x="84" y="584" text-anchor="middle">${tx('hike.trailhead')}</text>
-  <text class="place-label" x="1066" y="204" text-anchor="middle">${tx('hike.lake')}</text>
-  <text class="place-label small" x="412" y="672" text-anchor="end" id="rock-label">${tx('hike.rock')}</text>
-  <text class="place-label small" x="650" y="716">${tx('hike.stream')}</text>
-  <text class="place-label" x="610" y="190" text-anchor="middle" id="falls-label">${tx('hike.waterfall')}</text>
+  <text class="place-label" x="84" data-x="84" y="584" text-anchor="middle">${tx('hike.trailhead')}</text>
+  <text class="place-label" x="1066" data-x="1066" y="204" text-anchor="middle">${tx('hike.lake')}</text>
+  <text class="place-label small" x="412" data-x="412" y="672" text-anchor="end" id="rock-label">${tx('hike.rock')}</text>
+  <text class="place-label small" x="650" data-x="650" y="716">${tx('hike.stream')}</text>
+  <text class="place-label" x="610" data-x="610" y="190" text-anchor="middle" id="falls-label">${tx('hike.waterfall')}</text>
   <g id="loop-labels" class="fade-item">${LOOP_SPOTS.map(([cx, cy], i) => `<text class="place-label small" x="${cx}" y="${cy + LOOP_RY + 30}" text-anchor="middle">${tx(['hike.loopPark', 'hike.loopHill', 'hike.loopRiver'][i])}</text>`).join('')}</g>
   <g id="turn-flag" class="fade-item"><path d="M0 0 V-40" stroke="#9a5f3e" stroke-width="3" stroke-linecap="round"/><path d="M0 -40 L24 -33 L0 -26 Z" fill="#9a5f3e"/><text class="place-label small clay" x="30" y="54" text-anchor="middle" id="turn-flag-text"></text></g>
   <g id="whatif-note" class="fade-item"><text class="place-label clay" x="900" y="238" text-anchor="end">${tx('hike.noWater')}</text></g>
@@ -239,6 +239,16 @@ export function createHikeScene(root) {
     const k = Math.min(box.width / 1200, box.height / 800);
     svg.style.setProperty('--lbl', `${(16 / k).toFixed(1)}px`);
     svg.style.setProperty('--lbl-s', `${(15 / k).toFixed(1)}px`);
+    // Keep fixed labels fully inside the visible map: slide a label inward when its box would cross an edge.
+    const pad = 8 / k;
+    const left = 600 - box.width / k / 2 + pad;
+    const right = 600 + box.width / k / 2 - pad;
+    for (const label of svg.querySelectorAll('text[data-x]')) {
+      label.setAttribute('x', label.dataset.x);
+      const { x, width } = label.getBBox();
+      const shift = x < left ? left - x : x + width > right ? right - (x + width) : 0;
+      if (shift) label.setAttribute('x', String(Number(label.dataset.x) + shift));
+    }
     const size = bubbleText.getBBox();
     if (size.width) {
       const width = Math.ceil(size.width + 36);
