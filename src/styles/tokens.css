@@ -21,3 +21,14 @@
   --font-field: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
   --font-guide: "Avenir Next", AvenirNext, "Segoe UI", system-ui, sans-serif;
 }
+
+/* Water on the hike map: mixes of lake-soft with lake or paper. They are emitted even where no
+   class uses them, because the water layer reads them from the page at runtime. */
+@theme static {
+  --color-water-bank: #95b6c3; /* lake-soft to lake, 55%: the darker edge */
+  --color-water-body: #cadde3; /* lake-soft to lake, 10%: the stream */
+  --color-water-deep: #b7cfd8; /* lake-soft to lake, 26%: the middle of the stream */
+  --color-water-light: #f1f5f4; /* lake-soft to paper, 72%: dashes, bands, streaks */
+  --color-water-fall: #deebed; /* lake-soft to paper, 22%: the falling sheet */
+  --color-water-ring: #a6c3ce; /* lake-soft to lake, 40%: ripple rings */
+}
