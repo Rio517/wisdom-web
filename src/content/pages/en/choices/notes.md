@@ -6,9 +6,9 @@ kicker: Lesson 1 · Choices
 
 Lesson 1, [*Choices — The paths we make*](../the-paths-we-make/), is a guided, illustrated journey about how choices add up over a life, and about how much of what happens is not up to the person living it.
 
-It opens with a wide map of many possible paths, then narrows into two concrete stories: a hike that runs into trouble twice, once by planning and once by weather, and a girl named Maya who tries the same start on two imagined paths. A short game lets the reader spend ten fictional afternoons of their own, choosing between soccer, cello and rest, and a free explorer lets them build an example life from age three to seventy. It closes with three takeaways.
+It opens with a wide map of many possible paths, then narrows into two concrete stories: a hike that runs into trouble twice, once by planning and once by weather, and a girl named Maya who tries the same start on two imagined paths. Then a free explorer lets the reader build an example life from age three to seventy. It closes with three takeaways.
 
-These notes are the adult companion to that lesson, and to the [lesson overview](../) it sits alongside. Reading through with the games takes about 15 minutes; the [text-only version](../the-paths-we-make/read/) reads in about five. It's written to work from about age eight, and it works best read together, with room to stop and talk.
+These notes are the adult companion to that lesson, and to the [lesson overview](../) it sits alongside. Reading through takes about 10 minutes; the [text-only version](../the-paths-we-make/read/) reads in about eight. It's written to work from about age eight, and it works best read together, with room to stop and talk.
 
 ## What it teaches
 
@@ -31,7 +31,6 @@ Afterwards, a few questions tied to specific moments tend to work better than a 
 - At the halfway water bottle on the hike: what would you have done, and why?
 - After the drag-to-sort board: which card was hardest to place under "their choice" or "outside their control"?
 - After Maya's basketball season: what did Path A Maya already know how to do that helped her in a new sport? Has anything like that happened for you?
-- After your own ten afternoons: looking back, what would you do differently next time?
 - In the explorer: which gray line, a path you didn't take, would you want to go back and try?
 - At the end: which of the three takeaways feels most true to something in your own life right now?
 
@@ -47,7 +46,7 @@ None of this means a particular child's future is decided by age eight, or by an
 
 ## What is illustration, not data
 
-A few things in the lesson look precise but aren't. The path map's height and shape mean nothing; there's no measurement behind how large a branch looks. Maya's skill bars and the ten-afternoons game use a made-up model of practice with no real numbers behind it; the point is the pattern (early progress feels slow, then some skills build on others), not the specific bars. The explorer's example choices at each age are examples of the kinds of choices people make, not a ranking of good and bad lives and not a prediction about the reader. Every person in the lesson is fictional.
+A few things in the lesson look precise but aren't. The path map's height and shape mean nothing; there's no measurement behind how large a branch looks. Maya's skill bars use a made-up model of practice with no real numbers behind it; the point is the pattern (early progress feels slow, then some skills build on others), not the specific bars. The explorer's example choices at each age are examples of the kinds of choices people make, not a ranking of good and bad lives and not a prediction about the reader. Every person in the lesson is fictional.
 
 ## Accessibility and reading options
 

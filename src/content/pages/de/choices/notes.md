@@ -6,9 +6,9 @@ kicker: Lektion 1 · Entscheidungen
 
 Lektion 1, [*Entscheidungen — Die Wege, die wir gehen*](../the-paths-we-make/), ist eine geführte, bebilderte Reise darüber, wie sich Entscheidungen über ein Leben summieren, und darüber, wie viel von dem, was passiert, nicht in der Hand der Person liegt, die es lebt.
 
-Sie beginnt mit einer weiten Karte vieler möglicher Wege und verengt sich dann zu zwei konkreten Geschichten: einer Wanderung, die zweimal auf Schwierigkeiten stößt, einmal durch Planung und einmal durch das Wetter, und einem Mädchen namens Maya, das denselben Start auf zwei ausgedachten Wegen versucht. Ein kurzes Spiel lässt die lesende Person zehn erfundene Nachmittage lang selbst zwischen Fußball, Cello und Ruhe wählen, und ein freier Explorer lässt sie ein Beispielleben vom Alter drei bis siebzig aufbauen. Am Ende stehen drei Kernideen zum Mitnehmen.
+Sie beginnt mit einer weiten Karte vieler möglicher Wege und verengt sich dann zu zwei konkreten Geschichten: einer Wanderung, die zweimal auf Schwierigkeiten stößt, einmal durch Planung und einmal durch das Wetter, und einem Mädchen namens Maya, das denselben Start auf zwei ausgedachten Wegen versucht. Danach lässt ein freier Explorer die lesende Person ein Beispielleben vom Alter drei bis siebzig aufbauen. Am Ende stehen drei Kernideen zum Mitnehmen.
 
-Diese Hinweise sind die Begleitung für Erwachsene zu dieser Lektion und zu der [Lektionsübersicht](../), zu der sie gehören. Die Lektion mit den Spielen dauert etwa 15 Minuten; die [reine Textversion](../the-paths-we-make/read/) liest sich in etwa fünf. Sie funktioniert ab etwa acht Jahren und am besten gemeinsam gelesen, mit Raum zum Anhalten und Reden.
+Diese Hinweise sind die Begleitung für Erwachsene zu dieser Lektion und zu der [Lektionsübersicht](../), zu der sie gehören. Die Lektion dauert etwa 10 Minuten; die [reine Textversion](../the-paths-we-make/read/) liest sich in etwa acht. Sie funktioniert ab etwa acht Jahren und am besten gemeinsam gelesen, mit Raum zum Anhalten und Reden.
 
 ## Was sie vermittelt
 
@@ -31,7 +31,6 @@ Danach funktionieren ein paar Fragen zu bestimmten Momenten meist besser als ein
 - Bei der Wasserflasche auf halbem Weg der Wanderung: Was hättest du getan, und warum?
 - Nach dem Sortierspiel zum Ziehen: Welche Karte war am schwersten „ihre Entscheidung“ oder „außerhalb ihrer Kontrolle“ zuzuordnen?
 - Nach Mayas Basketball-Saison: Was konnte Maya auf Weg A schon, das ihr in einer neuen Sportart geholfen hat? Ist dir selbst schon einmal so etwas passiert?
-- Nach den eigenen zehn Nachmittagen: Im Rückblick – was würdest du beim nächsten Mal anders machen?
 - Im Explorer: Welche graue Linie, ein nicht gewählter Weg, würdest du gern zurückgehen und ausprobieren?
 - Am Ende: Welche der drei Kernideen fühlt sich gerade am wahrsten für dein eigenes Leben an?
 
@@ -47,7 +46,7 @@ Nichts davon bedeutet, dass die Zukunft eines bestimmten Kindes schon mit acht J
 
 ## Was Illustration ist, nicht Daten
 
-Ein paar Dinge in der Lektion wirken genau, sind es aber nicht. Höhe und Form der Wegkarte bedeuten nichts; hinter der Größe eines Zweigs steckt keine Messung. Mayas Fähigkeitsbalken und das Zehn-Nachmittage-Spiel nutzen ein erfundenes Modell von Übung ohne echte Zahlen dahinter; es geht um das Muster (früher Fortschritt fühlt sich langsam an, dann bauen manche Fähigkeiten auf anderen auf), nicht um die genauen Balken. Die Beispiel-Entscheidungen des Explorers für jedes Alter sind Beispiele für die Art von Entscheidungen, die Menschen treffen – keine Rangliste guter und schlechter Leben und keine Vorhersage über die lesende Person. Jede Person in der Lektion ist erfunden.
+Ein paar Dinge in der Lektion wirken genau, sind es aber nicht. Höhe und Form der Wegkarte bedeuten nichts; hinter der Größe eines Zweigs steckt keine Messung. Mayas Fähigkeitsbalken nutzen ein erfundenes Modell von Übung ohne echte Zahlen dahinter; es geht um das Muster (früher Fortschritt fühlt sich langsam an, dann bauen manche Fähigkeiten auf anderen auf), nicht um die genauen Balken. Die Beispiel-Entscheidungen des Explorers für jedes Alter sind Beispiele für die Art von Entscheidungen, die Menschen treffen – keine Rangliste guter und schlechter Leben und keine Vorhersage über die lesende Person. Jede Person in der Lektion ist erfunden.
 
 ## Barrierefreiheit und Leseoptionen
 

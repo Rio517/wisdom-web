@@ -4,7 +4,6 @@
 //   node tooling/lesson-copy.mjs de         → prints the German copy to stdout
 import { writeFileSync } from 'node:fs';
 import { chaptersFor, learnedFor } from '../src/lessons/choices/journey-story.js';
-import { daysWithLabels } from '../src/lessons/choices/journey-game.js';
 import { CHOICE_BANDS, CLOSED_REASONS, STORY_COUNT, bandChoices, mapStory } from '../src/lessons/choices/journey-choices.js';
 import { getTranslator } from '../src/i18n/index.js';
 import { LOCALES, LOCALE_NAMES, DEFAULT_LOCALE } from '../src/i18n/config.js';
@@ -51,11 +50,6 @@ for (const chapter of chaptersFor(t)) {
         const story = mapStory(index, t);
         add(`${index + 1}. **Taken:** ${story.taken.join(' → ')} · **Not taken:** ${story.untaken.join(', ')} · **Builds on it:** ${story.build[0]} → ${story.build[1]} / ${story.build[2]} · **Something new:** ${story.fresh[0]} → ${story.fresh[1]} / ${story.fresh[2]}`);
       }
-      add('');
-    }
-    if (beat.game) {
-      add('#### The ten afternoons', '');
-      daysWithLabels(t).forEach((day, index) => add(`${index + 1}. **${day.label}${day.chance ? ` · ${day.chance}` : ''}.** ${day.situation} — ${day.options.map(option => option.label).join(' / ')}`));
       add('');
     }
     if (beat.explore) {

@@ -1,7 +1,6 @@
 ---
 import SiteLayout from '../../../../layouts/SiteLayout.astro';
 import { renderJourneyReading } from '../../../../lessons/choices/journey-story.js';
-import { daysWithLabels } from '../../../../lessons/choices/journey-game.js';
 import { LESSON_PATH, UI, href } from '../../../../data/site.js';
 import { getTranslator } from '../../../../i18n/index.js';
 import { localeStaticPaths } from '../../../../i18n/config.js';
@@ -9,7 +8,7 @@ import { localeStaticPaths } from '../../../../i18n/config.js';
 export const getStaticPaths = localeStaticPaths;
 const { locale } = Astro.props;
 const t = getTranslator(locale);
-const reading = renderJourneyReading({ t, gameDays: daysWithLabels(t) });
+const reading = renderJourneyReading({ t });
 ---
 <SiteLayout title={t('read.title')} description={t('read.description')} current="read" locale={locale}>
   <article class="page page-narrow">

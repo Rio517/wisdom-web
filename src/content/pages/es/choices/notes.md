@@ -6,9 +6,9 @@ kicker: Lección 1 · Decisiones
 
 La Lección 1, [*Decisiones — Los caminos que hacemos*](../the-paths-we-make/), es un recorrido guiado e ilustrado sobre cómo se acumulan las decisiones a lo largo de una vida, y sobre cuánto de lo que ocurre no depende de la persona que la vive.
 
-Empieza con un amplio mapa de muchos caminos posibles, y luego se centra en dos historias concretas: una caminata que se complica dos veces, una por planificación y otra por el clima, y una niña llamada Maya que prueba el mismo comienzo en dos caminos imaginados. Un breve juego deja que el lector viva diez tardes ficticias propias, eligiendo entre fútbol, violonchelo y descanso, y un explorador libre le permite construir una vida de ejemplo desde los tres hasta los setenta años. Termina con tres ideas clave.
+Empieza con un amplio mapa de muchos caminos posibles, y luego se centra en dos historias concretas: una caminata que se complica dos veces, una por planificación y otra por el clima, y una niña llamada Maya que prueba el mismo comienzo en dos caminos imaginados. Después, un explorador libre le permite al lector construir una vida de ejemplo desde los tres hasta los setenta años. Termina con tres ideas clave.
 
-Estas notas son el complemento para adultos de esa lección, y del [resumen de la lección](../) junto al que se encuentra. Leerla completa con los juegos toma unos 15 minutos; la [versión solo de texto](../the-paths-we-make/read/) se lee en unos cinco. Está escrita para funcionar desde alrededor de los ocho años, y funciona mejor leída en compañía, con espacio para detenerse y conversar.
+Estas notas son el complemento para adultos de esa lección, y del [resumen de la lección](../) junto al que se encuentra. Leerla completa toma unos 10 minutos; la [versión solo de texto](../the-paths-we-make/read/) se lee en unos ocho. Está escrita para funcionar desde alrededor de los ocho años, y funciona mejor leída en compañía, con espacio para detenerse y conversar.
 
 ## Qué enseña
 
@@ -31,7 +31,6 @@ Después, unas pocas preguntas ligadas a momentos concretos suelen funcionar mej
 - En la botella de agua a mitad de la caminata: ¿qué habrías hecho tú, y por qué?
 - Después del tablero de arrastrar y clasificar: ¿qué tarjeta fue más difícil de colocar en «su decisión» o «fuera de su control»?
 - Después de la temporada de baloncesto de Maya: ¿qué sabía hacer ya la Maya del Camino A que la ayudó en un deporte nuevo? ¿Te ha pasado algo parecido a ti?
-- Después de tus propias diez tardes: mirando atrás, ¿qué harías diferente la próxima vez?
 - En el explorador: ¿qué línea gris, un camino que no tomaste, te gustaría volver a probar?
 - Al final: ¿cuál de las tres ideas clave se siente más cierta para algo en tu propia vida ahora mismo?
 
@@ -47,7 +46,7 @@ Nada de esto significa que el futuro de un niño en particular quede decidido a 
 
 ## Qué es ilustración, no datos
 
-Algunas cosas en la lección parecen precisas, pero no lo son. La altura y la forma del mapa de caminos no significan nada; no hay ninguna medición detrás de lo grande que se ve una rama. Las barras de habilidad de Maya y el juego de las diez tardes usan un modelo inventado de práctica sin números reales detrás; lo importante es el patrón (el progreso inicial se siente lento, y luego algunas habilidades se construyen sobre otras), no las barras específicas. Las decisiones de ejemplo del explorador en cada edad son ejemplos del tipo de decisiones que toma la gente, no una clasificación de vidas buenas y malas ni una predicción sobre el lector. Todas las personas de la lección son ficticias.
+Algunas cosas en la lección parecen precisas, pero no lo son. La altura y la forma del mapa de caminos no significan nada; no hay ninguna medición detrás de lo grande que se ve una rama. Las barras de habilidad de Maya usan un modelo inventado de práctica sin números reales detrás; lo importante es el patrón (el progreso inicial se siente lento, y luego algunas habilidades se construyen sobre otras), no las barras específicas. Las decisiones de ejemplo del explorador en cada edad son ejemplos del tipo de decisiones que toma la gente, no una clasificación de vidas buenas y malas ni una predicción sobre el lector. Todas las personas de la lección son ficticias.
 
 ## Accesibilidad y opciones de lectura
 

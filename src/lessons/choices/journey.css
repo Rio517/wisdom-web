@@ -2,7 +2,6 @@
 @import "../../styles/tokens.css";
 @import "../../styles/nav.css";
 @import "./journey-sort.css";
-@import "./journey-play.css";
 
 
 :root { color-scheme: light; font-family: var(--font-guide); color: var(--color-ink); background: var(--color-paper); }
@@ -96,8 +95,6 @@ h1, h2, h3, h4 { font-family: var(--font-field); font-weight: 500; }
 .next-button:active { transform: scale(.97); }
 .next-button[data-emphasis="true"] { animation: nudge 1.8s ease-in-out 1.2s 2; }
 @keyframes nudge { 0%, 100% { transform: none; } 50% { transform: translateX(3px); } }
-.narration[data-compact="true"] #beat-heading { @apply mb-4; font-size: 30px; }
-.narration[data-compact="true"] .narration-body { padding-top: 10px; }
 .key-hint { @apply m-0 text-[15px]; color: var(--color-quiet); }
 
 /* ——— Choices, sorting, closer ——— */
@@ -437,7 +434,8 @@ h1, h2, h3, h4 { font-family: var(--font-field); font-weight: 500; }
 .skill-box[data-boosts~="fingers"] .skill-row[data-skill="fingers"] .boost-note { display: inline; animation: text-in 400ms ease-out both; }
 .illustration-note { @apply m-0 mt-2 text-[15px]; color: var(--color-quiet); }
 
-/* ——— Game (details in journey-play.css) ——— */
+/* ——— Game panel pieces journey-play.css reuses. The game is not on this page;
+   Lesson 2 decides what to keep. ——— */
 .skills-panel { @apply grid gap-3; }
 .energy { @apply flex items-center justify-between rounded-2xl px-3.5 py-2.5; background: white; border: 1px solid var(--color-rule); }
 .energy strong { @apply text-[15px]; }
@@ -531,10 +529,6 @@ dialog::backdrop { background: #23302d66; }
   .narration { padding: 8px 24px 28px; }
   .narration-body { overflow: visible; }
   .chapter-stop .stop-label { font-size: 15px; }
-  .narration[data-compact="true"] .beat-kicker { display: none; }
-  .narration[data-compact="true"] #beat-heading { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
-  .narration[data-compact="true"] .skills-panel { grid-template-columns: 1fr 1fr; }
-  .narration[data-compact="true"] .skills-panel .energy, .narration[data-compact="true"] .skills-panel .illustration-note { grid-column: 1 / -1; }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -1,9 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { CHAPTERS, FRAGMENT_ALIASES, LEARNED, beatList, renderJourneyReading } from '../src/lessons/choices/journey-story.js';
+import { t as runtimeT } from '../src/i18n/runtime.js';
 
-test('the journey keeps the approved order: big picture, hike, compounding, game, explore, takeaways', () => {
-  assert.deepEqual(CHAPTERS.map(chapter => chapter.id), ['paths', 'hike', 'skills', 'play', 'explore', 'wrap']);
+test('the journey keeps the approved order: big picture, hike, compounding, explore, takeaways', () => {
+  assert.deepEqual(CHAPTERS.map(chapter => chapter.id), ['paths', 'hike', 'skills', 'explore', 'wrap']);
 });
 
 test('every beat has a stable unique fragment, a heading, text and a picture description', () => {
@@ -53,8 +54,13 @@ test('copy avoids guarantees, invented numbers and scores', () => {
 });
 
 test('the static reading renders every heading and escapes content', () => {
-  const html = renderJourneyReading({ gameDays: [{ label: 'Monday', situation: 'A <b> test', options: [{ label: 'Rest' }] }] });
-  for (const { beat } of beatList()) assert.ok(html.includes(beat.heading.replaceAll('&', '&amp;')), beat.heading);
+  const html = renderJourneyReading({ t: (key, values) => (key === 'lesson.beat.fork.heading' ? 'A <b> test' : runtimeT(key, values)) });
+  for (const { beat } of beatList()) if (beat.id !== 'fork') assert.ok(html.includes(beat.heading.replaceAll('&', '&amp;')), beat.heading);
   assert.match(html, /A &lt;b&gt; test/);
   assert.match(html, /what they chose/);
+});
+
+test('Lesson 1 no longer has the ten-afternoon game, in the journey or its text version', () => {
+  assert.ok(!beatList().some(item => item.beat.game || item.chapter.id === 'play'));
+  assert.doesNotMatch(renderJourneyReading(), /afternoon/i);
 });

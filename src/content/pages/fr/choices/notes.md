@@ -6,9 +6,9 @@ kicker: Leçon 1 · Les choix
 
 La leçon 1, [*Les choix — Les chemins qu’on trace*](../the-paths-we-make/), est un parcours guidé et illustré sur la façon dont les choix s’additionnent au cours d’une vie, et sur la part de ce qui arrive qui ne dépend pas de la personne qui la vit.
 
-Elle s’ouvre sur une large carte de nombreux chemins possibles, puis se resserre sur deux histoires concrètes : une randonnée qui rencontre deux fois des difficultés, une fois à cause de leur propre préparation et une fois à cause du temps, et une fille nommée Maya qui essaie le même départ sur deux chemins imaginés. Un court jeu laisse le lecteur vivre dix après-midi fictifs à sa façon, en choisissant entre le foot, le violoncelle et le repos, et un explorateur libre lui permet de construire une vie d’exemple, de trois à soixante-dix ans. Elle se termine par trois idées à retenir.
+Elle s’ouvre sur une large carte de nombreux chemins possibles, puis se resserre sur deux histoires concrètes : une randonnée qui rencontre deux fois des difficultés, une fois à cause de leur propre préparation et une fois à cause du temps, et une fille nommée Maya qui essaie le même départ sur deux chemins imaginés. Ensuite, un explorateur libre permet au lecteur de construire une vie d’exemple, de trois à soixante-dix ans. Elle se termine par trois idées à retenir.
 
-Ces notes sont le compagnon pour l’adulte de cette leçon, et de l’[aperçu de la leçon](../) auquel elles s’ajoutent. La lecture avec les jeux prend environ 15 minutes ; la [version texte seule](../the-paths-we-make/read/) se lit en environ cinq. Elle est écrite pour être accessible dès environ huit ans, et elle fonctionne mieux lue ensemble, avec de la place pour s’arrêter et discuter.
+Ces notes sont le compagnon pour l’adulte de cette leçon, et de l’[aperçu de la leçon](../) auquel elles s’ajoutent. La lecture prend environ 10 minutes ; la [version texte seule](../the-paths-we-make/read/) se lit en environ huit. Elle est écrite pour être accessible dès environ huit ans, et elle fonctionne mieux lue ensemble, avec de la place pour s’arrêter et discuter.
 
 ## Ce qu’elle enseigne
 
@@ -31,7 +31,6 @@ Ensuite, quelques questions liées à des moments précis fonctionnent souvent m
 - À la gourde à moitié vide pendant la randonnée : qu’aurais-tu fait, et pourquoi ?
 - Après le tableau à trier : quelle carte était la plus difficile à placer sous « leur choix » ou « hors de leur contrôle » ?
 - Après la saison de basket de Maya : qu’est-ce que la Maya du Chemin A savait déjà faire qui l’a aidée dans un nouveau sport ? Est-ce que quelque chose de semblable t’est déjà arrivé ?
-- Après tes propres dix après-midi : avec le recul, qu’aurais-tu fait différemment la prochaine fois ?
 - Dans l’explorateur : quelle ligne grise, un chemin que tu n’as pas pris, aimerais-tu retourner essayer ?
 - À la fin : laquelle des trois idées te semble la plus vraie par rapport à ta propre vie en ce moment ?
 
@@ -47,7 +46,7 @@ Rien de tout cela ne signifie que l’avenir d’un enfant en particulier est d�
 
 ## Ce qui est une illustration, pas une donnée
 
-Quelques éléments de la leçon semblent précis mais ne le sont pas. La hauteur et la forme de la carte des chemins ne signifient rien ; il n’y a aucune mesure derrière la taille apparente d’une branche. Les barres de compétence de Maya et le jeu des dix après-midi utilisent un modèle inventé de l’entraînement, sans vrais chiffres derrière ; ce qui compte, c’est le schéma (les progrès semblent lents au début, puis certaines compétences s’appuient sur d’autres), pas les barres précises. Les exemples de choix de l’explorateur à chaque âge sont des exemples du genre de choix que font les gens, pas un classement des bonnes et des mauvaises vies, et pas une prédiction sur le lecteur. Chaque personnage de la leçon est fictif.
+Quelques éléments de la leçon semblent précis mais ne le sont pas. La hauteur et la forme de la carte des chemins ne signifient rien ; il n’y a aucune mesure derrière la taille apparente d’une branche. Les barres de compétence de Maya utilisent un modèle inventé de l’entraînement, sans vrais chiffres derrière ; ce qui compte, c’est le schéma (les progrès semblent lents au début, puis certaines compétences s’appuient sur d’autres), pas les barres précises. Les exemples de choix de l’explorateur à chaque âge sont des exemples du genre de choix que font les gens, pas un classement des bonnes et des mauvaises vies, et pas une prédiction sur le lecteur. Chaque personnage de la leçon est fictif.
 
 ## Accessibilité et options de lecture
 

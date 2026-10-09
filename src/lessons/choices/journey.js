@@ -5,7 +5,6 @@ import { createToken, prefersReducedMotion, wait } from './journey-motion.js';
 import { createPathsScene } from './journey-map.js';
 import { createHikeScene } from './journey-hike.js';
 import { createSkillsScene } from './journey-skills.js';
-import { createPlayScene } from './journey-play.js';
 import { createExploreScene } from './journey-explore.js';
 import { createSortBoard } from './journey-sort.js';
 import { watchField } from '../../components/stage-field.js';
@@ -23,7 +22,6 @@ const roots = {
   paths: $('#scene-paths'),
   hike: $('#scene-hike'),
   skills: $('#scene-skills'),
-  play: $('#scene-play'),
   explore: $('#scene-explore'),
 };
 const scenes = {
@@ -32,7 +30,6 @@ const scenes = {
   paths: createPathsScene(roots.paths, { edgeFade: 0.24 }),
   hike: createHikeScene(roots.hike),
   skills: createSkillsScene(roots.skills),
-  play: createPlayScene(roots.play),
   explore: createExploreScene(roots.explore),
 };
 const rootFor = chapterId => (chapterId === 'wrap' ? 'paths' : chapterId);
@@ -170,9 +167,7 @@ function renderNarration(item, { animate }) {
     ? t('lesson.ui.kickerStep', { kicker: beat.kicker, step: beatIndex + 1, total: chapter.beats.length })
     : beat.kicker;
   $('#beat-heading').textContent = beat.heading;
-  const paragraphs = beat.game ? [] : beat.body;
-  $('#narration').dataset.compact = String(Boolean(beat.game));
-  $('#beat-text').innerHTML = paragraphs.map(text => `<p>${escapeHTML(text)}</p>`).join('')
+  $('#beat-text').innerHTML = beat.body.map(text => `<p>${escapeHTML(text)}</p>`).join('')
     + (beat.note ? `<p class="beat-note">${escapeHTML(beat.note)}</p>` : '');
   const extra = $('#beat-extra');
   extra.innerHTML = '';
@@ -181,12 +176,10 @@ function renderNarration(item, { animate }) {
   if (beat.closer) {
     extra.insertAdjacentHTML('beforeend', `<details class="closer"><summary>${escapeHTML(beat.closer.heading)}</summary>${beat.closer.body.map(text => `<p>${escapeHTML(text)}</p>`).join('')}</details>`);
   }
-  if (beat.game) scenes.play.mountPanel(extra);
   if (beat.explore) scenes.explore.mountPanel(extra);
   if (beat.takeaways) {
     extra.innerHTML = `<ul class="takeaways">${beat.takeaways.map(entry => `<li>${ICONS[entry.icon]}<div><strong>${escapeHTML(entry.heading)}</strong><span>${escapeHTML(entry.text)}</span></div></li>`).join('')}</ul>
-      <div class="end-actions"><button class="pill-button" type="button" data-end="play">${escapeHTML(t('lesson.ui.playAgain'))}</button>
-      <button class="pill-button" type="button" data-end="restart">${escapeHTML(t('lesson.ui.restart'))}</button>
+      <div class="end-actions"><button class="pill-button" type="button" data-end="restart">${escapeHTML(t('lesson.ui.restart'))}</button>
       <button class="pill-button" type="button" data-end="explore">${escapeHTML(t('lesson.ui.explore'))}</button></div>`;
   }
   if (animate && !prefersReducedMotion()) {
@@ -284,7 +277,7 @@ async function go(target, { animate = true, focus = 'none', history = 'replace' 
     await switchRoot(rootId, { zoomFrom: zoom });
     if (run.cancelled) return;
     if (rootId === 'skills' && item.beat.id === 'fork' && animate) scene.show('fork', { animate: true, token: run });
-    if (rootId === 'play' || rootId === 'explore') scene.show();
+    if (rootId === 'explore') scene.show();
   } else if (leavingCover) {
     // Full width while the paths grow; the narration arrives once they have.
     setCover('leaving');
@@ -345,9 +338,6 @@ $('#beat-extra').addEventListener('click', event => {
   const end = event.target.closest('[data-end]');
   if (end?.dataset.end === 'restart') { choices.clear(); sorted.clear(); go(0, { animate: false, focus: 'heading', history: 'push' }); }
   if (end?.dataset.end === 'explore') go(beats.findIndex(entry => entry.beat.explore), { animate: false, focus: 'heading', history: 'push' });
-  if (end?.dataset.end === 'play') {
-    go(beats.findIndex(entry => entry.beat.game), { animate: false, focus: 'none', history: 'push' }).then(() => scenes.play.restart());
-  }
 });
 
 document.addEventListener('keydown', event => {

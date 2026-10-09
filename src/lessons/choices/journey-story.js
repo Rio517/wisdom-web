@@ -1,5 +1,5 @@
 // The lesson's structure. Every word lives in the message catalogs
-// (lesson.*, game.*, explore.*); chaptersFor(t) joins the two. The live page
+// (lesson.*, reading.*, explore.*); chaptersFor(t) joins the two. The live page
 // and the static reading (build-time and no-JavaScript) render from the same
 // records. Editable English draft: docs/content/choices-journey.md.
 import { t as runtimeT } from '../../i18n/runtime.js';
@@ -30,7 +30,6 @@ const STRUCTURE = [
     { id: 'builds', body: 2, scrub: true, closer: 2, closerPicture: true },
     { id: 'never-late', body: 2 },
   ] },
-  { id: 'play', beats: [{ id: 'game', body: 2, game: true }] },
   { id: 'explore', beats: [{ id: 'explore', body: 1, explore: true }] },
   { id: 'wrap', short: true, beats: [{ id: 'takeaways', body: 1, takeaways: ['add', 'build', 'weather'] }] },
 ];
@@ -71,7 +70,6 @@ export function chaptersFor(t = runtimeT) {
         if (beat.closerPicture) record.closer.alt = t(`${key}.closer.alt`);
       }
       if (beat.scrub) record.scrub = true;
-      if (beat.game) record.game = true;
       if (beat.explore) record.explore = true;
       if (beat.takeaways) {
         record.takeaways = beat.takeaways.map(icon => ({
@@ -92,8 +90,8 @@ export function learnedFor(t = runtimeT) {
 }
 export const LEARNED = learnedFor();
 
-/** Fragments of beats that were merged away, so old links land on the beat that holds their words. */
-export const FRAGMENT_ALIASES = { 'skills-slow': 'skills-fork', 'skills-transfer': 'skills-builds' };
+/** Fragments of beats that were merged or removed, so old links land on the beat that holds their words or comes next. */
+export const FRAGMENT_ALIASES = { 'skills-slow': 'skills-fork', 'skills-transfer': 'skills-builds', 'play-game': 'explore-explore' };
 
 export function beatList(chapters = CHAPTERS) {
   return chapters.flatMap((chapter, chapterIndex) => chapter.beats.map((beat, beatIndex) => ({
@@ -104,7 +102,7 @@ export function beatList(chapters = CHAPTERS) {
 const escapeHTML = value => String(value)
   .replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;');
 
-function readingBeat(beat, { t, learned, gameDays }) {
+function readingBeat(beat, { t, learned }) {
   const parts = [`<section class="reading-beat" id="read-${beat.id}">`, `<h3>${escapeHTML(beat.heading)}</h3>`];
   for (const paragraph of beat.body) parts.push(`<p>${escapeHTML(paragraph)}</p>`);
   if (beat.alt) parts.push(`<p class="reading-visual"><span>${escapeHTML(t('reading.picture'))}</span> ${escapeHTML(beat.alt)}</p>`);
@@ -126,13 +124,6 @@ function readingBeat(beat, { t, learned, gameDays }) {
   if (beat.closer) {
     const picture = beat.closer.alt ? `<p class="reading-visual"><span>${escapeHTML(t('reading.picture'))}</span> ${escapeHTML(beat.closer.alt)}</p>` : '';
     parts.push(`<aside class="reading-closer"><h4>${escapeHTML(beat.closer.heading)}</h4>${beat.closer.body.map(p => `<p>${escapeHTML(p)}</p>`).join('')}${picture}</aside>`);
-  }
-  if (beat.game && gameDays) {
-    parts.push(`<p>${escapeHTML(t('reading.gameIntro'))}</p><ol class="reading-days">`);
-    for (const day of gameDays) {
-      parts.push(`<li><strong>${escapeHTML(day.label)}.</strong> ${escapeHTML(day.situation)} <span>${escapeHTML(t('reading.dayChoices', { choices: day.options.map(option => option.label).join(' · ') }))}</span></li>`);
-    }
-    parts.push(`</ol><p>${escapeHTML(t('reading.gameOutro'))}</p>`);
   }
   if (beat.explore) {
     parts.push(`<p>${escapeHTML(t('reading.exploreIntro'))}</p><ul class="reading-examples">`);
@@ -161,11 +152,11 @@ function readingBeat(beat, { t, learned, gameDays }) {
 }
 
 /** The whole lesson as semantic HTML in the language of `t`. */
-export function renderJourneyReading({ t = runtimeT, gameDays = null } = {}) {
+export function renderJourneyReading({ t = runtimeT } = {}) {
   const learned = learnedFor(t);
   const chapters = chaptersFor(t).map(chapter => `<section class="reading-chapter" aria-labelledby="read-chapter-${chapter.id}">
 <h2 id="read-chapter-${chapter.id}">${escapeHTML(chapter.title)}</h2>
-${chapter.beats.map(beat => readingBeat(beat, { t, learned, gameDays })).join('\n')}
+${chapter.beats.map(beat => readingBeat(beat, { t, learned })).join('\n')}
 </section>`);
   return `<article class="journey-reading" aria-labelledby="journey-reading-title">
 <h1 id="journey-reading-title">${escapeHTML(t('reading.title'))}</h1>

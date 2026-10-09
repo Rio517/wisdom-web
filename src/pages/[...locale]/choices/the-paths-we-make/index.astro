@@ -3,7 +3,6 @@ import '../../../../lessons/choices/journey.css';
 import BaseLayout from '../../../../layouts/BaseLayout.astro';
 import SiteNav from '../../../../components/SiteNav.astro';
 import { renderJourneyReading } from '../../../../lessons/choices/journey-story.js';
-import { daysWithLabels } from '../../../../lessons/choices/journey-game.js';
 import { UI, href } from '../../../../data/site.js';
 import { getTranslator } from '../../../../i18n/index.js';
 import { localeStaticPaths } from '../../../../i18n/config.js';
@@ -11,7 +10,7 @@ import { localeStaticPaths } from '../../../../i18n/config.js';
 export const getStaticPaths = localeStaticPaths;
 const { locale } = Astro.props;
 const t = getTranslator(locale);
-const reading = renderJourneyReading({ t, gameDays: daysWithLabels(t) });
+const reading = renderJourneyReading({ t });
 ---
 <BaseLayout title={t('lesson.ui.title')} description={t('lessonPage.description')} locale={locale} clientMessages>
   <a class="skip-link" href="#narration">{t('lesson.ui.skipToStory')}</a>
@@ -44,7 +43,6 @@ const reading = renderJourneyReading({ t, gameDays: daysWithLabels(t) });
       </div>
       <div class="scene scene-hike" id="scene-hike" data-scene="hike" hidden></div>
       <div class="scene scene-skills" id="scene-skills" data-scene="skills" hidden></div>
-      <div class="scene scene-play" id="scene-play" data-scene="play" hidden></div>
       <div class="scene scene-explore" id="scene-explore" data-scene="explore" hidden></div>
       <p class="sr-only" id="stage-description" aria-live="polite"></p>
     </section>
