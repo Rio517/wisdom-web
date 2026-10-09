@@ -10,33 +10,28 @@ const SUN = '#e0a93b';
 const WOOD = '#8a5a33';
 
 
-// Flat soccer ball: white disc, a dark centre pentagon, five partial dark
-// patches cut by the rim, thin seams between. Built from one geometry so every
-// size reads as the same ball. `detail` adds the hexagon seams (large sizes only).
+// Flat soccer ball, as in the picked concept: a white body with one thin ink outline, a solid ink centre
+// pentagon and five ink patches cut by the rim (a corner pointing at the centre), white gaps between and no
+// seam lines. A thin stroke in the same ink softens the corners. One geometry, so every size is the same ball.
+// `detail: false` keeps only the outline and a larger centre pentagon, for a ball too small for patches.
+// At today's sizes (10–36 px across) the patches still read, so no drawing uses it.
 let ballId = 0;
 const pt = (cx, cy, r, deg) => [cx + r * Math.cos(deg * Math.PI / 180), cy + r * Math.sin(deg * Math.PI / 180)];
-const poly = points => `M${points.map(([x, y]) => `${x.toFixed(2)} ${y.toFixed(2)}`).join('L')}z`;
-export function soccerBall(cx, cy, r, { ink = INK, detail = r >= 8 } = {}) {
+const poly = points => `M${points.map(([x, y]) => `${+x.toFixed(2)} ${+y.toFixed(2)}`).join('L')}z`;
+export function soccerBall(cx, cy, r, { ink = INK, detail = true } = {}) {
+  const n = v => +v.toFixed(2);
+  const line = 0.9 + r * 0.03; // about a pixel wide at every drawn size
+  const hub = poly(Array.from({ length: 5 }, (_, i) => pt(cx, cy, r * (detail ? 0.34 : 0.42), -90 + 72 * i)));
+  const shape = `fill="${ink}" stroke="${ink}" stroke-width="${n(r * 0.06)}" stroke-linejoin="round"`;
+  const body = `<circle cx="${cx}" cy="${cy}" r="${n(r - line / 2)}" fill="white" stroke="${ink}" stroke-width="${n(line)}"/>`;
+  if (!detail) return `${body}<path d="${hub}" ${shape}/>`;
+  const patches = Array.from({ length: 5 }, (_, i) => {
+    const angle = -90 + 72 * i; const [px, py] = pt(cx, cy, r * 1.15, angle);
+    return poly(Array.from({ length: 5 }, (_, k) => pt(px, py, r * 0.45, angle + 180 + 72 * k)));
+  }).join('');
   const id = `ball-clip-${++ballId}`;
-  const rim = Math.max(1.4, r * 0.11);
-  const seam = Math.max(0.9, r * 0.075);
-  const hub = Array.from({ length: 5 }, (_, i) => pt(cx, cy, r * 0.3, -90 + 72 * i));
-  const patches = []; const joins = []; const seams = [];
-  for (let i = 0; i < 5; i++) {
-    const angle = -90 + 72 * i;
-    const centre = pt(cx, cy, r * 1.08, angle);
-    const patch = Array.from({ length: 5 }, (_, k) => pt(centre[0], centre[1], r * 0.4, angle + 180 + 72 * k));
-    patches.push(patch);
-    seams.push(`M${hub[i][0].toFixed(2)} ${hub[i][1].toFixed(2)}L${patch[0][0].toFixed(2)} ${patch[0][1].toFixed(2)}`);
-    joins.push([patch[1], patch[4]]);
-  }
-  if (detail) for (let i = 0; i < 5; i++) seams.push(`M${joins[i][0][0].toFixed(2)} ${joins[i][0][1].toFixed(2)}L${joins[(i + 1) % 5][1][0].toFixed(2)} ${joins[(i + 1) % 5][1][1].toFixed(2)}`);
-  return `<defs><clipPath id="${id}"><circle cx="${cx}" cy="${cy}" r="${r}"/></clipPath></defs>
-    <circle cx="${cx}" cy="${cy}" r="${r}" fill="white"/>
-    <g clip-path="url(#${id})"><path d="${patches.map(poly).join('')}" fill="${ink}"/>
-    <path d="${seams.join('')}" stroke="${ink}" stroke-width="${seam.toFixed(2)}" fill="none"/></g>
-    <path d="${poly(hub)}" fill="${ink}" stroke="${ink}" stroke-width="${seam.toFixed(2)}" stroke-linejoin="round"/>
-    <circle cx="${cx}" cy="${cy}" r="${(r - rim / 2).toFixed(2)}" fill="none" stroke="${ink}" stroke-width="${rim.toFixed(2)}"/>`;
+  return `<clipPath id="${id}"><circle cx="${cx}" cy="${cy}" r="${n(r - line / 2)}"/></clipPath>
+    ${body}<path d="${patches}${hub}" ${shape} clip-path="url(#${id})"/>`;
 }
 
 export const ICONS = {
@@ -65,20 +60,36 @@ export const ICONS = {
   restSmall: svg(`<path d="M4 17h16M6 17c0-4 2.5-7 6-7s6 3 6 7" stroke="${FOREST}" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M12 5v2M5.5 8l1.3 1.3M18.5 8l-1.3 1.3" stroke="${SUN}" stroke-width="2" stroke-linecap="round"/>`, '0 0 24 24'),
   backpack: svg(`<rect x="5" y="7" width="14" height="15" rx="4" fill="${FOREST}"/><path d="M9 7V5a3 3 0 0 1 6 0v2" stroke="${FOREST}" stroke-width="2" fill="none"/><rect x="8" y="13" width="8" height="5" rx="1.5" fill="${SAGE}"/>`, '0 0 24 24'),
   leaf: svg(`<path d="M5 19C5 10 11 4 20 4c0 9-6 15-15 15z" fill="${FOREST}"/><path d="M5 19l9-9" stroke="white" stroke-width="1.5" stroke-linecap="round"/>`, '0 0 24 24'),
-  soccerSmall: svg(soccerBall(12, 12, 10.5, { detail: false }), '0 0 24 24'),
+  soccerSmall: svg(soccerBall(12, 12, 10.5), '0 0 24 24'),
   celloSmall: svg(`<path d="M12 2v6" stroke="${WOOD}" stroke-width="2" stroke-linecap="round"/><path d="M12 7.5c-2.6 0-4 1.6-3.6 3.6.3 1.1-1.3 1.6-1.3 4C7.1 19 9.4 22 12 22s4.9-3 4.9-6.9c0-2.4-1.6-2.9-1.3-4 .4-2-1-3.6-3.6-3.6z" fill="${WOOD}"/>`, '0 0 24 24'),
   add: svg(`<circle cx="22" cy="22" r="21" fill="#28544214"/><rect x="11" y="26" width="6" height="8" rx="1.5" fill="${SAGE}"/><rect x="19" y="19" width="6" height="15" rx="1.5" fill="${SAGE}"/><rect x="27" y="11" width="6" height="23" rx="1.5" fill="${FOREST}"/>`, '0 0 44 44'),
   build: svg(`<circle cx="22" cy="22" r="21" fill="#28544214"/><rect x="10" y="27" width="24" height="7" rx="2" fill="${FOREST}"/><rect x="14" y="19" width="16" height="7" rx="2" fill="${SAGE}"/><rect x="18" y="11" width="8" height="7" rx="2" fill="${SUN}"/>`, '0 0 44 44'),
   weather: svg(`<circle cx="22" cy="22" r="21" fill="#28544214"/><circle cx="16" cy="17" r="6" fill="${SUN}"/><path d="M14 30a6 6 0 0 1 1.5-11.8A8 8 0 0 1 31 20a5 5 0 0 1 0 10z" fill="${LAKE}"/><path d="M13 33c4 3 12 3 18-1" stroke="${FOREST}" stroke-width="2.5" fill="none" stroke-linecap="round"/>`, '0 0 44 44'),
 };
 
+// Maya, kicking her soccer ball: a big round head (about 38.5% of her height), two ink dots for eyes, one
+// hair shape with a fringe and a swinging ponytail, a T-shirt in the lane's colour, round-capped limbs and
+// two rounded shoes. Flat fills only. Same shapes in every lane; only `shirt` changes. `variant` is kept for
+// callers and draws the same girl. Without the ball the viewBox drops the ball's side.
+const SKIN = '#ab7648';
+const capsule = ([x1, y1], [x2, y2], r) => {
+  const len = Math.hypot(x2 - x1, y2 - y1); const nx = (y1 - y2) / len * r; const ny = (x2 - x1) / len * r;
+  const f = v => v.toFixed(1);
+  return `M${f(x1 + nx)} ${f(y1 + ny)}L${f(x2 + nx)} ${f(y2 + ny)}A${r} ${r} 0 0 0 ${f(x2 - nx)} ${f(y2 - ny)}L${f(x1 - nx)} ${f(y1 - ny)}A${r} ${r} 0 0 0 ${f(x1 + nx)} ${f(y1 + ny)}z`;
+};
+const dot = (cx, cy, r) => `M${+(cx - r).toFixed(2)} ${cy}a${r} ${r} 0 1 0 ${2 * r} 0a${r} ${r} 0 1 0 -${2 * r} 0z`;
+const MAYA = {
+  limbs: 'M26.6 22.5V25M15.4 26.9C11.2 27.5 7 29.8 5.6 34.3M31.4 30.6C35 33.4 39.6 35.8 43.6 32.2M18 40.5Q16.8 47.2 9.8 48M25.9 40.5Q32 47 34.2 56',
+  shirt: 'M15.2 24.1Q17 23.2 21 22.9H24L26.3 25.8 28.5 23.4Q29.6 23.6 30.4 24.6L33.8 28.6 33.6 31.2 30.2 32.6 29.9 39.9Q29.8 41.6 28 42Q22.3 42.9 16.8 41.9Q14.6 41.4 14.5 39.5L16.6 31.2 14.6 28.6 14.2 25.6Q14.3 24.5 15.2 24.1z',
+  hair: 'M16 14.4Q25.5 13.8 30.4 5.2Q34.5 8.6 38.4 9.3A11.5 11.5 0 0 0 19.3 4.2C18.3 2.2 16.3 .7 13.8 .7C10.2 .7 9.4 3.8 8.2 6.8C7 9.8 4 12 .9 11.8C3 14.6 5.3 17.4 8.4 17.4C11.8 17.4 14.7 12.3 16.1 7.1L17 7.4A11.5 11.5 0 0 0 16 14.4z',
+  ink: dot(28.1, 14.2, 1.35) + dot(34.3, 14.2, 1.35) + capsule([7.15, 47.5], [5.8, 50.1], 2.2) + capsule([34.2, 58.8], [37.8, 57.3], 2.2),
+};
 export function person({ shirt = '#285442', hair = '#3a2a1f', ball = false, variant = 'a' } = {}) {
-  return `<svg viewBox="0 0 56 72" aria-hidden="true" focusable="false">
-    <circle cx="26" cy="16" r="10" fill="#e9c3a0"/>
-    <path d="M16 15c0-7 5-11 10-11s11 3 10 11c-2-3-6-4-10-4s-8 1-10 4z" fill="${hair}"/>
-    ${variant === 'a' ? `<path d="M34 10c4 1 6 5 5 9" stroke="${hair}" stroke-width="4" fill="none" stroke-linecap="round"/>` : `<path d="M34 10c4 1 6 5 5 9" stroke="${hair}" stroke-width="4" fill="none" stroke-linecap="round" opacity=".9"/>`}
-    <path d="M13 50c0-14 5-22 13-22s13 8 13 22z" fill="${shirt}"/>
-    <path d="M20 50v16M32 50v16" stroke="#3b4a44" stroke-width="5" stroke-linecap="round"/>
-    ${ball ? `<g>${soccerBall(43, 61, 10, { detail: false })}</g>` : ''}
+  return `<svg viewBox="0 0 ${ball ? 60 : 47} 64" aria-hidden="true" focusable="false">
+    <path d="M12.7 60.8a12.9 2.5 0 1 0 25.8 0a12.9 2.5 0 1 0-25.8 0${ball ? 'M44 60.8a6 1.4 0 1 0 12 0a6 1.4 0 1 0-12 0' : ''}" fill="#dbe2da"/>
+    <path d="${MAYA.limbs}" stroke="${SKIN}" stroke-width="4" stroke-linecap="round" fill="none"/>
+    <path d="${MAYA.shirt}" fill="${shirt}"/><circle cx="27.35" cy="12.4" r="11.5" fill="${SKIN}"/>
+    <path d="${MAYA.hair}" fill="${hair}"/><path d="${MAYA.ink}" fill="#23302d"/>
+    ${ball ? soccerBall(50.8, 51.3, 7.3) : ''}
   </svg>`;
 }

@@ -8,6 +8,8 @@ The first complete website is [002 — Site shell and home, v01 — Launch](002-
 
 Newest implementation for review: [v09 — Guided journey](001-choices-explainer/v09-guided-journey/README.md) ([013](../product/013-choices-guided-journey.md)). The previous live implementation is [v08 — Alfredo lesson](001-choices-explainer/v08-alfredo-lesson/README.md). The older rounds below remain design history.
 
+Maya, redrawn from the picked concept (A · Garden) for review: [v12 — Maya figure](001-choices-explainer/v12-maya-figure/README.md), with a [size strip](001-choices-explainer/v12-maya-figure/size-strip-v01.png) beside the concept.
+
 All Choices design work belongs to [001 — Choices explainer](001-choices-explainer/README.md). That stable study contains the numbered review rounds, their questions, dates, status and relationship to the product documents.
 
 Accepted storyboard direction is [v07 — Hiking lesson storyboard](001-choices-explainer/v07-hiking-storyboard/README.md): four reader-facing scenes, their visual states and proposed transitions. The owner accepted v04 for prototyping; v05 changes only the character name to Alfredo. This round preserves the current path algorithm and does not implement the lesson. Earlier interactive review is [v06 — Flat Canvas](001-choices-explainer/v06-flat-canvas/README.md). The [v06 artwork](001-choices-explainer/v05-reference-and-modern/dimensional-v06.png) remains a composition reference, not dimensional styling to copy. See [NEXT_STEP.md](../../NEXT_STEP.md) for the current standalone path lab; the captures below predate that tuning surface.

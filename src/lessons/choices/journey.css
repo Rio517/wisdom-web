@@ -384,7 +384,7 @@ h1, h2, h3, h4 { font-family: var(--font-field); font-weight: 500; }
 .lanes[data-split="false"] .lane-b { opacity: 0; transform: translateY(-50%) scale(.98); }
 .lanes[data-split="false"] .lane-a { transform: translateY(calc(50% + 6px)); }
 .lane-who { @apply grid justify-items-center text-center; }
-.lane-who svg { width: 64px; height: 82px; }
+.lane-who svg { width: 77px; height: 82px; }
 .lane-who strong { @apply mt-1 block text-[17px]; font-family: var(--font-field); }
 .lane-a .lane-who strong { color: var(--color-forest); }
 .lane-b .lane-who strong { color: #3f7086; }
@@ -484,7 +484,7 @@ dialog::backdrop { background: #23302d66; }
 @media (max-width: 1280px) {
   .lane { grid-template-columns: 84px minmax(0, 1fr) minmax(190px, 204px); gap: 12px; padding: 10px 14px; }
   .lane-who span { overflow-wrap: normal; hyphens: auto; }
-  .lane-who svg { width: 40px; height: 52px; }
+  .lane-who svg { width: 49px; height: 52px; }
   .lane-who strong { font-size: 15px; }
   .lane-who span { font-size: 15px; }
   .growth { padding: 2px 6px; }
@@ -532,7 +532,7 @@ dialog::backdrop { background: #23302d66; }
   .scene-skills { padding: 12px 20px 8px; }
   .season-bar { margin-bottom: 8px; min-height: 46px; }
   .lane { padding-block: 6px; }
-  .lane-who svg { height: 44px; width: 34px; }
+  .lane-who svg { height: 44px; width: 41px; }
   .calendar-title { margin-bottom: 4px; }
   .calendar-rows { row-gap: 4px; }
   .skill-box { padding: 6px 12px; }
