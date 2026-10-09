@@ -21,6 +21,6 @@ export async function boot(direction) {
   element.id = 'i18n-messages';
   element.textContent = JSON.stringify(messages);
   document.head.append(element);
-  const { start } = await import(`./direction-${direction}.js`);
+  const { start } = direction === 'index' ? await import('./index-page.js') : await import(`./direction-${direction}.js`);
   start(document.getElementById('app'));
 }
