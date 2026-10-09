@@ -414,6 +414,14 @@ h1, h2, h3, h4 { font-family: var(--font-field); font-weight: 500; }
 .skill-row .skill-name { @apply text-[15px] leading-tight; hyphens: auto; overflow-wrap: normal; } /* long compounds (German) break only at syllables, with a hyphen; the column is wide enough for the longest */
 .skill-meta { grid-column: 2; @apply mt-1 flex flex-wrap items-baseline justify-start gap-x-2 gap-y-0.5 text-[15px] leading-none; }
 .skill-word { color: var(--color-quiet); white-space: nowrap; }
+/* A box with a head start carried across from soccer stacks each skill over a full-width bar, as tablets
+   do for every box: the striped part needs the width, and "Getting there · head start" stays on one line.
+   :where() keeps the base specificity, so the short-screen rules below still tighten it. */
+@media (min-width: 1281px) {
+  :where(.skill-box[data-group="basketball"]) .skill-row { grid-template-columns: minmax(0, 1fr); row-gap: 0; padding: 2px 0; }
+  :where(.skill-box[data-group="basketball"]) .skill-meta { grid-column: 1; margin-top: 1px; }
+  :where(.skill-box[data-group="basketball"]) .skill-name { font-weight: 600; }
+}
 .meter { position: relative; height: 14px; border-radius: 99px; background: white; border: 1px solid var(--color-rule); overflow: hidden; }
 .meter i { position: absolute; left: 0; top: 0; bottom: 0; width: calc(var(--level, 0) * 100%); border-radius: 99px; background: var(--bar, var(--color-forest)); transition: width 900ms cubic-bezier(.3,.7,.2,1), left 900ms cubic-bezier(.3,.7,.2,1); }
 .meter i.fill { left: calc(var(--from, 0) * 100%); width: calc((var(--level, 0) - var(--from, 0)) * 100%); }
