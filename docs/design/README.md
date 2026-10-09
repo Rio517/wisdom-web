@@ -8,7 +8,7 @@ The first complete website is [002 — Site shell and home, v01 — Launch](002-
 
 Newest implementation for review: [v09 — Guided journey](001-choices-explainer/v09-guided-journey/README.md) ([013](../product/013-choices-guided-journey.md)). The previous live implementation is [v08 — Alfredo lesson](001-choices-explainer/v08-alfredo-lesson/README.md). The older rounds below remain design history.
 
-Open prototype round: [v11 — Hike water](001-choices-explainer/v11-hike-water/README.md) asks which water the hike keeps: three versions of the hike map's streams and waterfall (flat Canvas 2D, Three.js flat, Three.js with light) on one shared geography. C goes forward, with A as its fallback, and B is retired. Fix round 1 (the falls, a second rock, the lake, a tapering trail, the bridge and the trailhead cabin) is in review.
+Open prototype round: [v11 — Hike water](001-choices-explainer/v11-hike-water/README.md) asks which water the hike keeps: three versions of the hike map's streams and waterfall (flat Canvas 2D, Three.js flat, Three.js with light) on one shared geography. C goes forward, with A as its fallback, and B is retired. Round 3 (a trailhead clearing, the falls lined up with their rock, a three-quarter bridge, the stream starting at the hill's crest, and Alfredo and his dad in the style of Maya's figure) is in review.
 
 All Choices design work belongs to [001 — Choices explainer](001-choices-explainer/README.md). That stable study contains the numbered review rounds, their questions, dates, status and relationship to the product documents.
 

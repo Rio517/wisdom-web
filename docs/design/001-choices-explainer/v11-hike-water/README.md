@@ -1,6 +1,6 @@
 # v11 — Hike water
 
-Created: 2026-10-09. Updated: 2026-10-09 (fix round 1). Status: C goes forward, with A's still drawing as its no-WebGL fallback; B is retired. Fix round 1 is on a branch for the owner's review. Not in the lesson; not published.
+Created: 2026-10-09. Updated: 2026-10-09 (round 3). Status: C goes forward, with A's still drawing as its no-WebGL fallback; B is retired. Round 3 is on a branch for the owner's review. Not in the lesson; not published.
 
 **Question: which water does the hike keep?**
 
@@ -44,11 +44,44 @@ The design lead's calls: go forward with C only, keep A's still drawing in step 
   - A picnic table seen from the side stands to its right, between the cabin and the trail's start, at least 24px from the map's edge.
   - The table has no label: the story's picnic spot is by the falls, and it is not labelled either.
 
+## Round 3
+
+The owner's notes on fix round 1:
+
+- a small round patch of bare ground at the trailhead, drawn for the map's low viewing angle so it doesn't look oddly shaped;
+- the waterfall and the rock behind it did not line up;
+- the bridge needed a second rail, perhaps with some depth;
+- the stream should come up the hill and stop at its top, not climb the mountains;
+- Alfredo and his dad should be drawn in the style of Maya's new figure.
+
+What changed (C, and A as its fallback):
+
+- **The trailhead clearing.** A flat patch of bare ground lies under the cabin, the picnic table and the trail's start. It is an ellipse about 4:1 wide, as seen at a low angle, with a gently uneven edge and no outline. Its colour, #e8d8c3, is halfway between the trail's sand (#dfcfae) and `clay-soft` (#f1e2d8), so it is lighter than the trail. The cabin moved down onto it.
+- **The falls.**
+  - The rock's notch, the sheet and the darker channel behind the sheet are now built from the same numbers (`FALL` in `geometry.js`).
+  - The sheet's top sits on the notch floor, centred in it, and the channel shows an equal margin on each side all the way down.
+  - The second rock is its own shape, standing partly behind the fall rock on the right with a clear overlap.
+  - The rocks and the water share one mapping, so they stay aligned at every size and after a resize.
+- **The bridge.** It is drawn in three-quarter view, still flat and in SVG:
+  - a plank deck running in the trail's direction, with a darker front edge;
+  - a near rail and a far rail, the far one a little higher on screen and shorter;
+  - three posts per rail, standing on the deck's edges.
+
+  The trail meets the deck at both ends.
+- **The stream's source.** The main stream now starts at the crest of the green hill and appears from behind it; nothing of it shows on the mountains. It keeps its taper, narrow at the crest and wider below. In C the shader hides the water above the crest; in A the same hill shape clips it. Three trees on the hill that had been cleared for the stream's old course are back.
+- **Alfredo and his dad.** Both are drawn in the style of Maya's figure:
+  - a big round head, two ink dot eyes and one hair shape;
+  - a T-shirt torso, round-capped limbs in skin colour and dark rounded shoes;
+  - a flat shadow on the ground.
+
+  They keep their clothes and colours, and the dad keeps his beard and backpack. Alfredo's head is about 39% of his height. His dad is about 1.45 times as tall, with a head about 28% of his height. At 1440x900 they are about 41 and 60 px tall. While they walk, their legs and arms swing and the pair bobs slightly; with reduced motion they stand still.
+- **The Halfway flag.** It stands about 30 units further up the trail, on the far edge, so the pair no longer hides it. Its label stays where it was.
+
 ## One geography for every version
 
 The water's shapes live in one module (`geometry.js`), so A, B and C differ only in how the water looks.
 
-- **Main stream.** It rises behind the far ridge and shows where it crosses the ridge line at a saddle. It narrows with distance, winds down through the notch in the second ridge, passes under the bridge where the trail crosses, and leaves at the bottom edge.
+- **Main stream.** It appears from behind the crest of the green hill below the mountains. It narrows with distance, winds down through the notch in the second ridge, passes under the bridge where the trail crosses, and leaves at the bottom edge.
 - **Waterfall.** The fall pours from a notch at the top of its tall rock on the right, as in the before picture, into a small pool at its foot. A smaller second rock stands behind it to the right.
 - **Side stream.** It is narrower than the main stream and runs from the pool leftwards in slow meanders. It joins the main stream below the bridge in a clean Y.
 - **Width and motion follow depth.** Width and the flow pattern both follow depth: the water is narrow and slow far away and wider and faster close up, and both streams share the same scale.
@@ -57,6 +90,7 @@ The water's shapes live in one module (`geometry.js`), so A, B and C differ only
   - The Waterfall Trail used to run up the stream's west bank to v10's waterfall in the middle of the map. It now leaves the bridge eastwards, above the side stream, to a lookout beside the falls.
   - The picnic spot moved to that lookout.
   - In fix round 1, Mirror Lake moved down into the land, and the trail's last stretch now ends at the lake's near shore. The trailhead became a cabin with a picnic table, and its label moved to sit over the cabin.
+  - In round 3, the stream's source moved down from the far ridges to the green hill's crest, the cabin moved down onto the clearing, and the Halfway flag moved up the trail.
   - Trees keep clear of all the water.
 
 ## The three versions
@@ -97,6 +131,27 @@ Open <http://127.0.0.1:4632/prototype/hike-water/>, which links to [A](http://12
 ## The numbers
 
 Measured on 2026-10-09 in headless Chrome (ANGLE on Metal, Apple M4), at 1440x900 with the CPU throttled 4x and 12 to 15 s of steady animation per run. The dev server was serving unbundled modules.
+
+### After round 3 (C)
+
+Fix round 1's code was measured alongside, on the same machine, for comparison.
+
+| | C, round 3 | C, fix round 1 |
+| --- | --- | --- |
+| Longest main-thread task, from a Chrome trace, in 8 s of steady animation | 3.3–9.1 ms | 3.7–5.7 ms |
+| Longest main-thread task during the walk to Halfway | 5.7–11.1 ms | 6.5–8.8 ms |
+| Tasks over 16.7 ms | none | none |
+| Water work per frame (JS), median / 95th percentile / worst | 0.1 / 0.6–0.8 / 1.0–4.1 ms | not measured |
+| Long animation frames (over 50 ms) while animating | none | none |
+| Load, at 4x | one 199–231 ms frame building the scene, then 55–77 ms setting up WebGL (38–57 ms to create the layer, 10.5–12.5 ms waiting for shaders, 22–37 ms for the first frame) | 197–254 ms, then 51–85 ms |
+| Renderer | 5 draw calls, 3 programs, 5 geometries, 2,766 triangles, 0 textures | the same, with 3,222 triangles |
+| JS heap over 60 s, after garbage collection | 9,285 → 9,302 KB and 9,277 → 8,787 KB in two runs; the renderer's counts never changed | not measured |
+| The walk from the start to Halfway | 3.2 s | not measured |
+
+How to read these:
+
+- **Frame intervals are left out.** Other heavy work was running on the machine (load average 10 to 17), and headless Chrome's frame intervals were irregular for both versions alike: a median of about 12.6 ms and a worst of about 27 ms. They say nothing about this page here, so the trace's task lengths stand in for them: no task, steady or walking, came near 16.7 ms.
+- **Fewer triangles.** The stream no longer runs over the far ridges. The clearing, the bridge and the figures are a few more SVG shapes, and the walk's leg swing is CSS.
 
 ### After fix round 1 (C, and A as its fallback)
 
@@ -153,20 +208,29 @@ How to read the frame numbers:
   - pausing for a hidden tab and when the map is off-screen.
 
   The respond, closed and practice steps were checked too, with the tapered Waterfall Trail, the walked lines and the closed stretch.
+- **Round 3.** On C, in Chromium and WebKit:
+  - **Alignment.** The water sits on the map's SVG layers to within 0.001 px at 744x1133, 1024x768, 1133x744, 1440x900, 1920x1080 and 2560x1440, on load and after resizing live through them. This holds at pixel ratio 1 and 2, and for A's drawing without WebGL.
+  - **The falls, by pixel.** At four heights on the fall, the channel shows 3.2–3.6 map units on each side of the sheet (3.5 drawn; the spread is within one device pixel). The sheet's top is at 390.2–392.6, against the notch floor at 391.
+  - **The source, by pixel.** The stream's first water pixel is at a height of 421.4–422.8 map units, where the crest is at 422.2. No water shows above the crest at any size.
+  - **Motion.** On the walk to Halfway (3.2 s), the legs and arms swing and the pair moves along the trail. With reduced motion the map is one still frame, unchanged over 1.5 s, and the legs don't swing.
+  - **Every step.** Plan, turn back, practice, retry, closed and respond all draw without errors.
+  - **Console.** No errors or warnings, with or without WebGL.
+  - **Tests and build.** `npm test` and `npm run build` pass.
 
 ## Known issues and limits
 
 - **The Three.js cost.** C costs 132.1 KB gzipped, almost all of it Three.js; its renderer barely tree-shakes. The same shaders on raw WebGL would be a few KB (an estimate, not built). The plan is to port C's shaders to plain WebGL at integration, so they use no Three.js chunks.
 - **A first frame for B and C.** On some loads B and C have one extra frame of about 50 ms at 4x, while WebGL is set up.
-- **The stream's source can be hidden.** At 1024x768 the backpack panel, which is taller at later steps, can cover where the stream comes over the ridge. Halfway is clear.
 - **B and C looked alike.** The owner saw no difference between the versions except in the stream, so B is retired and C goes forward.
 - **A slower load frame.** Building the tapered trail adds about 45 ms at 4x to the one-time load frame. The ribbons could be computed ahead of time if that matters.
 - **The far bank's colour.** The strip of hillside over the lake's far edge uses the second hill band's own colour (#d2ddd3), so it has to change with that band.
 - **This is a study copy.** `scene.js` is a study copy of the lesson's hike scene (`src/lessons/choices/journey-hike.js`), and the lesson is unchanged. Keeping a version means:
   - porting `geometry.js`, the water module and the moved trail into `src/`;
   - adding the colour tokens;
-  - moving the prototype's English-only strings (`copy.json`) into all four catalogs.
-- **No fresh-context design review.** The design reviewer has not looked at this round yet.
+  - moving the prototype's English-only strings (`copy.json`) into all four catalogs;
+  - moving Alfredo's and his dad's figures next to Maya's figure code, so all the lesson's people come from one place.
+- **The pair by the cabin.** At the first step and the turn-back step, the pair stands on the trail's start and slightly overlaps the cabin's right corner.
+- **No fresh-context design review.** The design reviewer has not looked at round 3 yet.
 
 ## Images
 
@@ -200,6 +264,18 @@ At 1440x900 and 744x1133, Halfway step:
 - [C without WebGL](hike-water-c-nowebgl-1440-v02.png): A's still drawing, in step with C.
 - **v03.** The picnic table moved to the right of the cabin, away from the map's edge: [C at 1440](hike-water-c-1440-v03.png), [C at 744](hike-water-c-744-v03.png), [the cabin and table](hike-water-c-cabin-v03.png).
 
+### Round 3 (v04, C only)
+
+- Full page, Halfway step: [C at 1440](hike-water-c-1440-v04.png), [C at 1920](hike-water-c-1920-v04.png), [C at 744](hike-water-c-744-v04.png).
+- Close-ups at pixel ratio 2, framed like the v02 and v03 ones:
+  - [the falls](hike-water-c-falls-v04.png): the notch, the sheet on its floor, the channel's equal margins and the second rock;
+  - [the bridge](hike-water-c-bridge-v04.png): the three-quarter deck and both rails;
+  - [the trailhead clearing](hike-water-c-cabin-v04.png), with the cabin and the table;
+  - [the stream's source](hike-water-c-source-v04.png) at the hill's crest.
+- [The pair at Halfway](hike-water-c-walkers-v04.png), at pixel ratio 3.
+- [The walk](hike-water-c-motion-v04.png): four frames of the pair walking to Halfway, taken in quick succession, at pixel ratio 3.
+- [C without WebGL](hike-water-c-nowebgl-1440-v04.png): A's still drawing, in step with C.
+
 ## Source files
 
 All files are in `prototype/hike-water/`:
@@ -209,12 +285,12 @@ All files are in `prototype/hike-water/`:
 | `index.html`, `a.html`, `b.html`, `c.html`, `boot.js`, `copy.json` | the pages and their words |
 | `index-page.js` | the version list |
 | `page.js` | the lesson-like layout and the water set-up and fallback |
-| `scene.js` | the study copy of the hike scene: the rocks, the lake's shore and far bank, the tapered trail, the bridge, the cabin and the table |
-| `geometry.js` | the shared water shapes |
+| `scene.js` | the study copy of the hike scene: the rocks and the falls' notch and channel, the lake's shore and far bank, the tapered trail, the bridge, the trailhead clearing, the cabin and the table, and the figures of Alfredo and his dad |
+| `geometry.js` | the shared water shapes, the green hill and its crest, and the falls' measurements |
 | `water-colors.js` | the token mixes |
 | `water-flat.js` | version A and the fallback |
 | `water-three.js` | versions B and C |
 | `water-layer.js` | sizing, the frame loop, pausing, reduced motion and stats |
-| `hike-water.css` | the page's styles and the props' colours (trail, bridge, cabin, table, lake shore) |
+| `hike-water.css` | the page's styles, the props' colours (trail, clearing, bridge, cabin, table, lake shore) and the figures' walking motion |
 
 `three` 0.186.1 is an exact devDependency.
