@@ -1,7 +1,7 @@
 // The round's front page: what each direction is, in a line or two.
 import { t, esc } from './ui.js';
 
-const LETTERS = ['a', 'b', 'c'];
+const LETTERS = ['a', 'b', 'c', 'd'];
 
 export function start(app) {
   const de = new URLSearchParams(location.search).get('lang') === 'de';

@@ -37,7 +37,7 @@ export function nextChanceLine(index, moment, cardIndex, routine = null) {
 }
 
 // ——— Frame ———
-const LETTERS = ['a', 'b', 'c'];
+const LETTERS = ['a', 'b', 'c', 'd'];
 export function mountFrame(app, direction, { onRestart } = {}) {
   const params = new URLSearchParams(location.search);
   const de = params.get('lang') === 'de';
