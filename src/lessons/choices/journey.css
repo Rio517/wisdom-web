@@ -559,7 +559,7 @@ dialog::backdrop { background: #23302d66; }
   .stage { margin: 0 16px; height: 56vh; min-height: 470px; }
   .journey[data-cover] .stage { margin: 0 16px 16px; height: calc(100dvh - 128px); min-height: 520px; }
   .journey[data-cover="true"] .cover-stage { width: calc(100% - 48px); }
-  .stage:has(> .scene-skills:not([hidden])) { height: max(56vh, 680px); } /* two lanes of skill boxes need the room */
+  .stage:has(> .scene-skills:not([hidden])) { height: max(56vh, 720px); } /* two lanes of skill boxes need the room (the Spanish basketball box is the tallest) */
   .narration { padding: 8px 24px 28px; }
   .narration-body { overflow: visible; }
   .chapter-stop .stop-label { font-size: 15px; }
