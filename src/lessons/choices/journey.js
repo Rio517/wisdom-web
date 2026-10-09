@@ -348,14 +348,25 @@ document.addEventListener('keydown', event => {
   if (event.key === 'ArrowLeft' && index > 0) { event.preventDefault(); go(index - 1, { animate: false, focus: index - 1 === 0 ? 'heading' : 'none' }); }
 });
 
+// An opened closer scrolls fully into view in the narration (a closed one stays pinned at its foot).
 // A closer with its own picture changes the stage while it is open.
 $('#beat-extra').addEventListener('toggle', event => {
   const item = beats[index];
-  if (!event.target.matches('details.closer') || !item.beat.closer?.alt) return;
+  if (!event.target.matches('details.closer')) return;
+  if (event.target.open) revealInNarration(event.target);
+  if (!item.beat.closer?.alt) return;
   const { open } = event.target;
   scenes[rootFor(item.chapter.id)].closer?.(open, { animate: true });
   $('#stage-description').textContent = open ? item.beat.closer.alt : item.beat.alt;
 }, true);
+
+function revealInNarration(element) {
+  const body = element.closest('.narration-body');
+  if (!body) return;
+  const port = body.getBoundingClientRect(), box = element.getBoundingClientRect();
+  const below = box.bottom + 12 - port.bottom;
+  if (below > 0) body.scrollBy({ top: Math.min(below, box.top - port.top), behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
+}
 
 window.addEventListener('popstate', () => {
   const target = beatForHash(location.hash);

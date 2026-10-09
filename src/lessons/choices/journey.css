@@ -120,6 +120,16 @@ h1, h2, h3, h4 { font-family: var(--font-field); font-weight: 500; }
 .closer summary::before { content: "+"; @apply grid place-items-center rounded-full text-[16px]; width: 22px; height: 22px; background: #28544214; }
 .closer[open] summary::before { content: "–"; }
 .closer p { @apply mx-4 mb-3 mt-0; font: 16px/1.5 var(--font-field); }
+/* When the beat's text runs past the fold, a closed closer stays pinned to the foot of the narration,
+   so it is never cut off; the text scrolls under it and fades into its edge. Opening it scrolls it
+   into view (journey.js). The page scrolls below 901px, where nothing clips it. */
+@media (min-width: 901px) {
+  .beat-extra:has(> .closer:only-child:not([open])) { position: sticky; bottom: 0; z-index: 1; background: var(--color-paper); }
+  .beat-extra:has(> .closer:only-child:not([open]))::before,
+  .beat-extra:has(> .closer:only-child:not([open]))::after { content: ""; position: absolute; left: 0; right: 0; pointer-events: none; }
+  .beat-extra:has(> .closer:only-child:not([open]))::before { bottom: 100%; height: 16px; background: linear-gradient(transparent, var(--color-paper)); }
+  .beat-extra:has(> .closer:only-child:not([open]))::after { top: 100%; height: 12px; background: var(--color-paper); }
+}
 
 .sort-summary { @apply mt-4 rounded-2xl px-4 py-3 text-[16px]; background: #28544214; animation: text-in 380ms ease-out both; }
 
