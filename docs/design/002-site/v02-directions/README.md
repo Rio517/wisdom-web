@@ -23,6 +23,12 @@ The circles in the opening animation are fixed. The cover's pulsing ring could g
 
 Before and after, settled. Home hero: [before, 1440](field-home-before-1440-v01.png) · [after, 1440](field-home-after-1440-v01.png) · [before, 2560](field-home-before-2560-v01.png) · [after, 2560](field-home-after-2560-v01.png). Lesson cover after Begin: [before, 1440](field-cover-before-1440-v01.png) · [after, 1440](field-cover-after-1440-v01.png) · [before, 2560](field-cover-before-2560-v01.png) · [after, 2560](field-cover-after-2560-v01.png).
 
+### Doors that open
+
+The lead passed on the owner's ask that outside forces aren't only negative. On the lesson map's "not everything is yours to choose" step, each way that closes now has a door that opens beside it. Three closings (clay ×, dashed route) alternate with three openings: a small ring with a plus, the new way lit in a deeper version of the futures' green from that point on through later forks, and a light-green label ("A teacher noticed", "A new club opened", "A friend invited them"; `map.opened.*`). The closings sit in the top half, the openings in the bottom half and a little later in life, where the field is wide enough to tell them apart. Openings swing in a little more slowly than closings snap shut. Reduced motion shows all of them at once; the step's keyboard behaviour is unchanged. When a label can't fit (two of three at 1024 × 768), the map shows fewer marks rather than overlapping labels.
+
+[1440 × 900](map-doors-1440-v01.png) · [1024 × 768](map-doors-1024-v01.png) · [reduced motion, 1440](map-doors-reduced-motion-1440-v01.png)
+
 Sources: `src/engine/path-laminar.js`, `src/engine/lab-settings.js`, `src/engine/lab-renderer.js`, `src/lessons/choices/journey-map.js`; tune in `prototype/path-lab.html`.
 
 ## 2. Three directions for the home page and the lesson cover
