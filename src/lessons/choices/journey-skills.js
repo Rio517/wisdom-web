@@ -117,6 +117,18 @@ export function createSkillsScene(root) {
       badge.dataset.level = String(level);
       badge.innerHTML = level ? `<span class="growth-long">${esc(t('skills.grew'))} </span>${esc(t(`skills.growth${level}`))}` : '';
     });
+    fitCalendars();
+  }
+
+  // Long badges ("a progressé beaucoup") squeeze the week squares. When a square would drop under
+  // 8px, both calendars take the tablet layout: label above the weeks, the badge without "grew".
+  function fitCalendars() {
+    if (!root.offsetWidth) return;
+    const calendars = root.querySelectorAll('.calendar');
+    calendars.forEach(calendar => { calendar.dataset.compact = 'false'; });
+    const weeks = [...root.querySelectorAll('.calendar-row:not([hidden]) .week')];
+    const tight = weeks.some(week => week.offsetWidth < 8);
+    calendars.forEach(calendar => { calendar.dataset.compact = String(tight); });
   }
 
   function setCalendar(key, upTo, { basket = 0, animateSeason = null } = {}) {
@@ -238,6 +250,6 @@ export function createSkillsScene(root) {
     else setSeason(season);
   }
 
-  new ResizeObserver(() => { if (current) setSeasonBar(sport === 'basketball' ? 4 : season); }).observe(root);
+  new ResizeObserver(() => { fitCalendars(); if (current) setSeasonBar(sport === 'basketball' ? 4 : season); }).observe(root);
   return { show, closer, hide() {} };
 }
