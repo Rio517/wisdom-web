@@ -21,7 +21,7 @@
 .l2[data-direction="d"] .play-card:not(.is-future) .play-activity:not(:disabled):hover { transform: none; }
 .l2[data-direction="d"] .play-activity { align-content: start; }
 .l2[data-direction="d"] .chance-tag[data-chance="lucky"] { background: color-mix(in srgb, var(--color-forest) 12%, white); color: var(--color-forest); }
-.d-kicker { margin: 0 0 6px; }
+.play-card p.d-kicker { margin: 0 0 6px; font: 600 15px/1.3 var(--font-guide); color: var(--color-quiet); letter-spacing: .01em; }
 
 /* Fourteen tiles: they share the rail's height, a little gap between the weeks. */
 .l2[data-direction="d"] .play-rail { gap: 4px; padding: 14px 10px; }
