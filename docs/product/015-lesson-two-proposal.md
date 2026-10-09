@@ -59,7 +59,7 @@ No numbers, streaks or "habit formed" badges. The two weeks are compressed time;
 
 ## Recommendation
 
-C. Maya's skill growth stays in the lesson whose takeaway it supports, and Lesson 2 keeps the character and game the child tester enjoyed while asking a new question: how does Path A Maya keep starting? C reuses the most art and code, shortens a Lesson 1 that runs well past its 2–3 minute aim, and avoids B's repetition. Its cost is a four-language edit of Lesson 1, shipped with Lesson 2. Before writing copy, research children's routines, lapses and restarting, and changing habits; until then the missed-day and change-your-plan beats stay labelled editorial.
+C. Maya's skill growth stays in the lesson whose takeaway it supports, and Lesson 2 keeps the character and game the child tester enjoyed while asking a new question: how does Path A Maya keep starting? C reuses the most art and code, shortens a Lesson 1 that runs well past its 2–3 minute aim, and avoids B's repetition. Its cost is a four-language edit of Lesson 1, shipped with Lesson 2. The habits research pass is done (B5–B18 in the [habits sources](../research/habits/sources.md)): a single missed day isn't a reset and if-then plans help children's goals, but no habit trial in primary-school children was found, so the game's beats stay fictional illustration, labelled as such.
 
 ## Decisions for the owner
 
