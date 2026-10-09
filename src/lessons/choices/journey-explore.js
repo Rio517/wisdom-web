@@ -309,7 +309,7 @@ export function createExploreScene(root) {
     context.fill();
     context.restore();
   }
-  function label(value, point, { color = FOREST, fontSize = 12.5, weight = 500, align = 'left', force = false } = {}) {
+  function label(value, point, { color = FOREST, fontSize = 12.5, weight = 500, align = 'left', force = false, avoid = null } = {}) {
     context.save();
     context.font = `${weight} ${fontSize}px "Avenir Next", AvenirNext, "Segoe UI", sans-serif`;
     const width = context.measureText(value).width;
@@ -317,7 +317,7 @@ export function createExploreScene(root) {
     const box = { left: left - 4, right: left + width + 4, top: point.y - fontSize, bottom: point.y + 4 };
     const outside = box.left < 2 || box.right > size.width - 2 || box.top < 2 || box.bottom > size.height - 26;
     const clash = labelBoxes.some(other => box.left < other.right && box.right > other.left && box.top < other.bottom && box.bottom > other.top);
-    if (!force && (outside || clash)) { context.restore(); return false; }
+    if (!force && (outside || clash || (avoid && avoid(box)))) { context.restore(); return false; }
     labelBoxes.push(box);
     context.textAlign = align;
     context.lineWidth = 4; context.strokeStyle = '#f2f5f0'; context.lineJoin = 'round';
@@ -435,18 +435,85 @@ export function createExploreScene(root) {
       dot(point, 7.5, FOREST);
     }
 
-    // Labels, newest first so recent choices win any overlap.
-    for (const item of livedLabels.reverse()) {
-      const mid = item.points[10];
-      label(item.node.label, { x: mid.x, y: mid.y - 11 }, { color: FOREST, weight: 650, align: 'center' })
-        || label(item.node.label, { x: mid.x, y: mid.y + 20 }, { color: FOREST, weight: 650, align: 'center' });
+    // Labels. Chosen-path labels never sit on the dark line: each tries spots above or
+    // below several points along its edge and keeps the first clear one, newest first so
+    // recent choices win. A short leader joins a label that had to move away.
+    const pathSamples = [];
+    nodesOnPath.slice(1).forEach((node, index) => {
+      const dense = edgePoints(nodesOnPath[index], node, 40);
+      for (let i = 1; i < dense.length; i += 1) {
+        const a = dense[i - 1]; const b = dense[i];
+        const steps = Math.max(1, Math.ceil(Math.hypot(b.x - a.x, b.y - a.y) / 2));
+        for (let k = 0; k < steps; k += 1) pathSamples.push({ x: a.x + ((b.x - a.x) * k) / steps, y: a.y + ((b.y - a.y) * k) / steps });
+      }
+      pathSamples.push(dense.at(-1));
+    });
+    const keepOff = nodesOnPath.map(screenOf);
+    const CELL = 16;
+    const grid = new Map();
+    for (const s of [...pathSamples, ...keepOff]) {
+      const key = `${Math.floor(s.x / CELL)},${Math.floor(s.y / CELL)}`;
+      if (!grid.has(key)) grid.set(key, []);
+      grid.get(key).push(s);
     }
+    // True when the line (or a node dot) comes within a few pixels of the box.
+    const onPath = box => {
+      for (let cx = Math.floor((box.left - 9) / CELL); cx <= Math.floor((box.right + 9) / CELL); cx += 1) {
+        for (let cy = Math.floor((box.top - 9) / CELL); cy <= Math.floor((box.bottom + 9) / CELL); cy += 1) {
+          if (grid.get(`${cx},${cy}`)?.some(s => s.x > box.left - 8 && s.x < box.right + 8 && s.y > box.top - 8 && s.y < box.bottom + 8)) return true;
+        }
+      }
+      return false;
+    };
+    const CHOSEN_SIZE = 15;
+    function placeChosen(item) {
+      context.save();
+      context.font = `650 ${CHOSEN_SIZE}px "Avenir Next", AvenirNext, "Segoe UI", sans-serif`;
+      const width = context.measureText(item.node.label).width;
+      context.restore();
+      let best = null;
+      [10, 9, 11, 8, 12, 7, 13, 6, 14, 5, 15, 4, 16, 3, 17, 2, 18, 1, 19].forEach((index, rank) => {
+        const anchor = item.points[index];
+        for (const side of [-1, 1]) {
+          for (const gap of [11, 22, 36, 54, 78, 104, 132]) {
+            for (const align of ['center', 'left', 'right']) {
+              const baseline = side < 0 ? anchor.y - gap - 4 : anchor.y + gap + CHOSEN_SIZE;
+              const left = align === 'center' ? anchor.x - width / 2 : align === 'left' ? anchor.x - 6 : anchor.x - width + 6;
+              const box = { left: left - 4, right: left + width + 4, top: baseline - CHOSEN_SIZE, bottom: baseline + 4 };
+              if (box.left < 2 || box.right > size.width - 2 || box.top < 2 || box.bottom > size.height - 26) continue;
+              if (labelBoxes.some(o => box.left < o.right && box.right > o.left && box.top < o.bottom && box.bottom > o.top)) continue;
+              if (onPath(box)) continue;
+              const cost = rank * 2 + gap + (align === 'center' ? 0 : 6) + (side > 0 ? 2 : 0);
+              if (!best || cost < best.cost) best = { cost, box, baseline, left, gap, anchor, side };
+            }
+          }
+        }
+      });
+      if (!best) return;
+      labelBoxes.push(best.box);
+      context.save();
+      if (best.gap > 14) {
+        const near = best.side < 0 ? best.box.bottom - 2 : best.box.top + 2;
+        const lx = Math.min(Math.max(best.anchor.x, best.box.left + 4), best.box.right - 4);
+        context.strokeStyle = FOREST; context.globalAlpha = 0.45; context.lineWidth = 1;
+        context.beginPath(); context.moveTo(best.anchor.x, best.anchor.y + best.side * 5); context.lineTo(lx, near); context.stroke();
+        context.globalAlpha = 1;
+      }
+      context.font = `650 ${CHOSEN_SIZE}px "Avenir Next", AvenirNext, "Segoe UI", sans-serif`;
+      context.textAlign = 'left';
+      context.lineWidth = 4; context.strokeStyle = '#f2f5f0'; context.lineJoin = 'round';
+      context.strokeText(item.node.label, best.left, best.baseline);
+      context.fillStyle = FOREST;
+      context.fillText(item.node.label, best.left, best.baseline);
+      context.restore();
+    }
+    for (const item of livedLabels.reverse()) placeChosen(item);
     for (const item of grayLabels.sort((a, b) => Number(b.highlighted) - Number(a.highlighted) || b.order - a.order)) {
       const mid = item.points[12];
       const text = item.sibling.closed ? `✕ ${item.sibling.label}` : item.sibling.label;
       const color = item.sibling.closed ? CLAY : item.highlighted ? PREVIEW : '#7f8c85';
-      label(text, { x: mid.x, y: mid.y - 8 }, { color, fontSize: 12, align: 'center' })
-        || label(text, { x: mid.x, y: mid.y + 18 }, { color, fontSize: 12, align: 'center' });
+      label(text, { x: mid.x, y: mid.y - 8 }, { color, fontSize: 12, align: 'center', avoid: onPath })
+        || label(text, { x: mid.x, y: mid.y + 18 }, { color, fontSize: 12, align: 'center', avoid: onPath });
     }
   }
 
