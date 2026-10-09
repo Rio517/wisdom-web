@@ -109,8 +109,6 @@ export const STEPS = {
   friendInvites: lucky(7, 16),
   friendForLife: lucky(9, 60),
   oldFriendJob: lucky(25, 60),
-  familyMoves: roadblock(7, 16, [], BIG),
-  newTownClub: choice(7, 17, ['familyMoves']),
   illForMonths: roadblock(10, 60),
   slowReturn: choice(10, 62, ['illForMonths']),
   jobEnds: roadblock(26, 60, [], BIG),

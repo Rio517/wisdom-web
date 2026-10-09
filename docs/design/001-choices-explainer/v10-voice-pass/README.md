@@ -35,29 +35,36 @@ Design note: [notes/explorer-chains.md](../../../../notes/explorer-chains.md). C
 What changed:
 - Eight chains of steps build over a life. Earlier choices unlock later ones: maths club → tournament → a teacher spots your talent → science → a scholarship → university → a PhD → a discovery. There are branches for an unkind supervisor or a parent's illness.
 - Surprises happen at some forks instead of a choice:
-  - A "Lucky break" (sun) or a "Roadblock" (clay) chip names the event, and the reader presses it to go on.
+  - A "Lucky break" (sun) or a "Setback" (clay) chip names the event, and the reader presses it to go on.
   - Lucky breaks and roadblocks take turns, so a life meets both.
   - Every roadblock is followed by real choices.
 - Big steps and big surprises swing the path far up or down the map. Small steps keep the gentle bends. A flat star marks a lucky break on the lived path, and a flat diamond marks a roadblock. The side panel tags each one in words.
 - The end card counts the lucky breaks and roadblocks along the way.
 - The text version writes out two example lives, one with a big lucky break and one with a big roadblock.
+- After one design review:
+  - Roadblocks are called "Setbacks", so a parent's illness names what happens, not who is in the way.
+  - A family move is no longer a setback.
+  - The end summary sits in the side panel, so the end card no longer hides the life.
+  - The balancing of lucky breaks and setbacks now draws on any-time surprises.
+  - Screen-reader labels for timeline steps include the tag.
+  - Surprise chips keep their colors when focused.
 - Fixed: the side panel used to re-render over its live region, so screen readers never heard a choice. The live region now stays put.
 
-Captures (all v01):
+Captures (v02, after the review; the v01 files are kept for comparison):
 - A life with big surprises, 1440 × 900:
-  - [the discovery appears](explore-lucky-discovery-en-1440x900-v01.png)
-  - [the whole life: a parent's illness at 27, then a PhD and a discovery](explore-lucky-life-end-en-1440x900-v01.png)
+  - [the discovery appears](explore-lucky-discovery-en-1440x900-v02.png)
+  - [the whole life: a parent's illness at 27, then a PhD and a discovery](explore-lucky-life-end-en-1440x900-v02.png)
 - A life with a big setback, 1440 × 900:
-  - [a bad knee injury at 20](explore-roadblock-knee-en-1440x900-v01.png)
-  - [the whole life](explore-roadblock-life-end-en-1440x900-v01.png)
+  - [a bad knee injury at 20](explore-roadblock-knee-en-1440x900-v02.png)
+  - [the whole life](explore-roadblock-life-end-en-1440x900-v02.png)
 - Other languages:
-  - [German surprise, 744 × 1133](explore-surprise-de-744x1133-v01.png)
-  - [Spanish surprise, 768 × 1024](explore-surprise-es-768x1024-v01.png)
-  - [French end, 1024 × 768](explore-end-fr-1024x768-v01.png)
+  - [German surprise, 744 × 1133](explore-surprise-de-744x1133-v02.png)
+  - [Spanish surprise, 768 × 1024](explore-surprise-es-768x1024-v02.png)
+  - [French end, 1024 × 768](explore-end-fr-1024x768-v02.png)
 
 Checks:
 - Lives played to 70 in all four languages at all four sizes, with no console errors.
-- Keyboard only: Tab to a chip, then Enter at every fork through a whole life. Focus moves to the next chip and then to the end card. Announcements include "Age 18. Roadblock: You hurt your hand for a year."
+- Keyboard only: Tab to a chip, then Enter at every fork through a whole life. Focus moves to the next chip and then to the end card. Announcements include "Age 33. Lucky break: A radio station plays your song."
 - The sort board also works with arrow keys alone.
 - Reduced motion is on for every capture.
 

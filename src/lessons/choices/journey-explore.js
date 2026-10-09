@@ -56,7 +56,8 @@ export function createLifeTree({ seed = 'life-explorer-1' } = {}) {
     const pool = fromChain.length ? fromChain : waiting;
     const wanted = seen > 0 ? 'roadblock' : seen < 0 ? 'lucky' : hash(key(`${node.id}:luck`)) < 0.5 ? 'lucky' : 'roadblock';
     const preferred = pool.filter(item => item.kind === wanted);
-    const list = preferred.length ? preferred : pool;
+    const anyTime = waiting.filter(item => item.kind === wanted);
+    const list = preferred.length ? preferred : anyTime.length ? anyTime : pool;
     return list[Math.floor(hash(key(`${node.id}:which-surprise`)) * list.length)];
   }
 
@@ -359,7 +360,7 @@ export function createExploreScene(root) {
 
     for (const age of [5, 10, 15, 20, 30, 40, 50, 60, 70]) {
       const x = toScreen(world({ age, y: 0 })).x;
-      if (x < 40 || x > size.width - 12) continue;
+      if (x < 64 || x > size.width - 12) continue;
       context.save(); context.strokeStyle = '#dde4dc'; context.lineWidth = 1; context.setLineDash([2, 7]);
       context.beginPath(); context.moveTo(x, 10); context.lineTo(x, size.height - 30); context.stroke(); context.restore();
       label(`${age}`, { x, y: size.height - 11 }, { color: '#5a6961', fontSize: 12, align: 'center', weight: 600, force: true });
@@ -573,11 +574,8 @@ export function createExploreScene(root) {
     overview = true;
     zoomButton.textContent = t('explore.zoomIn');
     const chosen = path.slice(1);
-    const closedSeen = path.slice(0, -1).filter(id => tree.children(id).some(child => child.closed)).length;
     endCard.hidden = false;
     endCard.innerHTML = `<h2 tabindex="-1">${escapeHTML(t('explore.end.heading'))}</h2>
-      <p>${escapeHTML(t('explore.end.summary', { choices: chosen.filter(id => !isSurprise(tree.get(id))).length, closed: closedSeen }))}</p>
-      <p>${escapeHTML(t('explore.end.luck', { lucky: chosen.filter(id => tree.get(id).kind === 'lucky').length, roadblocks: chosen.filter(id => tree.get(id).kind === 'roadblock').length }))}</p>
       <p>${escapeHTML(t('explore.end.gray'))}</p>
       <div class="end-buttons"><button type="button" class="solid-pill" data-tool="again">${escapeHTML(t('explore.end.again'))}</button>
       <button type="button" class="pill-button" data-tool="back-one">${escapeHTML(t('explore.end.backOne'))}</button></div>`;
@@ -606,13 +604,25 @@ export function createExploreScene(root) {
     if (live) live.textContent = message;
   }
 
+  function endSummary() {
+    const chosen = path.slice(1).map(id => tree.get(id));
+    return t('explore.end.summary', {
+      choices: chosen.filter(node => !isSurprise(node)).length,
+      lucky: chosen.filter(node => node.kind === 'lucky').length,
+      roadblocks: chosen.filter(node => node.kind === 'roadblock').length,
+      closed: path.slice(0, -1).filter(id => tree.children(id).some(child => child.closed)).length,
+    });
+  }
+
   function renderPanel() {
     if (!panel) return;
     const nodesOnPath = path.map(id => tree.get(id));
     const here = currentNode();
     const items = nodesOnPath.slice(1).map((node, index) => {
       const fork = nodesOnPath[index];
-      return `<li><button type="button" class="timeline-step" data-back="${fork.id}" aria-label="${escapeHTML(t('explore.stepLabel', { age: Math.round(fork.age), choice: node.label }))}">
+      return `<li><button type="button" class="timeline-step" data-back="${fork.id}" aria-label="${escapeHTML(isSurprise(node)
+        ? t('explore.stepLabelSurprise', { age: Math.round(fork.age), kind: t(`explore.kind.${node.kind}`), choice: node.label })
+        : t('explore.stepLabel', { age: Math.round(fork.age), choice: node.label }))}">
         <span class="timeline-age">${Math.round(fork.age)}</span><span class="timeline-label">${isSurprise(node) ? `<small class="timeline-kind is-${node.kind}">${escapeHTML(t(`explore.kind.${node.kind}`))}</small> ` : ''}${escapeHTML(node.label)}${node.byFamily ? ` <small>${escapeHTML(t('explore.byFamily'))}</small>` : ''}</span></button></li>`;
     }).join('');
     // The live region stays put across re-renders so announcements survive.
@@ -620,8 +630,8 @@ export function createExploreScene(root) {
       panel.innerHTML = '<div class="explore-panel"></div><p class="sr-only explore-live" aria-live="polite"></p>';
     }
     panel.querySelector('.explore-panel').innerHTML = `
-      <div class="explore-now">${here.age >= LIFE_END - 0.01
-        ? `<strong>${escapeHTML(t('explore.now.endStrong'))}</strong> ${escapeHTML(t('explore.now.end'))}`
+      <div class="explore-now${tree.children(here.id).find(isSurprise) ? ` is-${tree.children(here.id)[0].kind}` : ''}">${here.age >= LIFE_END - 0.01
+        ? `<strong>${escapeHTML(t('explore.now.endStrong'))}</strong> ${escapeHTML(endSummary())}`
         : `<strong>${escapeHTML(t('explore.now.age', { age: Math.round(here.age) }))}</strong> ${escapeHTML(t(path.length === 1 ? 'explore.now.first'
           : tree.children(here.id).some(isSurprise) ? 'explore.now.surprise' : 'explore.now.next'))}`}</div>
       <h2 class="timeline-title">${escapeHTML(t('explore.timeline.title'))}</h2>
