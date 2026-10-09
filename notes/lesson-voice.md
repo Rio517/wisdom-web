@@ -43,3 +43,41 @@ Seen but not mine:
 - de 1024×768 never-late breaks "Handdribbling" mid-word.
 - fr 744 hike clips "Départ du sentier" at the map's left edge.
 - The life map still shows only closed ways. Showing a door opening there needs `journey-map.js` (the home-page session's file).
+
+## 5. Deliverable 5 done: the explorer
+
+Design note: `notes/explorer-chains.md`. Captures: v10 README, part two.
+
+## 6. Closing report (CLOSE wisdom-39ngep)
+
+Built:
+- **Voice skill** (`.claude/skills/wisdom-voice/SKILL.md`, about 500 words) and one README bullet.
+- **Lesson 1 rewritten in the voice**, in English and as Spanish, German and French AI drafts. Outside forces cut both ways throughout: the ranger's lucky tip, a good-luck sort card, a lucky last afternoon and the takeaways.
+- **Explorer chains**:
+  - Eight chains where earlier choices unlock later ones.
+  - Lucky breaks and setbacks that take turns; every setback is followed by real choices.
+  - Big steps swing the path far up or down the map.
+  - The end summary counts choices, lucky breaks, setbacks and closed doors.
+  - The text version writes out two example lives.
+- **Bug fix:** explorer announcements were wiped by a panel re-render, so screen readers heard nothing. They work now.
+
+Simplified or skipped:
+- Deliverables 3, 4 and 6 are not done here, as the lead instructed.
+- The readable copy doesn't list the chains: its generator (`tooling/lesson-copy.mjs`) is outside my files.
+- "Leave the PhD" is shown as "Leave the research job" and "Start a PhD" as "Do research in a lab", per the reviewer's plain-word note. The owner may prefer "PhD".
+
+Known issues:
+- The life map shows only closed ways; a door opening there needs `journey-map.js`.
+- `NEXT_STEP.md`, `COMPLETED.md` and product 013 need updating; they are outside my edit list.
+- Overview labels sometimes overlap at big swings.
+- The German game skill labels break mid-word in portrait.
+- fr 744 clips "Départ du sentier" in the hike.
+- The relay returned 403 (network policy), so every note is in this file.
+
+Checks:
+- `npm test`: 240 pass, 0 fail. `npm run build`: 25 pages.
+- Copy: 320 screens (20 steps × 4 languages × 4 sizes, reduced motion). No raw keys, sideways scroll, clipped narration or console errors.
+- Explorer: lives played to 70 in 4 languages × 4 sizes with no console errors.
+- Keyboard only: the sort board (6 of 6 cards placed by arrow keys) and a whole explorer life by Tab and Enter, ending with focus on the end card. Announcements are heard.
+- Text version: two chains present.
+- Design reviews: 2 rounds (copy; explorer). No blockers remain, and the should-fix items are applied except the label overlap.
