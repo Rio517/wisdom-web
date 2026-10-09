@@ -171,12 +171,13 @@ export function replay(decisions) {
   return life;
 }
 
-/** Week-one words for the plan check: how often the moment came and was used. */
-export function weekSummary(life, routine, { from = 0, to = WEEK_ONE_END } = {}) {
+/** Week-one words for the plan check: how often the moment came and was used, and the days it never came. */
+export function weekSummary(life, routine, { moment = null, from = 0, to = WEEK_ONE_END } = {}) {
   const entries = life.log.filter(entry => entry.index >= from && entry.index <= to && entry.routines[routine]);
   const chances = entries.filter(entry => !['rest', 'luck'].includes(entry.routines[routine].how) && DAYS[entry.index].kind !== 'weekend' && !(DAYS[entry.index].kind === 'sunday' && entry.routines[routine].how !== 'moment'));
   const used = chances.filter(entry => entry.routines[routine].how === 'moment').length;
-  const snags = entries.filter(entry => entry.routines[routine].how === 'gone').map(entry => DAYS[entry.index].weekday);
+  const snags = entries.filter(entry => entry.routines[routine].how === 'gone' || (moment && ['gone', 'busy'].includes(momentFit(moment, DAYS[entry.index]))))
+    .map(entry => DAYS[entry.index].weekday);
   let word = 'none';
   if (chances.length && used === chances.length) word = 'all';
   else if (used >= chances.length * 0.6) word = 'most';

@@ -230,8 +230,9 @@ export function createPanel(aside, { routines, soccerSetUp = false }) {
     if (entry.soccer.length) icons.push({ icon: 'soccerSmall' });
     if (icons.length < 2) {
       const others = Object.values(entry.routines);
+      const unlucky = Object.keys(entry.routines).find(routine => entry.routines[routine].how === 'luck');
       if (others.some(item => item.how === 'skip')) icons.push({ icon: others.find(item => item.how === 'skip').icon ?? 'friends' });
-      else if (others.some(item => item.how === 'luck')) icons.push({ icon: 'snap' });
+      else if (unlucky) icons.push({ icon: unlucky === 'cello' ? 'snap' : 'backpack' });
       else if (others.some(item => item.how === 'rest')) icons.push({ icon: 'restSmall' });
     }
     return icons.slice(0, 2);

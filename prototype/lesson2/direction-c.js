@@ -279,8 +279,8 @@ export function start(app) {
     setAuto(true);
     const now = life();
     const row = routine => {
-      const summary = weekSummary(now, routine);
       const moment = plan[routine].moment;
+      const summary = weekSummary(now, routine, { moment });
       const snag = summary.snags.length ? `<p class="l2-check-snag">${esc(t('l2.check.snag', { days: listOf(summary.snags.map(day => t(`l2.wd.${day}`))) }))}</p>` : '';
       return `<div class="l2-check-row" data-routine="${routine}">
         <p class="l2-ask-name">${routineIcon(routine)}<span>${esc(t(`l2.check.word.${summary.word}`, { moment: `${RoutineWord(routine)} · ${momentYour(moment)}` }))}</span></p>

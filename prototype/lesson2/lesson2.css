@@ -51,6 +51,7 @@ body { min-width: 0; overflow: hidden; }
 .l2-cue { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: -4px 0 14px; font: 15px/1.35 var(--font-guide); color: var(--color-quiet); }
 .l2-cue-item { display: inline-flex; align-items: center; gap: 6px; }
 .l2-cue svg { flex: none; width: 22px; height: 22px; }
+.l2-fit { margin: -6px 0 12px; font: 17px/1.45 var(--font-field); color: var(--color-quiet); }
 .l2-feel { margin: 0 0 14px; font: italic 17px/1.45 var(--font-field); color: var(--color-ink); }
 
 /* Option buttons: Lesson 1's activity tiles. */
@@ -236,7 +237,7 @@ body { min-width: 0; overflow: hidden; }
   .l2-panel .skill-box { padding: 6px 10px; }
   .l2-panel .skill-box header { margin-bottom: 0; }
   .l2-panel .skill-box h3 { font-size: 15px; line-height: 20px; }
-  .l2-panel .skill-box .box-note { display: none; }
+  .l2-panel .skill-box .box-note:not(:has(.l2-setup-note)) { display: none; }
   .l2-panel .skill-row { grid-template-columns: minmax(0, 1fr) minmax(0, .8fr); column-gap: 8px; padding: 1px 0; }
   .l2-soccer-help { display: none; }
   .l2-panel .illustration-note { grid-column: 1 / -1; margin-top: 0; }
