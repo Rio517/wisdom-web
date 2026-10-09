@@ -407,8 +407,9 @@ h1, h2, h3, h4 { font-family: var(--font-field); font-weight: 500; }
 .skill-box h3 { @apply m-0 flex items-center gap-2 text-[18px] leading-6; }
 .skill-box h3 svg { width: 22px; height: 22px; }
 .skill-box .box-note { @apply text-right text-[15px] leading-tight; color: var(--color-quiet); }
-.skill-box.flip { animation: flip 640ms cubic-bezier(.3,.7,.2,1) both; }
-@keyframes flip { 0% { transform: perspective(600px) rotateX(0); } 45% { transform: perspective(600px) rotateX(90deg); opacity: .3; } 55% { transform: perspective(600px) rotateX(-90deg); opacity: .3; } 100% { transform: perspective(600px) rotateX(0); opacity: 1; } }
+/* A new sport's box grows a touch and settles (the week dots' pop curve). */
+.skill-box.is-growing { animation: box-grow 420ms cubic-bezier(.3,1.6,.5,1) both; }
+@keyframes box-grow { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.04); } }
 .skill-row { @apply grid items-center gap-x-3; grid-template-columns: 128px 1fr; padding: 3px 0; }
 .skill-row .skill-name { @apply text-[15px] leading-tight; hyphens: auto; overflow-wrap: normal; } /* long compounds (German) break only at syllables, with a hyphen; the column is wide enough for the longest */
 .skill-meta { grid-column: 2; @apply mt-1 flex flex-wrap items-baseline justify-start gap-x-2 gap-y-0.5 text-[15px] leading-none; }
@@ -541,3 +542,4 @@ dialog::backdrop { background: #23302d66; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.001ms !important; animation-delay: 0s !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
 }
+  .skill-box.is-growing { animation: none; }

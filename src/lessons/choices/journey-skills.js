@@ -155,7 +155,7 @@ export function createSkillsScene(root) {
       holder.innerHTML = next === 'soccer'
         ? skillBoxMarkup({ id: `box-${key}`, group: 'soccer', title: t('game.group.soccer'), skills: soccer, owner: owner(key) })
         : skillBoxMarkup({ id: `box-${key}`, group: 'basketball', title: t('game.group.basketball'), skills: basketball, owner: owner(key) });
-      if (animate) holder.firstElementChild.classList.add('flip');
+      if (animate) holder.firstElementChild.classList.add('is-growing');
       if (next === 'basketball') holder.querySelector('.box-note').textContent = t('skills.stripedNote');
     }
   }
