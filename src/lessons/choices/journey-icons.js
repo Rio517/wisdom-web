@@ -10,33 +10,28 @@ const SUN = '#e0a93b';
 const WOOD = '#8a5a33';
 
 
-// Flat soccer ball: white disc, a dark centre pentagon, five partial dark
-// patches cut by the rim, thin seams between. Built from one geometry so every
-// size reads as the same ball. `detail` adds the hexagon seams (large sizes only).
+// Flat soccer ball, as in the picked concept: a white body with one thin ink outline, a solid ink centre
+// pentagon and five ink patches cut by the rim (a corner pointing at the centre), white gaps between and no
+// seam lines. A thin stroke in the same ink softens the corners. One geometry, so every size is the same ball.
+// `detail: false` keeps only the outline and a larger centre pentagon, for a ball too small for patches.
+// At today's sizes (10–36 px across) the patches still read, so no drawing uses it.
 let ballId = 0;
 const pt = (cx, cy, r, deg) => [cx + r * Math.cos(deg * Math.PI / 180), cy + r * Math.sin(deg * Math.PI / 180)];
-const poly = points => `M${points.map(([x, y]) => `${x.toFixed(2)} ${y.toFixed(2)}`).join('L')}z`;
-export function soccerBall(cx, cy, r, { ink = INK, detail = r >= 8 } = {}) {
+const poly = points => `M${points.map(([x, y]) => `${+x.toFixed(2)} ${+y.toFixed(2)}`).join('L')}z`;
+export function soccerBall(cx, cy, r, { ink = INK, detail = true } = {}) {
+  const n = v => +v.toFixed(2);
+  const line = 0.9 + r * 0.03; // about a pixel wide at every drawn size
+  const hub = poly(Array.from({ length: 5 }, (_, i) => pt(cx, cy, r * (detail ? 0.34 : 0.42), -90 + 72 * i)));
+  const shape = `fill="${ink}" stroke="${ink}" stroke-width="${n(r * 0.06)}" stroke-linejoin="round"`;
+  const body = `<circle cx="${cx}" cy="${cy}" r="${n(r - line / 2)}" fill="white" stroke="${ink}" stroke-width="${n(line)}"/>`;
+  if (!detail) return `${body}<path d="${hub}" ${shape}/>`;
+  const patches = Array.from({ length: 5 }, (_, i) => {
+    const angle = -90 + 72 * i; const [px, py] = pt(cx, cy, r * 1.15, angle);
+    return poly(Array.from({ length: 5 }, (_, k) => pt(px, py, r * 0.45, angle + 180 + 72 * k)));
+  }).join('');
   const id = `ball-clip-${++ballId}`;
-  const rim = Math.max(1.4, r * 0.11);
-  const seam = Math.max(0.9, r * 0.075);
-  const hub = Array.from({ length: 5 }, (_, i) => pt(cx, cy, r * 0.3, -90 + 72 * i));
-  const patches = []; const joins = []; const seams = [];
-  for (let i = 0; i < 5; i++) {
-    const angle = -90 + 72 * i;
-    const centre = pt(cx, cy, r * 1.08, angle);
-    const patch = Array.from({ length: 5 }, (_, k) => pt(centre[0], centre[1], r * 0.4, angle + 180 + 72 * k));
-    patches.push(patch);
-    seams.push(`M${hub[i][0].toFixed(2)} ${hub[i][1].toFixed(2)}L${patch[0][0].toFixed(2)} ${patch[0][1].toFixed(2)}`);
-    joins.push([patch[1], patch[4]]);
-  }
-  if (detail) for (let i = 0; i < 5; i++) seams.push(`M${joins[i][0][0].toFixed(2)} ${joins[i][0][1].toFixed(2)}L${joins[(i + 1) % 5][1][0].toFixed(2)} ${joins[(i + 1) % 5][1][1].toFixed(2)}`);
-  return `<clipPath id="${id}"><circle cx="${cx}" cy="${cy}" r="${r}"/></clipPath>
-    <circle cx="${cx}" cy="${cy}" r="${r}" fill="white"/>
-    <g clip-path="url(#${id})"><path d="${patches.map(poly).join('')}" fill="${ink}"/>
-    <path d="${seams.join('')}" stroke="${ink}" stroke-width="${seam.toFixed(2)}" fill="none"/></g>
-    <path d="${poly(hub)}" fill="${ink}" stroke="${ink}" stroke-width="${seam.toFixed(2)}" stroke-linejoin="round"/>
-    <circle cx="${cx}" cy="${cy}" r="${(r - rim / 2).toFixed(2)}" fill="none" stroke="${ink}" stroke-width="${rim.toFixed(2)}"/>`;
+  return `<clipPath id="${id}"><circle cx="${cx}" cy="${cy}" r="${n(r - line / 2)}"/></clipPath>
+    ${body}<path d="${patches}${hub}" ${shape} clip-path="url(#${id})"/>`;
 }
 
 export const ICONS = {
@@ -65,7 +60,7 @@ export const ICONS = {
   restSmall: svg(`<path d="M4 17h16M6 17c0-4 2.5-7 6-7s6 3 6 7" stroke="${FOREST}" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M12 5v2M5.5 8l1.3 1.3M18.5 8l-1.3 1.3" stroke="${SUN}" stroke-width="2" stroke-linecap="round"/>`, '0 0 24 24'),
   backpack: svg(`<rect x="5" y="7" width="14" height="15" rx="4" fill="${FOREST}"/><path d="M9 7V5a3 3 0 0 1 6 0v2" stroke="${FOREST}" stroke-width="2" fill="none"/><rect x="8" y="13" width="8" height="5" rx="1.5" fill="${SAGE}"/>`, '0 0 24 24'),
   leaf: svg(`<path d="M5 19C5 10 11 4 20 4c0 9-6 15-15 15z" fill="${FOREST}"/><path d="M5 19l9-9" stroke="white" stroke-width="1.5" stroke-linecap="round"/>`, '0 0 24 24'),
-  soccerSmall: svg(soccerBall(12, 12, 10.5, { detail: false }), '0 0 24 24'),
+  soccerSmall: svg(soccerBall(12, 12, 10.5), '0 0 24 24'),
   celloSmall: svg(`<path d="M12 2v6" stroke="${WOOD}" stroke-width="2" stroke-linecap="round"/><path d="M12 7.5c-2.6 0-4 1.6-3.6 3.6.3 1.1-1.3 1.6-1.3 4C7.1 19 9.4 22 12 22s4.9-3 4.9-6.9c0-2.4-1.6-2.9-1.3-4 .4-2-1-3.6-3.6-3.6z" fill="${WOOD}"/>`, '0 0 24 24'),
   add: svg(`<circle cx="22" cy="22" r="21" fill="#28544214"/><rect x="11" y="26" width="6" height="8" rx="1.5" fill="${SAGE}"/><rect x="19" y="19" width="6" height="15" rx="1.5" fill="${SAGE}"/><rect x="27" y="11" width="6" height="23" rx="1.5" fill="${FOREST}"/>`, '0 0 44 44'),
   build: svg(`<circle cx="22" cy="22" r="21" fill="#28544214"/><rect x="10" y="27" width="24" height="7" rx="2" fill="${FOREST}"/><rect x="14" y="19" width="16" height="7" rx="2" fill="${SAGE}"/><rect x="18" y="11" width="8" height="7" rx="2" fill="${SUN}"/>`, '0 0 44 44'),
