@@ -10,7 +10,8 @@ import { watchField } from '../../src/components/stage-field.js';
 import { initSiteNav } from '../../src/components/site-nav.js';
 import { UI, lessonsFor } from '../../src/data/site.js';
 import { createPathsScene } from './map.js';
-import { LIFE_STEPS, createLifePlayer } from './life.js';
+import { LINES, createLifePlayer } from './life.js';
+import { ALTS } from './life-map.js';
 
 const SITE_URL = 'https://wisdom.knyflores.com';
 const esc = value => String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;');
@@ -19,19 +20,18 @@ const $ = selector => document.querySelector(selector);
 // ——— Mockup settings (in the URL, so a view can be shared and captured) ———
 const params = new URLSearchParams(location.search);
 const settings = {
-  dark: params.get('dark') === 'a' ? 'a' : 'b',
   pace: params.get('pace') === 'quick' ? 'quick' : 'normal',
 };
 function saveSettings() {
   const next = new URLSearchParams(location.search);
-  next.set('dark', settings.dark);
+  next.delete('dark');
   next.set('pace', settings.pace);
   history.replaceState(null, '', `${location.pathname}?${next}${location.hash}`);
 }
 
 // ——— Words ———
-const stepLine = index => t(settings.dark === 'a' && index >= 7 ? `lesson.beat.life.a.step${index + 1}` : `lesson.beat.life.step${index + 1}`);
-const lifeAlt = () => t(settings.dark === 'a' ? 'lesson.beat.life.a.alt' : 'lesson.beat.life.alt');
+const stepLine = index => t(`lesson.beat.life.${LINES[index].key}`);
+const lifeAlt = () => t('lesson.beat.life.alt');
 
 // ——— Structure: the lesson's chapters, with "Many paths" cut to three steps ———
 const chapters = chaptersFor(t);
@@ -132,7 +132,6 @@ export function start(app) {
     </aside>
     <div class="mockup-bar" id="mockup-bar" data-local-keys>
       <strong class="mockup-title">${esc(t('opening.mockup'))}</strong>
-      ${segmented('dark', t('opening.dark'), [['b', t('opening.dark.b')], ['a', t('opening.dark.a')]], settings.dark)}
       ${segmented('pace', t('opening.pace'), [['normal', t('opening.pace.normal')], ['quick', t('opening.pace.quick')]], settings.pace)}
       <button type="button" class="mockup-option mockup-replay" data-replay>${esc(t('opening.replay'))}</button>
     </div>
@@ -148,8 +147,12 @@ export function start(app) {
 
 function run() {
   const roots = { paths: $('#scene-paths'), hike: $('#scene-hike') };
+  // A picked life tells the narration as it grows (set up with the narration below).
+  const whatIf = { onPick: () => {}, onStep: () => {}, onDone: () => {} };
   const scenes = {
-    paths: createPathsScene(roots.paths, { edgeFade: 0.24 }),
+    paths: createPathsScene(roots.paths, { edgeFade: 0.24, life: {
+      onPick: info => whatIf.onPick(info), onStep: (node, position) => whatIf.onStep(node, position), onDone: run => whatIf.onDone(run),
+    } }),
     hike: createHikeScene(roots.hike),
   };
   Object.values(roots).forEach(root => { root.hidden = true; });
@@ -234,14 +237,15 @@ function run() {
   }
 
   // ——— Narration ———
-  const lifeMarkup = () => `<ol class="life-steps" id="life-steps">${LIFE_STEPS.map((step, position) => `<li class="life-step is-pending" data-step="${position}">
-    <span class="life-age">${esc(t('lesson.ui.age', { age: step.age }))}</span><span class="life-line">${esc(stepLine(position))}</span></li>`).join('')}</ol>`;
+  const lifeMarkup = () => `<ol class="life-steps" id="life-steps">${LINES.map((line, position) => `<li class="life-step is-pending${line.close ? ' is-close' : ''}" data-step="${position}">
+    <span class="life-age">${line.close ? '' : esc(t('lesson.ui.age', { age: line.age }))}</span><span class="life-line">${esc(stepLine(position))}</span></li>`).join('')}</ol>`;
 
   function renderNarration(item, { animate }) {
     const { beat, chapter, beatIndex } = item;
     const body = $('#narration-body');
     body.getAnimations().forEach(animation => animation.cancel());
     body.dataset.beat = beat.id;
+    body.classList.remove('whatif');
     journeyRoot.dataset.beat = beat.id;
     $('#beat-kicker').textContent = chapter.beats.length > 1
       ? t('lesson.ui.kickerStep', { kicker: beat.kicker, step: beatIndex + 1, total: chapter.beats.length })
@@ -291,7 +295,17 @@ function run() {
     if (narrationPaused) animation.pause();
     return animation;
   };
-  // If the list has to scroll in its column, the newest line stays in view.
+  // Beside the stage the list has a fixed height. Lines that haven't arrived
+  // wait folded to one row; when the list would overflow, older lines fold to
+  // one row too, oldest first, so the newest stay whole and nothing scrolls.
+  const sideColumn = matchMedia('(min-width: 990px)');
+  const fold = newest => {
+    const box = list();
+    if (!box || !sideColumn.matches) return;
+    const all = lines();
+    for (let other = 0; other < newest && box.scrollHeight > box.clientHeight + 1; other += 1) all[other].classList.add('is-folded');
+  };
+  // If the list still has to scroll in its column, the newest line stays in view.
   const keepInView = element => {
     const box = list();
     if (!box || box.scrollHeight <= box.clientHeight + 1) return;
@@ -304,7 +318,7 @@ function run() {
       lines().forEach(element => {
         element.getAnimations().forEach(animation => animation.cancel());
         element.classList.add('is-pending');
-        element.classList.remove('is-past');
+        element.classList.remove('is-past', 'is-folded');
       });
       if (list()) list().scrollTop = 0;
     },
@@ -313,12 +327,14 @@ function run() {
       if (!all[position]) return;
       lineIn(all[position], duration);
       all.forEach((element, other) => element.classList.toggle('is-past', other <= dim));
+      fold(position);
       keepInView(all[position]);
     },
     revealAll({ duration }) {
       const all = lines();
       all.filter(element => element.classList.contains('is-pending')).forEach(element => lineIn(element, duration));
       all.forEach((element, other) => element.classList.toggle('is-past', other < all.length - 4));
+      fold(all.length - 1);
       if (all.length) keepInView(all.at(-1));
     },
     finishCurrent() { lines().forEach(element => element.getAnimations().forEach(animation => animation.finish())); },
@@ -331,6 +347,9 @@ function run() {
     narration,
     onChange: state => {
       const button = $('#life-pause');
+      if (onLife()) lifeState(state);
+      // While the story plays, a line rising into place never shows a scroll bar.
+      $('#life-steps')?.classList.toggle('is-playing', !state.complete);
       if (!button) return;
       button.textContent = t(state.playing || !state.started ? 'lesson.ui.pause' : 'lesson.ui.play');
       if (state.complete && document.activeElement === button) $('#next').focus({ preventScroll: true });
@@ -338,8 +357,93 @@ function run() {
     },
   });
   player.setPace(settings.pace);
-  player.setVersion(settings.dark);
   const onLife = () => beats[index]?.beat.id === 'life';
+
+  // ——— After the story: change one of Sam's choices ———
+  const lifeMap = scenes.paths.life;
+  const lifeMode = () => lifeMap.mode;
+  const announce = message => { $('#announcer').textContent = ''; requestAnimationFrame(() => { $('#announcer').textContent = message; }); };
+  // The story's end shows the end card; playing again hides it.
+  function lifeState(state) {
+    const mode = lifeMode();
+    if (state.complete && (mode === 'story' || mode === 'adds')) {
+      scenes.paths.lifeMode('ended');
+      $('#stage-description').textContent = `${lifeAlt()} ${t('lesson.beat.life.altEnd')}`;
+      const here = document.activeElement;
+      if (!here || here === document.body || here === $('#narration')) lifeMap.card.querySelector('h2').focus({ preventScroll: true });
+      announce(t('opening.end.announce'));
+    } else if (!state.complete && mode !== 'story') {
+      scenes.paths.lifeMode('story');
+      $('#stage-description').textContent = lifeAlt();
+    }
+  }
+  /** The story's words, whole, as the story left them (after a picked life, or for picking). */
+  // While choosing, a hint under the story; the story's oldest lines fold to make room for it.
+  const addHint = () => { if (!$('.life-hint')) $('#beat-extra').insertAdjacentHTML('beforeend', `<p class="life-hint">${esc(t('opening.choose.hint'))}</p>`); };
+  function showStoryWords({ hint = false } = {}) {
+    renderNarration(beats[index], { animate: false });
+    $('#life-pause').parentElement.classList.add('is-done');
+    if (hint) addHint();
+    narration.revealAll({ duration: 0 });
+  }
+  function startChoosing() {
+    scenes.paths.lifeMode('choosing');
+    if (lifeMode() === 'choosing' && !$('.life-hint') && !$('#whatif-list')) { addHint(); fold(lines().length - 1); }
+    else showStoryWords({ hint: true });
+    scenes.paths.restAtEnd();
+    announce(t('opening.choose.announce'));
+    lifeMap.focusFirstPick();
+  }
+  function backToSam() {
+    scenes.paths.lifeMode('ended');
+    scenes.paths.restAtEnd();
+    showStoryWords();
+    $('#stage-description').textContent = `${lifeAlt()} ${t('lesson.beat.life.altEnd')}`;
+    announce(t('opening.whatif.announceBack'));
+    lifeMap.card.querySelector('button').focus({ preventScroll: true });
+  }
+  function pickChoice(key) {
+    if (!onLife() || !player.state.complete) return;
+    scenes.paths.lifeMode('whatif');
+    lifeMap.pick(key);
+  }
+  // The narration of a picked life: its question, then its events by age, in the explorer's list style.
+  let whatAge = 0;
+  whatIf.onPick = ({ alt, age }) => {
+    whatAge = age;
+    const body = $('#narration-body');
+    body.dataset.beat = 'life';
+    body.classList.add('whatif');
+    $('#beat-heading').textContent = t(`opening.whatif.heading.${alt.id}`);
+    $('#beat-text').innerHTML = `<p class="whatif-same">${esc(t('opening.whatif.same', { age }))}</p><ol class="timeline" id="whatif-list"></ol>`;
+    $('#beat-extra').innerHTML = `<p class="whatif-note" hidden>${esc(t('opening.whatif.note'))}</p>
+      <div class="whatif-actions"><button type="button" class="pill-button" data-whatif="again">${esc(t('opening.whatif.again'))}</button>
+      <button type="button" class="pill-button" data-whatif="back">${esc(t('opening.whatif.back'))}</button></div>`;
+    $('#stage-description').textContent = t('opening.whatif.alt');
+    announce(t(`opening.whatif.heading.${alt.id}`));
+    // Focus moves on the next frame, once the new words are laid out, so the pick stays one short task.
+    requestAnimationFrame(() => requestAnimationFrame(() => { if (body.classList.contains('whatif')) $('#beat-heading')?.focus({ preventScroll: true }); }));
+  };
+  const kindOf = node => (node.kind === 'lucky' || node.kind === 'roadblock' ? node.kind : null);
+  // The picked choice is dated at Sam's own age for that step; the rest at their own ages.
+  whatIf.onStep = (node, position) => {
+    const list = $('#whatif-list');
+    if (!list) return;
+    const kind = kindOf(node);
+    const age = position === 0 ? whatAge : Math.round(node.age);
+    list.insertAdjacentHTML('beforeend', `<li><div class="timeline-step"><span class="timeline-age">${age}</span><span class="timeline-label">${kind ? `<small class="timeline-kind is-${kind}">${esc(t(`explore.kind.${kind}`))}</small> ` : ''}${esc(node.label)}${node.byFamily ? ` <small>${esc(t('explore.byFamily'))}</small>` : ''}</span></div></li>`);
+    list.scrollTop = list.scrollHeight;
+    list.classList.toggle('is-scrolled', list.scrollTop > 0);
+    announce(kind ? t('explore.announceSurprise', { age, kind: t(`explore.kind.${kind}`), event: node.label })
+      : t('explore.announceChoice', { age, choice: node.label }));
+  };
+  whatIf.onDone = () => {
+    const note = document.querySelector('.whatif-note');
+    if (note) note.hidden = false;
+    scenes.paths.restAtEnd();
+  };
+  lifeMap.onCard(action => { if (action === 'choose') startChoosing(); });
+  lifeMap.onAlt(key => pickChoice(key));
 
   // ——— Stage ———
   async function switchRoot(target) {
@@ -455,6 +559,7 @@ function run() {
       }
       if (focus === 'next') narrationEl.focus({ preventScroll: true });
       if (!(await wait(380, run))) return;
+      scenes.paths.beginStory(prefersReducedMotion() ? 0 : 600);
       player.play();
       return;
     } else {
@@ -485,10 +590,16 @@ function run() {
   });
   $('#beat-extra').addEventListener('click', event => {
     if (event.target.closest('#life-pause')) player.toggle();
+    const action = event.target.closest('[data-whatif]')?.dataset.whatif;
+    if (action === 'again') startChoosing();
+    if (action === 'back') backToSam();
   });
-  // A click or tap on the map or the lines plays the next step.
+  const growing = () => onLife() && lifeMode() === 'whatif' && lifeMap.what && !lifeMap.what.done;
+  // A click or tap on the map or the lines plays the next step (or shows a growing life whole).
   const tapAdvance = event => {
-    if (!onLife() || !player.state.started || player.state.complete || event.target.closest('button, a')) return;
+    if (event.target.closest('button, a')) return;
+    if (growing()) { lifeMap.finishWhat(); return; }
+    if (!onLife() || !player.state.started || player.state.complete) return;
     player.advance();
   };
   $('#stage').addEventListener('click', tapAdvance);
@@ -499,6 +610,12 @@ function run() {
     if ($('#reading-dialog').open) return;
     if (event.target.closest?.('input, textarea, select, [contenteditable="true"], [data-local-keys]')) return;
     const telling = onLife() && player.state.started && !player.state.complete;
+    if (event.key === 'Escape' && onLife() && (lifeMode() === 'whatif' || lifeMode() === 'choosing')) {
+      event.preventDefault();
+      backToSam();
+      return;
+    }
+    if (event.key === 'ArrowRight' && growing()) { event.preventDefault(); lifeMap.finishWhat(); return; }
     if (event.key === ' ' && onLife() && !event.target.closest?.('button, a, summary')) {
       event.preventDefault();
       player.toggle();
@@ -517,20 +634,12 @@ function run() {
   // ——— Mockup bar ———
   const bar = $('#mockup-bar');
   bar.addEventListener('click', event => {
-    const option = event.target.closest('[data-dark], [data-pace], [data-replay]');
+    const option = event.target.closest('[data-pace], [data-replay]');
     if (!option) return;
-    if (option.dataset.dark) {
-      settings.dark = option.dataset.dark;
-      player.setVersion(settings.dark);
-      // Swap the words in place; what has already arrived stays arrived.
-      lines().forEach((element, position) => { element.querySelector('.life-line').textContent = stepLine(position); });
-      if (onLife()) $('#stage-description').textContent = lifeAlt();
-    }
     if (option.dataset.pace) {
       settings.pace = option.dataset.pace;
       player.setPace(settings.pace);
     }
-    bar.querySelectorAll('[data-dark]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.dark === settings.dark)));
     bar.querySelectorAll('[data-pace]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.pace === settings.pace)));
     saveSettings();
     if (option.dataset.replay !== undefined) go(LIFE, { animate: false, autoplay: true, focus: 'next', history: 'push' });
@@ -547,8 +656,9 @@ function run() {
       <section class="reading-chapter" aria-labelledby="read-chapter-paths"><h2 id="read-chapter-paths">${esc(paths.title)}</h2>
         <section class="reading-beat"><h3>${esc(cover.heading)}</h3>${cover.body.map(text => `<p>${esc(text)}</p>`).join('')}${picture(cover.alt)}</section>
         <section class="reading-beat"><h3>${esc(lifeBeat.heading)}</h3>
-          <ol class="reading-steps">${LIFE_STEPS.map((step, position) => `<li><strong>${esc(t('lesson.ui.age', { age: step.age }))}</strong> ${esc(stepLine(position))}</li>`).join('')}</ol>
-          ${picture(lifeAlt())}</section>
+          <ol class="reading-steps">${LINES.map((line, position) => `<li>${line.close ? '' : `<strong>${esc(t('lesson.ui.age', { age: line.age }))}</strong> `}${esc(stepLine(position))}</li>`).join('')}</ol>
+          ${picture(lifeAlt())}
+          <p>${esc(t('opening.reading.change'))}</p></section>
         <section class="reading-beat"><h3>${esc(addsBeat.heading)}</h3>${addsBeat.body.map(text => `<p>${esc(text)}</p>`).join('')}${picture(addsBeat.alt)}</section>
       </section>
       <section class="reading-chapter" aria-labelledby="read-chapter-hike"><h2 id="read-chapter-hike">${esc(plan.chapter.title)}</h2>
@@ -564,7 +674,7 @@ function run() {
   dialog.querySelector('[data-close]').addEventListener('click', () => dialog.close());
 
   // A test hook for the capture scripts.
-  globalThis.opening = { player, go, beats, scenes, get index() { return index; } };
+  globalThis.opening = { player, go, beats, scenes, pickChoice, startChoosing, backToSam, ALTS, get index() { return index; } };
 
   const initial = Math.max(0, beatForHash(location.hash));
   index = initial;

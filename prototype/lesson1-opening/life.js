@@ -4,51 +4,78 @@
 import { prefersReducedMotion } from '../../src/lessons/choices/journey-motion.js';
 
 /**
- * One step per line of the story.
- * - `y`: where the route stands after the step, in network units from the
- *   Beginning dot (negative is up). Luck and help lift the path, hard times
- *   drop it, and choices keep it level.
- * - `kind`: 'point' (a stop on the route), 'lift' (white dot, green ring, plus)
- *   or 'drop' (white dot, clay ring, minus).
- * - `buildsOn`: earlier steps that pulse once when this one lands, per
- *   version of the dark example where the two differ.
+ * One step per line of the story, drawn in the Explore chapter's language: each
+ * step is a fork on Sam's route, and the gray lives he didn't live leave it.
+ * - `key`: its words (`lesson.beat.life.<key>`) and map label (`map.life.<key>`).
+ * - `y`: the height of its dot, 0 (top) to 1 (bottom), as in the explorer, with
+ *   the Born dot at BORN_Y (the map moves the whole route so Born sits on the
+ *   field's Beginning dot). Luck and help lift the path, hard times drop it.
+ * - `kind`: 'start', 'choice', 'lucky' (a sun star) or 'roadblock' (a clay diamond).
+ * - `step`: the explorer step it stands for, so a life grown from an earlier
+ *   fork carries on Sam's chains (guitar → band → radio).
+ * - `alts`: the choices he didn't make here. They leave the previous dot, on
+ *   the side of the route it never crosses later. Those with an `id` have a
+ *   label and can be picked after the story; the rest are unlabelled lines.
+ * - `buildsOn`: earlier steps that pulse once when this one lands.
  * - `long`: an event, which holds a little longer before the next line.
  */
+export const BORN_Y = 0.5;
 export const LIFE_STEPS = [
-  { age: 0, y: 0, kind: 'start' },
-  { age: 6, y: 8, kind: 'point' },
-  { age: 10, y: 2, kind: 'point', buildsOn: [1] },
-  { age: 14, y: 6, kind: 'point', buildsOn: [2] },
-  { age: 16, y: 5, kind: 'point', buildsOn: [3] },
-  { age: 18, y: -17, kind: 'lift', buildsOn: [4], long: true },
-  { age: 20, y: -42, kind: 'point', buildsOn: [5, 4], long: true },
-  { age: 23, y: -40, kind: 'point' },
-  { age: 25, y: 10, kind: 'drop', long: true },
-  { age: 27, y: -10, kind: 'lift', buildsOn: { b: [2], a: [] }, long: true },
-  { age: 30, y: -16, kind: 'point', buildsOn: { b: [], a: [2] }, end: true },
+  { key: 'born', age: 0, y: 0.5, kind: 'start' },
+  { key: 'choir', age: 6, y: 0.515, byFamily: true, alts: [
+    { id: 'football', age: 6.5, y: 0.37, step: 'joinSoccer', byFamily: true },
+    { id: 'swimming', age: 5.6, y: 0.64, byFamily: true },
+  ] },
+  { key: 'guitar', age: 10, y: 0.49, step: 'startPiano', buildsOn: [1], alts: [
+    { id: 'drums', age: 10.5, y: 0.4, step: 'startPiano' },
+    { id: 'chess', age: 9.6, y: 0.62, step: 'mathsClub' },
+  ] },
+  { key: 'band', age: 14, y: 0.505, step: 'schoolBand', buildsOn: [2], alts: [
+    { id: 'schoolTeam', age: 13.6, y: 0.62, step: 'tryOutTeam' },
+  ] },
+  { key: 'song', age: 16, y: 0.49, step: 'playGigs', buildsOn: [3], alts: [{ age: 16.4, y: 0.58 }] },
+  { key: 'radio', age: 18, y: 0.4, kind: 'lucky', step: 'songOnRadio', buildsOn: [4], long: true, alts: [{ age: 18.3, y: 0.54 }] },
+  { key: 'record', age: 20, y: 0.29, step: 'recordAlbum', buildsOn: [5, 4], long: true, alts: [{ age: 20.3, y: 0.45, gap: 0.6 }] },
+  { key: 'fame', age: 23, y: 0.33, alts: [
+    { id: 'earlyNights', age: 23.3, y: 0.22 },
+    { id: 'savesMoney', age: 22.8, y: 0.14 },
+  ] },
+  { key: 'splits', age: 25, y: 0.78, kind: 'roadblock', long: true, alts: [{ age: 25.5, y: 0.32, band: [0.29, 0.38] }] },
+  { key: 'help', age: 27, y: 0.67, long: true, alts: [
+    { id: 'movesHome', age: 27.8, y: 0.75 },
+    { id: 'officeJob', age: 27.3, y: 0.86 },
+  ] },
+  { key: 'teaches', age: 30, y: 0.55, step: 'teachMusic', buildsOn: [2], alts: [{ age: 30.4, y: 0.68 }] },
+  { key: 'kids', age: 33, y: 0.45, alts: [{ age: 33.4, y: 0.57 }] },
+  { key: 'school', age: 36, y: 0.36, buildsOn: [10], alts: [{ age: 36.4, y: 0.47 }] },
+  { key: 'stage', age: 41, y: 0.27, buildsOn: [1], alts: [{ age: 41.3, y: 0.38 }] },
 ];
-export const LAST = LIFE_STEPS.length - 1;
+/** The story's lines: one per step, then "Many paths still ahead." (no age, no dot). */
+export const LINES = [...LIFE_STEPS.map((step, index) => ({ ...step, index })), { key: 'close', close: true }];
+export const LAST = LINES.length - 1;
+export const END = LIFE_STEPS.length - 1;
 
-/** The steps a version of the dark example pulses for step `index`. */
-export function buildsOn(index, version = 'b') {
-  const value = LIFE_STEPS[index].buildsOn;
-  if (!value) return [];
-  return Array.isArray(value) ? value : value[version] ?? [];
+/** The steps a step pulses as it lands. */
+export function buildsOn(index) {
+  return LINES[index]?.buildsOn ?? [];
 }
 
 // Milliseconds from the moment a step's line starts to arrive.
 export const TIMING = {
   line: 420, // the line rises 14px into place as it fades in
-  pointAt: 260, // its point blooms as the line lands
+  pointAt: 260, // its dot blooms as the line lands
   bloom: 320,
   markerBloom: 380,
-  walkFrom: 300, // and the traveller walks there
+  walkFrom: 300, // and the traveller walks there, the gray choices he didn't make sprouting beside him
   walk: 700,
+  tailsFrom: 700, // the gray lives carry on a little way
+  tails: 500,
+  labelAt: 900, // the step's short label on the map, as he arrives
   appear: 300, // the first step has no walk: the traveller appears on the Beginning dot
   pulseAt: 980, // earlier steps it builds on answer as the traveller arrives
   pulseGap: 140,
   pulse: 600,
-  hold: 600, // after the last step, before the route's end starts to breathe
+  hold: 600, // after the last line, before the route's end starts to breathe
   land: 300, // Next lands everything at once
 };
 export const PACES = { normal: { short: 900, long: 1300 }, quick: { short: 700, long: 1000 } };
@@ -70,7 +97,7 @@ export function bezier(x1, y1, x2, y2) {
   };
 }
 // A walk: a soft start and a long, gentle arrival.
-const walkEase = bezier(0.42, 0, 0.22, 1);
+export const walkEase = bezier(0.42, 0, 0.22, 1);
 // A bloom: grows a touch past its size and settles.
 const bloomEase = t => {
   const s = 1.9;
@@ -78,57 +105,65 @@ const bloomEase = t => {
   return 1 + (s + 1) * u ** 3 + s * u ** 2;
 };
 const landEase = bezier(0.2, 0.7, 0.2, 1);
+const sproutEase = bezier(0.3, 0, 0.3, 1);
 
 export const settleAt = index => (index === 0 ? TIMING.appear : TIMING.walkFrom + TIMING.walk);
-/** When a step has stopped moving: its walk has settled and its pulses have faded. */
-export function quietAfter(index, version = 'b') {
-  const count = index >= 0 ? buildsOn(index, version).length : 0;
-  return Math.max(settleAt(index), count ? TIMING.pulseAt + (count - 1) * TIMING.pulseGap + TIMING.pulse : 0);
+/** When a step has stopped moving: its walk and tails have settled and its pulses have faded. */
+export function quietAfter(index) {
+  if (index < 0) return 0;
+  const count = buildsOn(index).length;
+  return Math.max(settleAt(index), index > 0 && !LINES[index].close ? TIMING.tailsFrom + TIMING.tails : 0,
+    count ? TIMING.pulseAt + (count - 1) * TIMING.pulseGap + TIMING.pulse : 0);
 }
 export function stepDuration(index, pace) {
-  const step = LIFE_STEPS[index];
-  return settleAt(index) + (step.long ? pace.long : pace.short) + (step.end ? TIMING.hold : 0);
+  const line = LINES[index];
+  if (line.close) return settleAt(index) + TIMING.hold;
+  return settleAt(index) + (line.long ? pace.long : pace.short);
 }
 
 /**
- * What the map draws for a moment of the story: how far along the route the
- * traveller is (`pos`, in steps), how far each point has bloomed, the pulses
- * in flight and whether the route's end is resting.
+ * What the map draws for a moment of the story. Steps before `index` are
+ * whole; for the step at `index`: how far the traveller has walked to its dot
+ * (`walk`), how far its dot has bloomed, how far the choices he didn't make
+ * have grown from the dot he left (`sprout`, then `tails`), whether its label
+ * shows, and the pulses in flight. On the closing line, `sprout` grows the
+ * paths still ahead. `landing` (0–1) carries the traveller to the end at once.
  */
-function frameFor({ index, elapsed, version, landing }) {
-  const bloom = LIFE_STEPS.map((_, j) => (j < index ? 1 : 0));
-  const pulses = [];
-  let pos = 0;
-  let traveller = 1;
-  if (index >= 0) {
-    const step = LIFE_STEPS[index];
-    const growFor = step.kind === 'lift' || step.kind === 'drop' ? TIMING.markerBloom : TIMING.bloom;
-    bloom[index] = bloomEase(clamp01((elapsed - TIMING.pointAt) / growFor));
-    if (index === 0) {
-      traveller = bezier(0.2, 0.7, 0.2, 1)(clamp01(elapsed / TIMING.appear));
-    } else {
-      pos = index - 1 + walkEase(clamp01((elapsed - TIMING.walkFrom) / TIMING.walk));
-    }
-    buildsOn(index, version).forEach((at, order) => {
-      const p = (elapsed - TIMING.pulseAt - order * TIMING.pulseGap) / TIMING.pulse;
-      if (p > 0 && p < 1) pulses.push({ at, p });
-    });
+function frameFor({ index, elapsed, landing }) {
+  const frame = { index, walk: 0, appear: 1, bloom: 0, sprout: 0, tails: 0, label: false, pulses: [], resting: false, landing: null };
+  if (index < 0) { frame.appear = 0; return frame; }
+  const line = LINES[index];
+  if (line.close) {
+    frame.walk = 1; frame.bloom = 1; frame.label = true; frame.tails = 1;
+    frame.sprout = sproutEase(clamp01((elapsed - TIMING.walkFrom) / TIMING.walk));
+    frame.resting = elapsed >= settleAt(index);
   } else {
-    traveller = 0;
+    const growFor = line.kind === 'lucky' || line.kind === 'roadblock' ? TIMING.markerBloom : TIMING.bloom;
+    frame.bloom = bloomEase(clamp01((elapsed - TIMING.pointAt) / growFor));
+    if (index === 0) {
+      frame.appear = landEase(clamp01(elapsed / TIMING.appear));
+      frame.walk = 1;
+      frame.label = elapsed >= TIMING.appear;
+    } else {
+      frame.walk = walkEase(clamp01((elapsed - TIMING.walkFrom) / TIMING.walk));
+      frame.sprout = sproutEase(clamp01((elapsed - TIMING.walkFrom - 40) / TIMING.walk));
+      frame.tails = clamp01((elapsed - TIMING.tailsFrom) / TIMING.tails);
+      frame.label = elapsed >= TIMING.labelAt;
+    }
+    buildsOn(index).forEach((at, order) => {
+      const p = (elapsed - TIMING.pulseAt - order * TIMING.pulseGap) / TIMING.pulse;
+      if (p > 0 && p < 1) frame.pulses.push({ at, p });
+    });
   }
   if (landing) {
-    const p = landEase(landing.p);
-    pos += (LAST - pos) * p;
-    traveller = 1;
-    pulses.length = 0;
-    LIFE_STEPS.forEach((_, j) => { bloom[j] = Math.max(bloom[j], clamp01((pos - j + 1) * 1.5)); });
+    frame.landing = landEase(landing.p);
+    frame.pulses = [];
   }
-  const resting = !landing && index === LAST && elapsed >= settleAt(LAST);
-  return { pos, bloom, pulses, traveller, resting };
+  return frame;
 }
 
-/** Everything placed: the route to its end, every point, the traveller resting. */
-export const FINAL_FRAME = { pos: LAST, bloom: LIFE_STEPS.map(() => 1), pulses: [], traveller: 1, resting: true };
+/** Everything placed: the route to its end, every fork, the paths ahead, the traveller resting. */
+export const FINAL_FRAME = { index: LAST, walk: 1, appear: 1, bloom: 1, sprout: 1, tails: 1, label: true, pulses: [], resting: true, landing: null };
 
 /**
  * The story's player. One clock drives two sinks:
@@ -147,7 +182,6 @@ export function createLifePlayer({ map, narration, onChange = () => {} }) {
   let complete = false;
   let landing = null;
   let pace = PACES.normal;
-  let version = 'b';
   let frame = null;
   let last = 0;
   let drawnIdle = false;
@@ -155,7 +189,7 @@ export function createLifePlayer({ map, narration, onChange = () => {} }) {
   const state = () => ({ index, playing: auto && !complete, complete, started: index >= 0 });
   const emit = () => onChange(state());
 
-  const draw = () => map(complete && !landing ? FINAL_FRAME : frameFor({ index, elapsed, version, landing }));
+  const draw = () => map(complete && !landing ? FINAL_FRAME : frameFor({ index, elapsed, landing }));
 
   function loop(now) {
     frame = null;
@@ -182,7 +216,7 @@ export function createLifePlayer({ map, narration, onChange = () => {} }) {
       }
     }
     // Between a step's settle and the next line nothing moves: draw once, then rest.
-    const quiet = elapsed >= quietAfter(index, version);
+    const quiet = elapsed >= quietAfter(index);
     if (!quiet || !drawnIdle) { draw(); drawnIdle = quiet; }
     if (running) schedule();
   }
@@ -198,7 +232,7 @@ export function createLifePlayer({ map, narration, onChange = () => {} }) {
     elapsed = Math.max(0, carry);
     drawnIdle = false;
     narration.reveal(index, { duration: TIMING.line, dim: index - 4 });
-    if (!auto) holdAt = quietAfter(index, version);
+    if (!auto) holdAt = quietAfter(index);
   }
 
   function finish() {
@@ -313,7 +347,6 @@ export function createLifePlayer({ map, narration, onChange = () => {} }) {
     play, showAll, toggle, advance, land, stop, reset, seek,
     redraw: draw,
     setPace(name) { pace = PACES[name] ?? PACES.normal; },
-    setVersion(name) { version = name === 'a' ? 'a' : 'b'; },
     get state() { return state(); },
   };
 }
