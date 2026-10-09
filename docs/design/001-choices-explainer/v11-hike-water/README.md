@@ -1,6 +1,6 @@
 # v11 — Hike water
 
-Created: 2026-10-09. Updated: 2026-10-09 (round 3). Status: C goes forward, with A's still drawing as its no-WebGL fallback; B is retired. Round 3 is on a branch for the owner's review. Not in the lesson; not published.
+Created: 2026-10-09. Updated: 2026-10-09 (in the lesson). Status: C is the lesson's hike, rebuilt on plain WebGL, with A's still drawing as its no-WebGL fallback; B is retired. The integration is on a branch for the owner's review; not published.
 
 **Question: which water does the hike keep?**
 
@@ -77,6 +77,30 @@ What changed (C, and A as its fallback):
   They keep their clothes and colours, and the dad keeps his beard and backpack. Alfredo's head is about 39% of his height. His dad is about 1.45 times as tall, with a head about 28% of his height. At 1440x900 they are about 41 and 60 px tall. While they walk, their legs and arms swing and the pair bobs slightly; with reduced motion they stand still.
 - **The Halfway flag.** It stands about 30 units further up the trail, on the far edge, so the pair no longer hides it. Its label stays where it was.
 
+## In the lesson
+
+C is now the lesson's hike map, with A's still drawing as its fallback. The owner's notes on round 3:
+
+- move the whole falls group (both rocks, the notch, the sheet and the pool) down about 15 px at 1920x1080, so the rocks' bases sit below the ground line with no background showing under them, and the side stream starts from the moved pool;
+- make the trail and the cabin's patch of ground one shape: the trail widens smoothly into the clearing, in the trail's own colour and edge, with no seam and no second colour, and the walked line still starts at the trail's start dot;
+- show close-ups of the falls and the trailhead next to round 3's.
+
+What changed:
+
+- **The falls.** The rocks, the notch, the sheet and the pool moved down 12.5 map units (15.3 px at 1920x1080). The rocks' bases now follow the near ground's edge 3 units below it, so the rocks stand on the ground. The side stream leaves the moved pool, and the Waterfall label moved down with the falls.
+- **The trailhead.** The clearing and the trail's first stretch are one shape: a smooth union of the clearing's uneven ellipse and the trail's band, in the trail's sand with the trail's darker edge around it. The trail's centre dashes start where it leaves the clearing. The clearing's own colour (#e8d8c3) is gone.
+- **The pair at the trailhead.** At the first step, the turn-back step and the practice walks, Alfredo and his dad wait 22 map units up the trail, clear of the cabin's corner. The walked line still grows from the start dot behind them.
+- **The figures.** `alfredo()` and `dad()` sit next to `person()` in `src/lessons/choices/journey-icons.js`. Their legs and near arms swing only while they walk, and never under reduced motion.
+- **The water.** C's shaders run on plain WebGL2 in `src/lessons/choices/journey-hike-water.js`:
+  - one canvas and five draw calls (the lake, the pool, the side stream, the main stream and the sheet), with no textures and no Three.js;
+  - the module loads the first time the hike is shown;
+  - without WebGL2, or after a lost context, the canvas is replaced by A's still drawing;
+  - it pauses when the map is off-screen, behind the sorting board or in a hidden tab, and caps the pixel ratio at 2.
+
+  The shapes it shares with the two SVG layers are in `src/lessons/choices/journey-hike-geometry.js`, and all three layers use the same 1200 x 800 mapping.
+- **Colours.** The six water mixes are tokens in `src/styles/tokens.css`: `--color-water-bank`, `--color-water-body`, `--color-water-deep`, `--color-water-light`, `--color-water-fall` and `--color-water-ring`. They are declared `@theme static`, because the water reads them at runtime rather than through a class. The lake's waterline uses `water-bank`.
+- **Played and opened steps agree.** Playing into a step now ends on the same picture as opening it directly: the second walk's line ends at the pair's feet by the bridge, and the ranger leaves as they set off on the Waterfall Trail.
+
 ## One geography for every version
 
 The water's shapes live in one module (`geometry.js`), so A, B and C differ only in how the water looks.
@@ -116,7 +140,7 @@ The water uses the tokens `lake`, `lake-soft` and `paper` from `src/styles/token
 | `water-fall` | `lake-soft` → `paper`, 22% | #deebed | the falling sheet |
 | `water-ring` | `lake-soft` → `lake`, 40% | #a6c3ce | ripple rings |
 
-Foam and glints use `paper`. If the hike keeps a version, these mixes become tokens in `tokens.css`.
+Foam and glints use `paper`. In the lesson these mixes are tokens in `tokens.css` (see [In the lesson](#in-the-lesson)).
 
 ## How to run it
 
@@ -130,9 +154,22 @@ Open <http://127.0.0.1:4632/prototype/hike-water/>, which links to [A](http://12
 
 ## The numbers
 
+### In the lesson
+
+Measured on 2026-10-09 in headless Chrome (ANGLE on Metal, Apple M4) on the production build, at 1440x900 with the CPU throttled 4x. The machine was not quiet (a load average of 4 to 10 from other work), so the ranges are wider than they would be on an idle machine. "Before" is the lesson as it was, built the same way.
+
+- **The water module.** `journey-hike-water.js` is 14.7 KB, 6.2 KB gzipped. The shapes it shares with the map (`journey-hike-geometry.js`, loaded with the lesson) are 5.9 KB, 2.8 KB gzipped. The build contains no Three.js.
+- **Walking and steady water.** The longest main-thread task was 10.4–15.1 ms during the walk to Halfway and 3.5–7.3 ms with only the water moving.
+- **Frame intervals say nothing here.** In this headless browser a blank page has a median frame interval of 11.6 ms and a worst of 27.6 ms. The hike measures the same with its water moving (11.6 and 28.8 ms) or still (11.9 and 29.6 ms), so the task lengths stand in for frame intervals.
+- **The load frame.** Opened straight at the hike, the lesson's longest task is 126–141 ms, against 124–133 ms before. That task builds every chapter's scene; the hike's own share is about 5.5 ms unthrottled. The water then sets itself up in a separate task of 16–19 ms. Two runs under heavier load reached 253 and 319 ms.
+- **Entering the hike for the first time.** From the step before it, the longest task is 13–20 ms in most runs and up to 38 ms under load, against 11–15 ms before. Most of the difference is the browser creating the page's first WebGL context, which takes 8–21 ms at 4x on its own.
+- **Memory.** Over 60 s of moving water, the JS heap stayed at 2.65 MB at every 10 s sample, with 1,600 DOM nodes and 87 event listeners.
+
+### The prototype rounds
+
 Measured on 2026-10-09 in headless Chrome (ANGLE on Metal, Apple M4), at 1440x900 with the CPU throttled 4x and 12 to 15 s of steady animation per run. The dev server was serving unbundled modules.
 
-### After round 3 (C)
+#### After round 3 (C)
 
 Fix round 1's code was measured alongside, on the same machine, for comparison.
 
@@ -153,7 +190,7 @@ How to read these:
 - **Frame intervals are left out.** Other heavy work was running on the machine (load average 10 to 17), and headless Chrome's frame intervals were irregular for both versions alike: a median of about 12.6 ms and a worst of about 27 ms. They say nothing about this page here, so the trace's task lengths stand in for them: no task, steady or walking, came near 16.7 ms.
 - **Fewer triangles.** The stream no longer runs over the far ridges. The clearing, the bridge and the figures are a few more SVG shapes, and the walk's leg swing is CSS.
 
-### After fix round 1 (C, and A as its fallback)
+#### After fix round 1 (C, and A as its fallback)
 
 | | C | A (C's fallback) |
 | --- | --- | --- |
@@ -168,7 +205,7 @@ How to read these:
 
 The scene build frame grew from about 165 ms to about 210 ms at 4x, because the trail is now sampled into tapered ribbons when the page loads.
 
-### First round
+#### First round
 
 | | A | B | C |
 | --- | --- | --- | --- |
@@ -216,21 +253,29 @@ How to read the frame numbers:
   - **Every step.** Plan, turn back, practice, retry, closed and respond all draw without errors.
   - **Console.** No errors or warnings, with or without WebGL.
   - **Tests and build.** `npm test` and `npm run build` pass.
+- **In the lesson.** In Chromium and WebKit:
+  - **Every step, every language, every size.** The hike was played step by step, with both choices at Halfway and all three at the closed trail, in English, German, Spanish and French at 744x1133, 1024x768, 1133x744, 1440x900, 1920x1080 and 2560x1440, then resized live to another of those sizes. Each played step ends on the same picture as opening that step directly.
+  - **Alignment.** The water canvas and both SVG layers share one mapping to within 0.01 px at every size, before and after the resize.
+  - **Inside the map.** The labels, the pair and the ranger's bubble stay inside the map at every size and in every language.
+  - **The falls, by pixel** (1920x1080 at pixel ratio 2, and 2560x1440). The channel shows 3.3–3.7 map units on each side of the sheet (3.5 drawn). The sheet's top is at 403.5–404.4, against the moved notch floor at 403.5. The rocks' lowest edges are 1.6–12.4 units below the ground line, with no background showing under them.
+  - **The source, by pixel.** The first water is at 421.2, under the crest at 421.5.
+  - **The pair and the cabin.** At the first step, the turn-back step and the practice walks, the pair stands 20.6 map units clear of the cabin.
+  - **Reduced motion.** The water is one still frame, unchanged over 1.2 s; the pair moves to each step without walking, and their legs don't swing.
+  - **Without WebGL, and after a lost context.** A fresh canvas shows A's still drawing.
+  - **Pausing.** The water draws nothing while the tab is hidden, while the sorting board covers the map, or after the reader leaves the hike, and resumes when the map shows again.
+  - **Loading.** The water module is requested only when the hike is first shown.
+  - **Console.** No errors in any run.
+  - **The text version.** The built reading pages in all four languages are unchanged.
 
 ## Known issues and limits
 
-- **The Three.js cost.** C costs 132.1 KB gzipped, almost all of it Three.js; its renderer barely tree-shakes. The same shaders on raw WebGL would be a few KB (an estimate, not built). The plan is to port C's shaders to plain WebGL at integration, so they use no Three.js chunks.
+- **Three.js stays for the study pages only.** The lesson's water is plain WebGL. This round's B and C pages still run on Three.js, so `three` stays a devDependency; the site's build contains none of it.
 - **A first frame for B and C.** On some loads B and C have one extra frame of about 50 ms at 4x, while WebGL is set up.
 - **B and C looked alike.** The owner saw no difference between the versions except in the stream, so B is retired and C goes forward.
-- **A slower load frame.** Building the tapered trail adds about 45 ms at 4x to the one-time load frame. The ribbons could be computed ahead of time if that matters.
+- **The first WebGL context.** Entering the hike for the first time costs a task of about 13–20 ms at 4x, against 11–15 ms before, because the browser creates the page's first WebGL context then. It happens once, as the hike's scene fades in.
 - **The far bank's colour.** The strip of hillside over the lake's far edge uses the second hill band's own colour (#d2ddd3), so it has to change with that band.
-- **This is a study copy.** `scene.js` is a study copy of the lesson's hike scene (`src/lessons/choices/journey-hike.js`), and the lesson is unchanged. Keeping a version means:
-  - porting `geometry.js`, the water module and the moved trail into `src/`;
-  - adding the colour tokens;
-  - moving the prototype's English-only strings (`copy.json`) into all four catalogs;
-  - moving Alfredo's and his dad's figures next to Maya's figure code, so all the lesson's people come from one place.
-- **The pair by the cabin.** At the first step and the turn-back step, the pair stands on the trail's start and slightly overlaps the cabin's right corner.
-- **No fresh-context design review.** The design reviewer has not looked at round 3 yet.
+- **The study copy.** `prototype/hike-water/scene.js` stays as this round's record. The lesson's scene (`src/lessons/choices/journey-hike.js`) now carries everything in it, plus the moved falls and the trailhead's one shape, so the two have drifted apart on purpose.
+- **No fresh-context design review.** The design reviewer has not looked at round 3 or the lesson's version yet.
 
 ## Images
 
@@ -276,6 +321,18 @@ At 1440x900 and 744x1133, Halfway step:
 - [The walk](hike-water-c-motion-v04.png): four frames of the pair walking to Halfway, taken in quick succession, at pixel ratio 3.
 - [C without WebGL](hike-water-c-nowebgl-1440-v04.png): A's still drawing, in step with C.
 
+### In the lesson (site-hike v01)
+
+The lesson's own page at the Halfway step, taken from the site:
+
+- English: [1440x900](site-hike-1440-v01.png), [1920x1080](site-hike-1920-v01.png), [744x1133](site-hike-744-v01.png).
+- German: [1440x900](site-hike-de-1440-v01.png), [1920x1080](site-hike-de-1920-v01.png), [744x1133](site-hike-de-744-v01.png).
+- Close-ups at 1440x900, framed like round 3's:
+  - [the falls](site-hike-falls-v01.png), moved down onto the ground, next to [round 3's](hike-water-c-falls-v04.png), at pixel ratio 2;
+  - [the trailhead](site-hike-trailhead-v01.png), the trail and the clearing as one shape, next to [round 3's](hike-water-c-cabin-v04.png), at pixel ratio 2;
+  - [the pair at Halfway](site-hike-walkers-v01.png), at pixel ratio 3.
+- [Without WebGL](site-hike-nowebgl-1440-v01.png): A's still drawing.
+
 ## Source files
 
 All files are in `prototype/hike-water/`:
@@ -293,4 +350,6 @@ All files are in `prototype/hike-water/`:
 | `water-layer.js` | sizing, the frame loop, pausing, reduced motion and stats |
 | `hike-water.css` | the page's styles, the props' colours (trail, clearing, bridge, cabin, table, lake shore) and the figures' walking motion |
 
-`three` 0.186.1 is an exact devDependency.
+`three` 0.186.1 is an exact devDependency. The lesson does not use it.
+
+The lesson's version is in `src/lessons/choices/`: `journey-hike.js` (the scene and the story's steps), `journey-hike-geometry.js` (the shared shapes), `journey-hike-water.js` (the WebGL water and its still fallback) and `journey-icons.js` (the figures).

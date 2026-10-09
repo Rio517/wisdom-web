@@ -10,7 +10,7 @@ Newest implementation for review: [v09 — Guided journey](001-choices-explainer
 
 Maya, redrawn from the picked concept (A · Garden) for review: [v12 — Maya figure](001-choices-explainer/v12-maya-figure/README.md), with a [size strip](001-choices-explainer/v12-maya-figure/size-strip-v01.png) beside the concept.
 
-Open prototype round: [v11 — Hike water](001-choices-explainer/v11-hike-water/README.md) asks which water the hike keeps: three versions of the hike map's streams and waterfall (flat Canvas 2D, Three.js flat, Three.js with light) on one shared geography. C goes forward, with A as its fallback, and B is retired. Round 3 (a trailhead clearing, the falls lined up with their rock, a three-quarter bridge, the stream starting at the hill's crest, and Alfredo and his dad in the style of Maya's figure) is in review.
+Open prototype round: [v11 — Hike water](001-choices-explainer/v11-hike-water/README.md) asks which water the hike keeps: three versions of the hike map's streams and waterfall (flat Canvas 2D, Three.js flat, Three.js with light) on one shared geography. C goes forward, with A as its fallback, and B is retired. Round 3 (a trailhead clearing, the falls lined up with their rock, a three-quarter bridge, the stream starting at the hill's crest, and Alfredo and his dad in the style of Maya's figure) is now in the lesson, with C on plain WebGL, on a branch for review.
 
 All Choices design work belongs to [001 — Choices explainer](001-choices-explainer/README.md). That stable study contains the numbered review rounds, their questions, dates, status and relationship to the product documents.
 
