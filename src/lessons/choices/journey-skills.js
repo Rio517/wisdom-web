@@ -80,8 +80,7 @@ export function createSkillsScene(root) {
       </svg>
       <div class="fork-start"><span class="fork-dot"></span><span>${esc(t('skills.forkStart'))}</span></div>
       <div class="lanes" data-split="false">${lane('a')}${lane('b')}</div>
-    </div>
-    <p class="illustration-note skills-note">${esc(t('skills.illustration'))}</p>`;
+    </div>`;
 
   const $ = selector => root.querySelector(selector);
   const lanes = $('.lanes');

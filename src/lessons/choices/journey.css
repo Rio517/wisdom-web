@@ -334,7 +334,7 @@ h1, h2, h3, h4 { font-family: var(--font-field); font-weight: 500; }
 }
 
 /* ——— Skills (Maya) ——— */
-.scene-skills { @apply grid; grid-template-rows: auto minmax(0, 1fr) auto; padding: 18px 24px 10px; }
+.scene-skills { @apply grid; grid-template-rows: auto minmax(0, 1fr); padding: 18px 24px 10px; }
 .scene-skills { --fork-w: 78px; }
 /* The bar uses the lanes' own columns: "Time" over the fork, the steps from the lane edge. */
 .season-bar { @apply mb-3 grid items-center; grid-template-columns: var(--fork-w) minmax(0, 1fr); min-height: 52px; }
@@ -401,7 +401,6 @@ h1, h2, h3, h4 { font-family: var(--font-field); font-weight: 500; }
 .growth::before { content: "↑ "; }
 .growth[data-level="2"]::before { content: "↑↑ "; }
 .growth[data-level="3"]::before { content: "↑↑↑ "; }
-.skills-note { @apply m-0 pt-1 text-right; }
 
 .skill-box { @apply rounded-2xl px-4 py-3; background: var(--color-paper); border: 1px solid var(--color-rule); }
 .skill-box header { @apply mb-1.5 flex items-start justify-between gap-2; }
