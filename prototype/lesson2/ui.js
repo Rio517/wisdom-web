@@ -326,7 +326,7 @@ export function ownPlanMarkup() {
   return `<p class="kicker">${esc(t('l2.own.kicker'))}</p>
     <h2 class="l2-own-heading" tabindex="-1">${esc(t('l2.own.heading'))}</h2>
     <p class="l2-own-text">${esc(t('l2.own.text'))}</p>
-    <form class="l2-own-form l2-keep-live" onsubmit="return false">
+    <form class="l2-own-form l2-keep-live">
       <p class="l2-own-sheet-title" aria-hidden="true">${esc(t('l2.own.sheetTitle'))}</p>
       ${field('what', 'what')}${field('moment', 'moment')}${field('ready', 'ready')}${field('missed', 'missed')}
       <p class="l2-own-footer">${esc(t('l2.own.footer'))}</p>
@@ -344,6 +344,8 @@ export function finish(feed, life, routines, { onAgain }) {
   own.className = 'l2-card l2-own is-current';
   own.innerHTML = ownPlanMarkup();
   feed.append(own);
+  // Nothing is sent: Enter in a field must not submit the form anywhere.
+  own.querySelector('form').addEventListener('submit', event => event.preventDefault());
   own.querySelector('[data-action="print"]').addEventListener('click', () => window.print());
   own.querySelector('[data-action="again"]').addEventListener('click', () => onAgain());
   return { end, own };

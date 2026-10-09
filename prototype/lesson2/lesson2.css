@@ -9,7 +9,7 @@ body { min-width: 0; overflow: hidden; }
 
 /* ——— Frame ——— */
 .l2-top { flex: none; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 20px; height: 68px; padding: 0 24px; }
-.l2-brand { color: var(--color-ink); font: 26px/1 var(--font-field); text-decoration: none; }
+.l2-brand { display: inline-flex; flex-direction: column; justify-content: center; min-height: 44px; color: var(--color-ink); font: 26px/1 var(--font-field); text-decoration: none; }
 .l2-brand span { display: block; margin-top: 4px; font: 15px var(--font-guide); color: var(--color-quiet); }
 .l2-study { margin: 0; text-align: center; font: 15px/1.35 var(--font-guide); color: var(--color-quiet); }
 .l2-study span { display: block; }
