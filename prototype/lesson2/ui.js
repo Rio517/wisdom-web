@@ -45,7 +45,7 @@ export function mountFrame(app, direction, { onRestart } = {}) {
       <p class="l2-study"><span>${esc(t('l2.study'))}</span><strong>${esc(t('l2.dir.letter', { letter: direction.toUpperCase() }))} · ${esc(t(`l2.dir.${direction}`))}</strong></p>
       <nav class="l2-dirs" aria-label="${esc(t('l2.dirNav'))}">
         ${LETTERS.map(letter => `<a href="./${letter}.html${keep}" ${letter === direction ? 'aria-current="page"' : ''} title="${esc(t(`l2.dir.${letter}`))}">${letter.toUpperCase()}</a>`).join('')}
-        <a class="l2-lang" href="${langHref}" lang="${de ? 'en' : 'de'}" title="${esc(t('l2.langLabel'))}">${de ? 'English' : 'Deutsch'}</a>
+        <a class="l2-lang" href="${langHref}" lang="${de ? 'en' : 'de'}" title="${esc(t('l2.langLabel'))}">${esc(t(de ? 'l2.langBack' : 'l2.lang'))}</a>
         <button type="button" class="l2-restart">${esc(t('l2.restart'))}</button>
       </nav>
     </header>

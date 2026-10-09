@@ -12,6 +12,6 @@ export function start(app) {
       <p class="l2-index-text">${esc(t('l2.index.text'))}</p>
       <ol>${LETTERS.map(letter => `<li><a href="./${letter}.html${keep}">${esc(t('l2.dir.letter', { letter: letter.toUpperCase() }))} · ${esc(t(`l2.dir.${letter}`))}</a>
         <p>${esc(t(`l2.index.${letter}`))}</p></li>`).join('')}</ol>
-      <p><a class="l2-index-lang" href="${de ? location.pathname : `${location.pathname}?lang=de`}" lang="${de ? 'en' : 'de'}">${de ? 'English' : 'Deutsch'}</a></p>
+      <p><a class="l2-index-lang" href="${de ? location.pathname : `${location.pathname}?lang=de`}" lang="${de ? 'en' : 'de'}">${esc(t(de ? 'l2.langBack' : 'l2.lang'))}</a></p>
     </main>`;
 }
