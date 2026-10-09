@@ -20,6 +20,7 @@ The earlier [opening](v06-flat-canvas/opening-desktop-v06.png), [full context](v
 
 | Round | Date | Question and artifact type | Status |
 | --- | --- | --- | --- |
+| [v10 — Voice pass](v10-voice-pass/README.md) | 2026-10-09 | Does Lesson 1 read in one warm narrator's voice at an 8–12 reading level, with good luck as well as bad, and does a chain-based explorer show choices building on each other? | Implemented on a branch; owner review pending; not published. |
 | [v09 — Guided journey](v09-guided-journey/README.md) | 2026-09-26 | Does a guided, animated journey (big picture → hike → two-path compounding → game) explain the lesson better than v08's static map with text cards? | Implemented locally; owner review pending; not published. |
 | [v10 — Hike fixes](v10-hike-fixes/README.md) | 2026-10-09 | Does the hike map now read at a glance: a trail from the trailhead to the lake, a blue stream, a waterfall into a pool? | Implemented locally; owner review pending. |
 | [v08 — Alfredo lesson](v08-alfredo-lesson/README.md) | 2026-09-14 | Does the accepted storyboard work as a live Tailwind lesson with stable, revisitable map choices? | Implemented locally; owner review pending; not published. |
