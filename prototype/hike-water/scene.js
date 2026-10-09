@@ -80,7 +80,7 @@ function cabinMarkup() {
     <rect class="cabin-door" x="-16" y="-20" width="10" height="20"/>
     <rect class="cabin-window" x="5" y="-24" width="13" height="11"/><path class="cabin-frame" d="M11.5 -24 V-13 M5 -18.5 H18"/>
   </g>
-  <g id="picnic-table" transform="translate(30 690) scale(1.35)">
+  <g id="picnic-table" transform="translate(87 693) scale(1.2)">
     <path class="table-leg" d="M-3 -11.5 L-11 0 M3 -11.5 L11 0 M-14 -6.8 H14"/>
     <rect class="table-wood" x="-10" y="-14" width="20" height="3"/>
     <rect class="table-wood" x="-18" y="-8.2" width="8" height="2.6"/><rect class="table-wood" x="10" y="-8.2" width="8" height="2.6"/>

@@ -41,7 +41,7 @@ The design lead's calls: go forward with C only, keep A's still drawing in step 
 - **The bridge.** A small wooden footbridge seen from the side spans the stream, with a gently arched deck, plank ends along its edge, three posts and a handrail. The trail meets both ends, and the water shows under it.
 - **The trailhead.**
   - A cabin about 1.5 times the old house's size: plank walls in the clay and cello colours, a pitched roof with an overhang, a door, a window and a small stone chimney.
-  - A picnic table seen from the side stands in front of it.
+  - A picnic table seen from the side stands to its right, between the cabin and the trail's start, at least 24px from the map's edge.
   - The table has no label: the story's picnic spot is by the falls, and it is not labelled either.
 
 ## One geography for every version
@@ -198,6 +198,7 @@ At 1440x900 and 744x1133, Halfway step:
   - [the cabin and table](hike-water-c-cabin-v02.png).
 - [C's motion](hike-water-c-motion-v02.png): three frames 0.45 s apart.
 - [C without WebGL](hike-water-c-nowebgl-1440-v02.png): A's still drawing, in step with C.
+- **v03.** The picnic table moved to the right of the cabin, away from the map's edge: [C at 1440](hike-water-c-1440-v03.png), [C at 744](hike-water-c-744-v03.png), [the cabin and table](hike-water-c-cabin-v03.png).
 
 ## Source files
 
