@@ -1,6 +1,6 @@
 # Choices — The paths we make (guided journey)
 
-Status: Draft 03, the text of Lesson 1 on the site. Created: 2026-09-26. Updated: 2026-09-30.
+Status: Draft 04, the text of Lesson 1 on the site. Created: 2026-09-26. Updated: 2026-10-09.
 
 This is the readable copy of [Lesson 1](../product/013-choices-guided-journey.md). The live words are in `src/i18n/messages/en.json`, and the translations sit beside it (see [014](../product/014-languages.md)). Edit either here or in the catalog; after a code pass, regenerate this file with `npm run copy:lesson`. [Draft 02](choices-story.md) is the text of the earlier lesson study.
 
@@ -12,7 +12,7 @@ A guided lesson for readers aged eight and up. The people and places are made up
 
 Your choices shape where a life can go. So do things nobody chooses, the lucky ones and the unlucky ones.
 
-Take your time. First you’ll join a hike and meet a girl with two paths. Then you’ll play a game and try out a whole life.
+Take your time. First you’ll join a hike and meet a girl with two paths. Then you’ll try out a whole life.
 
 Picture: A single dot marks the beginning of a life.
 
@@ -150,19 +150,11 @@ Picture: Six cards sorted into two groups. Their choices: how much water to pack
 
 ### Same start, two paths.
 
-Meet Maya. She’s eight, and she just joined a soccer team.
+Meet Maya. She’s eight, and she just joined a soccer team. Let’s imagine two ways her next three years could go. Same Maya, same start. Only her choices are different.
 
-Let’s imagine two ways her next three years could go. Same Maya, same start. Only her choices are different.
+In her first season, Path A Maya goes to most practices and kicks a ball against the wall at home. Path B Maya goes now and then. So far, the difference is small. Early practice often feels like nothing is happening. Something is.
 
-Picture: One path splits into two. Path A: Maya keeps practising. Path B: Maya mostly skips.
-
-### At first, progress feels slow.
-
-In her first season, Path A Maya goes to most practices. At home, she kicks a ball against the wall. Path B Maya goes now and then.
-
-After one season, the difference is small. Early practice often feels like nothing is happening. Something is.
-
-Picture: Season one. Path A’s calendar is mostly filled; Path B’s has a few practices. Both sets of skill bars are low, with Path A slightly ahead.
+Picture: One path splits into two. Path A: Maya keeps practising. Path B: Maya mostly skips. Then season one: Path A’s calendar is mostly filled; Path B’s has a few practices. Both sets of skill bars are low, with Path A slightly ahead.
 
 ### Then learning builds on learning.
 
@@ -170,46 +162,23 @@ Path A Maya stops staring at the ball. Now she can look up and see her teammates
 
 Each skill gives the next one a place to stand. Path B Maya is still working on the basics, so the gap grows.
 
+> **Trying something new**
+>
+> At eleven, both Mayas try basketball. It’s a different ball, and dribbling with your hands is new.
+>
+> But Path A Maya already knows where to stand and when to pass. That comes with her. Path B Maya has to learn most of it from the start.
+>
+> Picture while open: Both skill boxes switch to basketball. Path A starts with part of Court sense and Passing already filled, carried across from soccer. Dribbling starts low for both. Path B starts low on all three.
+
 Picture: Seasons two and three. Path A’s skill bars rise faster than before, with arrows showing ball control helping passing and passing helping positioning. Path B’s bars rise slowly.
-
-### Trying something new.
-
-At eleven, both Mayas try basketball. It’s a different ball, and dribbling with your hands is new.
-
-But Path A Maya already knows where to stand and when to pass. That comes with her. Path B Maya has to learn most of it from the start.
-
-Picture: Both skill boxes switch to basketball. Path A starts with part of Court sense and Passing already filled, carried across from soccer. Dribbling starts low for both. Path B starts low on all three.
 
 ### It’s never too late to start.
 
-Path B Maya can start practising any season she likes. When she does, her skills grow too. She has more to catch up on, but the door is still open.
+Path B Maya can start practising any season she likes. When she practises basketball at eleven, her skills grow too. She has more to catch up on, but the door is still open.
 
 Real life is messier than this picture. Coaches, time and money matter. Luck does too, and sometimes luck is kind: someone spots you and says, “Keep going.” Practice helps, but it doesn’t guarantee a result.
 
 Picture: Both Mayas practise basketball for a season. Path B’s calendar fills for the first time and her bars rise; Path A keeps her head start.
-
-## Your turn
-
-### Ten afternoons, two skills.
-
-You play soccer and you’re learning the cello. You have ten afternoons after school. Choose what to do with each one, and watch what builds up.
-
-Rest counts too. When you’re worn out, practice doesn’t stick as well.
-
-#### The ten afternoons
-
-1. **Monday.** Soccer practice is at four. Your cello is leaning in the corner, waiting patiently. — Go to soccer practice / Practise cello for 15 minutes / Goof off with videos
-2. **Tuesday.** Cello lesson today. School was long and you’re a bit tired. — Go to your cello lesson / Kick the ball against the wall / Take a nap
-3. **Wednesday.** Your friends are playing tag in the park. — Play tag with friends / Practise cello for 15 minutes / Kick the ball against the wall
-4. **Thursday · Unlucky.** Rain! Soccer practice is cancelled. — Dribble a ball in the hallway / Practise cello for 15 minutes / Build a blanket fort
-5. **Friday.** Soccer practice today. Also, a new video game just came out. — Go to soccer practice / Play the new video game / Practise cello for 15 minutes
-6. **Monday.** You slept badly and you’re really tired. — Rest / Go to soccer practice / Practise cello for 15 minutes
-7. **Tuesday · Unlucky.** Your cello teacher is ill. No lesson today. — Practise cello on your own / Kick the ball against the wall / Read a comic
-8. **Wednesday.** Soccer practice. A friend asks you to come over instead. — Go to soccer practice / Go to your friend’s house / Practise cello for 15 minutes
-9. **Thursday · Lucky break.** Your coach is teaching a new passing trick today. — Go to practice / Practise cello for 15 minutes / Rest
-10. **Friday · Lucky break.** Last afternoon! Surprise: the coach is a player short on Saturday and asks you. The cello concert is next month. — Go to soccer practice / Practise cello for 15 minutes / Rest
-
-Picture: A game of ten afternoons. Each afternoon has three choices. Skill boxes for soccer and cello, and an energy meter, show what builds up.
 
 ## Explore
 
@@ -248,9 +217,9 @@ Picture: The life map comes back, with the traveller at Today and many light gre
 
 ## Editorial notes
 
-- The order is big picture first, then two concrete examples (setbacks and circumstances; compounding and carry-across), then a short game, a free explorer and three takeaways.
+- The order is big picture first, then two concrete examples (setbacks and circumstances; compounding and carry-across), then a free explorer and three takeaways.
 - Maya is compared with herself on two imagined paths, not with another child, so the contrast is about practice patterns rather than ability.
-- Soccer-to-basketball and cello-to-guitar are illustrative carry-across examples. The research supports a possible related-skill head start with adaptation, not guaranteed or large transfer ([learning findings](../research/learning/README.md)).
-- The game rewards rest: practising while worn out builds less. No numbers are shown; bars use words such as Learning and Getting good.
-- Chance cards (rain, an ill teacher, a new drill) and closed ways in the explorer keep circumstances visible.
+- Soccer-to-basketball is an illustrative carry-across example, kept optional behind “Trying something new”. The research supports a possible related-skill head start with adaptation, not guaranteed or large transfer ([learning findings](../research/learning/README.md)).
+- No numbers are shown; Maya’s bars use words such as Learning and Getting good.
+- The hike’s closed trail and the explorer’s closed ways and lucky chances keep circumstances visible.
 - Explorer labels are examples of the kinds of choices people make at each age. They are not ranked, and no option is presented as better. Early ones are marked as chosen by family.
