@@ -1,6 +1,6 @@
 # v11 — Hike water
 
-Created: 2026-10-09. Status: three prototype versions on a branch; the owner's pick is pending. Not in the lesson; not published.
+Created: 2026-10-09. Updated: 2026-10-09 (fix round 1). Status: C goes forward, with A's still drawing as its no-WebGL fallback; B is retired. Fix round 1 is on a branch for the owner's review. Not in the lesson; not published.
 
 **Question: which water does the hike keep?**
 
@@ -15,17 +15,48 @@ After v10, the owner found the hike's graphics worse than before, the water most
 - the stream on the right should merge into the first stream;
 - Three.js should be tried for the water, in a few versions to compare.
 
+## Fix round 1
+
+The owner found the water much better than before, but could see no difference between the versions except in the stream. The notes:
+
+- the fall should start at the top of its rock;
+- a second rock should stand to its right, for decoration;
+- the fall should land in the pool, without the odd line behind its foot;
+- Mirror Lake looked like a strange circle sitting on top of the mountain;
+- the trail should get narrower;
+- the bridge looked as if seen from straight above, and should have a little perspective;
+- the trailhead house should be a little bigger and look like a cabin, with a small picnic table next to it.
+
+The design lead's calls: go forward with C only, keep A's still drawing in step because it is C's fallback, and retire B. C's shaders stay self-contained for a later port to plain WebGL. What changed:
+
+- **The fall.** A notch is cut in the rock's top lip. The sheet pours over it, a little wider at the lip, and runs the full height of the rock.
+- **The fall's foot.** The sheet is drawn last and above the pool, so nothing shows behind its foot. It turns white near the bottom and ends inside the pool's surface, and the foam spreads out over the water around it.
+- **The second rock.** It is smaller (about 60% of the fall rock's height), flat, in the same rock colours, and stands partly behind the fall rock on the right, clear of the water.
+- **Mirror Lake.**
+  - It now sits in the land on the shelf below the dip in the skyline.
+  - Its shore is uneven and about 5:1 wide, as seen at a low angle, with a thin flat shore band.
+  - A strip of the hillside covers its far edge, with a waterline, and small trees stand at both ends of the far shore.
+  - The trail ends at its near shore.
+- **The trail.** It narrows smoothly with distance: full width at the trailhead and half width at the lake. The walked lines and the Waterfall Trail narrow with it.
+- **The bridge.** A small wooden footbridge seen from the side spans the stream, with a gently arched deck, plank ends along its edge, three posts and a handrail. The trail meets both ends, and the water shows under it.
+- **The trailhead.**
+  - A cabin about 1.5 times the old house's size: plank walls in the clay and cello colours, a pitched roof with an overhang, a door, a window and a small stone chimney.
+  - A picnic table seen from the side stands in front of it.
+  - The table has no label: the story's picnic spot is by the falls, and it is not labelled either.
+
 ## One geography for every version
 
 The water's shapes live in one module (`geometry.js`), so A, B and C differ only in how the water looks.
 
 - **Main stream.** It rises behind the far ridge and shows where it crosses the ridge line at a saddle. It narrows with distance, winds down through the notch in the second ridge, passes under the bridge where the trail crosses, and leaves at the bottom edge.
-- **Waterfall.** The fall sits in its tall rock on the right again, as in the before picture, with a small pool at its foot.
+- **Waterfall.** The fall pours from a notch at the top of its tall rock on the right, as in the before picture, into a small pool at its foot. A smaller second rock stands behind it to the right.
 - **Side stream.** It is narrower than the main stream and runs from the pool leftwards in slow meanders. It joins the main stream below the bridge in a clean Y.
 - **Width and motion follow depth.** Width and the flow pattern both follow depth: the water is narrow and slow far away and wider and faster close up, and both streams share the same scale.
-- **What moved.** Mirror Lake, the trail, the trailhead, the big rock, Alfredo and the labels stay where the lesson has them, with two exceptions that the water forced:
+- **Mirror Lake.** It sits in the land below the dip in the skyline: an uneven shore about 5:1 wide, a thin shore band, the hillside over its far edge. The trail ends at its near shore.
+- **What moved.** The trail, the trailhead, the big rock, Alfredo and the labels stay where the lesson has them, with these exceptions:
   - The Waterfall Trail used to run up the stream's west bank to v10's waterfall in the middle of the map. It now leaves the bridge eastwards, above the side stream, to a lookout beside the falls.
   - The picnic spot moved to that lookout.
+  - In fix round 1, Mirror Lake moved down into the land, and the trail's last stretch now ends at the lake's near shore. The trailhead became a cabin with a picnic table, and its label moved to sit over the cabin.
   - Trees keep clear of all the water.
 
 ## The three versions
@@ -33,10 +64,10 @@ The water's shapes live in one module (`geometry.js`), so A, B and C differ only
 | Version | What it is | Trade-off |
 | --- | --- | --- |
 | **A · Flat** (`a.html`) | Canvas 2D, no Three.js. Flat layered fills: a darker bank and a lighter body. Every bank is drawn first, then every body, so the junction and the pool join without a seam. The motion is slow and flat: thin light dashes drift downstream in three lanes, streaks fall down the sheet, foam sits at the foot, and ripple rings spread on the pool and the lake. | The lightest (3.5 KB gzipped) and the closest to the flat background. The motion is readable but mechanical: dashes, not water. |
-| **B · Three.js, flat** (`b.html`) | One orthographic Three.js layer between the background and the trail, still in flat colours. Soft bands drift down the streams in two layers at different speeds, so the pattern keeps changing. The fall is a sheet of long soft streaks sliding down from a lighter lip, with churning foam where it lands. Gentle rings spread on the pool and the lake. The edges are anti-aliased in the shader. | It reads more like moving water than A while staying flat. It costs 131.6 KB gzipped. |
+| **B · Three.js, flat** (`b.html`), retired after the first review | One orthographic Three.js layer between the background and the trail, still in flat colours. Soft bands drift down the streams in two layers at different speeds, so the pattern keeps changing. The fall is a sheet of long soft streaks sliding down from a lighter lip, with churning foam where it lands. Gentle rings spread on the pool and the lake. The edges are anti-aliased in the shader. | It reads more like moving water than A while staying flat. It costs 131.6 KB gzipped. |
 | **C · Three.js with light** (`c.html`) | B plus light: small glints that ride the flow and fade in and out, a lighter shimmer travelling down the fall, and a slightly deeper middle in the streams. | The liveliest. The light is subtle at a glance, most visible on the lake and the fall; it stays flat colour, with no gradients that imply volume. It costs the same as B. |
 
-B and C use the same module; C turns on its extra shader code with a `LIGHT` define. Without WebGL, or if the context is lost, B and C show A's still drawing with a one-line note in the reading panel.
+After the first review, C goes forward and B is retired. Its page still runs, because it shares C's module. B and C use the same module; C turns on its extra shader code with a `LIGHT` define. Without WebGL, or if the context is lost, B and C show A's still drawing with a one-line note in the reading panel.
 
 ## Colours
 
@@ -66,6 +97,23 @@ Open <http://127.0.0.1:4632/prototype/hike-water/>, which links to [A](http://12
 ## The numbers
 
 Measured on 2026-10-09 in headless Chrome (ANGLE on Metal, Apple M4), at 1440x900 with the CPU throttled 4x and 12 to 15 s of steady animation per run. The dev server was serving unbundled modules.
+
+### After fix round 1 (C, and A as its fallback)
+
+| | C | A (C's fallback) |
+| --- | --- | --- |
+| Frame interval, median / worst (C at pixel ratio 1 and 2, three runs; A at 2) | 16.7 / 16.8 ms | 16.7 / 16.8 ms |
+| Water work per frame (JS), median / 95th percentile / worst | 0.1 / 0.7 / 1.2 ms | 0.1 / 0.8 / 1.6 ms |
+| Long frames while animating | none | none |
+| Alfredo's walk from the start to Halfway, at pixel ratio 2 | worst interval 16.8 ms, no long frames | not measured |
+| Load, at 4x | one 205–223 ms frame building the scene, then 57–62 ms setting up WebGL (38–44 ms to create the layer, 11 ms waiting for shaders, 25–28 ms for the first frame) | one 217 ms frame building the scene |
+| Renderer | one WebGL2 renderer: 5 draw calls, 3 programs, 5 geometries, 3,222 triangles, 0 textures, pixel ratio at most 2 | one 2D canvas |
+| JS heap over 60 s, after garbage collection | 9,228 → 9,349 KB | not measured |
+| Extra code, gzipped (minified) | 132.1 KB (533.9 KB) | 4.1 KB (8.6 KB) |
+
+The scene build frame grew from about 165 ms to about 210 ms at 4x, because the trail is now sampled into tapered ribbons when the page loads.
+
+### First round
 
 | | A | B | C |
 | --- | --- | --- | --- |
@@ -97,13 +145,23 @@ How to read the frame numbers:
 - **Without WebGL.** B and C fall back to A's still drawing with the note, both when WebGL is missing at load and when the context is lost mid-animation.
 - **Other steps.** The other steps (respond, closed, practice) work with the new geography.
 - **Tests and build.** `npm test` and `npm run build` pass.
+- **Fix round 1.** On C, the checks above were run again:
+  - alignment at the four sizes, and after resizing through them;
+  - the console;
+  - reduced motion;
+  - the fallback without WebGL;
+  - pausing for a hidden tab and when the map is off-screen.
+
+  The respond, closed and practice steps were checked too, with the tapered Waterfall Trail, the walked lines and the closed stretch.
 
 ## Known issues and limits
 
-- **The Three.js cost.** B and C cost 131.6 KB gzipped, almost all of it Three.js; its renderer barely tree-shakes. The same shaders on raw WebGL would be a few KB (an estimate, not built). That is worth weighing if B or C wins.
+- **The Three.js cost.** C costs 132.1 KB gzipped, almost all of it Three.js; its renderer barely tree-shakes. The same shaders on raw WebGL would be a few KB (an estimate, not built). The plan is to port C's shaders to plain WebGL at integration, so they use no Three.js chunks.
 - **A first frame for B and C.** On some loads B and C have one extra frame of about 50 ms at 4x, while WebGL is set up.
 - **The stream's source can be hidden.** At 1024x768 the backpack panel, which is taller at later steps, can cover where the stream comes over the ridge. Halfway is clear.
-- **B and C look alike.** The difference between them is small at a glance.
+- **B and C looked alike.** The owner saw no difference between the versions except in the stream, so B is retired and C goes forward.
+- **A slower load frame.** Building the tapered trail adds about 45 ms at 4x to the one-time load frame. The ribbons could be computed ahead of time if that matters.
+- **The far bank's colour.** The strip of hillside over the lake's far edge uses the second hill band's own colour (#d2ddd3), so it has to change with that band.
 - **This is a study copy.** `scene.js` is a study copy of the lesson's hike scene (`src/lessons/choices/journey-hike.js`), and the lesson is unchanged. Keeping a version means:
   - porting `geometry.js`, the water module and the moved trail into `src/`;
   - adding the colour tokens;
@@ -111,6 +169,8 @@ How to read the frame numbers:
 - **No fresh-context design review.** The design reviewer has not looked at this round yet.
 
 ## Images
+
+### First round (v01)
 
 At 1440x900 and 744x1133, Halfway step:
 
@@ -128,6 +188,17 @@ At 1440x900 and 744x1133, Halfway step:
 
 **Fallback.** [B without WebGL](hike-water-b-nowebgl-1440-v01.png) shows A's still drawing and the note.
 
+### Fix round 1 (v02, C only)
+
+- Full page: [C at 1440](hike-water-c-1440-v02.png), [C at 744](hike-water-c-744-v02.png).
+- Close-ups at pixel ratio 2:
+  - [the falls](hike-water-c-falls-v02.png): the notch, the second rock and the foot in the pool;
+  - [Mirror Lake](hike-water-c-lake-v02.png);
+  - [the bridge](hike-water-c-bridge-v02.png);
+  - [the cabin and table](hike-water-c-cabin-v02.png).
+- [C's motion](hike-water-c-motion-v02.png): three frames 0.45 s apart.
+- [C without WebGL](hike-water-c-nowebgl-1440-v02.png): A's still drawing, in step with C.
+
 ## Source files
 
 All files are in `prototype/hike-water/`:
@@ -137,12 +208,12 @@ All files are in `prototype/hike-water/`:
 | `index.html`, `a.html`, `b.html`, `c.html`, `boot.js`, `copy.json` | the pages and their words |
 | `index-page.js` | the version list |
 | `page.js` | the lesson-like layout and the water set-up and fallback |
-| `scene.js` | the study copy of the hike scene, with the rock and the moved trail |
+| `scene.js` | the study copy of the hike scene: the rocks, the lake's shore and far bank, the tapered trail, the bridge, the cabin and the table |
 | `geometry.js` | the shared water shapes |
 | `water-colors.js` | the token mixes |
 | `water-flat.js` | version A and the fallback |
 | `water-three.js` | versions B and C |
 | `water-layer.js` | sizing, the frame loop, pausing, reduced motion and stats |
-| `hike-water.css` | the page's styles |
+| `hike-water.css` | the page's styles and the props' colours (trail, bridge, cabin, table, lake shore) |
 
 `three` 0.186.1 is an exact devDependency.
