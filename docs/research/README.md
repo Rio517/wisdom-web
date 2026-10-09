@@ -12,10 +12,10 @@ Read the [cross-topic synthesis](report-source.md) for the overall argument, the
 | [Lifetime opportunities](lifetime/README.md) | How do preparation, requirements, time, and recovery shape options? | [L2–L10](lifetime/sources.md) |
 | [Circumstances, setbacks and chance](circumstances/README.md) | How do outside conditions shape opportunities, and what can support recovery? | [C1–C22](circumstances/sources.md) |
 | [Decision-making and development](decision-making/README.md) | How can children learn demanding decision concepts, with appropriate support? | [T1–T9](decision-making/sources.md) |
-| [Habits](habits/README.md) | How do repeated actions become easier to initiate, and how can routines change? | [B1–B4](habits/sources.md) |
+| [Habits](habits/README.md) | How do repeated actions become easier to initiate, and how can routines change? | [B1–B18](habits/sources.md) |
 | [Delivery references](delivery/README.md) | What supports static delivery, useful prototypes, and accessible motion? | [H1–H8](delivery/sources.md) |
 
-Habits has an initial formation evidence base. Changing established habits and child/family interventions are explicit research gaps, not completed findings.
+Habits has a formation evidence base and a 2026-10-09 pass on interruptions, family support and changing habits. Child evidence is thin and mostly adjacent; no primary-school habit-formation trial was verified.
 
 ## File map
 

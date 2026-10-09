@@ -10,7 +10,7 @@ Access dates are recorded in each topic ledger; the circumstances search was add
 | L2–L10 | [Lifetime opportunities](lifetime/sources.md) |
 | C1–C22 | [Circumstances, setbacks, chance and support](circumstances/sources.md) |
 | T1–T9 | [Decision-making and development](decision-making/sources.md) |
-| B1–B4 | [Habits and repeated action](habits/sources.md) |
+| B1–B18 | [Habits and repeated action](habits/sources.md) |
 | H1–H8 | [Hosting, prototyping, layout, Canvas and motion accessibility](delivery/sources.md) |
 
 Identifiers are stable references; their prefixes do not constrain folder placement. Cross-link to an existing record instead of duplicating it.
