@@ -13,10 +13,15 @@
 /* The closing line has no age. */
 .life-step.is-close .life-age { visibility: hidden; }
 @media (min-width: 990px) {
-  /* Folded: one row, a size down (older lines when the column is short, and lines still to come). */
-  .life-step:is(.is-folded, .is-pending) .life-line { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 15px; line-height: 1.3; }
+  /* Folded: when the column is short, older lines step back a size, then one more, and still wrap to their whole text.
+     Snug: in the shortest column (1133x744) the rows close up as well. */
+  .life-step.is-folded .life-line { font-size: 15px; line-height: 1.3; color: var(--color-quiet); }
+  .life-step.is-folded-more .life-line { font-size: 14px; line-height: 1.25; }
+  .life-steps.is-snug { row-gap: 1px; }
+  .life-steps.is-snug .life-step.is-folded-more .life-line { line-height: 1.2; }
   .life-step:is(.is-folded, .is-pending) .life-age { font-size: 13px; }
-  .life-step.is-folded .life-line { color: var(--color-quiet); }
+  /* Lines still to come wait unseen in one row each, so the list doesn't jump as they arrive. */
+  .life-step.is-pending .life-line { white-space: nowrap; overflow: hidden; font-size: 15px; line-height: 1.3; }
 }
 .life-control { margin: 4px 0 0; }
 .life-control.is-done { visibility: hidden; }

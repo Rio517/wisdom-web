@@ -296,14 +296,22 @@ function run() {
     return animation;
   };
   // Beside the stage the list has a fixed height. Lines that haven't arrived
-  // wait folded to one row; when the list would overflow, older lines fold to
-  // one row too, oldest first, so the newest stay whole and nothing scrolls.
+  // wait in one row each. When the list would overflow, older lines step down
+  // a size, oldest first, then one size more; in a short column (an iPad held
+  // sideways) the rows close up too, and only then do the three lines before
+  // the newest step down. Every line wraps to its whole text, and nothing scrolls.
   const sideColumn = matchMedia('(min-width: 990px)');
   const fold = newest => {
     const box = list();
     if (!box || !sideColumn.matches) return;
     const all = lines();
-    for (let other = 0; other < newest && box.scrollHeight > box.clientHeight + 1; other += 1) all[other].classList.add('is-folded');
+    const over = () => box.scrollHeight > box.clientHeight + 1;
+    const shrink = (step, upTo) => { for (let other = 0; other < upTo && over(); other += 1) all[other].classList.add(step); };
+    shrink('is-folded', newest - 3);
+    shrink('is-folded-more', newest - 3);
+    if (over()) box.classList.add('is-snug');
+    shrink('is-folded', newest);
+    shrink('is-folded-more', newest);
   };
   // If the list still has to scroll in its column, the newest line stays in view.
   const keepInView = element => {
@@ -318,23 +326,27 @@ function run() {
       lines().forEach(element => {
         element.getAnimations().forEach(animation => animation.cancel());
         element.classList.add('is-pending');
-        element.classList.remove('is-past', 'is-folded');
+        element.classList.remove('is-past', 'is-folded', 'is-folded-more');
       });
-      if (list()) list().scrollTop = 0;
+      if (list()) { list().scrollTop = 0; list().classList.remove('is-snug'); }
     },
     reveal(position, { duration, dim }) {
       const all = lines();
       if (!all[position]) return;
-      lineIn(all[position], duration);
+      // Fold before the line starts rising, so its motion isn't measured as height.
+      all[position].classList.remove('is-pending');
       all.forEach((element, other) => element.classList.toggle('is-past', other <= dim));
       fold(position);
+      lineIn(all[position], duration);
       keepInView(all[position]);
     },
     revealAll({ duration }) {
       const all = lines();
-      all.filter(element => element.classList.contains('is-pending')).forEach(element => lineIn(element, duration));
+      const arriving = all.filter(element => element.classList.contains('is-pending'));
+      arriving.forEach(element => element.classList.remove('is-pending'));
       all.forEach((element, other) => element.classList.toggle('is-past', other < all.length - 4));
       fold(all.length - 1);
+      arriving.forEach(element => lineIn(element, duration));
       if (all.length) keepInView(all.at(-1));
     },
     finishCurrent() { lines().forEach(element => element.getAnimations().forEach(animation => animation.finish())); },
