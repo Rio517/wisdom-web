@@ -21,6 +21,7 @@ The earlier [opening](v06-flat-canvas/opening-desktop-v06.png), [full context](v
 | Round | Date | Question and artifact type | Status |
 | --- | --- | --- | --- |
 | [v09 — Guided journey](v09-guided-journey/README.md) | 2026-09-26 | Does a guided, animated journey (big picture → hike → two-path compounding → game) explain the lesson better than v08's static map with text cards? | Implemented locally; owner review pending; not published. |
+| [v10 — Hike fixes](v10-hike-fixes/README.md) | 2026-10-09 | Does the hike map now read at a glance: a trail from the trailhead to the lake, a blue stream, a waterfall into a pool? | Implemented locally; owner review pending. |
 | [v08 — Alfredo lesson](v08-alfredo-lesson/README.md) | 2026-09-14 | Does the accepted storyboard work as a live Tailwind lesson with stable, revisitable map choices? | Implemented locally; owner review pending; not published. |
 | [v01 — Reading and motion](v01-reading-and-motion/README.md) | 2026-09-06 | ImageGen reading-surface and motion storyboards: what should the explainer feel like? | Historical; the sparse map and stationary-dot sequence are superseded. |
 | [v02 — SVG interaction](v02-svg-interaction/README.md) | 2026-09-06 | Browser captures of the initial HTML/SVG map: does beginning-to-Today travel and focus work? | Superseded implementation evidence. |

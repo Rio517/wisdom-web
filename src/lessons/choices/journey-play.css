@@ -51,8 +51,8 @@
 .play-intro h2 { margin: 0 0 10px; font: 500 clamp(24px, 2.3vw, 30px)/1.15 var(--font-field); }
 .play-intro p { margin: 0; font: 17px/1.55 var(--font-field); color: var(--color-quiet); }
 
-.play-day-label { margin: 0 0 8px; font: 600 14px var(--font-guide); color: var(--color-quiet); }
-.play-day-label .chance-tag { margin-left: 8px; border-radius: 99px; padding: 2px 10px; font: 700 12px var(--font-guide); background: var(--color-sun-soft); color: #7a5412; }
+.play-day-label { margin: 0 0 8px; font: 600 15px var(--font-guide); color: var(--color-quiet); }
+.play-day-label .chance-tag { margin-left: 8px; border-radius: 99px; padding: 2px 10px; font: 700 15px var(--font-guide); background: var(--color-sun-soft); color: #7a5412; }
 
 .play-heading {
   margin: 0 0 20px;
@@ -82,8 +82,8 @@
 .play-activity[aria-pressed="true"], .play-activity.is-chosen { border-color: var(--color-forest); background: #28544210; }
 .play-activity:disabled { cursor: default; }
 .play-activity-icon svg { width: 48px; height: 48px; display: block; }
-.play-activity-label { font: 600 14px/1.3 var(--font-guide); text-align: center; }
-.play-activity-kind { font: 600 12px var(--font-guide); color: var(--color-quiet); }
+.play-activity-label { font: 600 15px/1.3 var(--font-guide); text-align: center; }
+.play-activity-kind { font: 600 15px var(--font-guide); color: var(--color-quiet); }
 
 .play-pop { animation: pop 420ms cubic-bezier(.3,1.6,.5,1) both; }
 
@@ -95,11 +95,11 @@
 .play-end h2 { margin: 0 0 12px; font: 500 30px/1.1 var(--font-field); letter-spacing: -.01em; }
 .play-summary-list { margin: 0 0 14px; padding-left: 22px; list-style: disc; display: grid; gap: 6px; font: 17px/1.45 var(--font-field); }
 .play-summary-list li::marker { color: var(--color-sage); }
-.play-end p.illustration-note { margin-top: 10px; font: 12px/1.4 var(--font-guide); color: var(--color-quiet); }
+.play-end p.illustration-note { margin-top: 10px; font: 15px/1.4 var(--font-guide); color: var(--color-quiet); }
 .play-end-subheading { margin: 18px 0 8px; font: 500 20px var(--font-field); }
 .play-end p { margin: 0 0 4px; font: 17px/1.5 var(--font-field); }
 .play-transfer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 6px; }
-.play-end .carry-note { margin: 6px 0 0; font: 12px/1.4 var(--font-guide); color: var(--color-quiet); }
+.play-end .carry-note { margin: 6px 0 0; font: 15px/1.4 var(--font-guide); color: var(--color-quiet); }
 .play-end-actions { margin-top: 18px; }
 
 /* ——— Day rail ——— */
@@ -136,7 +136,7 @@
 .play-rail-tile[data-state="current"] { border-color: var(--color-forest); box-shadow: 0 0 0 3px #2854421f; }
 .play-rail-tile[data-chosen="true"] { background: #28544210; border-color: transparent; }
 .play-rail-icon svg { width: 26px; height: 26px; display: block; }
-.play-rail-num { font: 700 13px var(--font-guide); color: var(--color-mist); }
+.play-rail-num { font: 700 15px var(--font-guide); color: var(--color-mist); }
 .play-rail-tile[data-chosen="true"] .play-rail-num { display: none; }
 
 /* ——— Narrow stages (tablet portrait) ——— */
@@ -146,7 +146,7 @@
   .play-options { gap: 8px; }
   .play-activity { padding: 12px 4px; }
   .play-activity-icon svg { width: 36px; height: 36px; }
-  .play-activity-label { font-size: 12px; }
+  .play-activity-label { font-size: 15px; }
   .play-rail { flex-basis: 58px; width: 58px; padding: 12px 6px; }
   .play-rail-icon svg { width: 22px; height: 22px; }
   .play-transfer-grid { grid-template-columns: 1fr; }
