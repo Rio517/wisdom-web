@@ -141,7 +141,9 @@ export function createField(figure) {
   const stack = figure.querySelector('.map-stack');
   const base = figure.querySelector('#map-base');
   const ghost = figure.querySelector('#map-ghost');
-  const scene = createPathsScene(figure, { labels: false });
+  // A softer right-hand end than the lesson's: on a full-width stage the line
+  // ends otherwise stand in a wall short of the screen edge.
+  const scene = createPathsScene(figure, { labels: false, edgeFade: 0.16 });
   const place = () => {
     const { width, height } = stack.getBoundingClientRect();
     // Where fitOverview puts the Beginning (src/engine/lab-renderer.js: 30px
@@ -158,7 +160,13 @@ export function createField(figure) {
   let ghostURL = null;
   const copyGhost = () => {
     if (!base.width) return;
-    base.toBlob(blob => {
+    // Leave out the renderer's bottom labels (the last 28px): the real
+    // Beginning label sits beside the dot.
+    const copy = document.createElement('canvas');
+    copy.width = base.width; copy.height = base.height;
+    const scale = base.width / Math.max(1, base.getBoundingClientRect().width);
+    copy.getContext('2d').drawImage(base, 0, 0, base.width, base.height - 30 * scale, 0, 0, base.width, base.height - 30 * scale);
+    copy.toBlob(blob => {
       if (!blob) return;
       if (ghostURL) URL.revokeObjectURL(ghostURL);
       ghostURL = URL.createObjectURL(blob);

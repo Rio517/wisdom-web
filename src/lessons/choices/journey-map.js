@@ -46,8 +46,12 @@ function pointAtAge(points, age) {
   return points.at(-1);
 }
 
-/** `labels: false` plays the same map without choice chips or cluster highlights (home page hero). */
-export function createPathsScene(root, { labels = true } = {}) {
+/**
+ * `labels: false` plays the same map without choice chips or cluster
+ * highlights (home page hero). `edgeFade` overrides the right-hand fade, for
+ * a full-width stage where the line ends would otherwise stand as a wall.
+ */
+export function createPathsScene(root, { labels = true, edgeFade = null } = {}) {
   const stack = root.querySelector('.map-stack');
   const baseCanvas = root.querySelector('#map-base');
   const todayCanvas = root.querySelector('#map-today');
@@ -74,7 +78,7 @@ export function createPathsScene(root, { labels = true } = {}) {
     ? storyParam - 1 : Math.floor(Math.random() * STORY_COUNT);
   const story = mapStory(storyIndex);
   // The Canvas renderer's own labels, in the page's language.
-  const renderSettings = { ...LAB_DEFAULTS, labels: { beginning: t('map.beginning'), today: age => t('map.today', { age }) } };
+  const renderSettings = { ...LAB_DEFAULTS, ...(edgeFade === null ? {} : { edgeFade }), labels: { beginning: t('map.beginning'), today: age => t('map.today', { age }) } };
   root.dataset.story = String(storyIndex + 1);
 
   const data = () => {

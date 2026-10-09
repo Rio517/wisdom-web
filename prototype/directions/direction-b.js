@@ -35,6 +35,7 @@ export function start() {
     if (prefersReducedMotion()) {
       copy.hidden = true;
       stage.dataset.moved = 'true';
+      stage.dataset.arrived = 'true';
       field.settle({ travel });
       showAfter(after, home ? settledMarkup() : narrationMarkup());
       return;
@@ -47,6 +48,7 @@ export function start() {
     Promise.all(exits.map(exit => exit.finished)).then(() => { copy.hidden = true; });
     if (!(await wait(240, run))) return;
     stage.dataset.moved = 'true';
+    figure.addEventListener('transitionend', () => { stage.dataset.arrived = 'true'; }, { once: true });
     if (!(await wait(260, run))) return;
     await field.grow(run, { travel });
     if (run.cancelled) return;

@@ -50,6 +50,7 @@ body { min-height: 100vh; }
 .d-copy .kicker { font-size: clamp(15px, 1vw, 18px); }
 .d-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 14px; margin-top: 34px; }
 .d-copy .btn, .d-after .btn { min-height: 54px; padding: 0 28px; font-size: 18px; }
+.d-after .btn-quiet { background: var(--color-paper); }
 
 .d-after { position: absolute; z-index: 3; left: 50%; bottom: clamp(24px, 5vh, 64px); transform: translate(-50%, 12px); width: min(760px, calc(100% - 48px)); text-align: center; opacity: 0; transition: opacity 500ms ease, transform 500ms cubic-bezier(.2, .7, .2, 1); }
 .d-after.is-in { opacity: 1; transform: translate(-50%, 0); }
@@ -76,7 +77,7 @@ body { min-height: 100vh; }
 .d-roadmap li > div a:hover { color: var(--color-forest); text-decoration: underline; }
 .d-roadmap .soon-tip { left: 0; top: 38px; max-width: 300px; }
 .d-roadmap li:has([data-tip-open]) { z-index: 5; }
-.d-road-num { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 999px; border: 2px solid var(--color-mist); font: 600 15px var(--font-guide); color: #6c7a72; background: var(--color-paper); }
+.d-road-num { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 999px; border: 2px solid var(--color-mist); font: 600 15px var(--font-guide); color: var(--color-quiet); background: var(--color-paper); }
 .d-roadmap li[data-status="available"] .d-road-num { background: var(--color-forest); border-color: var(--color-forest); color: white; }
 .d-roadmap li[data-status="next"] .d-road-num { border-color: var(--color-sun); color: #7a5412; }
 .d-grownups { margin: 56px 0 0; text-align: center; font: 19px/1.5 var(--font-field); }
@@ -106,6 +107,8 @@ body { min-height: 100vh; }
 .d-stage-b .d-field { transform: translateX(calc(var(--copy-left) + var(--copy-width))); transition: transform 1000ms cubic-bezier(.45, .05, .2, 1); }
 .d-stage-b .d-field #map-ghost { opacity: .22; }
 .d-stage-b[data-moved] .d-field { transform: none; }
+/* B keeps the faint field until the slide lands, so the stage never goes blank. */
+.d-stage-b:not([data-arrived]) .d-field #map-ghost { visibility: visible; }
 body[data-view="cover"] .d-stage-b .d-after { left: auto; right: clamp(24px, 3vw, 56px); bottom: auto; top: 50%; width: min(440px, 32vw); transform: translate(24px, -50%); }
 body[data-view="cover"] .d-stage-b .d-after.is-in { transform: translate(0, -50%); }
 
@@ -113,7 +116,7 @@ body[data-view="cover"] .d-stage-b .d-after.is-in { transform: translate(0, -50%
 .d-copy-c { left: 50%; top: 47%; transform: translate(-50%, -50%); width: min(1180px, calc(100% - 96px)); text-align: center; }
 .d-copy-c::before { content: ""; position: absolute; inset: -12% -18%; z-index: -1; background: radial-gradient(closest-side, var(--color-paper) 55%, #fbfbf800); }
 .d-copy-c h1 { font-size: clamp(52px, 6vw, 116px); }
-.d-copy-c .d-summary { max-width: 30ch; margin: 22px auto 0; font-size: clamp(30px, 2.5vw, 50px); line-height: 1.28; letter-spacing: -.01em; color: var(--color-quiet); }
+.d-copy-c .d-summary { max-width: 30ch; margin: 22px auto 0; font-size: clamp(26px, 2vw, 40px); line-height: 1.3; letter-spacing: -.01em; }
 .d-copy-c .d-actions { justify-content: center; }
 .d-copy-c .w { display: inline-block; }
 .d-dot { position: absolute; z-index: 4; width: 10px; height: 10px; border-radius: 99px; background: var(--color-forest); pointer-events: none; }

@@ -51,26 +51,31 @@ Shared choices:
 
 ### Frame budget
 
-Headless Chromium 141 at 1440 × 900 with 4× CPU throttling (DevTools `Emulation.setCPUThrottlingRate`), with a Performance trace and requestAnimationFrame intervals from the click to the paths being fully grown:
+Headless Chromium 141 at 1440 × 900 with 4× CPU throttling (DevTools `Emulation.setCPUThrottlingRate`). Each figure is the median of three runs, using a Performance trace and requestAnimationFrame intervals from the click until the paths are fully grown:
 
 | | A home | A cover | B home | B cover | C home | C cover |
 | --- | --- | --- | --- | --- | --- | --- |
-| Frames | 165 | 164 | 172 | 175 | 174 | 175 |
-| 95th percentile | 16.7 ms | 16.8 ms | 16.8 ms | 16.8 ms | 16.8 ms | 16.8 ms |
-| Frames over 33 ms | 3 | 2 | 4 | 4 | 4 | 5 |
-| Longest frame | 67 ms | 50 ms | 67 ms | 50 ms | 83 ms | 67 ms |
+| Frames | 157 | 160 | 173 | 172 | 165 | 175 |
+| 95th percentile | 33.3 ms | 33.3 ms | 33.3 ms | 16.8 ms | 33.3 ms | 33.3 ms |
+| Frames over 33 ms | 5 | 4 | 4 | 6 | 7 | 5 |
+| Longest frame | 50 ms | 67 ms | 50 ms | 67 ms | 83 ms | 67 ms |
 
 The longest main-thread task in every run was under 5 ms.
 
-The budget of no frame over 33 ms is **not fully met**. The grow itself holds 16.7 ms frames. The 2–5 slow frames fall in the first 600 ms: the click frame, and the grow's first frame, when the field canvas is first shown and uploaded. This headless Chromium rasterizes in software (SwiftShader), so compositor costs are higher than on a real GPU. On the same machine, a bare clip-path grow on one canvas holds 16.7 ms throughout. Getting here took four fixes:
+The budget of no frame over 33 ms is **not met**: 4–7 frames per run go over it, by up to 83 ms. They cluster in the first 600 ms: the click frame, the words leaving, and the grow's first frame, when the field canvas is first shown and uploaded. The grow itself runs at 16.7 ms. Main-thread script is not the cause (every task is under 5 ms). The cost is compositing full-size canvas layers, and this headless Chromium does that in software (SwiftShader). On the same machine, a bare clip-path grow on one canvas holds 16.7 ms throughout, so a real GPU should do better; that is untested.
+
+Getting here took several fixes:
 - The scene no longer repaints both canvases on every step (a 1.1 s frame at the click).
 - The pulse ring is now a small compositor-animated element instead of a full-canvas redraw each frame. An idle page went from 33 ms frames to 16.7 ms.
 - The faint field is a still image rather than a third canvas.
+- The field canvas stays hidden until it starts to grow.
 - B slides the field rather than scaling it. Scaling made the canvases repaint (and would blur them).
+
+After the design review, the directions use a stronger right-hand fade (0.16, a `createPathsScene` option; the lesson keeps the owner's 0.04), so the line ends don't stand as a wall. B keeps the faint field until its slide lands, so the stage never goes blank. Both cost a little: the numbers above are after those fixes and run slightly above the first measurements (2–5 frames over).
 
 ### Review images
 
-Before the click, mid-animation and settled, at 1440 × 900 and 2560 × 1440. Baseline (today's home, with the round's shell and field fixes): [1440](baseline-home-1440-v01.png) · [2560](baseline-home-2560-v01.png).
+Before the click, mid-animation and settled, at 1440 × 900 and 2560 × 1440 (after the review fixes). Baseline (today's home, with the round's shell and field fixes): [1440](baseline-home-1440-v01.png) · [2560](baseline-home-2560-v01.png).
 
 **A · Stage**
 

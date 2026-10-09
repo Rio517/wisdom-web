@@ -39,12 +39,13 @@
 .nav-pages a[aria-current="page"] { color: var(--color-forest); font-weight: 600; }
 .nav-pages a[aria-current="page"]::before { content: ""; position: absolute; left: 17.5px; top: 7px; bottom: 7px; width: 3px; border-radius: 3px; background: var(--color-forest); }
 .nav-soon { font: 500 16px var(--font-guide); color: var(--color-quiet); }
-.nav-soon .lesson-num { background: var(--color-index); border: 1.5px solid var(--color-mist); color: #6c7a72; }
+.nav-soon .lesson-num { background: var(--color-index); border: 1.5px solid var(--color-mist); color: var(--color-quiet); }
 .nav-lesson-soon[data-status="next"] .lesson-num { border-color: var(--color-sun); color: #7a5412; }
 
 /* Popover for lessons that aren't written yet (index and home roadmap). */
 .nav-lesson:has([data-tip-open]), .roadmap li:has([data-tip-open]) { z-index: 5; }
-.soon-tip { position: absolute; z-index: 20; left: 44px; top: calc(100% - 2px); width: max-content; max-width: min(260px, calc(100% - 48px)); border-radius: 12px; background: var(--color-ink); padding: 9px 13px; font: 500 15px/1.4 var(--font-guide); color: white; text-align: left; animation: tip-in 160ms ease-out both; pointer-events: none; }
+/* Anchored under the circle so it can use the whole row: the index scrolls, so anything wider is clipped. */
+.soon-tip { position: absolute; z-index: 20; left: 2px; top: calc(100% - 2px); width: max-content; max-width: min(250px, 100%); border-radius: 12px; background: var(--color-ink); padding: 9px 13px; font: 500 15px/1.4 var(--font-guide); color: white; text-align: left; animation: tip-in 160ms ease-out both; pointer-events: none; }
 .soon-tip::before { content: ""; position: absolute; left: 16px; top: -5px; width: 10px; height: 10px; background: inherit; transform: rotate(45deg); border-radius: 2px; }
 @keyframes tip-in { from { opacity: 0; transform: translateY(-3px); } }
 .nav-utility { margin-top: auto; display: grid; gap: 2px; padding-top: 18px; border-top: 1px solid var(--color-rule); }

@@ -102,7 +102,8 @@ p { text-wrap: pretty; }
 .roadmap li > div { position: relative; }
 .road-soon { margin: -2px -8px; border: 0; border-radius: 10px; background: transparent; padding: 2px 8px; font: inherit; color: inherit; text-align: left; }
 .road-soon:hover, .road-soon[data-tip-open] { background: #28544209; }
-.roadmap .soon-tip { left: 0; top: 36px; max-width: 300px; }
+.roadmap .soon-tip { left: 0; top: auto; bottom: calc(100% + 8px); max-width: 300px; }
+.roadmap .soon-tip::before { top: auto; bottom: -5px; }
 .roadmap p { margin: 0; font: 19px/1.5 var(--font-field); color: var(--color-quiet); max-width: 62ch; }
 
 /* ——— Grown-ups band ——— */
