@@ -112,6 +112,23 @@ export function createPathsScene(root, { labels = true, edgeFade = null } = {}) 
       painted.today = size;
       todayRenderer.paint(network, projection, renderSettings, true);
     }
+    if (!withToday && painted.today !== size) prepareToday();
+  }
+
+  // Paint the Today canvas ahead, in a quiet moment while nothing grows, so
+  // the step that shows it doesn't stall on a full paint (a long frame at
+  // the start of the home page's travel).
+  let todayQueued = false;
+  function prepareToday() {
+    if (todayQueued) return;
+    todayQueued = true;
+    const idle = globalThis.requestIdleCallback ?? (callback => setTimeout(callback, 300));
+    const attempt = () => idle(() => {
+      if (stack.dataset.grow === 'growing') { attempt(); return; }
+      todayQueued = false;
+      if (!root.hidden) paintBase(true);
+    }, { timeout: 2500 });
+    attempt();
   }
 
   function chooseClosed() {

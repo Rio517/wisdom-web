@@ -72,6 +72,9 @@ p { text-wrap: pretty; }
    start to grow: never two full-size layers at once, and no fade, which cost
    long frames on slow machines. */
 .stage-field #map-ghost { opacity: .12; }
+.stage-field #map-ghost:not([src]) { visibility: hidden; }
+/* Until the still copy exists, the field itself stands in at the same strength. */
+.stage-field .map-stack[data-grow="hidden"]:not([data-ghost]) #map-base { visibility: visible; opacity: .12; clip-path: none; }
 .stage-field .map-stack:not([data-grow="hidden"]) #map-ghost { visibility: hidden; }
 /* A widening circle from the Beginning dot, on the compositor. Fully clipped
    is still a layer; hidden is not. */
@@ -85,7 +88,7 @@ p { text-wrap: pretty; }
 
 .stage-copy { position: absolute; z-index: 2; left: 50%; top: 47%; transform: translate(-50%, -50%); width: min(1100px, calc(100% - 96px)); text-align: center; }
 /* Paper behind the words, so the faint field never runs through them. */
-.stage-copy::before { content: ""; position: absolute; inset: -12% -18%; z-index: -1; background: radial-gradient(closest-side, var(--color-paper) 55%, #fbfbf800); transition: opacity 400ms ease; }
+.stage-copy::before { content: ""; position: absolute; inset: -12% -18%; z-index: -1; background: radial-gradient(closest-side, var(--color-paper) 55%, transparent); transition: opacity 400ms ease; }
 /* The paper goes with the words, so the growing paths aren't cut by it. */
 .stage-copy.is-leaving::before { opacity: 0; }
 .stage-copy h1 { margin: 0; font: 500 clamp(48px, 5.4vw, 104px)/1.0 var(--font-field); letter-spacing: -.03em; color: var(--color-ink); }
@@ -93,11 +96,11 @@ p { text-wrap: pretty; }
 .stage-summary { max-width: 40ch; margin: 26px auto 0; font: clamp(22px, 1.6vw, 30px)/1.45 var(--font-field); color: var(--color-ink); text-wrap: pretty; }
 .stage-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px 14px; margin-top: 34px; }
 .stage-home .btn { min-height: 54px; padding: 0 28px; font-size: 18px; }
-.stage-after { position: absolute; z-index: 3; left: 50%; bottom: clamp(24px, 5vh, 64px); transform: translate(-50%, 12px); width: min(760px, calc(100% - 48px)); text-align: center; opacity: 0; transition: opacity 500ms ease, transform 500ms cubic-bezier(.2, .7, .2, 1); }
+.stage-after { position: absolute; z-index: 3; left: 50%; bottom: clamp(40px, 6vh, 72px); transform: translate(-50%, 12px); width: min(760px, calc(100% - 48px)); text-align: center; opacity: 0; transition: opacity 500ms ease, transform 500ms cubic-bezier(.2, .7, .2, 1); }
 .stage-after.is-in { opacity: 1; transform: translate(-50%, 0); }
 .stage-after .stage-actions { margin-top: 18px; }
 .stage-after .btn-quiet { background: var(--color-paper); }
-.stage-settled { display: inline-block; margin: 0; border-radius: 18px; background: #fbfbf8e6; padding: 8px 18px; font: 500 19px/1.4 var(--font-guide); color: var(--color-ink); }
+.stage-settled { display: inline-block; margin: 0; border-radius: 18px; background: color-mix(in srgb, var(--color-paper) 90%, transparent); padding: 8px 18px; font: 500 19px/1.4 var(--font-guide); color: var(--color-ink); }
 
 /* ——— Below the stage: the lesson, the roadmap, a line for grown-ups ——— */
 .home-below { max-width: 960px; margin: 0 auto; padding: clamp(64px, 10vh, 120px) clamp(24px, 5vw, 48px) 72px; }

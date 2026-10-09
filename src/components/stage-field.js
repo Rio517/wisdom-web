@@ -24,6 +24,7 @@ export function watchField(stack, base, ghost, { snapshotWhen = () => true } = {
   // cost long frames while the words left. It leaves out the renderer's
   // bottom labels (the last 30px); the real Beginning label sits by the dot.
   let url = null;
+  ghost?.addEventListener('load', () => { stack.dataset.ghost = 'true'; });
   const snapshot = () => {
     if (!ghost || !base.width || !snapshotWhen()) return;
     const scale = base.width / Math.max(1, base.clientWidth);

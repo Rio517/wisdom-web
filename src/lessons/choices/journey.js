@@ -67,17 +67,27 @@ const coverField = watchField(pathsStack, roots.paths.querySelector('#map-base')
 function setCover(state) {
   if (state) journeyRoot.dataset.cover = state;
   else delete journeyRoot.dataset.cover;
-  if (state === 'true') cover.getAnimations({ subtree: true }).forEach(animation => animation.cancel());
+  if (state === 'true') {
+    cover.classList.remove('is-lifted');
+    cover.getAnimations({ subtree: true }).forEach(animation => animation.cancel());
+  }
   skipLink?.setAttribute('href', state ? '#cover' : '#narration');
 }
 
 /** The cover's lines lift and fade in turn: 480 ms each, 70 ms apart (690 ms in all). */
 function liftCover() {
-  if (prefersReducedMotion()) return;
-  [...cover.querySelectorAll('.lift')].forEach((line, position) => line.animate(
+  if (prefersReducedMotion()) { cover.classList.add('is-lifted'); return; }
+  const exits = [...cover.querySelectorAll('.lift')].map((line, position) => line.animate(
     [{ transform: 'none', opacity: 1 }, { transform: 'translateY(-36px)', opacity: 0 }],
     { duration: 480, delay: position * 70, easing: 'cubic-bezier(.4, 0, .7, .2)', fill: 'forwards' },
   ));
+  // The lifted state is a class, not the animations' fill: a finished fill
+  // could outlive the cover being hidden and leave Back on a cover with no words.
+  Promise.all(exits.map(exit => exit.finished)).then(() => {
+    if (journeyRoot.dataset.cover === 'true') return;
+    cover.classList.add('is-lifted');
+    exits.forEach(exit => exit.cancel());
+  }, () => {});
 }
 
 let index = 0;
@@ -340,7 +350,7 @@ document.addEventListener('keydown', event => {
   if ($('#reading-dialog').open) return;
   if (event.target.closest?.('input, textarea, select, [contenteditable="true"], [data-local-keys]')) return;
   if (event.key === 'ArrowRight' && index < beats.length - 1) { event.preventDefault(); go(index + 1); }
-  if (event.key === 'ArrowLeft' && index > 0) { event.preventDefault(); go(index - 1, { animate: false }); }
+  if (event.key === 'ArrowLeft' && index > 0) { event.preventDefault(); go(index - 1, { animate: false, focus: index - 1 === 0 ? 'heading' : 'none' }); }
 });
 
 window.addEventListener('popstate', () => {
