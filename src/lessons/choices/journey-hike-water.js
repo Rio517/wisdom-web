@@ -280,7 +280,10 @@ function webglWater(canvas, colors) {
     uCenter: [cx, cy], uSources: sources.flat(), uRingSize: ringSize, uRingCycle: cycle, uFoamOn: foam ? 1 : 0, uBankWidth: bank, uDepth: depth,
   });
   const impact = [IMPACT[0], IMPACT[1] + 2];
-  const pieces = [
+  // The meshes are built on the first frame after the shaders start compiling, so neither step
+  // holds up the page for long.
+  let pieces = null;
+  const build = () => [
     [1, pondMesh(LAKE_SHORE, { spineEnd: 12 }), pondUniforms(LAKE, LAKE_RINGS, [40, 9.5], 5.6, false, 4.2, 18)],
     [1, pondMesh(ellipseLoop(POOL), { spineEnd: POOL.ry }), pondUniforms(POOL, [impact, impact], [POOL.rx - 4, POOL.ry - 2], 4.2, true, 3, 12)],
     [0, streamMesh(SIDE), streamUniforms(false)],
@@ -343,8 +346,12 @@ function webglWater(canvas, colors) {
 
   return {
     kind: 'webgl',
-    // True once the shaders are ready to draw; false while they still compile.
+    // True once the meshes are up and the shaders are ready to draw; false until then.
     prepare() {
+      if (!pieces) {
+        pieces = build();
+        return false;
+      }
       if (!ready && compiled()) link();
       return ready;
     },

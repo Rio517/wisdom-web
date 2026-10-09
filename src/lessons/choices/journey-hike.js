@@ -394,7 +394,7 @@ export function createHikeScene(root) {
       + dashes(line, yard ? line.pts.find(p => yard.outside(p) > TRAIL_HALF + YARD.blend / 2).s : 4);
     const mainLine = sample(main, mainLength);
     const altLine = sample(altPath, altLength);
-    const yard = yardShapes(mainLine.pts.filter((p, i) => p.s <= 140 && i % 2 === 0));
+    const yard = yardShapes(mainLine.pts.filter((p, i) => p.s <= 140 && i % 4 === 0));
     $('#trail-main').innerHTML = trail(mainLine, yard);
     $('#alt-plan').innerHTML = trail(altLine);
     $('.mask-trail').innerHTML = [mainLine, altLine].map(line => band(line, k => 2.5 * k + 0.3)).join('');
