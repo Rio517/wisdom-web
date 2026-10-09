@@ -137,14 +137,14 @@ export function addCard(feed, html, { className = '', focus = true, scroll = tru
 export function clearFeed(feed) { stopScroll(); feed.innerHTML = ''; feed.scrollTop = 0; }
 
 // ——— Cards ———
-export function dayHead(index, { routine = 'cello', next = [] } = {}) {
+export function dayHead(index, { routine = 'cello', next = [], focus = true, id = '' } = {}) {
   const day = DAYS[index];
   const tag = day.chance ? `<span class="l2-tag" data-chance="${day.chance}">${esc(t(`l2.tag.${day.chance}`))}</span>`
     : (day.kind === 'weekend' || day.kind === 'sunday') ? `<span class="l2-tag" data-chance="weekend">${esc(t('l2.tag.weekend'))}</span>` : '';
   const lines = [].concat(next).filter(Boolean);
   return `<p class="l2-day">${esc(dayLabel(index))}${tag}</p>
     ${lines.map(line => `<p class="l2-next">${ICONS.clock}<span>${esc(line)}</span></p>`).join('')}
-    <h2 class="l2-situation" tabindex="-1" data-focus>${esc(situation(index, routine))}</h2>`;
+    <h2 class="l2-situation" tabindex="-1"${focus ? ' data-focus' : ''}${id ? ` id="${id}"` : ''}>${esc(situation(index, routine))}</h2>`;
 }
 
 /** A row reminding the reader of the cue and the set-up. */

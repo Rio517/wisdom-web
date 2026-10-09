@@ -6,8 +6,8 @@
 // with every routine already in its usual spot, so a routine that keeps its
 // spot gets easy to start and the days get quicker to plan.
 import {
-  mountFrame, createPanel, addCard, announce, dayHead, startChip, movesFor, finish,
-  t, esc, ICONS, weekday, RoutineWord, routineWord, revealEnd,
+  mountFrame, createPanel, addCard, announce, dayHead, startChips, movesFor, moveOf, finish,
+  optionsMarkup, markChosen, listOf, t, esc, ICONS, weekday, RoutineWord, routineWord, revealEnd,
 } from './ui.js';
 import { routineIcon } from './icons.js';
 import { person } from '../../src/lessons/choices/journey-icons.js';
@@ -25,6 +25,13 @@ const FUN = { tag: ['tag', 'friends'], rain: ['fort', 'fort'], party: ['party', 
 const isWeekend = day => day.kind === 'weekend' || day.kind === 'sunday';
 const slotsFor = day => (isWeekend(day) ? WEEKEND_SLOTS : WEEKDAY_SLOTS);
 const slotIn = slot => t(`l2.b.slotIn.${slot}`);
+const capital = text => text.charAt(0).toLocaleUpperCase(t.locale) + text.slice(1);
+
+/** "Cello after school and reading in the evening." for the free spots of a day. */
+function planSentence(free, arrangement) {
+  const items = free.map(slot => t('l2.b.plan.item', { what: t(`l2.b.what.${arrangement[slot]}`), slot: slotIn(slot) }));
+  return capital(t('l2.b.plan', { items: listOf(items) }));
+}
 
 /** The spot soccer takes today, if any: practice after school, the match and the visit in the afternoon. */
 function lockedFor(day) {
@@ -170,9 +177,11 @@ export function start(app) {
     const slots = slotsFor(day);
     const locked = lockedFor(day);
     const arrangement = {};
+    // The party is after school: it takes that spot before anything else does.
+    if (day.tempt === 'party') arrangement.afterSchool = 'party';
     const wants = ROUTINES.filter(routine => available.includes(routine))
       .map(routine => ({ routine, pinned: Boolean(pins[routine] && !isWeekend(day)), slot: (!isWeekend(day) && pins[routine]) || usualSlot(counts[routine], slots) }))
-      .filter(want => want.slot && !locked[want.slot])
+      .filter(want => want.slot && !locked[want.slot] && !arrangement[want.slot])
       .sort((a, b) => (b.pinned - a.pinned) || ((counts[b.routine][b.slot] ?? 0) - (counts[a.routine][a.slot] ?? 0)));
     for (const { routine, slot } of wants) if (!arrangement[slot]) arrangement[slot] = routine;
     return arrangement;
@@ -183,6 +192,7 @@ export function start(app) {
     if (index === WEEK_ONE_END + 1 && !checked) { showCheck(); return; }
     if (index >= DAYS.length) { done(); return; }
     const day = DAYS[index];
+    if (day.kind === 'weekend') { showWeekend(index); return; }
     const { life, counts } = state();
     panel.update(life, { current: index });
     const slots = slotsFor(day);
@@ -213,9 +223,18 @@ export function start(app) {
       return `<fieldset class="l2-slot" data-slot="${slot}">${head}<div class="l2-chips">${chips}</div></fieldset>`;
     };
 
-    const card = addCard(ui.feed, `${dayHead(index, { routine: 'cello', next })}
-      <div class="l2-slots">${slots.map(slotMarkup).join('')}</div>
-      <div class="l2-actions"><button type="button" class="btn btn-primary" data-action="live">${esc(t('l2.b.live'))}</button>
+    // A day that starts complete shows as one sentence; the spots open on "Change".
+    const free = slots.filter(slot => !locked[slot]);
+    const summary = index > 0 && free.every(slot => arrangement[slot]);
+    const summaryMarkup = () => `<div class="l2-b-summary" data-role="summary">
+        ${slots.filter(slot => locked[slot]).map(slot => `<p class="l2-slot-lock">${ICONS.soccerSmall}<span>${esc(t(`l2.b.lock.${locked[slot]}`))}</span></p>`).join('')}
+        <div class="l2-b-plan-row"><p class="l2-b-plan" id="l2-b-plan-${index}">${esc(planSentence(free, arrangement))}</p>
+        <button type="button" class="pill-button l2-change" data-action="change">${esc(t('l2.change'))}</button></div>
+      </div>`;
+    const card = addCard(ui.feed, `${dayHead(index, { routine: 'cello', next, focus: !summary, id: `l2-b-day-${index}` })}
+      ${summary ? summaryMarkup() : ''}
+      <div class="l2-slots" data-role="slots" ${summary ? 'hidden' : ''}>${slots.map(slotMarkup).join('')}</div>
+      <div class="l2-actions"><button type="button" class="btn btn-primary" data-action="live" ${summary ? `data-focus aria-describedby="l2-b-day-${index} l2-b-plan-${index}"` : ''}>${esc(t('l2.b.live'))}</button>
         <p class="l2-hint" role="alert" hidden>${esc(t('l2.b.needs'))}</p></div>
       <div class="l2-result" data-role="result"></div>`, { className: 'l2-day-card l2-juggle', day: index });
 
@@ -233,6 +252,13 @@ export function start(app) {
         arrangement[slot] = id;
         sync();
         card.querySelector('.l2-hint').hidden = true;
+        return;
+      }
+      if (event.target.closest('[data-action="change"]')) {
+        card.querySelector('[data-role="summary"]').hidden = true;
+        card.querySelector('[data-role="slots"]').hidden = false;
+        card.querySelector('[data-action="live"]').removeAttribute('aria-describedby');
+        card.querySelector('.l2-slot:not([data-locked]) .l2-chip-choice:not([disabled])').focus();
         return;
       }
       if (event.target.closest('[data-action="live"]')) {
@@ -262,20 +288,59 @@ export function start(app) {
     const entry = life.log.at(-1);
     panel.update(life, { current: index, moves: movesFor(entry) });
     const keys = ROUTINES.map(routine => resultKey(entry.routines[routine]));
-    const chips = ROUTINES.map(routine => startChip(routine, entry.routines[routine]));
-    // When both went the same way, one sentence says it for both.
-    const lines = keys[0] === keys[1] && ['moment', 'other', 'skip', 'rest'].includes(keys[0])
-      ? [{ text: t(`l2.b.res.both.${keys[0]}`), chip: `<div class="l2-start-chips">${chips.join('')}</div>` }]
+    // When both went the same way, one sentence says it for both; the chips merge when they match.
+    const lines = keys[0] === keys[1] && ['moment', 'other', 'skip', 'rest', 'tired'].includes(keys[0])
+      ? [t(`l2.b.res.both.${keys[0]}`)]
       : ROUTINES.map((routine, i) => {
         const item = entry.routines[routine];
-        return { text: t(`l2.b.res.${keys[i]}`, { Routine: RoutineWord(routine), routine: routineWord(routine), slot: item.slot ? slotIn(item.slot) : '' }), chip: chips[i] };
+        return t(`l2.b.res.${keys[i]}`, { Routine: RoutineWord(routine), routine: routineWord(routine), slot: item.slot ? slotIn(item.slot) : '' });
       });
-    const soccer = soccerLine(entry);
-    card.querySelector('[data-role="result"]').innerHTML = `${lines.map(line => `<div class="l2-result-row"><p>${esc(line.text)}</p>${line.chip}</div>`).join('')}
+    const soccer = soccerLine(entry, { again: false });
+    card.querySelector('[data-role="result"]').innerHTML = `${lines.map(line => `<p>${esc(line)}</p>`).join('')}
+      ${startChips(ROUTINES, entry.routines)}
       ${soccer ? `<p class="l2-soccer-line">${ICONS.soccerSmall}<span>${esc(soccer)}</span></p>` : ''}`;
-    announce(ui.live, t('l2.announce', { weekday: weekday(index), result: `${lines.map(line => line.text).join(' ')} ${soccer}`.trim() }));
+    announce(ui.live, t('l2.announce', { weekday: weekday(index), result: `${lines.join(' ')} ${soccer}`.trim() }));
     revealEnd(ui.feed, card);
     timer = setTimeout(() => showDay(index + 1), ADVANCE_MS);
+  }
+
+  // ——— The weekend: one card, two ways to spend it ———
+  function showWeekend(index) {
+    const { life } = state();
+    panel.update(life, { current: index });
+    const options = [
+      { label: t('l2.b.weekend.both'), icon: 'morning', kind: 'other' },
+      { label: t('l2.b.weekend.off'), icon: 'rest', kind: 'rest' },
+    ];
+    const card = addCard(ui.feed, `<p class="l2-day">${esc(listOf([weekday(index), weekday(index + 1)]))}<span class="l2-tag" data-chance="weekend">${esc(t('l2.tag.weekend'))}</span></p>
+      <h2 class="l2-situation" tabindex="-1" data-focus>${esc(t(`l2.b.weekend.${DAYS[index].week}`))}</h2>
+      ${optionsMarkup(options)}
+      <div class="l2-result" data-role="result"></div>`, { className: 'l2-day-card', day: index });
+    card.addEventListener('click', event => {
+      const button = event.target.closest('.l2-opt');
+      if (!button || button.disabled || card.classList.contains('is-answered')) return;
+      card.classList.add('is-answered');
+      markChosen(card, button);
+      card.querySelectorAll('.l2-opt').forEach(other => { other.disabled = true; });
+      const both = button.dataset.option === '0';
+      // Saturday has one free spot (the match has the afternoon); Sunday has two.
+      days[index] = both ? { morning: 'cello' } : { morning: 'rest' };
+      days[index + 1] = both ? { morning: 'cello', afternoon: 'reading' } : { morning: 'rest', afternoon: 'rest' };
+      const now = state().life;
+      const [saturday, sunday] = now.log.slice(-2);
+      // The weekend's Starting move, Saturday morning to Sunday night.
+      const items = Object.fromEntries(ROUTINES.map(routine => {
+        const { before } = saturday.routines[routine];
+        const { after } = sunday.routines[routine];
+        return [routine, { before, after, moved: after > before ? 'up' : after < before ? 'down' : 'still' }];
+      }));
+      panel.update(now, { current: index + 1, moves: Object.fromEntries(ROUTINES.map(routine => [routine, moveOf(items[routine])])) });
+      const text = t(both ? 'l2.b.res.weekend.both' : 'l2.res.restWeekend.both');
+      card.querySelector('[data-role="result"]').innerHTML = `<p>${esc(text)}</p>${startChips(ROUTINES, items)}`;
+      announce(ui.live, t('l2.announce', { weekday: listOf([weekday(index), weekday(index + 1)]), result: text }));
+      revealEnd(ui.feed, card);
+      timer = setTimeout(() => showDay(index + 2), ADVANCE_MS);
+    });
   }
 
   // ——— The check: which one got easier, and why? ———
