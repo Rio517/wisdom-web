@@ -22,7 +22,7 @@ const STRUCTURE = [
     { id: 'respond', body: 2, closer: 2 },
     { id: 'sort', body: 1, sort: [
       { id: 'pack', mine: true }, { id: 'storm', mine: false }, { id: 'back', mine: true },
-      { id: 'closed', mine: false }, { id: 'practise', mine: true }, { id: 'ask', mine: true },
+      { id: 'ranger', mine: false }, { id: 'practise', mine: true }, { id: 'ask', mine: true },
     ] },
   ] },
   { id: 'skills', beats: [

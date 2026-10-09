@@ -20,6 +20,7 @@ The earlier [opening](v06-flat-canvas/opening-desktop-v06.png), [full context](v
 
 | Round | Date | Question and artifact type | Status |
 | --- | --- | --- | --- |
+| [v10 — Voice pass](v10-voice-pass/README.md) | 2026-10-09 | Does Lesson 1 read in one warm narrator's voice at an 8–12 reading level, with good luck as well as bad, and does a chain-based explorer show choices building on each other? | Implemented on a branch; owner review pending; not published. |
 | [v09 — Guided journey](v09-guided-journey/README.md) | 2026-09-26 | Does a guided, animated journey (big picture → hike → two-path compounding → game) explain the lesson better than v08's static map with text cards? | Implemented locally; owner review pending; not published. |
 | [v08 — Alfredo lesson](v08-alfredo-lesson/README.md) | 2026-09-14 | Does the accepted storyboard work as a live Tailwind lesson with stable, revisitable map choices? | Implemented locally; owner review pending; not published. |
 | [v01 — Reading and motion](v01-reading-and-motion/README.md) | 2026-09-06 | ImageGen reading-surface and motion storyboards: what should the explainer feel like? | Historical; the sparse map and stationary-dot sequence are superseded. |
