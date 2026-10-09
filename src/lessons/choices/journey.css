@@ -200,6 +200,15 @@ h1, h2, h3, h4 { font-family: var(--font-field); font-weight: 500; }
 .choice-chip.is-closed strong { text-decoration: line-through; text-decoration-thickness: 1.5px; }
 .choice-chip.is-closed small { display: block; color: var(--color-clay); font-weight: 500; }
 .choice-chip.is-closed:hover { transform: none; }
+.choice-chip.is-lucky, .choice-chip.is-roadblock { max-width: 240px; gap: 2px; padding: 9px 16px; border-width: 2px; }
+.choice-chip.is-lucky { border-color: var(--color-sun); background: var(--color-sun-soft); }
+.choice-chip.is-roadblock { border-color: var(--color-clay); background: var(--color-clay-soft); }
+.choice-chip.is-lucky small, .choice-chip.is-roadblock small { color: var(--color-ink); font-size: 12px; font-weight: 700; letter-spacing: .02em; }
+.choice-chip.is-big strong { font-size: 16px; }
+.chip-go { font-size: 12.5px; font-weight: 600; color: var(--color-forest-deep); text-decoration: underline; text-underline-offset: 3px; }
+.timeline-label .timeline-kind { display: inline-block; border-radius: 6px; padding: 0 5px; color: var(--color-ink); font-weight: 700; }
+.timeline-kind.is-lucky { background: var(--color-sun-soft); }
+.timeline-kind.is-roadblock { background: var(--color-clay-soft); }
 .choice-chip.nope { animation: nope 420ms ease-in-out; }
 @keyframes nope { 20%, 60% { transform: translateX(-5px); } 40%, 80% { transform: translateX(5px); } }
 .chip-x { font-weight: 800; }

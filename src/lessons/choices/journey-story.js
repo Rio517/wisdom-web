@@ -3,7 +3,7 @@
 // and the static reading (build-time and no-JavaScript) render from the same
 // records. Editable English draft: docs/content/choices-journey.md.
 import { t as runtimeT } from '../../i18n/runtime.js';
-import { CHOICE_BANDS, bandChoices } from './journey-choices.js';
+import { CHOICE_BANDS, bandChoices, EXAMPLE_CHAINS, STEPS, stepLabel } from './journey-choices.js';
 
 const STRUCTURE = [
   { id: 'paths', beats: [
@@ -137,6 +137,12 @@ function readingBeat(beat, { t, learned, gameDays }) {
       const range = t(band.by === 'family' ? 'reading.ageRangeFamily' : 'reading.ageRange', { from, until });
       parts.push(`<li><strong>${escapeHTML(range)}</strong> ${bandChoices(band, t).slice(0, 4).map(escapeHTML).join(' · ')}</li>`);
       from = band.until;
+    }
+    parts.push(`</ul><p>${escapeHTML(t('reading.exploreChains'))}</p><ul class="reading-examples">`);
+    for (const chain of EXAMPLE_CHAINS) {
+      const steps = chain.map(id => (STEPS[id].kind === 'choice' ? stepLabel(id, t)
+        : t('reading.chainStep', { kind: t(`explore.kind.${STEPS[id].kind}`), event: stepLabel(id, t) })));
+      parts.push(`<li>${steps.map(escapeHTML).join(' → ')}</li>`);
     }
     parts.push(`</ul><p>${escapeHTML(t('reading.exploreOutro'))}</p>`);
   }
