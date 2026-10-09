@@ -1,6 +1,7 @@
-// Version B: the hike's water as one orthographic Three.js layer between
+// Versions B and C: the hike's water as one orthographic Three.js layer between
 // the flat background SVG and the trail, trees and labels. Still flat-coloured:
-// soft bands moving along the streams, a falling sheet with foam, gentle rings.
+// B moves soft bands along the streams, a falling sheet with foam, gentle rings;
+// C adds light: small moving glints, a shimmer on the fall, a darker middle.
 //
 // One renderer, five meshes (main stream, side stream, fall, pool, lake), one
 // draw call each, no textures. Each piece writes how far a pixel is from its own
@@ -40,6 +41,19 @@ const COMMON = /* glsl */ `
     float aa = max(fwidth(edge), 1e-3);
     return smoothstep(-aa, aa * 0.5, edge);
   }
+#ifdef LIGHT
+  // A glint: a small soft fleck in a sparse grid of cells that drift and fade in and out.
+  float glint(vec2 cellSpace, float seed, float density) {
+    vec2 cell = floor(cellSpace);
+    vec2 f = fract(cellSpace) - 0.5;
+    float r = hash(cell + seed);
+    float on = step(1.0 - density, r);
+    float life = 0.5 + 0.5 * sin(uTime * (1.1 + r) + r * 60.0);
+    vec2 jitter = vec2(hash(cell + seed + 3.1), hash(cell + seed + 7.7)) - 0.5;
+    float shape = 1.0 - smoothstep(0.0, 1.0, length((f - jitter * 0.4) / vec2(0.34, 0.2)));
+    return on * shape * life * life;
+  }
+#endif
 `;
 
 const STREAM_VERTEX = /* glsl */ `
@@ -86,7 +100,17 @@ const STREAM_FRAGMENT = /* glsl */ `
     float band = smoothstep(0.44, 0.74, n);
     vec3 body = uBody;
     float bandMix = 0.62;
+#ifdef LIGHT
+    // A hint of depth: the middle a touch darker than the edges.
+    body = mix(uBody, uDeep, smoothstep(0.1, 0.95, centre));
+    bandMix = 0.48;
+#endif
     vec3 color = mix(body, uBand, band * bandMix);
+#ifdef LIGHT
+    // Light on the water: small flecks riding the flow.
+    float g = glint(vec2((flow - drift * 1.1) / 15.0, across * 2.6 + 2.6), 11.0, 0.24);
+    color = mix(color, uFoam, g * (1.0 - bankMix));
+#endif
     color = mix(color, uBank, bankMix);
     gl_FragColor = vec4(color, alpha);
   }
@@ -130,6 +154,9 @@ const POND_FRAGMENT = /* glsl */ `
     float bankMix = 1.0 - smoothstep(bank * 0.55, bank * 1.3, edge);
     float centre = clamp(edge / uRadius.y, 0.0, 1.0);
     vec3 color = uBody;
+#ifdef LIGHT
+    color = mix(uBody, uDeep, smoothstep(0.1, 1.0, centre) * 0.8);
+#endif
     float rings = 0.0;
     for (int i = 0; i < 2; i++) {
       float phase = fract(uTime / uRingCycle + float(i) * 0.5);
@@ -145,6 +172,10 @@ const POND_FRAGMENT = /* glsl */ `
       float flecks = step(0.72, noise(vPos * vec2(0.32, 0.9) + vec2(uTime * 0.6, 0.0))) * (1.0 - smoothstep(1.0, 1.9, length(f)));
       color = mix(color, uFoam, max(foam, flecks * 0.8));
     }
+#ifdef LIGHT
+    float g = glint((vPos - uCenter) / vec2(15.0, 4.2) + vec2(uTime * 0.12, 0.0), 23.0, 0.16);
+    color = mix(color, uFoam, g * (1.0 - bankMix));
+#endif
     color = mix(color, uBank, bankMix);
     gl_FragColor = vec4(color, alpha);
   }
@@ -180,6 +211,11 @@ const FALL_FRAGMENT = /* glsl */ `
     vec3 color = mix(uSheet, uFoam, streak * 0.9);
     // The lip, where the water turns over the rock.
     color = mix(color, uFoam, (1.0 - smoothstep(0.0, 0.05, vFall.y)) * 0.6);
+#ifdef LIGHT
+    // A slight lighter shimmer travelling down the sheet.
+    float shimmer = 0.5 + 0.5 * sin((vPos.y / 36.0 - uTime * 0.5) * 6.2832 + across * 2.0);
+    color = mix(color, uFoam, shimmer * shimmer * 0.22);
+#endif
     color = mix(color, uBank, bankMix);
     gl_FragColor = vec4(color, alpha);
   }
@@ -260,7 +296,7 @@ function fallGeometry() {
   return geometry;
 }
 
-export function createThreeWater(canvas, { onLost } = {}) {
+export function createThreeWater(canvas, { light = false, onLost } = {}) {
   if (!canvas.getContext('webgl2')) throw new Error('WebGL 2 is not available');
   const renderer = new WebGLRenderer({ canvas, alpha: true, antialias: false, premultipliedAlpha: true, stencil: false, powerPreference: 'low-power' });
   renderer.setClearColor(0x000000, 0);
@@ -275,7 +311,7 @@ export function createThreeWater(canvas, { onLost } = {}) {
     uRing: { value: colors.ring },
   };
   const material = (vertexShader, fragmentShader, uniforms = {}) => new ShaderMaterial({
-    vertexShader, fragmentShader, uniforms: { ...shared, ...uniforms },
+    vertexShader, fragmentShader, uniforms: { ...shared, ...uniforms }, defines: light ? { LIGHT: '' } : {},
     transparent: true, depthTest: true, depthWrite: true, side: DoubleSide,
   });
   const scene = new Scene();
