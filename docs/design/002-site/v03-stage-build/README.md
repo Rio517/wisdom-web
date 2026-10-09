@@ -1,10 +1,14 @@
 # v03 — Stage, built
 
-Created: 2026-10-09. Updated: 2026-10-09. Status: built on the working branch; one design-review round applied; not published.
+Created: 2026-10-09. Updated: 2026-10-09. Status: built on the working branch; one design-review round applied; the home part was later reverted (see below); not published.
 
 Question: does the site's home page and the lesson cover, built from the picked direction ([v02](../v02-directions/README.md) · A, "Stage"), match the approved prototype at desktop, iPad and large-monitor sizes, in all four languages?
 
 The approved spec is `prototype/directions/a.html`. Sources: `src/pages/[...locale]/index.astro`, `src/layouts/SiteLayout.astro` (the `stage` layout), `src/components/stage-field.js`, `src/styles/site.css`, `src/lessons/choices/journey.js` and `journey.css` (cover step), `src/lessons/choices/journey-map.js`, `src/engine/lab-renderer.js`.
+
+## Later change (2026-10-09)
+
+The home went back to the "Ideas worth growing up with" landing from [v01](../v01-launch/README.md), with the hero and its paths card, the lesson card with its chapter stops, the roadmap and the grown-ups band. It uses the current site shell. The stage became the Lesson 1 cover (commit 43497f0). The cover keeps its question and adds the stage's summary line (`lesson.beat.cover.lede`, which replaces `map.coverHint`) and the "Watch the paths grow" button (`lesson.beat.cover.next`). The home's lesson links open on the cover. The `stage` layout in `SiteLayout.astro` and the home-stage styles are gone. The sections below describe the build as it was reviewed.
 
 ## What was built
 
