@@ -97,7 +97,7 @@ export async function start(app, version) {
       const { createThreeWater } = await import('./water-three.js');
       timings.module = performance.now() - mark;
       mark = performance.now();
-      renderer = createThreeWater(canvas, { light: version === 'c', onLost: () => useFallback('WebGL context lost') });
+      renderer = createThreeWater(canvas, { onLost: () => useFallback('WebGL context lost') });
       timings.create = performance.now() - mark;
       mark = performance.now();
       await renderer.ready;
