@@ -22,7 +22,9 @@ const roots = {
   explore: $('#scene-explore'),
 };
 const scenes = {
-  paths: createPathsScene(roots.paths),
+  // A softer right-hand end than the lab's 0.04: beside the narration panel
+  // the line ends otherwise stand in a straight wall (as on the home stage).
+  paths: createPathsScene(roots.paths, { edgeFade: 0.24 }),
   hike: createHikeScene(roots.hike),
   skills: createSkillsScene(roots.skills),
   play: createPlayScene(roots.play),
@@ -58,7 +60,8 @@ ghost.id = 'map-ghost';
 ghost.alt = '';
 ghost.setAttribute('aria-hidden', 'true');
 pathsStack.prepend(ghost);
-const coverField = watchField(pathsStack, roots.paths.querySelector('#map-base'), ghost);
+// The still copy is only needed while the cover shows.
+const coverField = watchField(pathsStack, roots.paths.querySelector('#map-base'), ghost, { snapshotWhen: () => journeyRoot.dataset.cover === 'true' });
 
 /** 'true' shows the cover, 'leaving' keeps its full-width stage while the paths grow, null is the lesson layout. */
 function setCover(state) {

@@ -557,7 +557,17 @@ export function createPathsScene(root, { labels = true, edgeFade = null } = {}) 
     if (fxMode === 'travel') { drawFx(); return; }
     setState(FINAL[current] ?? FINAL.many);
   }
-  new ResizeObserver(() => requestAnimationFrame(resize)).observe(stack);
+  // Repaint on a quiet moment, not the next frame: until then the canvases
+  // stretch their last bitmap to the new box (the map is fitted to width and
+  // height separately, so that is nearly the same picture). A layout change
+  // during an animation (the narration arriving after the cover's grow) then
+  // doesn't stall it with a full repaint.
+  let resizeQueued = null;
+  const idle = globalThis.requestIdleCallback ?? (callback => setTimeout(callback, 200));
+  new ResizeObserver(() => {
+    if (resizeQueued !== null) return;
+    resizeQueued = idle(() => { resizeQueued = null; requestAnimationFrame(resize); }, { timeout: 900 });
+  }).observe(stack);
 
   return { show, hide() { stopPulse(); }, todayScreenPoint, failed };
 }

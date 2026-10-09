@@ -7,7 +7,7 @@
  * `--reach` (enough radius to cover the stack) on `stack`, and a still copy
  * of `base` in `ghost` (an <img>), in step with the stack's size.
  */
-export function watchField(stack, base, ghost) {
+export function watchField(stack, base, ghost, { snapshotWhen = () => true } = {}) {
   const place = () => {
     const width = stack.clientWidth;
     const height = stack.clientHeight;
@@ -25,7 +25,7 @@ export function watchField(stack, base, ghost) {
   // bottom labels (the last 30px); the real Beginning label sits by the dot.
   let url = null;
   const snapshot = () => {
-    if (!ghost || !base.width) return;
+    if (!ghost || !base.width || !snapshotWhen()) return;
     const scale = base.width / Math.max(1, base.clientWidth);
     const copy = document.createElement('canvas');
     copy.width = base.width;
