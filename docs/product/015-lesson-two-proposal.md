@@ -1,6 +1,6 @@
 # 015 — Lesson 2: where Maya belongs, and a longer habits game
 
-Status: Proposed; owner decision pending. Created: 2026-10-09. Updated: 2026-10-09.
+Status: Accepted (structure C, 2026-10-09); Lesson 2 not yet built. Created: 2026-10-09. Updated: 2026-10-09.
 
 Related: [lesson roadmap](../README.md#lesson-roadmap) · [004 — Habits](004-habits-and-daily-practice.md) · [013 — Lesson 1](013-choices-guided-journey.md) · [Lesson 1 copy](../content/choices-journey.md#skills-grow) · [habits research](../research/habits/README.md)
 
@@ -61,7 +61,15 @@ No numbers, streaks or "habit formed" badges. The two weeks are compressed time;
 
 C. Maya's skill growth stays in the lesson whose takeaway it supports, and Lesson 2 keeps the character and game the child tester enjoyed while asking a new question: how does Path A Maya keep starting? C reuses the most art and code, shortens a Lesson 1 that runs well past its 2–3 minute aim, and avoids B's repetition. Its cost is a four-language edit of Lesson 1, shipped with Lesson 2. The habits research pass is done (B5–B18 in the [habits sources](../research/habits/sources.md)): in adults a single missed day isn't a reset, and if-then plans help children's goals, but no habit trial in primary-school children was found, so the game's beats stay fictional illustration, labelled as such.
 
-## Decisions for the owner
+## Owner decisions (2026-10-09)
+
+- **Structure: C.** Lesson 1 keeps a three-beat Maya; her habit story and the longer game go to Lesson 2. Lesson 1's change ships together with Lesson 2.
+- **The ten-afternoon game leaves Lesson 1.** Lesson 2 owns the game.
+- **The routine: soccer, cello and reading.** The game design still has to settle how the three appear (the reader picks one, or juggles them).
+- **Length: two weeks**, 14 day cards with weekends.
+- **The habits research pass** is done ([interruptions and restarting](../research/habits/README.md#interruptions-and-restarting) and the sections after it); the game's beats remain a labelled illustration.
+
+## Decisions put to the owner
 
 1. Structure: A, B or C (recommended), with any Lesson 1 change released together with Lesson 2.
 2. Does the game leave Lesson 1 entirely, or does a five-afternoon version stay?
