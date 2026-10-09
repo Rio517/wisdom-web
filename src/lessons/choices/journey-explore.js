@@ -1,4 +1,4 @@
-import { hash, labelsForFork, closedReason } from './journey-choices.js';
+import { hash, labelsForFork, closedReason, availableSteps, stepLabel } from './journey-choices.js';
 import { timelinePositionForAge } from '../../engine/lab-settings.js';
 import { canvasBitmap } from '../../engine/path-presentation.js';
 import { tween, ease, prefersReducedMotion } from './journey-motion.js';
@@ -12,6 +12,8 @@ const SAGE = '#8daa91';
 const MIST = '#c5cec8';
 const PREVIEW = '#376f9a';
 const CLAY = '#9a5f3e';
+const SUN = '#e0a93b';
+const isSurprise = node => node.kind === 'lucky' || node.kind === 'roadblock';
 
 function gapFor(age) {
   if (age < 7) return 2.2;
@@ -32,7 +34,7 @@ function gapFor(age) {
  */
 export function createLifeTree({ seed = 'life-explorer-1' } = {}) {
   const nodes = new Map();
-  nodes.set('r', { id: 'r', age: LIFE_START, y: 0.5, ay: 0.5, parent: null, label: null, children: null });
+  nodes.set('r', { id: 'r', age: LIFE_START, y: 0.5, ay: 0.5, parent: null, label: null, kind: 'choice', children: null });
   const key = id => `${seed}:${id}`;
 
   function pathTo(id) {
@@ -41,20 +43,45 @@ export function createLifeTree({ seed = 'life-explorer-1' } = {}) {
     return path;
   }
 
+  // A surprise happens at about one fork in three once the life is under way,
+  // more often when the reader's own chain has one waiting.
+  function surpriseFor(node, path, taken) {
+    if (node.kind !== 'choice' || node.age < 6 || node.age > LIFE_END - 4) return null;
+    const waiting = availableSteps(node.age, taken, node.step).filter(item => item.kind !== 'choice');
+    if (!waiting.length) return null;
+    const fromChain = waiting.filter(item => item.after.length);
+    if (hash(key(`${node.id}:surprise`)) > (fromChain.length ? 0.42 : 0.22)) return null;
+    // Lucky breaks and roadblocks take turns, so a life meets both.
+    const seen = path.filter(item => item.kind === 'lucky').length - path.filter(item => item.kind === 'roadblock').length;
+    const pool = fromChain.length ? fromChain : waiting;
+    const wanted = seen > 0 ? 'roadblock' : seen < 0 ? 'lucky' : hash(key(`${node.id}:luck`)) < 0.5 ? 'lucky' : 'roadblock';
+    const preferred = pool.filter(item => item.kind === wanted);
+    const anyTime = waiting.filter(item => item.kind === wanted);
+    const list = preferred.length ? preferred : anyTime.length ? anyTime : pool;
+    return list[Math.floor(hash(key(`${node.id}:which-surprise`)) * list.length)];
+  }
+
+  // Newest first: steps unlocked by the most recent part of the path lead.
+  function rankChain(steps, path) {
+    const recency = id => path.findLastIndex(item => item.step === id);
+    const score = item => Math.max(-1, ...item.after.map(recency));
+    return steps.sort((a, b) => score(b) - score(a) || hash(key(`${a.id}:rank`)) - hash(key(`${b.id}:rank`)));
+  }
+
   function children(id) {
     const node = nodes.get(id);
     if (!node) return [];
     if (node.children) return node.children.map(child => nodes.get(child));
     if (node.age >= LIFE_END - 0.01) { node.children = []; return []; }
-    const count = hash(key(`${id}:count`)) < (node.age < 19 ? 0.5 : 0.35) ? 3 : 2;
-    const used = pathTo(id).map(item => item.label).filter(Boolean);
-    const { labels, byFamily } = labelsForFork(node.age, key(id), count, used);
-    const closedIndex = count === 3 && node.age >= 7 && hash(key(`${id}:closed`)) < 0.45
-      ? Math.floor(hash(key(`${id}:which`)) * 3) : -1;
-    node.children = [];
-    for (let index = 0; index < count; index += 1) {
+    const path = pathTo(id);
+    const taken = new Set(path.map(item => item.step).filter(Boolean));
+    const used = path.map(item => item.label).filter(Boolean);
+    const add = (index, item, extra = {}) => {
       const childId = `${id}.${index}`;
-      let age = node.age + gapFor(node.age) * (0.75 + 0.6 * hash(key(`${childId}:gap`)));
+      const big = Boolean(item.big);
+      const surprise = item.kind !== 'choice';
+      const factor = surprise ? (big ? 0.8 : 0.45) : big ? 1.55 : 1;
+      let age = node.age + Math.max(0.6, gapFor(node.age) * factor * (0.75 + 0.6 * hash(key(`${childId}:gap`))));
       if (age > LIFE_END - 1.5) age = LIFE_END;
       nodes.set(childId, {
         id: childId,
@@ -62,16 +89,47 @@ export function createLifeTree({ seed = 'life-explorer-1' } = {}) {
         y: null,
         ay: node.y ?? node.ay,
         parent: id,
-        label: labels[index],
-        byFamily,
-        closed: index === closedIndex,
-        reason: index === closedIndex ? closedReason(node.age, key(childId)) : null,
-        bend: (hash(key(`${childId}:bend`)) - 0.5) * 0.05,
+        step: item.id ?? null,
+        kind: item.kind ?? 'choice',
+        big,
+        label: item.label,
+        byFamily: Boolean(item.byFamily),
+        closed: false,
+        reason: null,
+        bend: (hash(key(`${childId}:bend`)) - 0.5) * (big ? 0.02 : 0.05),
         jitter: hash(key(`${childId}:y`)) - 0.5,
         children: null,
+        ...extra,
       });
       node.children.push(childId);
+    };
+    node.children = [];
+
+    const surprise = surpriseFor(node, path, taken);
+    if (surprise) {
+      add(0, { ...surprise, label: stepLabel(surprise.id) });
+      return node.children.map(child => nodes.get(child));
     }
+
+    const count = hash(key(`${id}:count`)) < (node.age < 19 ? 0.5 : 0.35) ? 3 : 2;
+    const open = availableSteps(node.age, taken, node.step)
+      .filter(item => item.kind === 'choice')
+      .map(item => ({ ...item, label: stepLabel(item.id) }))
+      .filter(item => !used.includes(item.label));
+    const chain = rankChain(open.filter(item => item.after.length), path);
+    const starters = open.filter(item => !item.after.length)
+      .sort((a, b) => hash(key(`${id}:${a.id}`)) - hash(key(`${id}:${b.id}`)));
+    // Up to two steps that build on the path, then something new.
+    const picked = chain.slice(0, count - 1);
+    if (starters.length && hash(key(`${id}:starter`)) < 0.6) picked.push(starters[0]);
+    const avoid = [...used, ...picked.map(item => item.label)];
+    const { labels, byFamily } = labelsForFork(node.age, key(id), count - picked.length, avoid);
+    const options = [...picked, ...labels.map(label => ({ id: null, kind: 'choice', label, byFamily }))]
+      .sort((a, b) => hash(key(`${id}:order:${a.label}`)) - hash(key(`${id}:order:${b.label}`)));
+    const closedIndex = count === 3 && node.age >= 7 && hash(key(`${id}:closed`)) < 0.4
+      ? Math.floor(hash(key(`${id}:which`)) * 3) : -1;
+    options.forEach((item, index) => add(index, item, index === closedIndex
+      ? { closed: true, reason: closedReason(node.age, key(`${id}.${index}`)) } : {}));
     return node.children.map(child => nodes.get(child));
   }
 
@@ -88,7 +146,15 @@ export function createLifeTree({ seed = 'life-explorer-1' } = {}) {
         const childLo = lo + part * index;
         const band = childLo + part * (0.5 + child.jitter * 0.3);
         const parentY = node.y ?? node.ay;
-        if (child.y === null) child.ay = level === 1 ? parentY + (band - parentY) * 0.6 : band;
+        if (child.y === null) {
+          child.ay = level === 1 ? parentY + (band - parentY) * 0.6 : band;
+          // Big moves swing far: toward the roomier side, kept inside the band.
+          if (child.big) {
+            const away = list.length === 1 ? (parentY < 0.5 ? 1 : -1) : (band >= parentY ? 1 : -1);
+            const target = parentY + away * (list.length === 1 ? 0.3 : Math.max(0.12, Math.abs(band - parentY)));
+            child.ay = Math.min(childLo + part * 0.92, Math.max(childLo + part * 0.08, target));
+          }
+        }
         split(child, childLo, childLo + part, level + 1);
       });
     };
@@ -223,6 +289,26 @@ export function createExploreScene(root) {
     context.save(); context.globalAlpha = alpha; context.fillStyle = color;
     context.beginPath(); context.arc(point.x, point.y, radius, 0, Math.PI * 2); context.fill(); context.restore();
   }
+  // A small flat marker where a surprise happened: a star for a lucky break, a diamond for a roadblock.
+  function marker(point, kind) {
+    context.save();
+    context.fillStyle = kind === 'lucky' ? SUN : CLAY;
+    context.strokeStyle = '#f2f5f0';
+    context.lineWidth = 2;
+    context.beginPath();
+    const spikes = kind === 'lucky' ? 5 : 2;
+    const outer = kind === 'lucky' ? 10 : 8.5;
+    const inner = kind === 'lucky' ? 4.4 : 8.5;
+    for (let index = 0; index < spikes * 2; index += 1) {
+      const radius = index % 2 ? inner : outer;
+      const angle = -Math.PI / 2 + (index * Math.PI) / spikes;
+      context.lineTo(point.x + Math.cos(angle) * radius, point.y + Math.sin(angle) * radius);
+    }
+    context.closePath();
+    context.stroke();
+    context.fill();
+    context.restore();
+  }
   function label(value, point, { color = FOREST, fontSize = 12.5, weight = 500, align = 'left', force = false } = {}) {
     context.save();
     context.font = `${weight} ${fontSize}px "Avenir Next", AvenirNext, "Segoe UI", sans-serif`;
@@ -274,7 +360,7 @@ export function createExploreScene(root) {
 
     for (const age of [5, 10, 15, 20, 30, 40, 50, 60, 70]) {
       const x = toScreen(world({ age, y: 0 })).x;
-      if (x < 40 || x > size.width - 12) continue;
+      if (x < 64 || x > size.width - 12) continue;
       context.save(); context.strokeStyle = '#dde4dc'; context.lineWidth = 1; context.setLineDash([2, 7]);
       context.beginPath(); context.moveTo(x, 10); context.lineTo(x, size.height - 30); context.stroke(); context.restore();
       label(`${age}`, { x, y: size.height - 11 }, { color: '#5a6961', fontSize: 12, align: 'center', weight: 600, force: true });
@@ -330,6 +416,7 @@ export function createExploreScene(root) {
       livedLabels.push({ node, points, order: index });
     });
     nodesOnPath.slice(0, -1).forEach(node => dot(screenOf(node), 3.8, FOREST));
+    nodesOnPath.slice(1, -1).filter(isSurprise).forEach(node => marker(screenOf(node), node.kind));
 
     if (travel) {
       const parent = tree.get(travel.from);
@@ -372,7 +459,9 @@ export function createExploreScene(root) {
       chipsLayer.dataset.fork = here.id;
       chipsLayer.innerHTML = options.map((option, index) => option.closed
         ? `<button type="button" class="choice-chip is-closed" aria-disabled="true" data-closed="${option.id}" style="--i:${index}"><span class="chip-x" aria-hidden="true">✕</span><span><strong>${escapeHTML(option.label)}</strong><small>${escapeHTML(option.reason)}</small></span></button>`
-        : `<button type="button" class="choice-chip" data-option="${option.id}" style="--i:${index}">${option.byFamily ? `<small>${escapeHTML(t('explore.byFamilyChip'))}</small>` : ''}<strong>${escapeHTML(option.label)}</strong></button>`).join('');
+        : isSurprise(option)
+          ? `<button type="button" class="choice-chip is-${option.kind}${option.big ? ' is-big' : ''}" data-option="${option.id}" style="--i:${index}"><small>${escapeHTML(t(`explore.kind.${option.kind}`))}</small><strong>${escapeHTML(option.label)}</strong><span class="chip-go">${escapeHTML(t('explore.surpriseGo'))}</span></button>`
+          : `<button type="button" class="choice-chip" data-option="${option.id}" style="--i:${index}">${option.byFamily ? `<small>${escapeHTML(t('explore.byFamilyChip'))}</small>` : ''}<strong>${escapeHTML(option.label)}</strong></button>`).join('');
     }
     options.forEach((option, index) => {
       const chip = chipsLayer.children[index];
@@ -452,7 +541,9 @@ export function createExploreScene(root) {
     path = [...path, option.id];
     tree.layoutAhead(option.id);
     chipsLayer.dataset.fork = '';
-    announce(t('explore.announceChoice', { age: Math.round(here.age), choice: option.label }));
+    announce(isSurprise(option)
+      ? t('explore.announceSurprise', { age: Math.round(here.age), kind: t(`explore.kind.${option.kind}`), event: option.label })
+      : t('explore.announceChoice', { age: Math.round(here.age), choice: option.label }));
     renderPanel();
     if (option.age >= LIFE_END - 0.01) { finish(); return; }
     paint();
@@ -483,10 +574,8 @@ export function createExploreScene(root) {
     overview = true;
     zoomButton.textContent = t('explore.zoomIn');
     const chosen = path.slice(1);
-    const closedSeen = path.slice(0, -1).filter(id => tree.children(id).some(child => child.closed)).length;
     endCard.hidden = false;
     endCard.innerHTML = `<h2 tabindex="-1">${escapeHTML(t('explore.end.heading'))}</h2>
-      <p>${escapeHTML(t('explore.end.summary', { choices: chosen.length, closed: closedSeen }))}</p>
       <p>${escapeHTML(t('explore.end.gray'))}</p>
       <div class="end-buttons"><button type="button" class="solid-pill" data-tool="again">${escapeHTML(t('explore.end.again'))}</button>
       <button type="button" class="pill-button" data-tool="back-one">${escapeHTML(t('explore.end.backOne'))}</button></div>`;
@@ -515,25 +604,40 @@ export function createExploreScene(root) {
     if (live) live.textContent = message;
   }
 
+  function endSummary() {
+    const chosen = path.slice(1).map(id => tree.get(id));
+    return t('explore.end.summary', {
+      choices: chosen.filter(node => !isSurprise(node)).length,
+      lucky: chosen.filter(node => node.kind === 'lucky').length,
+      roadblocks: chosen.filter(node => node.kind === 'roadblock').length,
+      closed: path.slice(0, -1).filter(id => tree.children(id).some(child => child.closed)).length,
+    });
+  }
+
   function renderPanel() {
     if (!panel) return;
     const nodesOnPath = path.map(id => tree.get(id));
     const here = currentNode();
     const items = nodesOnPath.slice(1).map((node, index) => {
       const fork = nodesOnPath[index];
-      return `<li><button type="button" class="timeline-step" data-back="${fork.id}" aria-label="${escapeHTML(t('explore.stepLabel', { age: Math.round(fork.age), choice: node.label }))}">
-        <span class="timeline-age">${Math.round(fork.age)}</span><span class="timeline-label">${escapeHTML(node.label)}${node.byFamily ? ` <small>${escapeHTML(t('explore.byFamily'))}</small>` : ''}</span></button></li>`;
+      return `<li><button type="button" class="timeline-step" data-back="${fork.id}" aria-label="${escapeHTML(isSurprise(node)
+        ? t('explore.stepLabelSurprise', { age: Math.round(fork.age), kind: t(`explore.kind.${node.kind}`), choice: node.label })
+        : t('explore.stepLabel', { age: Math.round(fork.age), choice: node.label }))}">
+        <span class="timeline-age">${Math.round(fork.age)}</span><span class="timeline-label">${isSurprise(node) ? `<small class="timeline-kind is-${node.kind}">${escapeHTML(t(`explore.kind.${node.kind}`))}</small> ` : ''}${escapeHTML(node.label)}${node.byFamily ? ` <small>${escapeHTML(t('explore.byFamily'))}</small>` : ''}</span></button></li>`;
     }).join('');
-    panel.innerHTML = `<div class="explore-panel">
-      <div class="explore-now">${here.age >= LIFE_END - 0.01
-        ? `<strong>${escapeHTML(t('explore.now.endStrong'))}</strong> ${escapeHTML(t('explore.now.end'))}`
-        : `<strong>${escapeHTML(t('explore.now.age', { age: Math.round(here.age) }))}</strong> ${escapeHTML(t(path.length === 1 ? 'explore.now.first' : 'explore.now.next'))}`}</div>
+    // The live region stays put across re-renders so announcements survive.
+    if (!panel.querySelector('.explore-live')) {
+      panel.innerHTML = '<div class="explore-panel"></div><p class="sr-only explore-live" aria-live="polite"></p>';
+    }
+    panel.querySelector('.explore-panel').innerHTML = `
+      <div class="explore-now${tree.children(here.id).find(isSurprise) ? ` is-${tree.children(here.id)[0].kind}` : ''}">${here.age >= LIFE_END - 0.01
+        ? `<strong>${escapeHTML(t('explore.now.endStrong'))}</strong> ${escapeHTML(endSummary())}`
+        : `<strong>${escapeHTML(t('explore.now.age', { age: Math.round(here.age) }))}</strong> ${escapeHTML(t(path.length === 1 ? 'explore.now.first'
+          : tree.children(here.id).some(isSurprise) ? 'explore.now.surprise' : 'explore.now.next'))}`}</div>
       <h2 class="timeline-title">${escapeHTML(t('explore.timeline.title'))}</h2>
       ${items ? `<ol class="timeline">${items}</ol><p class="timeline-hint">${escapeHTML(t('explore.timeline.hint'))}</p>` : `<p class="timeline-empty">${escapeHTML(t('explore.timeline.empty'))}</p>`}
       <div class="explore-actions"><button type="button" class="pill-button" data-tool="again">${escapeHTML(t('explore.newLife'))}</button></div>
-      <p class="illustration-note">${escapeHTML(t('explore.madeUp'))}</p>
-      <p class="sr-only explore-live" aria-live="polite"></p>
-    </div>`;
+      <p class="illustration-note">${escapeHTML(t('explore.madeUp'))}</p>`;
     const list = panel.querySelector('.timeline');
     if (list) list.scrollTop = list.scrollHeight;
   }

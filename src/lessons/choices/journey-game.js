@@ -75,7 +75,7 @@ const DAY_DATA = [
   { weekday: 'tue', chance: 'chance', options: ['celloSolo', 'kickBall', 'comic'] },
   { weekday: 'wed', options: ['soccerPractice', 'friend', 'celloPractice'] },
   { weekday: 'thu', chance: 'lucky', options: ['drillPractice', 'celloPractice', 'rest'] },
-  { weekday: 'fri', options: ['soccerPractice', 'celloPractice', 'rest'] },
+  { weekday: 'fri', chance: 'lucky', options: ['soccerPractice', 'celloPractice', 'rest'] },
 ];
 
 /** A day's words in a given language: weekday, situation, and the chance tag if any. */
