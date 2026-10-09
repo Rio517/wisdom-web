@@ -122,8 +122,8 @@ h1, h2, h3, h4 { font-family: var(--font-field); font-weight: 500; }
 .closer p { @apply mx-4 mb-3 mt-0; font: 16px/1.5 var(--font-field); }
 /* When the beat's text runs past the fold, a closed closer stays pinned to the foot of the narration,
    so it is never cut off; the text scrolls under it and fades into its edge. Opening it scrolls it
-   into view (journey.js). The page scrolls below 901px, where nothing clips it. */
-@media (min-width: 901px) {
+   into view (journey.js). The page scrolls below 990px, where nothing clips it. */
+@media (min-width: 990px) {
   .beat-extra:has(> .closer:only-child:not([open])) { position: sticky; bottom: 0; z-index: 1; background: var(--color-paper); }
   .beat-extra:has(> .closer:only-child:not([open]))::before,
   .beat-extra:has(> .closer:only-child:not([open]))::after { content: ""; position: absolute; left: 0; right: 0; pointer-events: none; }
@@ -528,7 +528,7 @@ dialog::backdrop { background: #23302d66; }
   .choice-chip small { font-size: 15px; }
 }
 /* Short landscape screens (Safari on iPad shows ~690px): tighter lanes so the skill box never spills out of its lane. */
-@media (min-width: 901px) and (max-height: 800px) {
+@media (min-width: 990px) and (max-height: 800px) {
   .scene-skills { padding: 12px 20px 8px; }
   .season-bar { margin-bottom: 8px; min-height: 46px; }
   .lane { padding-block: 6px; }
@@ -544,13 +544,15 @@ dialog::backdrop { background: #23302d66; }
   .lane { padding-block: 4px; }
   .skill-box { padding: 4px 12px; }
 }
-@media (max-width: 1100px) and (min-width: 901px) {
+@media (max-width: 1100px) and (min-width: 990px) {
   .journey { grid-template-columns: minmax(0, 1fr) 330px; }
   .narration { padding: 8px 20px 16px 24px; }
   .beat-text p { font-size: 19px; }
   .backpack { width: clamp(250px, 38%, 400px); padding: 16px; }
 }
-@media (max-width: 900px) {
+/* Below 990px the page uses the stacked layout: the side-by-side calendars need about 987px in the longest
+   language (Spanish, 801px tall), so 990 leaves a small margin. */
+@media (width < 990px) {
   body { overflow: auto; }
   /* The trail takes the full width on its own row, so every chapter name fits on one line. */
   .journey-header { grid-template-columns: 1fr auto; height: auto; row-gap: 0; padding-top: 8px; }
