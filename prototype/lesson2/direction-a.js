@@ -4,7 +4,7 @@
 // lift start it, which is the contrast with the routine that is up to you.
 import {
   mountFrame, createPanel, addCard, announce, dayHead, cueLine, optionsMarkup, markChosen,
-  startChip, movesFor, finish, t, esc, ICONS, weekday, momentYour, listOf, nextChanceLine, revealEnd,
+  startChip, movesFor, finish, t, esc, ICONS, weekday, momentYour, listOf, nextChanceLine, revealEnd, readingTime,
 } from './ui.js';
 import { person } from '../../src/lessons/choices/journey-icons.js';
 import { DAYS, MOMENTS, SETUPS, WEEK_ONE_END, momentFit, replay, weekSummary, startingLevel, startingStage } from './model.js';
@@ -21,6 +21,7 @@ export function start(app) {
   let checked = false;
   let cueShown = '';
   let feltStage = -1;
+  let freshLeft = 0; // starts still to come at a moved moment that count as new
 
   const life = () => replay(decisions);
 
@@ -31,6 +32,7 @@ export function start(app) {
     checked = false;
     cueShown = '';
     feltStage = -1;
+    freshLeft = 0;
     ui = mountFrame(app, 'a', { onRestart: reset });
     showPlan();
   }
@@ -108,11 +110,12 @@ export function start(app) {
     const routine = plan.routine;
     const now = life();
     panel.update(now, { current: index });
-    const options = routineOptions(routine, index, plan.moment);
     const fit = momentFit(plan.moment, DAYS[index]);
-    const comes = fit === 'ok' || fit === 'tired';
     const last = decisions[index - 1];
     const next = last?.plan[routine] === 'skip' ? nextChanceLine(index - 1, plan.moment, index) : '';
+    if (fit === 'gone') { goneDay(index, next); return; }
+    const options = routineOptions(routine, index, plan.moment);
+    const comes = fit === 'ok' || fit === 'tired';
     // The feeling shows when it changes, and the cue when the plan is new.
     const stage = startingStage(startingLevel(now.tally[routine]));
     const feel = comes && DAYS[index].event !== 'snag' && stage !== feltStage ? `<p class="l2-feel">${esc(t(`l2.feel.${stage}`))}</p>` : '';
@@ -137,21 +140,41 @@ export function start(app) {
     });
   }
 
+  /** A day the moment can't come (the snack is eaten in the car) plays by itself. */
+  function goneDay(index, next) {
+    const routine = plan.routine;
+    decisions[index] = { plan: { [routine]: 'gone' }, options: { extra: [], details: {} } };
+    const now = life();
+    const entry = now.log.at(-1);
+    panel.update(now, { current: index, moves: movesFor(entry) });
+    const soccer = soccerLine(entry, { again: false });
+    const card = addCard(ui.feed, `${dayHead(index, { routine, next })}
+      <p class="l2-fit">${esc(fitLine(index))}</p>
+      <div class="l2-result">${startChip(routine, entry.routines[routine])}${soccerMarkup(soccer)}</div>`, { className: 'l2-day-card', day: index });
+    announce(ui.live, t('l2.announce', { weekday: weekday(index), result: `${fitLine(index)} ${soccer}`.trim() }));
+    timer = setTimeout(() => showDay(index + 1), readingTime(card));
+  }
+
+  const soccerMarkup = line => (line ? `<p class="l2-soccer-line">${ICONS.soccerSmall}<span>${esc(line)}</span></p>` : '');
+
   function choose(index, card, option) {
     const routine = plan.routine;
+    // The first two starts at a moved moment are new: they grow like another time.
+    const fresh = option.how === 'moment' && freshLeft > 0;
+    if (fresh) freshLeft -= 1;
     decisions[index] = {
       plan: { [routine]: option.how },
-      options: { extra: option.extra ?? [], details: { [routine]: { tired: Boolean(option.tired), icon: option.alt } } },
+      options: { extra: option.extra ?? [], details: { [routine]: { tired: Boolean(option.tired), icon: option.alt, fresh } } },
     };
     const now = life();
     const entry = now.log.at(-1);
     panel.update(now, { current: index, moves: movesFor(entry) });
     const item = entry.routines[routine];
-    const soccer = soccerLine(entry);
+    const soccer = soccerLine(entry, { again: false });
     const hallway = (option.extra ?? []).includes('hallway') ? `<p class="l2-soccer-line">${ICONS.ball}<span>${esc(t('l2.res.hallway'))}</span></p>` : '';
     card.querySelector('[data-role="result"]').innerHTML = `<p>${esc(resultLine(routine, item, index))}</p>
       ${startChip(routine, item)}
-      ${soccer ? `<p class="l2-soccer-line">${ICONS.soccerSmall}<span>${esc(soccer)}</span></p>` : ''}${hallway}`;
+      ${soccerMarkup(soccer)}${hallway}`;
     announce(ui.live, t('l2.announce', { weekday: weekday(index), result: `${resultLine(routine, item, index)} ${soccer}`.trim() }));
     revealEnd(ui.feed, card);
     timer = setTimeout(() => showDay(index + 1), ADVANCE_MS);
@@ -188,6 +211,7 @@ export function start(app) {
       }
       if (event.target.closest('[data-action="week2"]')) {
         checked = true;
+        if (plan.moment !== original) freshLeft = 2;
         showDay(WEEK_ONE_END + 1);
       }
     });
