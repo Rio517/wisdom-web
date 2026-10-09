@@ -42,11 +42,13 @@ The public repository is [Rio517/wisdom-web](https://github.com/Rio517/wisdom-we
 
 ## Immediate next work
 
-1. **Owner review of the site** at the URLs above and the [v01 captures](docs/design/002-site/v01-launch/README.md), including the i18n change before it is committed.
-2. **Keep translations in step:** any change to English text updates all four catalogs in the same change (`npm test` enforces parity); recheck German layouts afterwards.
-3. **Domain protection (optional):** verify `knyflores.com` in GitHub account settings (Pages → verified domains) so no other account can claim the subdomain.
-4. **Reader testing** near age eight and with older readers. Can they connect earlier learning to a later possibility, separate preparation from guaranteed outcomes, and name something outside Alfredo's control? Does the game read as "practice plus rest builds skills" rather than "never have fun"?
-5. **Lesson 02, Habits and daily practice**, is next. It gets a page and navigation link only when its content is complete.
+**2026-10-09 owner feedback round (on `main`, tagged deploys):** the hike was redrawn (a stream that reads as water, a waterfall into a pool, a trail to the lake, a new rock, readable labels, a larger packing panel), Maya's chapter aligned for every iPad size with real soccer balls, a 15px text floor, Lesson 1 rewritten in the narrator's voice in all four languages ([wisdom-voice skill](.claude/skills/wisdom-voice/SKILL.md); outside forces now bring good luck as well as bad), a richer life-path explorer (chains of choices, lucky breaks and setbacks that move the path; [design note](notes/explorer-chains.md)), the path field fanned out with new lab controls, the index line and "coming soon" popovers, doors that open on the life map, and Lesson 2 structure C accepted ([015](docs/product/015-lesson-two-proposal.md)) with a habits research pass. Captures: [v10 voice pass](docs/design/001-choices-explainer/v10-voice-pass/README.md), [v10 hike](docs/design/001-choices-explainer/v10-hike-fixes/README.md), [v10 Maya](docs/design/001-choices-explainer/v10-maya-fixes/README.md), [002 v02 directions](docs/design/002-site/v02-directions/README.md).
+
+1. **Home page and lesson cover:** the owner picks one of three playable directions (`npm run dev:prototype`, then <http://127.0.0.1:4602/prototype/directions/>); the pick is then built into the site, including the centred lesson cover.
+2. **Lesson 2, Habits and daily practice (structure C):** Maya's habit story and a two-week soccer, cello and reading game; the ten-afternoon game and most of Maya's skill beats leave Lesson 1 in the same release. It gets a page and navigation link only when its content is complete.
+3. **Keep translations in step:** any change to English text updates all four catalogs in the same change (`npm test` enforces parity); recheck German layouts afterwards.
+4. **Reader testing** near age eight and with older readers, now with the new voice and the explorer's chains.
+5. **Domain protection (optional):** verify `knyflores.com` in GitHub account settings (Pages → verified domains).
 
 Open decisions: whether to use regional language variants (see 014), packaging web fonts (the site uses the approved system font stacks, which fall back to Palatino/Georgia and Segoe UI on non-Apple devices), a phone layout (deferred), and whether to retire the `prototype/` studies once the site is published.
 

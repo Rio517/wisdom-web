@@ -156,3 +156,14 @@ At the end of that 2026-09-07 pass, the redesigned short lesson, owner visual se
 - Committed the i18n work (`19c6854`) and, separately, the dev-only Dialecto in-context editor added from the Dialecto session (`33078e8`). Pushed `prototype/choices-map` and fast-forwarded `main`; the Pages deploy passed and every route answered 200 on `wisdom.knyflores.com` in all four languages, with drafts `noindex` and unlinked from English pages. The owner's DNS record is live; the HTTPS certificate was still pending at deploy time.
 - Published Spanish, German and French at the owner's request, without further review: all four languages are `published`, so the switcher (sidebar, footer, lesson drawer) links them from every page, and `hreflang` lists all four. Switching language inside the lesson keeps the current step. 014, AGENTS.md and the handoff now describe the translations as published AI drafts.
 - Finished going live: after the owner's DNS record resolved, GitHub issued no certificate for an hour; removing and re-adding the custom domain started issuance. The certificate was approved, HTTPS is enforced (`http://` redirects with 301), and the site answers on <https://wisdom.knyflores.com/> in all four languages.
+
+## 2026-10-09
+
+- Acted on the owner's review: redrew the hike scene, aligned Maya's chapter for desktop and iPad sizes with recognisable soccer balls, and set a 15px text floor across the lesson.
+- Added the wisdom-voice writing skill and rewrote Lesson 1 in it in English, Spanish, German and French, with good luck alongside bad luck.
+- Rebuilt the life-path explorer around chains of choices, lucky breaks and setbacks; fixed its screen-reader announcements.
+- Fanned out the path field (new lab controls, about 3× faster generation), fixed the index line and the map's pulse ring, added "coming soon" popovers and doors that open on the life map, and built three playable home-page directions for the owner's pick.
+- Wrote proposal 015 (Lesson 2 structure C accepted) and extended the habits research with sources B5–B18.
+- Changed deployment to release tags on `main` and moved checks to a nightly workflow.
+- Verified: 240 tests pass and the build produces 25 pages; layouts measured at 1440×900, 1024×768, 768×1024 and 744×1133 in all four languages.
+
