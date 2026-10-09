@@ -1,6 +1,6 @@
 # 003 · v01 — Game directions
 
-Created: 2026-10-09. Updated: 2026-10-09. Status: second pass done after a fresh-context review of the first (it ranked C, then A, then B); no direction chosen. These are studies under `prototype/`, not the website.
+Created: 2026-10-09. Updated: 2026-10-09. Status: A, B and C had a second pass after a fresh-context review of the first (it ranked C, then A, then B). The owner then found all three too complicated and too wordy; D (below) is the direction now being prototyped. These are studies under `prototype/`, not the website.
 
 ## The question
 
@@ -10,7 +10,64 @@ Related: [015 — Lesson 2 proposal](../../../product/015-lesson-two-proposal.md
 
 ## Run it
 
-`npm run dev:prototype`, then open `/prototype/lesson2/index.html` on the prototype port. Each direction has a header link to the other two, **Start again**, and **Deutsch** (`?lang=de`), which swaps in German words for the layout check.
+`npm run dev:prototype`, then open `/prototype/lesson2/index.html` on the prototype port. Each direction has a header link to the others, **Start again**, and **Deutsch** (`?lang=de`), which swaps in German words for the layout check.
+
+## D · Three things, two weeks
+
+**Why.** The owner found A, B and C too complicated and too wordy for a ten-year-old. He asked for Lesson 1's game back (three picture choices a day, skills visibly growing on the right) and for "starting gets easier" to stay, but simply. Where fewer words and completeness pulled apart, fewer words won.
+
+**What changed** (`d.html`):
+- A pick screen of nine picture cards replaces the plan board: an instrument, a quiet thing and a sport (cello, reading and soccer are pre-selected). The panel rebuilds as the reader taps.
+- Fourteen days in Lesson 1's feed, day rail and look. Each day is one short situation and three picture options; the two home options carry a small time caption (*after snack*, *before bed*) and there is no time to choose.
+- The instrument's and the quiet thing's boxes each gain one row, **Starting**: a dotted footpath that wears in solid each time the reader does that activity, more at its usual time. The sport box has no path. A chip says *started* or *easier*, like Lesson 1's *grew*.
+- Gone from A–C: times to choose and things to get ready, the week-one check, the Starting track cards and their stage words, result sentences, the coach, auto-played days. Rest, bad luck and other choices move nothing; a missed day is a path that simply doesn't move.
+- The end card: *Starting got easier.*, *A missed day was just a missed day.*, *Real life takes longer. It's different for everyone.*, the two paths, **Make your own plan** (the own-plan card) and **Play again** (Lesson 1's replay with ghost bars).
+
+**The two looks**, switched by **Glow | Lines** at the top right:
+- *Lines*: a tap draws a line from the chosen option to its box; the box icon pops as it lands, then the bars and the path grow and the chips show. Starting is the path.
+- *Glow*: the box that changed lights up with a soft ring and tint, with no line. Starting is the activity's icon going from grey to full colour over a soft disc, with no Starting row.
+- The cross pairs exist only as URLs: `d.html?look=lines&starting=light`, `?look=glow&starting=path`.
+
+**Model** (`model-d.js`). It counts, so order never matters: Starting = min(1, 0.07 × (2 × starts at the usual time + other starts)); skills follow Lesson 1's curve with steps of 0.12 and 0.10 for an activity's two skills, ×1.6 on the lucky day. `tests/lesson2-d-model.test.js` shuffles the days 2,000 times (all end equal) and plays 42,000 random days (rest, bad luck and other choices move Starting zero times; nothing ever goes down).
+
+**Numbers.**
+- Words a child sees, counted by script over the page after a full play with the default picks: 265 on screen plus 4 that come and go (*Start*, the chips) ≈ **269**. Prose 95, labels 170; the longest situation is 7 words, the longest label 4. German ≈ 285.
+- Play time ≈ **1.8 minutes**: prose at 180 words a minute, labels at 300, 15 taps at a second each, the measured settle after each tap (about 15 s in all) and 10 s on the pick screen. A slow reader (120 and 200 words a minute) ≈ 2.3 minutes. With reduced motion the days themselves take 12.6 s.
+- Worst frame at 4× CPU throttle, 1440×900, a full play: 16.8 ms in both looks, none over 33 ms, no long animation frames.
+
+**Checks.** Twelve scripted headless play-throughs (1440×900, 1024×768 and 744×1133; keyboard and mouse; both looks; with and without reduced motion; the default picks and gymnastics, piano and drawing) each pick, play 14 days and reach *Make your own plan* with focus on its heading: no problems, no console errors, no digits on screen, no panel or page scroll, 34 Tab presses for the whole game, no animations under reduced motion.
+
+**Simplified beyond the spec.**
+- Starting is a row under the box title, lined up with the bars, rather than a header path leading into the icon; it keeps three boxes inside the panel at 1024×768.
+- No coach anywhere: the cancelled Thursday reads *Soccer is cancelled today.*; the lucky one *A new trick at soccer today.*
+- Pick rows run instrument, quiet thing, sport, matching the panel.
+- Situations no longer repeat the weekday the card already shows.
+- An activity's two skills grow at slightly different steps so the bars don't move as one.
+- No soup icon: the sick day's options are *Sleep*, *A film* and *Read*.
+
+**Known issues.**
+- The round's index heading and text still describe A–C ("Three ways…", "same model underneath").
+- The quiet thing's sage bars are low in contrast on white, and the Light signal is faint at its first steps.
+- At 1440×900 the panel has empty space below the three boxes.
+- Chips sit over the right end of the bar or path while they show.
+- The bars' screen-reader values still use Lesson 1's level words.
+- No fresh-context design review yet.
+
+**Shots** (headless, after a scripted play):
+
+| Moment | 1440×900 | 744×1133 |
+| --- | --- | --- |
+| Pick screen | [1440](d-1-pick-1440-v01.png) | [744](d-1-pick-744-v01.png) · [German](d-1-pick-744-de-v01.png) |
+| A day just after a tap, Lines (the line landing) | [1440](d-2-day-lines-1440-v01.png) | [744](d-2-day-lines-744-v01.png) |
+| The same moment, Glow | [1440](d-2-day-glow-1440-v01.png) | [744](d-2-day-glow-744-v01.png) · [German, Lines](d-2-day-744-de-v01.png) |
+| The party chosen: nothing grows, nothing drops | [1440](d-3-party-1440-v01.png) | [744](d-3-party-744-v01.png) |
+| The sick day, reading anyway | [1440](d-4-sick-1440-v01.png) | [744](d-4-sick-744-v01.png) |
+| End card | [1440](d-5-end-1440-v01.png) | [744](d-5-end-744-v01.png) |
+| Three boxes fit, no panel scroll | [1024×768](d-6-fit-1024-v01.png) | |
+
+**Files:** [`d.html`](../../../../prototype/lesson2/d.html), [`direction-d.js`](../../../../prototype/lesson2/direction-d.js), [`direction-d.css`](../../../../prototype/lesson2/direction-d.css), [`model-d.js`](../../../../prototype/lesson2/model-d.js), [`icons-d.js`](../../../../prototype/lesson2/icons-d.js), the `l2.d.*` keys in `copy.json` and `copy.de.json`, and [`tests/lesson2-d-model.test.js`](../../../../tests/lesson2-d-model.test.js). From Lesson 1, unchanged: `journey-play.css`, `journey-skills.js` (skill boxes) and `journey-motion.js`; `direction-d.js` adapts `journey-play.js`'s feed, rail and focus handling.
+
+The sections below describe A, B and C.
 
 ## What all three share
 
@@ -149,6 +206,6 @@ The round's front page: [1440](index-1440-v01.png) · [744, German](index-744-de
 
 - Pages: [`prototype/lesson2/index.html`](../../../../prototype/lesson2/index.html), [`a.html`](../../../../prototype/lesson2/a.html), [`b.html`](../../../../prototype/lesson2/b.html), [`c.html`](../../../../prototype/lesson2/c.html); start-up and catalogs: [`boot.js`](../../../../prototype/lesson2/boot.js), [`index-page.js`](../../../../prototype/lesson2/index-page.js).
 - Shared: [`model.js`](../../../../prototype/lesson2/model.js) (days, moments, the Starting track, skills, replay), [`story.js`](../../../../prototype/lesson2/story.js) (each day's options and result lines), [`ui.js`](../../../../prototype/lesson2/ui.js) (frame, cards, panel, end card, own plan), [`icons.js`](../../../../prototype/lesson2/icons.js), [`lesson2.css`](../../../../prototype/lesson2/lesson2.css).
-- Directions: [`direction-a.js`](../../../../prototype/lesson2/direction-a.js), [`direction-b.js`](../../../../prototype/lesson2/direction-b.js), [`direction-c.js`](../../../../prototype/lesson2/direction-c.js).
+- Directions: [`direction-a.js`](../../../../prototype/lesson2/direction-a.js), [`direction-b.js`](../../../../prototype/lesson2/direction-b.js), [`direction-c.js`](../../../../prototype/lesson2/direction-c.js). D has its own model, icons and styles, listed in its section.
 - Words: [`copy.json`](../../../../prototype/lesson2/copy.json), [`copy.de.json`](../../../../prototype/lesson2/copy.de.json).
 - Reused from Lesson 1 unchanged: `src/lessons/choices/journey-game.js` (skill growth), `journey-skills.js` (skill boxes), `journey-icons.js` (icons and Maya's person art), `journey.css` (tokens and components), `src/i18n/runtime.js` and the site catalogs.
