@@ -82,8 +82,16 @@ export function createPathsScene(root, { labels = true } = {}) {
   const rect = () => stack.getBoundingClientRect();
   const view = () => fitOverview(data().network.bounds, rect(), undefined, data().network.maxAge);
 
+  // Both canvases depend only on the stage's size, so a beat change that
+  // keeps the size reuses them; repainting on every beat cost a long frame
+  // right as an animation started.
+  let paintedFor = '';
   function paintBase() {
     if (failed) return;
+    const r = rect();
+    const size = `${Math.round(r.width)}x${Math.round(r.height)}@${devicePixelRatio || 1}`;
+    if (size === paintedFor) return;
+    paintedFor = size;
     const { network, projection } = data();
     if (!overview) overview = generateNetwork(networkOptionsForLab(LAB_DEFAULTS, { today: STORY_AGE }));
     baseRenderer.paint(overview, projection, renderSettings, false);
@@ -146,25 +154,26 @@ export function createPathsScene(root, { labels = true } = {}) {
   function sizeFx() {
     const r = rect();
     const bitmap = canvasBitmap(r, devicePixelRatio || 1);
-    fxCanvas.width = bitmap.width; fxCanvas.height = bitmap.height;
+    // Reallocate only when the size changes; the traveller redraws every frame.
+    if (fxCanvas.width !== bitmap.width || fxCanvas.height !== bitmap.height) {
+      fxCanvas.width = bitmap.width; fxCanvas.height = bitmap.height;
+    }
     fx.setTransform(bitmap.scale, 0, 0, bitmap.scale, 0, 0);
     fx.clearRect(0, 0, r.width, r.height);
     return r;
   }
 
-  function drawFx(pulsePhase = 0) {
+  function drawFx() {
     if (failed) return;
+    // An empty full-size canvas still costs the compositor a layer each
+    // frame, so it is hidden while there is nothing on it.
+    fxCanvas.style.visibility = fxMode === 'none' ? 'hidden' : '';
     const r = sizeFx();
     const v = view();
     const { projection } = data();
     const birth = v.world(projection.past[0]);
     if (fxMode === 'cover') {
       fx.beginPath(); fx.arc(birth.x, birth.y, 4.5, 0, Math.PI * 2); fx.fillStyle = FOREST; fx.fill();
-      // One ring breathes out from the dot and fades; eased so it slows as it goes.
-      const spread = 1 - (1 - pulsePhase) ** 2;
-      const ring = 8 + spread * 24;
-      fx.beginPath(); fx.arc(birth.x, birth.y, ring, 0, Math.PI * 2);
-      fx.strokeStyle = `rgba(40,84,66,${0.4 * (1 - spread)})`; fx.lineWidth = 1.5; fx.stroke();
       fx.fillStyle = '#5a6961'; fx.font = '500 15px "Avenir Next", AvenirNext, "Segoe UI", sans-serif';
       fx.textAlign = 'center'; fx.fillText(t('map.beginning'), birth.x, birth.y + 40);
       return;
@@ -201,12 +210,7 @@ export function createPathsScene(root, { labels = true } = {}) {
     }
     if (fxMode === 'closed' || fxMode === 'wrap') {
       const today = v.world(projection.today);
-      if (fxMode === 'wrap') {
-        const spread = 1 - (1 - pulsePhase) ** 2;
-        fx.beginPath(); fx.arc(today.x, today.y, 8 + spread * 20, 0, Math.PI * 2);
-        fx.strokeStyle = `rgba(40,84,66,${0.4 * (1 - spread)})`; fx.lineWidth = 1.5; fx.stroke();
-        return;
-      }
+      if (fxMode === 'wrap') return;
       for (const mark of closedMarks) {
         const after = mark.segment.points.filter(point => point.age >= mark.at.age);
         const points = [mark.at, ...after].map(v.world);
@@ -374,20 +378,30 @@ export function createPathsScene(root, { labels = true } = {}) {
     }
   }
 
+  /**
+   * A ring that breathes out from the Beginning (cover) or Today (wrap) and
+   * fades. It is a small element animated on the compositor: redrawing the
+   * whole effects canvas every frame for it cost a frame's budget on slow
+   * machines.
+   */
   function startPulse(mode) {
     stopPulse();
-    if (matchMedia('(prefers-reduced-motion: reduce)').matches) { drawFx(0); return; }
-    const began = performance.now();
-    const loop = now => {
-      if (fxMode !== mode) return;
-      // A frame's timestamp can be a little earlier than `began`; a negative
-      // phase gave the ring a negative radius, which threw and froze it.
-      drawFx((Math.max(0, now - began) % 1800) / 1800);
-      pulse = requestAnimationFrame(loop);
-    };
-    pulse = requestAnimationFrame(loop);
+    drawFx();
+    if (failed || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const { projection } = data();
+    const at = view().world(mode === 'cover' ? projection.past[0] : projection.today);
+    const ring = document.createElement('i');
+    ring.setAttribute('aria-hidden', 'true');
+    Object.assign(ring.style, {
+      position: 'absolute', left: `${at.x - 16}px`, top: `${at.y - 16}px`, width: '32px', height: '32px',
+      borderRadius: '50%', border: '1.5px solid rgba(40,84,66,.4)', pointerEvents: 'none',
+    });
+    stack.append(ring);
+    ring.animate([{ transform: 'scale(.5)', opacity: 1 }, { transform: 'scale(2)', opacity: 0 }],
+      { duration: 1800, iterations: Infinity, easing: 'cubic-bezier(.2, .6, .4, 1)' });
+    pulse = ring;
   }
-  function stopPulse() { if (pulse !== null) cancelAnimationFrame(pulse); pulse = null; }
+  function stopPulse() { pulse?.remove(); pulse = null; }
 
   function setState({ grow, state, fxModeValue, calloutMode }) {
     stack.dataset.grow = grow;

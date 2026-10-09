@@ -1,0 +1,130 @@
+/* v02 directions: the site's own styles, plus the centred stage. */
+@import "../../src/styles/site.css";
+
+@property --grow { syntax: "<length>"; inherits: true; initial-value: 0px; }
+
+body { min-height: 100vh; }
+.d-top { position: relative; z-index: 10; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 24px; height: 72px; padding: 0 clamp(16px, 3vw, 48px); }
+.d-top > :first-child { justify-self: start; }
+.d-top > :last-child { justify-self: end; }
+.d-menu { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; border: 1px solid var(--color-rule); border-radius: 999px; background: var(--color-paper); padding: 0 16px 0 12px; font: 600 16px var(--font-guide); color: var(--color-forest); }
+.d-menu:hover { border-color: var(--color-forest); }
+.d-menu svg { width: 20px; height: 20px; }
+.d-left { display: flex; align-items: center; gap: 18px; }
+.d-brand { font: 500 26px/1 var(--font-field); color: var(--color-ink); text-decoration: none; }
+.d-quiet { font: 600 16px var(--font-guide); color: var(--color-forest); text-decoration: none; }
+.d-quiet:hover { text-decoration: underline; }
+
+/* The cover's chapter trail, centred like the lesson's. */
+.d-trail ol { display: flex; gap: clamp(12px, 2vw, 32px); margin: 0; padding: 0; list-style: none; }
+.d-trail a { display: grid; justify-items: center; gap: 4px; min-height: 44px; padding: 4px; font: 500 15px var(--font-guide); color: var(--color-quiet); text-decoration: none; }
+.d-trail a[aria-current] { color: var(--color-forest); font-weight: 600; }
+.d-trail-dot { width: 12px; height: 12px; border-radius: 99px; border: 2px solid var(--color-mist); background: var(--color-paper); }
+.d-trail a[aria-current] .d-trail-dot { border-color: var(--color-forest); }
+
+/* ——— The stage: a full-width field with the words in the middle ——— */
+.d-stage { position: relative; height: calc(100svh - 72px); min-height: 600px; overflow: hidden; outline: none; }
+.d-field { position: absolute; inset: 0 clamp(8px, 2vw, 40px) 8px; margin: 0; }
+.d-field .map-stack { position: absolute; inset: 0; --grow: 0px; }
+.d-field canvas { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
+.d-field #map-ghost { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
+/* The faint field under the words; the growing paths cover it. */
+/* The faint field waits under the words and clears the moment the paths
+   start to grow. No fade, and never both at once: animating or stacking a
+   second full-size canvas layer cost long frames on slow machines. */
+.d-field #map-ghost { opacity: .12; }
+.d-field .map-stack:not([data-grow="hidden"]) #map-ghost { visibility: hidden; }
+/* Paths grow out from the Beginning dot: a soft-edged circle that widens. */
+.d-field #map-base { clip-path: circle(0px at var(--ox) var(--oy)); transition: opacity 700ms ease; }
+.d-field .map-stack[data-grow="growing"] #map-base { clip-path: circle(var(--reach) at var(--ox) var(--oy)); transition: clip-path 2.2s cubic-bezier(.33, .12, .25, 1), opacity 700ms ease; }
+.d-field .map-stack[data-grow="shown"] #map-base { clip-path: none; }
+/* Fully clipped is still a layer; hidden is not. */
+.d-field .map-stack[data-grow="hidden"] #map-base { visibility: hidden; }
+.d-field #map-today { opacity: 0; visibility: hidden; transition: opacity 700ms ease, visibility 0s 700ms; }
+.d-field .map-stack[data-state="today"] #map-today { opacity: 1; visibility: visible; transition: opacity 700ms ease, visibility 0s; }
+.d-field .map-stack[data-state="today"] #map-base { opacity: 0; }
+
+.d-copy { position: absolute; z-index: 2; }
+.d-copy h1 { margin: 0; font: 500 clamp(48px, 5.4vw, 104px)/1.0 var(--font-field); letter-spacing: -.03em; color: var(--color-ink); text-wrap: balance; }
+.d-copy .d-summary { margin: 26px 0 0; font: clamp(22px, 1.6vw, 30px)/1.45 var(--font-field); color: #34423e; text-wrap: pretty; }
+.d-copy .kicker { font-size: clamp(15px, 1vw, 18px); }
+.d-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 14px; margin-top: 34px; }
+.d-copy .btn, .d-after .btn { min-height: 54px; padding: 0 28px; font-size: 18px; }
+
+.d-after { position: absolute; z-index: 3; left: 50%; bottom: clamp(24px, 5vh, 64px); transform: translate(-50%, 12px); width: min(760px, calc(100% - 48px)); text-align: center; opacity: 0; transition: opacity 500ms ease, transform 500ms cubic-bezier(.2, .7, .2, 1); }
+.d-after.is-in { opacity: 1; transform: translate(-50%, 0); }
+.d-after .d-actions { justify-content: center; margin-top: 18px; }
+.d-settled { display: inline-block; margin: 0; border-radius: 999px; background: #fbfbf8e6; padding: 8px 18px; font: 500 19px/1.4 var(--font-guide); color: var(--color-ink); }
+.d-narration { border-radius: 24px; background: #fbfbf8f2; border: 1px solid var(--color-rule); padding: 26px 32px 28px; text-align: left; }
+.d-narration h2 { margin: 0 0 10px; font: 500 clamp(30px, 2.4vw, 40px)/1.1 var(--font-field); letter-spacing: -.015em; }
+.d-narration p:not(.kicker) { margin: 0; font: 20px/1.55 var(--font-field); color: #34423e; }
+.d-narration .d-actions { justify-content: flex-end; margin-top: 16px; }
+
+/* ——— Below the stage (home): the lesson, the roadmap, a line for grown-ups ——— */
+.d-below { max-width: 960px; margin: 0 auto; padding: clamp(64px, 10vh, 120px) clamp(24px, 5vw, 48px) 96px; }
+.d-lesson { text-align: center; }
+.d-lesson h2 { margin: 0; font: 500 clamp(40px, 3.6vw, 60px)/1.05 var(--font-field); letter-spacing: -.02em; }
+.d-lede { margin: 18px auto 0; max-width: 40ch; font: 22px/1.5 var(--font-field); color: #34423e; }
+.d-lesson .d-actions { justify-content: center; }
+.d-roadmap { margin-top: clamp(72px, 10vh, 120px); }
+.d-roadmap h2 { margin: 0 0 18px; text-align: center; font: 500 clamp(28px, 2.4vw, 38px)/1.1 var(--font-field); }
+.d-roadmap ol { position: relative; display: grid; margin: 0; padding: 0; list-style: none; }
+.d-roadmap li { position: relative; display: grid; grid-template-columns: 52px minmax(0, 1fr) auto; gap: 20px; align-items: center; padding: 14px 0; border-bottom: 1px solid #e7ece6; }
+.d-roadmap li:last-child { border-bottom: 0; }
+.d-roadmap li > div { position: relative; font: 500 23px/1.25 var(--font-field); }
+.d-roadmap li > div a { color: var(--color-ink); text-decoration: none; }
+.d-roadmap li > div a:hover { color: var(--color-forest); text-decoration: underline; }
+.d-roadmap .soon-tip { left: 0; top: 38px; max-width: 300px; }
+.d-roadmap li:has([data-tip-open]) { z-index: 5; }
+.d-road-num { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 999px; border: 2px solid var(--color-mist); font: 600 15px var(--font-guide); color: #6c7a72; background: var(--color-paper); }
+.d-roadmap li[data-status="available"] .d-road-num { background: var(--color-forest); border-color: var(--color-forest); color: white; }
+.d-roadmap li[data-status="next"] .d-road-num { border-color: var(--color-sun); color: #7a5412; }
+.d-grownups { margin: 56px 0 0; text-align: center; font: 19px/1.5 var(--font-field); }
+
+/* ——— Review toolbar (prototype only) ——— */
+.d-review { position: fixed; z-index: 30; left: 16px; bottom: 16px; display: flex; align-items: center; gap: 4px; border: 1px solid var(--color-rule); border-radius: 999px; background: #fbfbf8f2; padding: 4px 6px 4px 14px; font: 15px var(--font-guide); }
+.d-review strong { margin-right: 6px; color: var(--color-quiet); font-weight: 600; }
+.d-review a { display: inline-flex; align-items: center; min-height: 36px; padding: 0 12px; border-radius: 999px; color: var(--color-forest); text-decoration: none; }
+.d-review a[aria-current] { background: var(--color-paper-deep); font-weight: 600; }
+
+@media (prefers-reduced-motion: reduce) {
+  .d-field .map-stack[data-grow="growing"] #map-base { transition: none; }
+}
+
+/* ——— A: stage ——— */
+.d-copy-a { left: 50%; top: 47%; transform: translate(-50%, -50%); width: min(1100px, calc(100% - 96px)); text-align: center; }
+.d-copy-a::before { content: ""; position: absolute; inset: -12% -18%; z-index: -1; background: radial-gradient(closest-side, var(--color-paper) 55%, #fbfbf800); }
+.d-copy-a .d-summary { max-width: 40ch; margin-left: auto; margin-right: auto; }
+.d-copy-a .d-actions { justify-content: center; }
+
+/* ——— B: left third ——— */
+.d-copy-b { left: var(--copy-left); top: 50%; transform: translateY(-50%); width: var(--copy-width); }
+.d-copy-b h1 { font-size: clamp(46px, 4.4vw, 92px); }
+/* Slide only, never scale: the canvases size themselves from their on-screen
+   box, so a scale would repaint them (and blur them) mid-animation. */
+.d-stage-b { --copy-left: clamp(32px, 6vw, 140px); --copy-width: clamp(340px, 30vw, 620px); }
+.d-stage-b .d-field { transform: translateX(calc(var(--copy-left) + var(--copy-width))); transition: transform 1000ms cubic-bezier(.45, .05, .2, 1); }
+.d-stage-b .d-field #map-ghost { opacity: .22; }
+.d-stage-b[data-moved] .d-field { transform: none; }
+body[data-view="cover"] .d-stage-b .d-after { left: auto; right: clamp(24px, 3vw, 56px); bottom: auto; top: 50%; width: min(440px, 32vw); transform: translate(24px, -50%); }
+body[data-view="cover"] .d-stage-b .d-after.is-in { transform: translate(0, -50%); }
+
+/* ——— C: typographic ——— */
+.d-copy-c { left: 50%; top: 47%; transform: translate(-50%, -50%); width: min(1180px, calc(100% - 96px)); text-align: center; }
+.d-copy-c::before { content: ""; position: absolute; inset: -12% -18%; z-index: -1; background: radial-gradient(closest-side, var(--color-paper) 55%, #fbfbf800); }
+.d-copy-c h1 { font-size: clamp(52px, 6vw, 116px); }
+.d-copy-c .d-summary { max-width: 30ch; margin: 22px auto 0; font-size: clamp(30px, 2.5vw, 50px); line-height: 1.28; letter-spacing: -.01em; color: var(--color-quiet); }
+.d-copy-c .d-actions { justify-content: center; }
+.d-copy-c .w { display: inline-block; }
+.d-dot { position: absolute; z-index: 4; width: 10px; height: 10px; border-radius: 99px; background: var(--color-forest); pointer-events: none; }
+
+/* The sliding field keeps its own layer. */
+.d-stage-b .d-field { will-change: transform; }
+
+/* Tablets: the cover's trail keeps its dots and names them for screen readers only. */
+@media (max-width: 1100px) {
+  .d-trail a > span:not(.d-trail-dot) { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .d-trail a { min-width: 44px; align-content: center; }
+  .d-stage-b { --copy-width: 44vw; }
+  .d-copy-b h1 { font-size: 46px; }
+}
