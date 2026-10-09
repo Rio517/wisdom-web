@@ -68,15 +68,15 @@ export function createSkillsScene(root) {
 
   root.innerHTML = `<div class="season-bar">
       <label id="season-label">${esc(t('skills.time'))}</label>
-      <div class="season-steps" role="group" aria-labelledby="season-label"><span class="season-fill"></span>
+      <div class="season-track"><div class="season-steps" role="group" aria-labelledby="season-label"><span class="season-fill"></span>
         ${seasonLabels().map((label, index) => `<button class="season-step" type="button" data-season="${index}" aria-pressed="false"><i></i>${esc(label)}</button>`).join('')}
       </div>
-      <span class="scrub-hint">${esc(t('skills.scrubHint'))}</span>
+      <span class="scrub-hint">${esc(t('skills.scrubHint'))}</span></div>
     </div>
     <div class="lanes-wrap">
       <svg class="fork" viewBox="0 0 100 400" preserveAspectRatio="none" aria-hidden="true">
-        <path class="fork-a" d="M6 200 C 50 200, 50 100, 100 100" vector-effect="non-scaling-stroke"/>
-        <path class="fork-b" d="M6 200 C 50 200, 50 300, 100 300" vector-effect="non-scaling-stroke"/>
+        <path class="fork-a" d="M9 200 C 55 200, 55 100, 100 100" vector-effect="non-scaling-stroke"/>
+        <path class="fork-b" d="M9 200 C 55 200, 55 300, 100 300" vector-effect="non-scaling-stroke"/>
       </svg>
       <div class="fork-start"><span class="fork-dot"></span><span>${esc(t('skills.forkStart'))}</span></div>
       <div class="lanes" data-split="false">${lane('a')}${lane('b')}</div>

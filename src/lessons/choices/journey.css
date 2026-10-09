@@ -284,13 +284,16 @@ h1, h2, h3, h4 { font-family: var(--font-field); font-weight: 500; }
 
 /* ——— Skills (Maya) ——— */
 .scene-skills { @apply grid; grid-template-rows: auto minmax(0, 1fr) auto; padding: 18px 24px 10px; }
-.season-bar { @apply mb-3 flex items-center gap-4; min-height: 52px; padding-left: 4px; }
+.scene-skills { --fork-w: 78px; }
+/* The bar uses the lanes' own columns: "Time" over the fork, the steps from the lane edge. */
+.season-bar { @apply mb-3 grid items-center; grid-template-columns: var(--fork-w) minmax(0, 1fr); min-height: 52px; }
 .season-bar label { @apply text-[14px] font-semibold; color: var(--color-quiet); }
-.season-steps { @apply relative flex flex-1 items-center justify-between; max-width: 620px; }
-.season-steps::before { content: ""; position: absolute; left: 22px; right: 22px; top: 21px; height: 3px; background: var(--color-mist); border-radius: 3px; }
-.season-steps .season-fill { position: absolute; left: 22px; top: 21px; height: 3px; background: var(--color-forest); border-radius: 3px; transition: width 600ms cubic-bezier(.3,.7,.2,1); }
-.season-step { @apply relative z-10 grid min-h-11 place-items-center rounded-full border-0 bg-transparent px-1 text-[13px]; color: var(--color-quiet); }
-.season-step i { @apply mx-auto mb-1 block rounded-full; width: 16px; height: 16px; background: var(--color-paper-deep); border: 2.5px solid var(--color-mist); transition: all 250ms; }
+.season-track { @apply flex min-w-0 items-center gap-4; }
+.season-steps { @apply relative grid min-w-0 flex-1; grid-auto-flow: column; grid-auto-columns: 1fr; max-width: 620px; --dot-y: 12px; }
+.season-steps::before { content: ""; position: absolute; left: 10%; right: 10%; top: calc(var(--dot-y) - 1.5px); height: 3px; background: var(--color-mist); border-radius: 3px; }
+.season-steps .season-fill { position: absolute; left: 10%; top: calc(var(--dot-y) - 1.5px); height: 3px; background: var(--color-forest); border-radius: 3px; transition: width 600ms cubic-bezier(.3,.7,.2,1); }
+.season-step { @apply relative z-10 flex min-h-11 flex-col items-center justify-start rounded-full border-0 bg-transparent px-1 text-[13px] leading-tight; padding-top: calc(var(--dot-y) - 8px); color: var(--color-quiet); }
+.season-step i { @apply mb-1 block flex-none rounded-full; width: 16px; height: 16px; background: var(--color-paper-deep); border: 2.5px solid var(--color-mist); transition: all 250ms; }
 .season-step[aria-pressed="true"] i, .season-step[data-done="true"] i { background: var(--color-forest); border-color: var(--color-forest); }
 .season-step[aria-pressed="true"] { color: var(--color-forest); font-weight: 600; }
 .season-step[aria-pressed="true"] i { transform: scale(1.25); }
@@ -298,15 +301,16 @@ h1, h2, h3, h4 { font-family: var(--font-field); font-weight: 500; }
 .season-step:disabled { cursor: default; }
 .scrub-hint { display: none; }
 .scene-skills[data-scrub="true"] .scrub-hint { display: inline-block; @apply ml-2 rounded-full px-3 py-1 text-[12px] font-semibold; background: var(--color-sun-soft); color: #7a5412; }
-.lanes-wrap { @apply relative grid min-h-0; grid-template-columns: 78px minmax(0, 1fr); }
-.fork { position: absolute; left: 0; top: 0; width: 78px; height: 100%; overflow: visible; }
+.lanes-wrap { @apply relative grid min-h-0; grid-template-columns: var(--fork-w) minmax(0, 1fr); }
+.fork { position: absolute; left: 0; top: 0; width: var(--fork-w); height: 100%; overflow: visible; }
 .fork path { fill: none; stroke-width: 4; stroke-linecap: round; transition: stroke-dashoffset 900ms cubic-bezier(.3,.7,.2,1); stroke-dasharray: 300; stroke-dashoffset: 0; }
 .fork-a { stroke: var(--color-forest); }
 .fork-b { stroke: var(--color-lake); }
 .lanes-wrap:has(.lanes[data-split="false"]) .fork path { stroke-dashoffset: 300; }
-.fork-start { @apply absolute flex -translate-y-1/2 flex-col items-start gap-1 text-[12px] font-semibold; left: -2px; top: 50%; color: var(--color-quiet); }
-.fork-start span:last-child { @apply rounded-full px-1.5 py-0.5; background: var(--color-paper-deep); transform: translateY(14px); }
-.fork-dot { position: absolute; width: 14px; height: 14px; border-radius: 99px; background: var(--color-forest); top: -7px; left: 0; }
+/* One start point: the dot sits on the curves' shared origin, exactly half-way down the lanes. */
+.fork-start { position: absolute; left: 0; top: 50%; width: var(--fork-w); height: 0; @apply text-[12px] font-semibold; color: var(--color-quiet); }
+.fork-start span:last-child { @apply absolute whitespace-nowrap rounded-full px-1.5 py-0.5; top: 14px; left: calc(var(--fork-w) * .09); transform: translateX(-50%); background: var(--color-paper-deep); }
+.fork-dot { position: absolute; width: 14px; height: 14px; border-radius: 99px; background: var(--color-forest); top: -7px; left: calc(var(--fork-w) * .09 - 7px); }
 .lanes { @apply relative col-start-2 grid min-h-0 gap-3; grid-template-rows: 1fr 1fr; }
 .lane {
   @apply relative grid min-h-0 items-center gap-5 rounded-[20px] px-5 py-3;
@@ -349,15 +353,15 @@ h1, h2, h3, h4 { font-family: var(--font-field); font-weight: 500; }
 .skills-note { @apply m-0 pt-1 text-right; }
 
 .skill-box { @apply rounded-2xl px-4 py-3; background: var(--color-paper); border: 1px solid var(--color-rule); }
-.skill-box header { @apply mb-1.5 flex items-center justify-between gap-2; }
-.skill-box h3 { @apply m-0 flex items-center gap-2 text-[18px]; }
+.skill-box header { @apply mb-1.5 flex items-start justify-between gap-2; }
+.skill-box h3 { @apply m-0 flex items-center gap-2 text-[18px] leading-6; }
 .skill-box h3 svg { width: 22px; height: 22px; }
 .skill-box .box-note { @apply text-right text-[12px] leading-tight; color: var(--color-quiet); }
 .skill-box.flip { animation: flip 640ms cubic-bezier(.3,.7,.2,1) both; }
 @keyframes flip { 0% { transform: perspective(600px) rotateX(0); } 45% { transform: perspective(600px) rotateX(90deg); opacity: .3; } 55% { transform: perspective(600px) rotateX(-90deg); opacity: .3; } 100% { transform: perspective(600px) rotateX(0); opacity: 1; } }
 .skill-row { @apply grid items-center gap-x-3; grid-template-columns: 104px 1fr; padding: 3px 0; }
 .skill-row .skill-name { @apply text-[14px] leading-tight; hyphens: auto; overflow-wrap: break-word; } /* long compounds (German) break at syllables */
-.skill-meta { grid-column: 2; @apply mt-1 flex flex-wrap items-baseline justify-between gap-x-2 gap-y-0.5 text-[12px] leading-none; }
+.skill-meta { grid-column: 2; @apply mt-1 flex flex-wrap items-baseline justify-start gap-x-2 gap-y-0.5 text-[12px] leading-none; }
 .skill-word { color: var(--color-quiet); white-space: nowrap; }
 .meter { position: relative; height: 14px; border-radius: 99px; background: white; border: 1px solid var(--color-rule); overflow: hidden; }
 .meter i { position: absolute; left: 0; top: 0; bottom: 0; width: calc(var(--level, 0) * 100%); border-radius: 99px; background: var(--bar, var(--color-forest)); transition: width 900ms cubic-bezier(.3,.7,.2,1), left 900ms cubic-bezier(.3,.7,.2,1); }
@@ -372,7 +376,7 @@ h1, h2, h3, h4 { font-family: var(--font-field); font-weight: 500; }
 .gain-chip { @apply pointer-events-none absolute right-0 top-0 rounded-full px-2 py-0.5 text-[11px] font-bold; background: var(--color-sun-soft); color: #7a5412; animation: chip 1.8s ease-out both; }
 .skill-row { position: relative; }
 @keyframes chip { 0% { opacity: 0; transform: translateY(6px); } 15% { opacity: 1; transform: none; } 75% { opacity: 1; } 100% { opacity: 0; transform: translateY(-8px); } }
-.boost-note { @apply ml-auto text-right text-[11px] font-semibold; color: #9a6a12; display: none; }
+.boost-note { @apply text-left text-[11px] font-semibold; color: #9a6a12; display: none; }
 .skill-box[data-boosts~="passing"] .skill-row[data-skill="passing"] .boost-note,
 .skill-box[data-boosts~="positioning"] .skill-row[data-skill="positioning"] .boost-note,
 .skill-box[data-boosts~="rhythm"] .skill-row[data-skill="rhythm"] .boost-note,
@@ -407,13 +411,7 @@ dialog::backdrop { background: #23302d66; }
 .journey-reading .reading-intro { color: var(--color-quiet); }
 
 /* ——— Tablet ——— */
-@media (max-width: 1180px) {
-  .journey-header { grid-template-columns: auto 1fr auto; gap: 14px; padding: 0 18px; }
-  .journey-brand span { display: none; }
-}
-@media (max-width: 1100px) {
-  .choice-chip { max-width: 170px; padding: 5px 10px; font-size: 13px; border-radius: 13px; }
-  .choice-chip small { font-size: 10px; }
+@media (max-width: 1280px) {
   .lane { grid-template-columns: 56px minmax(0, 1fr) minmax(190px, 204px); gap: 12px; padding: 10px 14px; }
   .lane-who svg { width: 40px; height: 52px; }
   .lane-who strong { font-size: 15px; }
@@ -431,8 +429,29 @@ dialog::backdrop { background: #23302d66; }
   .skill-row .skill-name { font-size: 13px; }
   .skill-word { white-space: normal; }
   .lane-box { min-width: 0; }
-  .lanes-wrap { grid-template-columns: 64px minmax(0, 1fr); }
-  .fork { width: 64px; }
+  .scene-skills { --fork-w: 64px; }
+}
+@media (max-width: 1180px) {
+  .journey-header { grid-template-columns: auto 1fr auto; gap: 14px; padding: 0 18px; }
+  .journey-brand span { display: none; }
+}
+@media (max-width: 1100px) {
+  .choice-chip { max-width: 170px; padding: 5px 10px; font-size: 13px; border-radius: 13px; }
+  .choice-chip small { font-size: 10px; }
+}
+/* Short landscape screens (Safari on iPad shows ~690px): tighter lanes so the skill box never spills out of its lane. */
+@media (min-width: 901px) and (max-height: 800px) {
+  .scene-skills { padding: 12px 20px 8px; }
+  .season-bar { margin-bottom: 8px; min-height: 46px; }
+  .lane { padding-block: 6px; }
+  .lane-who svg { height: 44px; width: 34px; }
+  .calendar-title { margin-bottom: 4px; }
+  .calendar-rows { row-gap: 4px; }
+  .skill-box { padding: 6px 12px; }
+  .skill-box header { margin-bottom: 2px; }
+  .skill-box h3 { font-size: 16px; }
+  .skill-row { padding: 1px 0; }
+  .skill-meta { margin-top: 2px; }
 }
 @media (max-width: 1100px) and (min-width: 901px) {
   .journey { grid-template-columns: minmax(0, 1fr) 330px; }

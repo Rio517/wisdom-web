@@ -2,18 +2,46 @@
 const svg = (body, viewBox = '0 0 48 48') => `<svg viewBox="${viewBox}" aria-hidden="true" focusable="false">${body}</svg>`;
 
 const FOREST = '#285442';
+const INK = '#23302d';
 const SAGE = '#8daa91';
 const LAKE = '#5f8fa3';
 const CLAY = '#9a5f3e';
 const SUN = '#e0a93b';
 const WOOD = '#8a5a33';
 
+
+// Flat soccer ball: white disc, a dark centre pentagon, five partial dark
+// patches cut by the rim, thin seams between. Built from one geometry so every
+// size reads as the same ball. `detail` adds the hexagon seams (large sizes only).
+let ballId = 0;
+const pt = (cx, cy, r, deg) => [cx + r * Math.cos(deg * Math.PI / 180), cy + r * Math.sin(deg * Math.PI / 180)];
+const poly = points => `M${points.map(([x, y]) => `${x.toFixed(2)} ${y.toFixed(2)}`).join('L')}z`;
+export function soccerBall(cx, cy, r, { ink = INK, detail = r >= 8 } = {}) {
+  const id = `ball-clip-${++ballId}`;
+  const rim = Math.max(1.4, r * 0.11);
+  const seam = Math.max(0.9, r * 0.075);
+  const hub = Array.from({ length: 5 }, (_, i) => pt(cx, cy, r * 0.3, -90 + 72 * i));
+  const patches = []; const joins = []; const seams = [];
+  for (let i = 0; i < 5; i++) {
+    const angle = -90 + 72 * i;
+    const centre = pt(cx, cy, r * 1.08, angle);
+    const patch = Array.from({ length: 5 }, (_, k) => pt(centre[0], centre[1], r * 0.4, angle + 180 + 72 * k));
+    patches.push(patch);
+    seams.push(`M${hub[i][0].toFixed(2)} ${hub[i][1].toFixed(2)}L${patch[0][0].toFixed(2)} ${patch[0][1].toFixed(2)}`);
+    joins.push([patch[1], patch[4]]);
+  }
+  if (detail) for (let i = 0; i < 5; i++) seams.push(`M${joins[i][0][0].toFixed(2)} ${joins[i][0][1].toFixed(2)}L${joins[(i + 1) % 5][1][0].toFixed(2)} ${joins[(i + 1) % 5][1][1].toFixed(2)}`);
+  return `<defs><clipPath id="${id}"><circle cx="${cx}" cy="${cy}" r="${r}"/></clipPath></defs>
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="white"/>
+    <g clip-path="url(#${id})"><path d="${patches.map(poly).join('')}" fill="${ink}"/>
+    <path d="${seams.join('')}" stroke="${ink}" stroke-width="${seam.toFixed(2)}" fill="none"/></g>
+    <path d="${poly(hub)}" fill="${ink}" stroke="${ink}" stroke-width="${seam.toFixed(2)}" stroke-linejoin="round"/>
+    <circle cx="${cx}" cy="${cy}" r="${(r - rim / 2).toFixed(2)}" fill="none" stroke="${ink}" stroke-width="${rim.toFixed(2)}"/>`;
+}
+
 export const ICONS = {
-  soccer: svg(`<circle cx="24" cy="24" r="17" fill="white" stroke="${FOREST}" stroke-width="2.5"/>
-    <path d="M24 15l7 5-2.6 8.3h-8.8L17 20z" fill="${FOREST}"/>
-    <path d="M24 15V7.5M31 20l7-3M28.4 28.3l4.6 6.5M19.6 28.3L15 34.8M17 20l-7-3" stroke="${FOREST}" stroke-width="2" fill="none"/>`),
-  ball: svg(`<circle cx="22" cy="28" r="12" fill="white" stroke="${FOREST}" stroke-width="2.5"/>
-    <path d="M22 22l4.5 3.2-1.7 5.3h-5.6l-1.7-5.3z" fill="${FOREST}"/>
+  soccer: svg(soccerBall(24, 24, 18)),
+  ball: svg(`${soccerBall(21, 29, 13)}
     <path d="M36 8v30" stroke="${SAGE}" stroke-width="3" stroke-linecap="round"/><path d="M34 12h6M34 20h6M34 28h6" stroke="${SAGE}" stroke-width="2" stroke-linecap="round"/>`),
   cello: svg(`<path d="M24 5v12" stroke="${WOOD}" stroke-width="3" stroke-linecap="round"/>
     <path d="M24 16c-5 0-8 3-7 7 .6 2.2-2.4 3-2.4 7.5C14.6 38 19 43 24 43s9.4-5 9.4-12.5c0-4.5-3-5.3-2.4-7.5 1-4-2-7-7-7z" fill="${WOOD}"/>
@@ -37,7 +65,7 @@ export const ICONS = {
   restSmall: svg(`<path d="M4 17h16M6 17c0-4 2.5-7 6-7s6 3 6 7" stroke="${FOREST}" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M12 5v2M5.5 8l1.3 1.3M18.5 8l-1.3 1.3" stroke="${SUN}" stroke-width="2" stroke-linecap="round"/>`, '0 0 24 24'),
   backpack: svg(`<rect x="5" y="7" width="14" height="15" rx="4" fill="${FOREST}"/><path d="M9 7V5a3 3 0 0 1 6 0v2" stroke="${FOREST}" stroke-width="2" fill="none"/><rect x="8" y="13" width="8" height="5" rx="1.5" fill="${SAGE}"/>`, '0 0 24 24'),
   leaf: svg(`<path d="M5 19C5 10 11 4 20 4c0 9-6 15-15 15z" fill="${FOREST}"/><path d="M5 19l9-9" stroke="white" stroke-width="1.5" stroke-linecap="round"/>`, '0 0 24 24'),
-  soccerSmall: svg(`<circle cx="12" cy="12" r="9" fill="white" stroke="${FOREST}" stroke-width="1.8"/><path d="M12 7.5l3.6 2.6-1.4 4.3H9.8l-1.4-4.3z" fill="${FOREST}"/>`, '0 0 24 24'),
+  soccerSmall: svg(soccerBall(12, 12, 10.5, { detail: false }), '0 0 24 24'),
   celloSmall: svg(`<path d="M12 2v6" stroke="${WOOD}" stroke-width="2" stroke-linecap="round"/><path d="M12 7.5c-2.6 0-4 1.6-3.6 3.6.3 1.1-1.3 1.6-1.3 4C7.1 19 9.4 22 12 22s4.9-3 4.9-6.9c0-2.4-1.6-2.9-1.3-4 .4-2-1-3.6-3.6-3.6z" fill="${WOOD}"/>`, '0 0 24 24'),
   add: svg(`<circle cx="22" cy="22" r="21" fill="#28544214"/><rect x="11" y="26" width="6" height="8" rx="1.5" fill="${SAGE}"/><rect x="19" y="19" width="6" height="15" rx="1.5" fill="${SAGE}"/><rect x="27" y="11" width="6" height="23" rx="1.5" fill="${FOREST}"/>`, '0 0 44 44'),
   build: svg(`<circle cx="22" cy="22" r="21" fill="#28544214"/><rect x="10" y="27" width="24" height="7" rx="2" fill="${FOREST}"/><rect x="14" y="19" width="16" height="7" rx="2" fill="${SAGE}"/><rect x="18" y="11" width="8" height="7" rx="2" fill="${SUN}"/>`, '0 0 44 44'),
@@ -51,6 +79,6 @@ export function person({ shirt = '#285442', hair = '#3a2a1f', ball = false, vari
     ${variant === 'a' ? `<path d="M34 10c4 1 6 5 5 9" stroke="${hair}" stroke-width="4" fill="none" stroke-linecap="round"/>` : `<path d="M34 10c4 1 6 5 5 9" stroke="${hair}" stroke-width="4" fill="none" stroke-linecap="round" opacity=".9"/>`}
     <path d="M13 50c0-14 5-22 13-22s13 8 13 22z" fill="${shirt}"/>
     <path d="M20 50v16M32 50v16" stroke="#3b4a44" stroke-width="5" stroke-linecap="round"/>
-    ${ball ? '<circle cx="44" cy="62" r="7" fill="white" stroke="#285442" stroke-width="2"/><path d="M44 58.5l2.8 2-1.1 3.3h-3.4l-1.1-3.3z" fill="#285442"/>' : ''}
+    ${ball ? `<g>${soccerBall(43, 61, 10, { detail: false })}</g>` : ''}
   </svg>`;
 }
