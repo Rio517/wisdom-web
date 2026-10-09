@@ -45,6 +45,7 @@ h1, h2, h3, h4 { font-family: var(--font-field); font-weight: 500; }
 .chapter-stop[data-state="done"] .stop-dot { background: var(--color-forest); border-color: var(--color-forest); }
 .chapter-stop[data-state="current"] .stop-dot { border-color: var(--color-forest); background: var(--color-paper); transform: scale(1.25); box-shadow: 0 0 0 5px #28544222; }
 .chapter-stop[data-state="current"] { color: var(--color-forest); font-weight: 600; }
+.chapter-stop .stop-label { white-space: nowrap; }
 .chapter-stop:hover .stop-label { text-decoration: underline; text-underline-offset: 3px; }
 .quiet-link { @apply min-h-11 border-0 bg-transparent px-2 text-[15px]; color: var(--color-forest); }
 .quiet-link:hover { text-decoration: underline; text-underline-offset: 4px; }
@@ -317,8 +318,8 @@ h1, h2, h3, h4 { font-family: var(--font-field); font-weight: 500; }
 /* The bar uses the lanes' own columns: "Time" over the fork, the steps from the lane edge. */
 .season-bar { @apply mb-3 grid items-center; grid-template-columns: var(--fork-w) minmax(0, 1fr); min-height: 52px; }
 .season-bar label { @apply text-[15px] font-semibold; color: var(--color-quiet); }
-.season-track { @apply flex min-w-0 items-center gap-4; }
-.season-steps { @apply relative grid min-w-0 flex-1; grid-auto-flow: column; grid-auto-columns: 1fr; max-width: 620px; --dot-y: 12px; }
+.season-track { @apply flex min-w-0 flex-wrap items-center gap-x-4 gap-y-1; }
+.season-steps { @apply relative grid min-w-0; flex: 1 1 100%; grid-auto-flow: column; grid-auto-columns: 1fr; max-width: 620px; --dot-y: 12px; }
 .season-steps::before { content: ""; position: absolute; left: 10%; right: 10%; top: calc(var(--dot-y) - 1.5px); height: 3px; background: var(--color-mist); border-radius: 3px; }
 .season-steps .season-fill { position: absolute; left: 10%; top: calc(var(--dot-y) - 1.5px); height: 3px; background: var(--color-forest); border-radius: 3px; transition: width 600ms cubic-bezier(.3,.7,.2,1); }
 .season-step { @apply relative z-10 flex min-h-11 flex-col items-center justify-start rounded-full border-0 bg-transparent px-1 text-[15px] leading-tight; padding-top: calc(var(--dot-y) - 8px); color: var(--color-quiet); }
@@ -329,7 +330,7 @@ h1, h2, h3, h4 { font-family: var(--font-field); font-weight: 500; }
 .season-step:not(:disabled):hover { color: var(--color-forest); }
 .season-step:disabled { cursor: default; }
 .scrub-hint { display: none; }
-.scene-skills[data-scrub="true"] .scrub-hint { display: inline-block; @apply ml-2 rounded-full px-3 py-1 text-[15px] font-semibold; background: var(--color-sun-soft); color: #7a5412; }
+.scene-skills[data-scrub="true"] .scrub-hint { display: inline-block; max-width: 100%; @apply rounded-full px-3 py-1 text-[15px] font-semibold; background: var(--color-sun-soft); color: #7a5412; }
 .lanes-wrap { @apply relative grid min-h-0; grid-template-columns: var(--fork-w) minmax(0, 1fr); }
 .fork { position: absolute; left: 0; top: 0; width: var(--fork-w); height: 100%; overflow: visible; }
 .fork path { fill: none; stroke-width: 4; stroke-linecap: round; transition: stroke-dashoffset 900ms cubic-bezier(.3,.7,.2,1); stroke-dasharray: 300; stroke-dashoffset: 0; }
@@ -388,8 +389,8 @@ h1, h2, h3, h4 { font-family: var(--font-field); font-weight: 500; }
 .skill-box .box-note { @apply text-right text-[15px] leading-tight; color: var(--color-quiet); }
 .skill-box.flip { animation: flip 640ms cubic-bezier(.3,.7,.2,1) both; }
 @keyframes flip { 0% { transform: perspective(600px) rotateX(0); } 45% { transform: perspective(600px) rotateX(90deg); opacity: .3; } 55% { transform: perspective(600px) rotateX(-90deg); opacity: .3; } 100% { transform: perspective(600px) rotateX(0); opacity: 1; } }
-.skill-row { @apply grid items-center gap-x-3; grid-template-columns: 104px 1fr; padding: 3px 0; }
-.skill-row .skill-name { @apply text-[15px] leading-tight; hyphens: auto; overflow-wrap: break-word; } /* long compounds (German) break at syllables */
+.skill-row { @apply grid items-center gap-x-3; grid-template-columns: 128px 1fr; padding: 3px 0; }
+.skill-row .skill-name { @apply text-[15px] leading-tight; hyphens: auto; overflow-wrap: normal; } /* long compounds (German) break only at syllables, with a hyphen; the column is wide enough for the longest */
 .skill-meta { grid-column: 2; @apply mt-1 flex flex-wrap items-baseline justify-start gap-x-2 gap-y-0.5 text-[15px] leading-none; }
 .skill-word { color: var(--color-quiet); white-space: nowrap; }
 .meter { position: relative; height: 14px; border-radius: 99px; background: white; border: 1px solid var(--color-rule); overflow: hidden; }
@@ -442,7 +443,7 @@ dialog::backdrop { background: #23302d66; }
 /* ——— Tablet ——— */
 @media (max-width: 1280px) {
   .lane { grid-template-columns: 84px minmax(0, 1fr) minmax(190px, 204px); gap: 12px; padding: 10px 14px; }
-  .lane-who span { overflow-wrap: anywhere; hyphens: auto; }
+  .lane-who span { overflow-wrap: normal; hyphens: auto; }
   .lane-who svg { width: 40px; height: 52px; }
   .lane-who strong { font-size: 15px; }
   .lane-who span { font-size: 15px; }
@@ -495,6 +496,9 @@ dialog::backdrop { background: #23302d66; }
 }
 @media (max-width: 900px) {
   body { overflow: auto; }
+  /* The trail takes the full width on its own row, so every chapter name fits on one line. */
+  .journey-header { grid-template-columns: 1fr auto; height: auto; row-gap: 0; padding-top: 8px; }
+  .chapter-trail { grid-column: 1 / -1; grid-row: 2; max-width: none; }
   .journey { height: auto; grid-template-columns: 1fr; }
   .stage { margin: 0 16px; height: 56vh; min-height: 470px; }
   .stage:has(> .scene-skills:not([hidden])) { height: max(56vh, 680px); } /* two lanes of skill boxes need the room */
