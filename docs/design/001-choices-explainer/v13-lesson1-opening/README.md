@@ -29,13 +29,15 @@ Held moments, at 1440×900 and 744×1133 (the iPad mini, portrait), plus 1280×8
 | --- | --- | --- | --- |
 | Cover | [cover](opening-cover-1440-v01.png) | [cover](opening-cover-744-v01.png) | |
 | Step 1, Sam is born: the traveller appears on the Beginning dot | [01](opening-01-1440-v01.png) | [01](opening-01-744-v01.png) | |
-| Step 6, the radio DJ: the luck marker blooms, the song pulses | [06](opening-06-1440-v01.png) | [06](opening-06-744-v01.png) | |
-| Step 9, the band splits: the drop | [09](opening-09-1440-v01.png) | [09](opening-09-744-v01.png) | [09](opening-09-1280-v01.png) |
-| Step 11, the whole story: the route's end breathes | [11](opening-11-1440-v01.png) | [11](opening-11-744-v01.png) | [11](opening-11-1280-v01.png) |
-| Choices add up | [adds](opening-adds-1440-v01.png) | [adds](opening-adds-744-v01.png) | |
+| Step 6, the radio DJ: the luck marker blooms, the song pulses | [06 v02](opening-06-1440-v02.png) ([v01](opening-06-1440-v01.png)) | [06](opening-06-744-v01.png) | |
+| Step 9, the band splits: the drop | [09 v02](opening-09-1440-v02.png) ([v01](opening-09-1440-v01.png)) | [09](opening-09-744-v01.png) | [09](opening-09-1280-v01.png) |
+| Step 11, the whole story: the route's end breathes | [11 v02](opening-11-1440-v02.png) ([v01](opening-11-1440-v01.png)) | [11 v02](opening-11-744-v02.png) ([v01](opening-11-744-v01.png)) | [11](opening-11-1280-v01.png) |
+| Choices add up | [adds v02](opening-adds-1440-v02.png) ([v01](opening-adds-1440-v01.png)) | [adds](opening-adds-744-v01.png) | |
 | Into the hike, 820 ms after Next | [fade](opening-fade-1440-v01.png) | [fade](opening-fade-744-v01.png) | |
 
-[Life strip](opening-life-strip-1440-v01.png): six frames of the story at 1440×900 (steps 1, 3, 5, 6, 9 and the finished story).
+[Life strip v02](opening-life-strip-1440-v02.png): six frames of the story at 1440×900 (steps 1, 3, 5, 6, 9 and the finished story). [v01](opening-life-strip-1440-v01.png) shows the earlier route.
+
+v02 redraws Sam's route as one smooth curve; v01 images show the earlier route, which read like a line chart (straight runs, a flat stretch from 20 to 23, a V at the drop). Everything else in the frames is unchanged.
 
 The held moments use the page's review hook (`opening.player.seek(step, ms)`), which pauses the story at that moment. In these images, the Pause link reads as it does while the story plays.
 
@@ -43,7 +45,7 @@ The held moments use the page's review hook (`opening.player.seek(step, ms)`), w
 
 Each line has the same rhythm. In the first 420 ms the line rises 14 px and fades in. As it lands (260 ms), its point blooms on the map, with a slight overshoot. Then the traveller walks there, from 300 to 1000 ms, starting softly and arriving slowly. The steps this one builds on pulse once as the traveller arrives: a ring that widens and fades over 600 ms, 140 ms apart. Then the pause. One clock drives the words and the route, so they can't drift apart, whether the reader pauses, steps or taps quickly.
 
-- The route grows along the path engine's own curve, from the Beginning dot. Its x positions come from the network's age scale.
+- The route grows from the Beginning dot as one smooth curve through Sam's points, with no corners. Its x positions come from the network's age scale. At each point the curve follows the direction of the field's own lines there, unless that would fight a rise or a drop. Climbs and falls ease in and out. The years from the record deal to the split arc gently over. The drop is an S from 23 to 25 that bottoms out just before the setback marker, and the climb after it leaves gently. Two shaping points just outside the marker (not stops) make that bottom a U rather than a V.
 - Choices keep the route level. The radio play lifts it (a white dot in a green ring, with a plus). The split drops it (a clay ring, with a minus). Asking for help lifts it again.
 - Builds-on pulses: choir → guitar → band → song → radio and record deal. In example B, asking for help pulses the guitar. In example A, the last step pulses it.
 - Lines older than the last four step back to the quiet colour. The age sits in a narrow left column.
