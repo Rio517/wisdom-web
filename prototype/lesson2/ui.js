@@ -138,12 +138,15 @@ export function cueLine(routine, moment, setup) {
 }
 
 /** Option buttons. Each option: { label, kind, icon }. Rest and skip labels say what they are, so only the others get a caption. */
+/** Every option says what kind of afternoon it is, in the same quiet words: none is the answer. */
+const captionOf = option => (option.kind === 'skip' ? (['friends', 'party'].includes(option.alt) ? 'friends' : 'fun') : option.kind);
+
 export function optionsMarkup(options, { name = '' } = {}) {
   return `<ul class="l2-options" data-count="${options.length}" ${name ? `aria-label="${esc(name)}"` : ''}>${options.map((option, i) => `<li>
     <button type="button" class="l2-opt" data-option="${i}" data-kind="${option.kind}" aria-pressed="false">
       <span class="l2-opt-icon">${ICONS[option.icon] ?? ''}</span>
       <span class="l2-opt-label">${esc(option.label)}</span>
-      ${['moment', 'other', 'luck'].includes(option.kind) ? `<span class="l2-opt-kind">${esc(t(`l2.kind.${option.kind}`))}</span>` : ''}
+      <span class="l2-opt-kind">${esc(t(`l2.kind.${captionOf(option)}`))}</span>
     </button></li>`).join('')}</ul>`;
 }
 
@@ -156,7 +159,7 @@ export function markChosen(container, button) {
  * stage itself is on the panel's track; screen readers hear both here.
  */
 export function startChip(routine, entry) {
-  const move = entry.moved === 'up' ? (entry.after - entry.before < 0.06 ? 'small' : 'up') : entry.moved === 'down' ? 'down' : 'still';
+  const move = moveOf(entry);
   return `<p class="l2-start-chip" data-move="${move}"><span class="l2-chip-icon">${routineIcon(routine)}</span>
     <span><span class="sr-only">${esc(t(`l2.start.title.${routine}`))}: ${esc(stageWord(entry.after))}. </span><span aria-hidden="true">${esc(t('l2.start.chipLabel'))} · </span><span class="l2-chip-move">${esc(t(`l2.start.delta.${move}`))}</span></span></p>`;
 }
@@ -218,7 +221,7 @@ export function createPanel(aside, { routines, soccerSetUp = false }) {
     const delta = el.querySelector('.l2-start-delta');
     delta.dataset.move = move;
     delta.textContent = t(`l2.start.delta.${move}`);
-    if (move === 'up' || move === 'small' || move === 'down') {
+    if (move !== 'still') {
       delta.classList.remove('is-new');
       void delta.offsetWidth; // restart the short highlight
       delta.classList.add('is-new');
@@ -287,13 +290,19 @@ export function createPanel(aside, { routines, soccerSetUp = false }) {
   return { update };
 }
 
-/** Which way each routine's Starting moved on a day: up · small · still · down. */
+/**
+ * Which way a routine's Starting moved on a day: first (the very first start,
+ * which has nothing to be easier than) · up · small · still · down.
+ */
+export function moveOf(item) {
+  if (item.moved === 'down') return 'down';
+  if (item.moved !== 'up') return 'still';
+  if (item.before === 0) return 'first';
+  return item.after - item.before < 0.06 ? 'small' : 'up';
+}
+
 export function movesFor(entry) {
-  return Object.fromEntries(Object.entries(entry.routines).map(([routine, item]) => {
-    if (item.moved === 'down') return [routine, 'down'];
-    if (item.moved === 'up') return [routine, item.after - item.before < 0.06 ? 'small' : 'up'];
-    return [routine, 'still'];
-  }));
+  return Object.fromEntries(Object.entries(entry.routines).map(([routine, item]) => [routine, moveOf(item)]));
 }
 
 // ——— End card and the reader's own plan ———

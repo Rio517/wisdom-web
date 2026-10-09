@@ -4,7 +4,7 @@
 // party, a broken string, the plan check after the first week.
 import {
   mountFrame, createPanel, addCard, clearFeed, announce, dayHead, optionsMarkup, markChosen,
-  startChip, movesFor, finish, t, esc, ICONS, weekday, momentYour, RoutineWord, listOf,
+  startChip, movesFor, moveOf, finish, t, esc, ICONS, weekday, momentYour, RoutineWord, listOf,
   nextChanceLine, revealEnd,
 } from './ui.js';
 import { routineIcon } from './icons.js';
@@ -182,7 +182,7 @@ export function start(app) {
   function quietLine(routine, item) {
     const values = { Routine: RoutineWord(routine), routine: t(`l2.routine.${routine}`), moment: momentYour(plan[routine].moment) };
     const key = item.how === 'moment' && item.tired ? 'tired' : item.how;
-    const move = item.moved === 'up' ? (item.after - item.before < 0.06 ? 'small' : 'up') : item.moved === 'down' ? 'down' : 'still';
+    const move = moveOf(item);
     return `<li class="l2-quiet-line">${routineIcon(routine)}<span>${esc(t(`l2.c.line.${key}`, values))}</span>
       <span class="l2-move" data-move="${move}">${esc(t(`l2.start.delta.${move}`))}</span></li>`;
   }
