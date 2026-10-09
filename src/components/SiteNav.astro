@@ -35,7 +35,7 @@ const choicesOpen = ['choices', 'lesson', 'read', 'notes', 'home'].includes(curr
     <ul class="nav-lessons" aria-labelledby={`${id}-lessons`}>
       <li class="nav-lesson">
         <details open={choicesOpen}>
-          <summary><span class="lesson-num">01</span>{t('nav.choices')}<span class="chevron" set:html={UI.chevron} /></summary>
+          <summary><span class="lesson-num">01</span><span class="nav-lesson-title">{t('nav.choices')}</span><span class="chevron" set:html={UI.chevron} /></summary>
           <ul class="nav-pages">
             {pages.map(page => (
               <li><a href={href(locale, page.path)} aria-current={current === page.key ? 'page' : undefined}>{page.label}</a></li>
@@ -43,11 +43,15 @@ const choicesOpen = ['choices', 'lesson', 'read', 'notes', 'home'].includes(curr
           </ul>
         </details>
       </li>
+      {soon.map(lesson => (
+        <li class="nav-lesson nav-lesson-soon" data-status={lesson.status}>
+          <button class="nav-soon soon-trigger" type="button" aria-describedby={`${id}-tip-${lesson.id}`}>
+            <span class="lesson-num">{lesson.number}</span><span class="nav-lesson-title">{lesson.title}</span>
+          </button>
+          <span class="soon-tip" role="tooltip" id={`${id}-tip-${lesson.id}`} hidden>{lesson.tip}</span>
+        </li>
+      ))}
     </ul>
-    <ul class="nav-soon" aria-label={t('nav.inPreparationLabel')}>
-      {soon.map(lesson => <li><span class="lesson-num">{lesson.number}</span>{lesson.title}</li>)}
-    </ul>
-    <p class="nav-soon-note">{t('nav.inPreparation')}</p>
   </div>
 
   <div class="nav-utility">

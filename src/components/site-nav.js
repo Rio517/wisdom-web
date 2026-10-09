@@ -1,6 +1,8 @@
 // Site index behaviour. Wide screens: a sidebar that can be hidden (remembered
 // per browser). Tablets and the full-screen lesson: a drawer with a backdrop,
 // Escape to close, focus kept inside while open, and focus returned after.
+import { initSoonTips } from './soon-tip.js';
+
 const STORE_KEY = 'wisdom-nav-collapsed';
 
 function remember(value) {
@@ -11,6 +13,7 @@ function remembered() {
 }
 
 export function initSiteNav() {
+  initSoonTips();
   const nav = document.querySelector('.site-nav');
   if (!nav) return;
   const shell = document.querySelector('.site-shell');

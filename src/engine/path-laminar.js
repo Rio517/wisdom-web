@@ -115,7 +115,13 @@ export function generateLaminarNetwork(options) {
   const narrowing = 1 + ((0.12 + 0.88 * remainingLife ** 4) - 1) * options.ageTaper;
   const topReach = fullTop * narrowing;
   const bottomReach = fullBottom * narrowing;
-  const envelope = age => envelopeAt(options, age, Math.max(topReach, bottomReach));
+  // Fan-out keeps the field widening after it opens, past the top and the
+  // bottom of the drawing: outer lines leave through the edges and give their
+  // place back, so lines go on splitting and spreading instead of running
+  // level. Zero keeps the field inside the drawing.
+  const fanOut = options.fanOut ?? 0;
+  const fanGrowth = age => fanOut * clamp(age / options.maxAge, 0, 1) ** 0.85;
+  const envelope = age => envelopeAt(options, age, Math.max(topReach, bottomReach)) * (1 + fanGrowth(age));
   // Waves are small and even, as in the reference: never more than a third
   // of a lane, and never more than a few pixels however wide the lane is.
   const waveCap = 12 * options.waveStrength;
@@ -268,21 +274,33 @@ export function generateLaminarNetwork(options) {
     const { top, bottom } = edgesAt(age);
     const lane = top + rank * (bottom - top) + outlierReach(line, age);
     const drift = options.originSlope * age * Math.exp(-age / Math.max(1, settle));
+    if (fanOut > 0) return clamp(lane + waveAt(line, age) + drift, -options.height, options.height * 2);
     return clamp(lane + waveAt(line, age) + drift, options.yPadding, options.height - options.yPadding);
   }
 
   // The trunk drifts along the incoming direction for a while, then levels.
   const yAt = (line, age) => yAtRank(rankAt(line), line, age);
 
+  // With fan-out, lines that have left the drawing keep their lanes (so the
+  // others don't shift) but neither fork nor count against the budget: the
+  // places they give back go to forks inside the drawing.
+  const inside = line => fanOut <= 0 || (line.points.at(-1).y >= 0 && line.points.at(-1).y <= options.height);
+  const visibleCount = () => (fanOut > 0 ? lines.filter(inside).length : lines.length);
+
   function budgetAt(age) {
     return Math.max(1, Math.floor(options.maxTips * Math.max(0.05, budgetShareAt(options, age))));
   }
 
-  function childCount(line, age) {
+  /** A big fork: after `bigForkAge`, now and then a later fork opens wide, like the first. */
+  const isBigFork = (line, age) => line.branchId !== 'r' && (options.bigForkChance ?? 0) > 0
+    && options.ageOffset + age >= options.bigForkAge
+    && randomUnit(`${seed}|laminar|${line.branchId}|big|${line.splitIndex}`) < options.bigForkChance;
+
+  function childCount(line, age, big = false) {
     const first = line.branchId === 'r';
-    const minimum = first ? options.firstChildrenMin : options.laterChildrenMin;
-    const maximum = first ? options.firstChildrenMax : options.laterChildrenMax;
-    const room = budgetAt(age) - lines.length + 1;
+    const minimum = first ? options.firstChildrenMin : big ? options.laterChildrenMax + 1 : options.laterChildrenMin;
+    const maximum = first ? options.firstChildrenMax : big ? options.laterChildrenMax + 2 : options.laterChildrenMax;
+    const room = budgetAt(age) - visibleCount() + 1;
     const edgeRoom = options.maxEdges - edges.length - lines.length - 1;
     const available = Math.min(maximum, room, edgeRoom);
     if (available < minimum) return 0;
@@ -316,6 +334,16 @@ export function generateLaminarNetwork(options) {
     return target;
   }
 
+  /** Between samples: a point for one line (a fork or an ending), still in lane order. */
+  function pointNow(line, age) {
+    if (line.points.at(-1).age >= age - 1e-9) return;
+    const at = lines.indexOf(line);
+    const above = at > 0 ? yAt(lines[at - 1], age) + 0.01 : -Infinity;
+    const below = at < lines.length - 1 ? yAt(lines[at + 1], age) - 0.01 : Infinity;
+    const y = above <= below ? clamp(yAt(line, age), above, below) : yAt(line, age);
+    line.points.push({ x: round(xForAge(age)), y: round(y), age });
+  }
+
   const root = newLine('r', rootId, 0, 0.5, 0);
   root.points.push({ x: round(xForAge(0)), y: round(centreY), age: 0 });
   lines = [root];
@@ -327,19 +355,26 @@ export function generateLaminarNetwork(options) {
   while (age < options.maxAge) {
     guard += 1;
     if (guard > 100000) throw new RangeError('laminar generation exceeded its event budget');
-    const nextSample = Math.min(options.maxAge, age + step);
+    // Samples sit on a fixed grid, whatever events land between them.
+    const nextSample = Math.min(options.maxAge, (Math.floor(age / step + 1e-9) + 1) * step);
     const nextFork = Math.min(...lines.map(line => line.nextSplit));
     const nextAge = Math.min(nextSample, nextFork);
     advance(nextAge - age);
     age = nextAge;
     // Lanes never cross, and neither may the waves on them: the drawn y is
-    // held in lane order at every sample.
-    let floor = -Infinity;
-    for (const line of lines) {
-      // A hair apart at least, so order is never a tie.
-      const y = Math.max(floor + 0.01, yAt(line, age));
-      floor = y;
-      line.points.push({ x: round(xForAge(age)), y: round(y), age });
+    // held in lane order at every sample. Lines get a point at each yearly
+    // sample; a fork between samples adds one only to the line that forks,
+    // so the drawing holds a point per line per sample, not per event.
+    const sampling = nextAge >= nextSample - 1e-9;
+    const due = lines.filter(line => line.nextSplit <= age + 1e-9);
+    if (sampling) {
+      let floor = -Infinity;
+      for (const line of lines) {
+        // A hair apart at least, so order is never a tie.
+        const y = Math.max(floor + 0.01, yAt(line, age));
+        floor = y;
+        line.points.push({ x: round(xForAge(age)), y: round(y), age });
+      }
     }
     if (age >= options.maxAge) break;
 
@@ -363,6 +398,7 @@ export function generateLaminarNetwork(options) {
       });
       for (const line of ending) {
         if (lines.length <= 1) break;
+        pointNow(line, age);
         endLine(line, age, false, 'ended');
         lines.splice(lines.indexOf(line), 1);
       }
@@ -371,21 +407,24 @@ export function generateLaminarNetwork(options) {
     lastSampledAge = age;
 
     // Forks due now, in lane order so a run is one drawing.
-    const due = lines.filter(line => line.nextSplit <= age + 1e-9);
     for (const line of due) {
       const remaining = options.maxAge - age;
       const roll = randomUnit(`${seed}|laminar|${line.branchId}|split|${line.splitIndex}`);
       const guaranteed = line.branchId === 'r' && line.splitIndex === 0 && options.firstSplitAge !== null;
-      const chance = options.splitProbability * ageWeight(options, age);
+      // Centre bias favours forks in the middle band, where readers look.
+      const centre = 1 - (options.centerBias ?? 0) * Math.min(1, Math.abs(rankAt(line) - 0.5) * 2);
+      const chance = options.splitProbability * ageWeight(options, age) * centre;
       // A line reaching for the edge neither forks nor ends: its children
       // would drop back into the band and draw a loop.
-      const mayFork = line.edge.target !== 1 && remaining >= step * 1.5 && (guaranteed || roll < chance);
-      const count = mayFork ? childCount(line, age) : 0;
+      const mayFork = line.edge.target !== 1 && remaining >= step * 1.5 && inside(line) && (guaranteed || roll < chance);
+      const big = mayFork && isBigFork(line, age);
+      const count = mayFork ? childCount(line, age, big) : 0;
       if (count <= 0) {
         line.splitIndex += 1;
         line.nextSplit = age + randomRange(`${seed}|laminar|${line.branchId}|interval|${line.splitIndex}`, options.splitMin, options.splitMax);
         continue;
       }
+      pointNow(line, age);
       const fork = endLine(line, age, true);
       const rank = rankAt(line);
       const waveNow = waveAt(line, age);
@@ -412,7 +451,9 @@ export function generateLaminarNetwork(options) {
       // The wide opening rounds (the lab's Wide opening rounds) push off at
       // the opening angle; later forks at the later branch spacing.
       const wide = line.depth < options.wideForkLevels;
-      const departure = wide ? options.openingAngle / 75 : options.laterBranchSpacing / 10;
+      const departure = wide ? options.openingAngle / 75
+        : big ? Math.max(options.laterBranchSpacing / 10, options.openingAngle / 110)
+          : options.laterBranchSpacing / 10;
       const carriesOn = children.reduce((closest, child) =>
         (Math.abs(child.lane.target - rank) < Math.abs(closest.lane.target - rank) ? child : closest));
       for (const child of children) {
@@ -421,7 +462,7 @@ export function generateLaminarNetwork(options) {
       }
     }
   }
-  for (const line of lines) endLine(line, options.maxAge, false);
+  for (const line of lines) endLine(line, options.maxAge, false, inside(line) ? 'horizon' : 'boundary-exit');
   // How far each edge can still lead: to the horizon unless everything past
   // it has ended. Routes prefer the edges that lead furthest.
   const edgeById = new Map(edges.map(edge => [edge.id, edge]));

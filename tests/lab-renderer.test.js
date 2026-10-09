@@ -212,7 +212,7 @@ test('initial lab paint fits every unique edge at high resolution with only the 
   const labels = operations.filter(item => item.type === 'label');
   assert.deepEqual(labels.map(item => item.text), ['Beginning']);
   assert.ok(labels.every(item => item.color === '#596860'
-    && item.font === '400 14px "Avenir Next", AvenirNext, "Segoe UI", sans-serif'));
+    && item.font === '400 15px "Avenir Next", AvenirNext, "Segoe UI", sans-serif'));
   assert.equal(operations.filter(item => item.type === 'mask').length, 0,
     'zero edge fade does not apply a boundary mask');
   assert.equal(canvas.dataset.age, '40');
@@ -263,7 +263,7 @@ test('selected lab paint layers gray, possible, masked field, and one continuous
     'Beginning', 'Today · 40',
   ]);
   assert.ok(labels.every(item => item.color === '#596860'
-    && item.font.startsWith('400 14px ')), 'Canvas labels stay regular-weight and quiet');
+    && item.font.startsWith('400 15px ')), 'Canvas labels stay regular-weight and quiet');
   assert.ok(labels.every(item => item.y === rect.height - 14),
     'Beginning and Today sit below the path field without crossing the lines');
 

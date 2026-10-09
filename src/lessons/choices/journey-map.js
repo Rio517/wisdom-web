@@ -10,6 +10,8 @@ import { t } from '../../i18n/runtime.js';
 const STORY_AGE = 12;
 const FOREST = '#285442';
 const CLAY = '#9a5f3e';
+// A door that opens: the futures' green, a step darker so it reads as lit.
+const OPEN = '#4f7d5f';
 
 function tracePath(context, points) {
   const slopes = points.slice(1).map((point, index) => {
@@ -44,8 +46,12 @@ function pointAtAge(points, age) {
   return points.at(-1);
 }
 
-/** `labels: false` plays the same map without choice chips or cluster highlights (home page hero). */
-export function createPathsScene(root, { labels = true } = {}) {
+/**
+ * `labels: false` plays the same map without choice chips or cluster
+ * highlights (home page hero). `edgeFade` overrides the right-hand fade, for
+ * a full-width stage where the line ends would otherwise stand as a wall.
+ */
+export function createPathsScene(root, { labels = true, edgeFade = null } = {}) {
   const stack = root.querySelector('.map-stack');
   const baseCanvas = root.querySelector('#map-base');
   const todayCanvas = root.querySelector('#map-today');
@@ -72,7 +78,7 @@ export function createPathsScene(root, { labels = true } = {}) {
     ? storyParam - 1 : Math.floor(Math.random() * STORY_COUNT);
   const story = mapStory(storyIndex);
   // The Canvas renderer's own labels, in the page's language.
-  const renderSettings = { ...LAB_DEFAULTS, labels: { beginning: t('map.beginning'), today: age => t('map.today', { age }) } };
+  const renderSettings = { ...LAB_DEFAULTS, ...(edgeFade === null ? {} : { edgeFade }), labels: { beginning: t('map.beginning'), today: age => t('map.today', { age }) } };
   root.dataset.story = String(storyIndex + 1);
 
   const data = () => {
@@ -82,8 +88,16 @@ export function createPathsScene(root, { labels = true } = {}) {
   const rect = () => stack.getBoundingClientRect();
   const view = () => fitOverview(data().network.bounds, rect(), undefined, data().network.maxAge);
 
+  // Both canvases depend only on the stage's size, so a beat change that
+  // keeps the size reuses them; repainting on every beat cost a long frame
+  // right as an animation started.
+  let paintedFor = '';
   function paintBase() {
     if (failed) return;
+    const r = rect();
+    const size = `${Math.round(r.width)}x${Math.round(r.height)}@${devicePixelRatio || 1}`;
+    if (size === paintedFor) return;
+    paintedFor = size;
     const { network, projection } = data();
     if (!overview) overview = generateNetwork(networkOptionsForLab(LAB_DEFAULTS, { today: STORY_AGE }));
     baseRenderer.paint(overview, projection, renderSettings, false);
@@ -105,6 +119,64 @@ export function createPathsScene(root, { labels = true } = {}) {
       if (picks.length === 3) break;
     }
     return picks;
+  }
+
+  /**
+   * Doors that open: luck that helps, as the closings are luck that doesn't.
+   * As many as there are closings, a little later (where the field is wide
+   * enough to tell them apart), on still-open paths in the other half of the
+   * field (the closings take the top), and never on a
+   * line that leaves the drawing. The lit way follows the path on through
+   * later forks, so it reads as a new route rather than a stub.
+   */
+  const OPEN_AGE = 26;
+  function chooseOpened(closed) {
+    const { network, projection } = data();
+    const v = view();
+    const height = network.bounds.height;
+    const possible = projection.segments.filter(segment => segment.state === 'possible');
+    const byEdge = new Map(network.edges.map(edge => [edge.id, edge]));
+    const possibleIds = new Set(possible.map(segment => segment.edgeId));
+    const inside = segment => segment.points.every(point => point.y > height * 0.06 && point.y < height * 0.94);
+    const way = segment => {
+      const points = [...segment.points];
+      for (let edge = byEdge.get(segment.edgeId); edge;) {
+        const children = network.edges.filter(child => child.from === edge.to && possibleIds.has(child.id));
+        if (!children.length) break;
+        const last = points.at(-1);
+        edge = children.sort((a, b) => Math.abs(a.points[1].y - last.y) - Math.abs(b.points[1].y - last.y))[0];
+        points.push(...edge.points.slice(1));
+      }
+      return points;
+    };
+    const taken = new Set(closed.map(mark => mark.segment));
+    const topHalf = closed.length && closed.every(mark => mark.at.y < projection.today.y);
+    const candidates = possible
+      .filter(segment => !taken.has(segment) && inside(segment)
+        && segment.points[0].age <= OPEN_AGE - 0.5 && segment.points.at(-1).age >= OPEN_AGE + 1)
+      .map(segment => ({ segment, at: pointAtAge(segment.points, OPEN_AGE) }))
+      .filter(candidate => (topHalf ? candidate.at.y > projection.today.y : true))
+      .sort((a, b) => a.at.y - b.at.y);
+    const picks = [];
+    for (const candidate of candidates) {
+      const screen = v.world(candidate.at);
+      if ([...picks, ...closed].some(pick => Math.abs(v.world(pick.at).y - screen.y) < 70)) continue;
+      picks.push({ ...candidate, way: way(candidate.segment) });
+      if (picks.length === closed.length) break;
+    }
+    return picks;
+  }
+
+  /** Closings and openings, alternating, so they appear one of each in turn. */
+  function chooseMarks() {
+    const closed = chooseClosed().map(mark => ({ ...mark, kind: 'closed', scale: 1 }));
+    const opened = chooseOpened(closed).map(mark => ({ ...mark, kind: 'opened', scale: 1 }));
+    const marks = [];
+    for (let index = 0; index < Math.max(closed.length, opened.length); index += 1) {
+      if (closed[index]) marks.push(closed[index]);
+      if (opened[index]) marks.push(opened[index]);
+    }
+    return marks;
   }
 
   /**
@@ -146,23 +218,26 @@ export function createPathsScene(root, { labels = true } = {}) {
   function sizeFx() {
     const r = rect();
     const bitmap = canvasBitmap(r, devicePixelRatio || 1);
-    fxCanvas.width = bitmap.width; fxCanvas.height = bitmap.height;
+    // Reallocate only when the size changes; the traveller redraws every frame.
+    if (fxCanvas.width !== bitmap.width || fxCanvas.height !== bitmap.height) {
+      fxCanvas.width = bitmap.width; fxCanvas.height = bitmap.height;
+    }
     fx.setTransform(bitmap.scale, 0, 0, bitmap.scale, 0, 0);
     fx.clearRect(0, 0, r.width, r.height);
     return r;
   }
 
-  function drawFx(pulsePhase = 0) {
+  function drawFx() {
     if (failed) return;
+    // An empty full-size canvas still costs the compositor a layer each
+    // frame, so it is hidden while there is nothing on it.
+    fxCanvas.style.visibility = fxMode === 'none' ? 'hidden' : '';
     const r = sizeFx();
     const v = view();
     const { projection } = data();
     const birth = v.world(projection.past[0]);
     if (fxMode === 'cover') {
-      fx.beginPath(); fx.arc(birth.x, birth.y, 6, 0, Math.PI * 2); fx.fillStyle = FOREST; fx.fill();
-      const ring = 10 + pulsePhase * 26;
-      fx.beginPath(); fx.arc(birth.x, birth.y, ring, 0, Math.PI * 2);
-      fx.strokeStyle = `rgba(40,84,66,${0.45 * (1 - pulsePhase)})`; fx.lineWidth = 2; fx.stroke();
+      fx.beginPath(); fx.arc(birth.x, birth.y, 4.5, 0, Math.PI * 2); fx.fillStyle = FOREST; fx.fill();
       fx.fillStyle = '#5a6961'; fx.font = '500 15px "Avenir Next", AvenirNext, "Segoe UI", sans-serif';
       fx.textAlign = 'center'; fx.fillText(t('map.beginning'), birth.x, birth.y + 40);
       return;
@@ -177,8 +252,10 @@ export function createPathsScene(root, { labels = true } = {}) {
       fx.beginPath(); tracePath(fx, past.map(v.world));
       fx.strokeStyle = FOREST; fx.lineWidth = 3.8; fx.lineCap = 'round'; fx.lineJoin = 'round'; fx.stroke();
       fx.restore();
-      fx.beginPath(); fx.arc(headScreen.x, headScreen.y, 12, 0, Math.PI * 2); fx.fillStyle = 'rgba(40,84,66,.16)'; fx.fill();
-      fx.beginPath(); fx.arc(headScreen.x, headScreen.y, 6.5, 0, Math.PI * 2); fx.fillStyle = FOREST; fx.fill();
+      // The traveller starts at the Beginning dot's size and arrives at Today's,
+      // so neither end pops; no halo, which smeared over the lines.
+      const radius = 4 + 2 * Math.min(1, travel * 4);
+      fx.beginPath(); fx.arc(headScreen.x, headScreen.y, radius, 0, Math.PI * 2); fx.fillStyle = FOREST; fx.fill();
       return;
     }
     if (fxMode === 'clusters') {
@@ -197,14 +274,30 @@ export function createPathsScene(root, { labels = true } = {}) {
     }
     if (fxMode === 'closed' || fxMode === 'wrap') {
       const today = v.world(projection.today);
-      if (fxMode === 'wrap') {
-        const ring = 10 + pulsePhase * 22;
-        fx.beginPath(); fx.arc(today.x, today.y, ring, 0, Math.PI * 2);
-        fx.strokeStyle = `rgba(40,84,66,${0.4 * (1 - pulsePhase)})`; fx.lineWidth = 2; fx.stroke();
-        return;
-      }
+      if (fxMode === 'wrap') return;
       for (const mark of closedMarks) {
         const after = mark.segment.points.filter(point => point.age >= mark.at.age);
+        if (mark.kind === 'opened') {
+          // The new way lights up from the door onward, growing as it opens.
+          const route = mark.way ?? mark.segment.points;
+          const end = mark.at.age + (route.at(-1).age - mark.at.age) * Math.max(0, Math.min(1, mark.scale));
+          const reach = [mark.at, ...route.filter(point => point.age > mark.at.age && point.age <= end), pointAtAge(route, end)].map(v.world);
+          fx.save();
+          fx.beginPath(); tracePath(fx, reach);
+          fx.strokeStyle = OPEN; fx.lineWidth = 3.4; fx.lineCap = 'round'; fx.lineJoin = 'round'; fx.stroke();
+          fx.restore();
+          const p = v.world(mark.at);
+          const radius = 8 * Math.min(1, mark.scale);
+          const arm = 3.6 * Math.min(1, mark.scale);
+          fx.save();
+          fx.beginPath(); fx.arc(p.x, p.y, Math.max(0, radius), 0, Math.PI * 2);
+          fx.fillStyle = '#fbfbf8'; fx.fill();
+          fx.strokeStyle = OPEN; fx.lineWidth = 2.5; fx.stroke();
+          fx.beginPath(); fx.moveTo(p.x - arm, p.y); fx.lineTo(p.x + arm, p.y); fx.moveTo(p.x, p.y - arm); fx.lineTo(p.x, p.y + arm);
+          fx.lineCap = 'round'; fx.stroke();
+          fx.restore();
+          continue;
+        }
         const points = [mark.at, ...after].map(v.world);
         fx.save();
         fx.beginPath(); tracePath(fx, points);
@@ -225,6 +318,7 @@ export function createPathsScene(root, { labels = true } = {}) {
 
   const LABELS = {
     closed: [t('map.closed.teamFull'), t('map.closed.classCancelled'), t('map.closed.familyMoved')],
+    opened: [t('map.opened.teacherNoticed'), t('map.opened.newClub'), t('map.opened.friendInvited')],
   };
 
   function chip(text, point, tone, index, placed, { dx = 0, dy = -14 } = {}) {
@@ -356,10 +450,14 @@ export function createPathsScene(root, { labels = true } = {}) {
       if (clusterCache !== best.cache) { reset(); clusterCache = best.cache; placeGroups(); }
     }
     if (mode === 'outside') {
+      const count = { closed: 0, opened: 0 };
       closedMarks.forEach((mark, markIndex) => {
         const point = v.world(mark.at);
-        chip(LABELS.closed[markIndex % LABELS.closed.length], point, 'closed', markIndex, placed, { dx: 4, dy: -16 })
-          || chip(LABELS.closed[markIndex % LABELS.closed.length], point, 'closed', markIndex, placed, { dx: 4, dy: 40 });
+        const list = LABELS[mark.kind];
+        const text = list[count[mark.kind]++ % list.length];
+        const tone = mark.kind === 'opened' ? 'possible' : 'closed';
+        chip(text, point, tone, markIndex, placed, { dx: 4, dy: -16 })
+          || chip(text, point, tone, markIndex, placed, { dx: 4, dy: 40 });
       });
     }
     if (mode === 'wrap') {
@@ -370,18 +468,30 @@ export function createPathsScene(root, { labels = true } = {}) {
     }
   }
 
+  /**
+   * A ring that breathes out from the Beginning (cover) or Today (wrap) and
+   * fades. It is a small element animated on the compositor: redrawing the
+   * whole effects canvas every frame for it cost a frame's budget on slow
+   * machines.
+   */
   function startPulse(mode) {
     stopPulse();
-    if (matchMedia('(prefers-reduced-motion: reduce)').matches) { drawFx(0); return; }
-    const began = performance.now();
-    const loop = now => {
-      if (fxMode !== mode) return;
-      drawFx(((now - began) % 1800) / 1800);
-      pulse = requestAnimationFrame(loop);
-    };
-    pulse = requestAnimationFrame(loop);
+    drawFx();
+    if (failed || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const { projection } = data();
+    const at = view().world(mode === 'cover' ? projection.past[0] : projection.today);
+    const ring = document.createElement('i');
+    ring.setAttribute('aria-hidden', 'true');
+    Object.assign(ring.style, {
+      position: 'absolute', left: `${at.x - 16}px`, top: `${at.y - 16}px`, width: '32px', height: '32px',
+      borderRadius: '50%', border: '1.5px solid rgba(40,84,66,.4)', pointerEvents: 'none',
+    });
+    stack.append(ring);
+    ring.animate([{ transform: 'scale(.5)', opacity: 1 }, { transform: 'scale(2)', opacity: 0 }],
+      { duration: 1800, iterations: Infinity, easing: 'cubic-bezier(.2, .6, .4, 1)' });
+    pulse = ring;
   }
-  function stopPulse() { if (pulse !== null) cancelAnimationFrame(pulse); pulse = null; }
+  function stopPulse() { pulse?.remove(); pulse = null; }
 
   function setState({ grow, state, fxModeValue, calloutMode }) {
     stack.dataset.grow = grow;
@@ -404,7 +514,7 @@ export function createPathsScene(root, { labels = true } = {}) {
   async function show(beatId, { from = null, animate = true, token } = {}) {
     current = beatId;
     paintBase();
-    if (beatId === 'outside' && !closedMarks.length) closedMarks = chooseClosed().map(mark => ({ ...mark, scale: 1 }));
+    if (beatId === 'outside' && !closedMarks.length) closedMarks = chooseMarks();
     if (!animate || failed) { setState(FINAL[beatId]); return; }
 
     if (beatId === 'many' && from === 'cover') {
@@ -434,7 +544,9 @@ export function createPathsScene(root, { labels = true } = {}) {
       closedMarks.forEach(mark => { mark.scale = 0; });
       for (let index = 0; index < closedMarks.length; index += 1) {
         const mark = closedMarks[index];
-        const run = tween({ duration: 380, easing: t => 1 - (1 - t) ** 3 * Math.cos(t * 5), update: t => { mark.scale = t; drawFx(); } });
+        // A closing snaps shut; an opening swings open a little slower.
+        const easing = mark.kind === 'opened' ? ease.out : t => 1 - (1 - t) ** 3 * Math.cos(t * 5);
+        const run = tween({ duration: mark.kind === 'opened' ? 520 : 380, easing, update: t => { mark.scale = t; drawFx(); } });
         token?.onCancel(() => run.cancel());
         if (!(await run.promise) || token?.cancelled) { closedMarks.forEach(m => { m.scale = 1; }); drawFx(); return; }
         await wait(160, token);

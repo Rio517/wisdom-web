@@ -35,6 +35,10 @@ const DEFAULTS = Object.freeze({
   waveStrength: 1,
   openingAngle: 120,
   endingRate: 0,
+  fanOut: 0,
+  centerBias: 0,
+  bigForkChance: 0,
+  bigForkAge: 10,
   sampleAgeStep: 1,
   turnMin: 4.5,
   turnMax: 14,
@@ -84,6 +88,7 @@ function normalizeOptions(input) {
     'openingBurst', 'ageOffset', 'ageHorizon', 'ageTaper', 'burstSpan',
     'laterBranchSpacing', 'exitMargin', 'originSlope',
     'envelopeAge', 'settleYears', 'waveStrength', 'openingAngle', 'endingRate',
+    'fanOut', 'centerBias', 'bigForkChance', 'bigForkAge',
     'maxTips', 'maxEdges', 'sampleAgeStep', 'turnMin', 'turnMax', 'turnStrength',
     'maxSlope', 'crowdingStrength', 'crowdingRadius', 'crowdingSplitSuppression',
     'boundaryStrength', 'yPadding',
@@ -124,6 +129,10 @@ function normalizeOptions(input) {
   if (options.envelopeAge <= 0 || options.settleYears < 0 || options.waveStrength < 0
       || options.openingAngle <= 0 || options.openingAngle > 180 || options.endingRate < 0) {
     throw new RangeError('envelopeAge must be positive; settleYears and waveStrength non-negative; openingAngle within 0–180');
+  }
+  if (options.fanOut < 0 || options.fanOut > 3 || options.centerBias < 0 || options.centerBias > 1
+      || options.bigForkChance < 0 || options.bigForkChance > 1 || options.bigForkAge < 0) {
+    throw new RangeError('fanOut must be 0–3; centerBias and bigForkChance 0–1; bigForkAge non-negative');
   }
   if (options.openingBurst < 0 || options.openingBurst > 1) {
     throw new RangeError('openingBurst must be between zero and one');

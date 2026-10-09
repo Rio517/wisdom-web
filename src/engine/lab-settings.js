@@ -27,6 +27,10 @@ export const LAB_DEFAULTS = Object.freeze({
   splitSpacing: 1,
   firstSplitAge: 0.1,
   endingRate: 0.01,
+  fanOut: 0.85,
+  centerBias: 0.5,
+  bigForkChance: 0.25,
+  bigForkAge: 8,
   maxTips: 67,
   turnStrength: 4.8,
   turnSpacing: 9,
@@ -38,6 +42,7 @@ export const LAB_DEFAULTS = Object.freeze({
   fadeFloor: 0.6,
   todayFade: 40,
   edgeFade: 0.04,
+  verticalFade: 0.16,
 });
 
 export const LAB_CONTROLS = Object.freeze([
@@ -49,6 +54,8 @@ export const LAB_CONTROLS = Object.freeze([
   { field: 'splitSpacing', label: 'Split spacing', min: 1, max: 18, step: 0.5, unit: 'years', group: 'Branching', help: 'Typical wait between attempts. Each branch picks its own interval.' },
   { field: 'firstSplitAge', label: 'First fork at', min: 0.1, max: 8, step: 0.01, unit: 'years', group: 'Branching', help: 'How long the beginning runs as one line before its first fork.' },
   { field: 'endingRate', label: 'Paths that end', min: 0, max: 0.06, step: 0.005, unit: '', group: 'Branching', help: 'Laminar only. The yearly chance a line ends at seventy. Shaped like a life table: a small bump in the first five years, very little through the middle, a rise from forty. Zero means none.' },
+  { field: 'fanOut', label: 'Fan-out', min: 0, max: 1.5, step: 0.05, unit: '', group: 'Branching', help: 'Keeps the field widening after it opens, past the top and bottom of the drawing. Lines that leave give their place back, so splitting goes on through life. Zero keeps every line inside, running level.' },
+  { field: 'centerBias', label: 'Middle forks', min: 0, max: 1, step: 0.05, unit: '', group: 'Branching', help: 'Favours forks in the middle band, so divisions show where readers look. Zero lets every line fork alike.' },
   { field: 'firstChildrenMin', label: 'First fork · minimum', min: 2, max: 8, step: 1, unit: '', group: 'Forks', help: 'Smallest number of outgoing branches at the beginning or Today’s first fork.' },
   { field: 'firstChildrenMax', label: 'First fork · maximum', min: 2, max: 8, step: 1, unit: '', group: 'Forks', help: 'Each first fork draws a count within this range.' },
   { field: 'laterChildrenMin', label: 'Later forks · minimum', min: 2, max: 8, step: 1, unit: '', group: 'Forks', help: 'Smallest admitted fork after the first. A full drawing may have no room for another fork.' },
@@ -56,6 +63,8 @@ export const LAB_CONTROLS = Object.freeze([
   { field: 'forkSpread', label: 'Opening spread', min: 30, max: 150, step: 5, unit: '°', group: 'Forks', help: 'The broad opening at Beginning or Today. Later forks use smaller, count-scaled fans, capped by this angle.' },
   { field: 'wideForkLevels', label: 'Wide opening rounds', min: 1, max: 3, step: 1, unit: '', group: 'Forks', help: '1 widens only the first fork. 2 also widens its children’s forks; 3 includes the next round. Counted along each path, not across the whole chart.' },
   { field: 'laterBranchSpacing', label: 'Later branch spacing', min: 3, max: 30, step: 1, unit: '°', group: 'Forks', help: 'Angle between neighbors after the opening rounds. At 12°: 2 branches span 12°, 3 span 24°, and 6 span 60°, where space allows.' },
+  { field: 'bigForkChance', label: 'Big later forks', min: 0, max: 0.5, step: 0.01, unit: '', group: 'Forks', help: 'The chance a later fork opens wide, with more branches, like the first. Zero keeps the big fans at the beginning.' },
+  { field: 'bigForkAge', label: 'Big forks from', min: 0, max: 40, step: 1, unit: 'years', group: 'Forks', help: 'The age from which big later forks may happen.' },
   { field: 'maxTips', label: 'Branch limit', min: 16, max: 150, step: 1, unit: 'ends', group: 'Forks', help: 'How many lines the drawing holds at once. A line that leaves the drawing gives its place back, so later ages keep forking. The Today fan uses a smaller, age-tapered budget.' },
   { field: 'turnStrength', label: 'Bend strength', min: 0, max: 12, step: 0.2, unit: '', group: 'Shape', help: 'How strongly each line chooses to rise or fall. Forks and crowding also affect its shape.' },
   { field: 'turnSpacing', label: 'Bend spacing', min: 3, max: 22, step: 0.5, unit: 'years', group: 'Shape', help: 'Typical wait before choosing a new direction. Larger values make longer sweeps.' },
@@ -66,7 +75,8 @@ export const LAB_CONTROLS = Object.freeze([
   { field: 'fadeDistance', label: 'Fade distance', min: 80, max: 650, step: 10, unit: 'units', group: 'Style', help: 'How far gray paths fade after a missed fork, down to the faded floor.' },
   { field: 'fadeFloor', label: 'Faded floor', min: 0, max: 1, step: 0.05, unit: '', group: 'Style', help: 'How visible an old alternative stays once its fade is done, so it and its later forks still reach Today. Zero removes it entirely.' },
   { field: 'todayFade', label: 'Today dissolve', min: 0, max: 300, step: 10, unit: 'units', group: 'Style', help: 'How far before Today the remaining gray dissolves into the line. Gray never crosses Today.' },
-  { field: 'edgeFade', label: 'Edge fade', min: 0, max: 0.3, step: 0.01, unit: '', group: 'Style', help: 'How much of the outer field fades into the page. Zero leaves the ends visible.' },
+  { field: 'edgeFade', label: 'Edge fade', min: 0, max: 0.3, step: 0.01, unit: '', group: 'Style', help: 'How much of the right-hand end fades into the page. Zero leaves the ends visible.' },
+  { field: 'verticalFade', label: 'Top and bottom fade', min: 0, max: 0.4, step: 0.01, unit: '', group: 'Style', help: 'How much of the top and bottom fades into the page, so lines that fan out dissolve rather than stop at an edge.' },
 ].map(Object.freeze));
 
 const clamp = (value, minimum, maximum) => Math.max(minimum, Math.min(maximum, value));
@@ -127,7 +137,8 @@ export function networkOptionsForLab(input = {}, { today = null } = {}) {
     maxAge: LAB_MAX_AGE,
     maxTips: settings.maxTips,
     // Room for the forks that lines leaving the drawing hand back.
-    maxEdges: 4 * settings.maxTips - 1,
+    // Fan-out hands places back all life long, so it needs more edges.
+    maxEdges: Math.min(1000, Math.round(settings.maxTips * (4 + 12 * settings.fanOut)) - 1),
     sampleAgeStep: settings.growthMode === 'organic' ? 0.5 : 1,
     growthMode: settings.growthMode,
     firstChildrenMin: settings.firstChildrenMin,
@@ -155,6 +166,10 @@ export function networkOptionsForLab(input = {}, { today = null } = {}) {
     // How fast the field opens, and how sharply the wide rounds push off.
     openingAngle: settings.forkSpread,
     endingRate: settings.endingRate,
+    fanOut: settings.fanOut,
+    centerBias: settings.centerBias,
+    bigForkChance: settings.bigForkChance,
+    bigForkAge: settings.bigForkAge,
     // The field may use the height; the waves keep off the last few pixels.
     yPadding: 8,
     openingBurst: settings.openingBurst,

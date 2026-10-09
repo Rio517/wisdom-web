@@ -1,5 +1,5 @@
 /* Shared site index: sidebar on wide screens, drawer on tablets and in the lesson. */
-.nav-opener { position: fixed; left: 18px; top: 16px; z-index: 30; display: none; align-items: center; gap: 8px; min-height: 44px; border: 1px solid var(--color-rule); border-radius: 999px; background: #fbfbf8f0; padding: 0 16px 0 12px; font-size: 15px; color: var(--color-forest); }
+.nav-opener { position: fixed; left: 18px; top: 16px; z-index: 30; display: none; align-items: center; gap: 8px; min-height: 44px; border: 1px solid var(--color-rule); border-radius: 999px; background: #fbfbf8f0; padding: 0 16px 0 12px; font-size: 16px; color: var(--color-forest); }
 .nav-opener svg { width: 20px; height: 20px; }
 
 /* ——— Site index (sidebar and drawer) ——— */
@@ -8,48 +8,66 @@
 .nav-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
 .site-nav .brand { display: block; color: var(--color-ink); text-decoration: none; }
 .site-nav .brand-name, .site-topbar .brand-name { display: block; font: 500 31px/1 var(--font-field); letter-spacing: -.01em; }
-.site-nav .brand-tag { display: block; margin-top: 7px; font-size: 14px; color: var(--color-quiet); }
+.site-nav .brand-tag { display: block; margin-top: 7px; font-size: 15px; color: var(--color-quiet); }
 .nav-close { display: grid; place-items: center; width: 40px; height: 40px; margin: -6px -8px 0 0; border: 0; border-radius: 999px; background: transparent; color: var(--color-quiet); }
 .nav-close:hover { background: #28544210; color: var(--color-forest); }
 .nav-close svg { width: 20px; height: 20px; }
 .nav-close span { display: grid; }
 .site-nav[data-mode="drawer"] .icon-collapse, .site-nav:not([data-mode="drawer"]) .icon-close { display: none; }
-.nav-section-label { margin: 0 0 10px; font: 600 13px var(--font-guide); color: var(--color-quiet); }
-.nav-lessons { margin: 0; padding: 0; list-style: none; display: grid; gap: 4px; }
-.nav-lesson > details > summary, .nav-lesson-link { display: flex; align-items: center; gap: 10px; min-height: 44px; list-style: none; cursor: pointer; border-radius: 10px; padding: 4px 8px 4px 4px; font-weight: 600; font-size: 16px; color: var(--color-ink); text-decoration: none; }
+.nav-section-label { margin: 0 0 10px; font: 600 15px var(--font-guide); color: var(--color-quiet); }
+/* One line runs through the lesson circles, centre to centre. Each row draws
+   its own piece from its circle's centre (22px down, 19px across) so the
+   line meets every circle exactly at any zoom, however tall the row grows. */
+.nav-lessons { margin: 0; padding: 0; list-style: none; display: grid; }
+.nav-lesson { position: relative; }
+.nav-lesson::before { content: ""; position: absolute; left: 18px; width: 2px; top: 0; bottom: 0; background: var(--color-mist); }
+.nav-lesson:first-child::before { top: 22px; }
+.nav-lesson:last-child::before { bottom: auto; height: 22px; }
+.nav-lesson:only-child::before { display: none; }
+.nav-lesson > details > summary, .nav-soon { position: relative; display: flex; align-items: flex-start; gap: 10px; width: 100%; min-height: 44px; list-style: none; cursor: pointer; border: 0; border-radius: 10px; background: transparent; padding: 7px 8px 7px 4px; text-align: left; text-decoration: none; }
+.nav-lesson > details > summary { font-weight: 600; font-size: 17px; color: var(--color-ink); }
 .nav-lesson > details > summary::-webkit-details-marker { display: none; }
-.nav-lesson > details > summary:hover { background: #28544209; }
-.lesson-num { display: grid; place-items: center; width: 30px; height: 30px; flex: none; border-radius: 999px; font: 700 12px var(--font-guide); background: var(--color-forest); color: white; }
-.nav-lesson .chevron { margin-left: auto; width: 16px; height: 16px; color: var(--color-quiet); transition: transform 200ms; }
+.nav-lesson > details > summary:hover, .nav-soon:hover, .nav-soon[data-tip-open] { background: #28544209; }
+.nav-lesson-title { padding-top: 4px; line-height: 1.3; }
+.lesson-num { position: relative; display: grid; place-items: center; width: 30px; height: 30px; flex: none; border-radius: 999px; font: 600 15px/1 var(--font-guide); letter-spacing: -.02em; background: var(--color-forest); color: white; }
+.nav-lesson .chevron { flex: none; margin: 7px 0 0 auto; width: 16px; height: 16px; color: var(--color-quiet); transition: transform 200ms; }
 .nav-lesson details[open] .chevron { transform: rotate(90deg); }
-.nav-pages { margin: 4px 0 6px 18px; padding: 0; list-style: none; border-left: 1.5px solid var(--color-rule); }
-.nav-pages a { display: block; margin-left: -1.5px; border-left: 2.5px solid transparent; padding: 9px 12px 9px 18px; font-size: 15.5px; line-height: 1.3; color: var(--color-quiet); text-decoration: none; }
+.nav-pages { margin: 2px 0 6px; padding: 0; list-style: none; }
+.nav-pages a { position: relative; display: block; padding: 9px 12px 9px 44px; font-size: 16px; line-height: 1.3; color: var(--color-quiet); text-decoration: none; border-radius: 10px; }
 .nav-pages a:hover { color: var(--color-forest); }
-.nav-pages a[aria-current="page"] { border-color: var(--color-forest); color: var(--color-forest); font-weight: 600; }
-.nav-soon { margin: 14px 0 0; padding: 0; list-style: none; display: grid; gap: 2px; }
-.nav-soon li { display: flex; align-items: center; gap: 10px; min-height: 34px; padding: 3px 0 3px 4px; font-size: 15px; line-height: 1.3; color: #7c8a82; }
-.nav-soon .lesson-num { background: transparent; border: 1.5px solid var(--color-mist); color: #8a978f; }
-.nav-soon-note { margin: 8px 0 0 4px; font-size: 13px; color: #7c8a82; }
+/* The current page darkens its piece of the line. */
+.nav-pages a[aria-current="page"] { color: var(--color-forest); font-weight: 600; }
+.nav-pages a[aria-current="page"]::before { content: ""; position: absolute; left: 17.5px; top: 7px; bottom: 7px; width: 3px; border-radius: 3px; background: var(--color-forest); }
+.nav-soon { font: 500 16px var(--font-guide); color: var(--color-quiet); }
+.nav-soon .lesson-num { background: var(--color-index); border: 1.5px solid var(--color-mist); color: var(--color-quiet); }
+.nav-lesson-soon[data-status="next"] .lesson-num { border-color: var(--color-sun); color: #7a5412; }
+
+/* Popover for lessons that aren't written yet (index and home roadmap). */
+.nav-lesson:has([data-tip-open]), .roadmap li:has([data-tip-open]) { z-index: 5; }
+/* Anchored under the circle so it can use the whole row: the index scrolls, so anything wider is clipped. */
+.soon-tip { position: absolute; z-index: 20; left: 2px; top: calc(100% - 2px); width: max-content; max-width: min(250px, 100%); border-radius: 12px; background: var(--color-ink); padding: 9px 13px; font: 500 15px/1.4 var(--font-guide); color: white; text-align: left; animation: tip-in 160ms ease-out both; pointer-events: none; }
+.soon-tip::before { content: ""; position: absolute; left: 16px; top: -5px; width: 10px; height: 10px; background: inherit; transform: rotate(45deg); border-radius: 2px; }
+@keyframes tip-in { from { opacity: 0; transform: translateY(-3px); } }
 .nav-utility { margin-top: auto; display: grid; gap: 2px; padding-top: 18px; border-top: 1px solid var(--color-rule); }
-.nav-utility a { display: flex; align-items: center; justify-content: space-between; min-height: 40px; padding: 0 4px; font-size: 15.5px; color: var(--color-ink); text-decoration: none; border-radius: 8px; }
+.nav-utility a { display: flex; align-items: center; justify-content: space-between; min-height: 40px; padding: 0 4px; font-size: 16px; color: var(--color-ink); text-decoration: none; border-radius: 8px; }
 .nav-utility a:hover { color: var(--color-forest); }
 .nav-utility a[aria-current="page"] { color: var(--color-forest); font-weight: 600; }
 .nav-utility svg { width: 14px; height: 14px; color: var(--color-quiet); }
 
 /* Language switcher: each language named in itself, the current one marked. */
 .lang-switch ul { display: flex; flex-wrap: wrap; gap: 4px; margin: 0; padding: 0; list-style: none; }
-.lang-switch a { display: inline-flex; align-items: center; min-height: 34px; padding: 0 11px; border: 1px solid transparent; border-radius: 999px; font-size: 14.5px; color: var(--color-quiet); text-decoration: none; }
+.lang-switch a { display: inline-flex; align-items: center; min-height: 34px; padding: 0 11px; border: 1px solid transparent; border-radius: 999px; font-size: 15px; color: var(--color-quiet); text-decoration: none; }
 .lang-switch a:hover { color: var(--color-forest); background: #28544210; }
 .lang-switch a[aria-current="true"] { border-color: var(--color-rule); background: var(--color-paper); color: var(--color-forest); font-weight: 600; }
 .lang-block-nav { display: grid; gap: 6px; margin-top: 10px; padding-top: 12px; border-top: 1px solid var(--color-rule); }
-.lang-label { display: flex; align-items: center; gap: 7px; padding: 0 4px; font: 600 13px var(--font-guide); color: var(--color-quiet); }
+.lang-label { display: flex; align-items: center; gap: 7px; padding: 0 4px; font: 600 15px var(--font-guide); color: var(--color-quiet); }
 .lang-block-nav .lang-switch ul { display: grid; grid-template-columns: repeat(2, max-content); margin-left: -7px; } /* two even rows rather than a ragged wrap */
-.nav-utility .lang-switch a { justify-content: center; min-height: 34px; padding: 0 11px; font-size: 14.5px; color: var(--color-quiet); }
+.nav-utility .lang-switch a { justify-content: center; min-height: 34px; padding: 0 11px; font-size: 15px; color: var(--color-quiet); }
 .nav-utility .lang-switch a[aria-current="true"] { color: var(--color-forest); }
 /* Draft-language notice: a page banner on site pages, a quiet line in the lesson's drawer. */
-.draft-note { margin: 0; padding: 10px 24px; border-bottom: 1px solid #e9d8b0; background: var(--color-sun-soft); font-size: 14px; line-height: 1.4; text-align: center; color: #6b4a10; }
+.draft-note { margin: 0; padding: 10px 24px; border-bottom: 1px solid #e9d8b0; background: var(--color-sun-soft); font-size: 15px; line-height: 1.4; text-align: center; color: #6b4a10; }
 .draft-note a, .nav-draft-note a { color: inherit; font-weight: 600; text-underline-offset: 3px; }
-.nav-draft-note { margin: 6px 0 0; padding: 8px 10px; border-radius: 10px; background: var(--color-sun-soft); font-size: 13px; line-height: 1.4; color: #6b4a10; }
+.nav-draft-note { margin: 6px 0 0; padding: 8px 10px; border-radius: 10px; background: var(--color-sun-soft); font-size: 15px; line-height: 1.4; color: #6b4a10; }
 .nav-backdrop { position: fixed; inset: 0; z-index: 40; border: 0; background: #23302d52; animation: fade-in 200ms ease-out both; }
 @keyframes fade-in { from { opacity: 0; } }
 
