@@ -5,7 +5,7 @@ import { t } from '../../src/i18n/runtime.js';
 import { SKILL_GROUPS } from '../../src/lessons/choices/journey-game.js';
 import { skillBoxMarkup, setSkillBox } from '../../src/lessons/choices/journey-skills.js';
 import { ICONS, routineIcon } from './icons.js';
-import { DAYS, STAGES, startingLevel, startingStage, bookStage, nextChance } from './model.js';
+import { DAYS, STAGES, WEEK_ONE_END, startingLevel, startingStage, bookStage, nextChance } from './model.js';
 
 export { t, ICONS };
 export const esc = value => String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;');
@@ -13,7 +13,10 @@ export const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)'
 
 // ——— Words helpers ———
 export const weekday = index => t(`l2.wd.${DAYS[index].weekday}`);
-export const dayLabel = index => t('l2.day.label', { weekday: weekday(index), week: t(`l2.week.${DAYS[index].week}`) });
+/** "Monday · First week" on the day a week starts; after that the weekday is enough (the calendar shows the week). */
+export const dayLabel = index => (index === 0 || index === WEEK_ONE_END + 1
+  ? t('l2.day.label', { weekday: weekday(index), week: t(`l2.week.${DAYS[index].week}`) })
+  : weekday(index));
 export const routineWord = routine => t(`l2.routine.${routine}`);
 export const RoutineWord = routine => t(`l2.Routine.${routine}`);
 export const momentYour = moment => t(`l2.moment.${moment}.your`);
@@ -65,6 +68,19 @@ export function announce(live, text) {
   live.textContent = '';
   // A fresh node each time so the same words are read again.
   requestAnimationFrame(() => { live.textContent = text; });
+}
+
+/**
+ * How long a card that plays by itself stays before the next day: about
+ * three words a second (a ten-year-old reading every word), at least 3 s.
+ */
+export function readingTime(el) {
+  let words = 0;
+  const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+  for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+    if (!node.parentElement.closest('.sr-only, [hidden]')) words += node.textContent.split(/\s+/).filter(Boolean).length;
+  }
+  return Math.max(3000, words * 330);
 }
 
 // ——— Feed: cards, scrolling, focus ———
@@ -137,16 +153,12 @@ export function cueLine(routine, moment, setup) {
     <span class="l2-cue-item">${ICONS[setup]}<span>${esc(t(`l2.setup.${setup}.your`))}</span></span></p>`;
 }
 
-/** Option buttons. Each option: { label, kind, icon }. Rest and skip labels say what they are, so only the others get a caption. */
-/** Every option says what kind of afternoon it is, in the same quiet words: none is the answer. */
-const captionOf = option => (option.kind === 'skip' ? (['friends', 'party'].includes(option.alt) ? 'friends' : 'fun') : option.kind);
-
+/** Option buttons. Each option: { label, kind, icon }. No captions: the labels say what each afternoon is, and none is the answer. */
 export function optionsMarkup(options, { name = '' } = {}) {
   return `<ul class="l2-options" data-count="${options.length}" ${name ? `aria-label="${esc(name)}"` : ''}>${options.map((option, i) => `<li>
     <button type="button" class="l2-opt" data-option="${i}" data-kind="${option.kind}" aria-pressed="false">
       <span class="l2-opt-icon">${ICONS[option.icon] ?? ''}</span>
       <span class="l2-opt-label">${esc(option.label)}</span>
-      <span class="l2-opt-kind">${esc(t(`l2.kind.${captionOf(option)}`))}</span>
     </button></li>`).join('')}</ul>`;
 }
 

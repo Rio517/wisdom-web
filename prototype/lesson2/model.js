@@ -136,7 +136,10 @@ export function liveDay(life, index, plan, { extra = [], tired = DAYS[index].tir
   const gains = {};
   for (const [routine, how] of Object.entries(plan)) {
     const before = startingLevel(tally[routine]);
-    tally[routine][TALLY_KEY[how]] += 1;
+    // The first starts at a moved moment count like another time: a new
+    // moment isn't a cue yet, so it grows by the small step.
+    const fresh = how === 'moment' && Boolean(details[routine]?.fresh);
+    tally[routine][TALLY_KEY[fresh ? 'other' : how]] += 1;
     const after = startingLevel(tally[routine]);
     const isTired = DONE.has(how) && Boolean(details[routine]?.tired ?? tired);
     if (DONE.has(how)) {

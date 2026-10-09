@@ -61,7 +61,9 @@ export function autoHow(moment, index) {
 export function resultLine(routine, item, index) {
   const day = DAYS[index];
   switch (item.how) {
-    case 'moment': return item.tired ? t(`l2.res.tired.${routine}`) : t(`l2.res.moment.${routine}.${item.stageBefore}`);
+    case 'moment':
+      if (item.tired) return t(`l2.res.tired.${routine}`);
+      return item.fresh ? t(`l2.res.fresh.${routine}`) : t(`l2.res.moment.${routine}.${item.stageBefore}`);
     case 'other': return t(`l2.res.other.${routine}`);
     case 'skip': return item.moved === 'down' ? t(`l2.res.slip.${routine}`) : t(`l2.res.skip.${routine}`);
     case 'rest': return t(day.kind === 'weekend' || day.kind === 'sunday' ? 'l2.res.restWeekend' : 'l2.res.rest');
@@ -71,13 +73,19 @@ export function resultLine(routine, item, index) {
   }
 }
 
-/** Soccer's line for the day, if any: set up for you, cancelled, or a lucky break. */
-export function soccerLine(entry) {
+/**
+ * Soccer's line for the day, if any: set up for you, cancelled, or a lucky
+ * break. With `again: false` a plain practice speaks only the first time;
+ * after that the calendar tile says it.
+ */
+export function soccerLine(entry, { again = true } = {}) {
   const day = DAYS[entry.index];
   if (day.event === 'rain') return t('l2.res.rain');
   if (entry.soccer.includes('trick')) return t('l2.res.trick');
   // The first practice says who started it; later ones say it in a few words.
   const first = DAYS.findIndex(other => other.kind === 'soccer' && !other.event);
-  if (entry.soccer.includes('soccer')) return t(entry.index === first ? 'l2.res.soccer' : 'l2.res.soccerAgain');
+  if (!entry.soccer.includes('soccer')) return '';
+  if (entry.index === first) return t('l2.res.soccer');
+  return again ? t('l2.res.soccerAgain') : '';
   return '';
 }
