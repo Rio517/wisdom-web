@@ -165,5 +165,6 @@ At the end of that 2026-09-07 pass, the redesigned short lesson, owner visual se
 - Fanned out the path field (new lab controls, about 3× faster generation), fixed the index line and the map's pulse ring, added "coming soon" popovers and doors that open on the life map, and built three playable home-page directions for the owner's pick.
 - Wrote proposal 015 (Lesson 2 structure C accepted) and extended the habits research with sources B5–B18.
 - Changed deployment to release tags on `main` and moved checks to a nightly workflow.
+- Built the picked home direction, A ("Stage"), into the home page and the lesson cover: a centred sentence over a faint field, no sidebar, words that lift away and paths that grow; a softer right edge on the lesson map and idle repaints after a resize.
 - Verified: 240 tests pass and the build produces 25 pages; layouts measured at 1440×900, 1024×768, 768×1024 and 744×1133 in all four languages.
 
