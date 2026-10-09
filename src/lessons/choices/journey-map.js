@@ -159,10 +159,12 @@ export function createPathsScene(root, { labels = true } = {}) {
     const { projection } = data();
     const birth = v.world(projection.past[0]);
     if (fxMode === 'cover') {
-      fx.beginPath(); fx.arc(birth.x, birth.y, 6, 0, Math.PI * 2); fx.fillStyle = FOREST; fx.fill();
-      const ring = 10 + pulsePhase * 26;
+      fx.beginPath(); fx.arc(birth.x, birth.y, 4.5, 0, Math.PI * 2); fx.fillStyle = FOREST; fx.fill();
+      // One ring breathes out from the dot and fades; eased so it slows as it goes.
+      const spread = 1 - (1 - pulsePhase) ** 2;
+      const ring = 8 + spread * 24;
       fx.beginPath(); fx.arc(birth.x, birth.y, ring, 0, Math.PI * 2);
-      fx.strokeStyle = `rgba(40,84,66,${0.45 * (1 - pulsePhase)})`; fx.lineWidth = 2; fx.stroke();
+      fx.strokeStyle = `rgba(40,84,66,${0.4 * (1 - spread)})`; fx.lineWidth = 1.5; fx.stroke();
       fx.fillStyle = '#5a6961'; fx.font = '500 15px "Avenir Next", AvenirNext, "Segoe UI", sans-serif';
       fx.textAlign = 'center'; fx.fillText(t('map.beginning'), birth.x, birth.y + 40);
       return;
@@ -177,8 +179,10 @@ export function createPathsScene(root, { labels = true } = {}) {
       fx.beginPath(); tracePath(fx, past.map(v.world));
       fx.strokeStyle = FOREST; fx.lineWidth = 3.8; fx.lineCap = 'round'; fx.lineJoin = 'round'; fx.stroke();
       fx.restore();
-      fx.beginPath(); fx.arc(headScreen.x, headScreen.y, 12, 0, Math.PI * 2); fx.fillStyle = 'rgba(40,84,66,.16)'; fx.fill();
-      fx.beginPath(); fx.arc(headScreen.x, headScreen.y, 6.5, 0, Math.PI * 2); fx.fillStyle = FOREST; fx.fill();
+      // The traveller starts at the Beginning dot's size and arrives at Today's,
+      // so neither end pops; no halo, which smeared over the lines.
+      const radius = 4 + 2 * Math.min(1, travel * 4);
+      fx.beginPath(); fx.arc(headScreen.x, headScreen.y, radius, 0, Math.PI * 2); fx.fillStyle = FOREST; fx.fill();
       return;
     }
     if (fxMode === 'clusters') {
@@ -198,9 +202,9 @@ export function createPathsScene(root, { labels = true } = {}) {
     if (fxMode === 'closed' || fxMode === 'wrap') {
       const today = v.world(projection.today);
       if (fxMode === 'wrap') {
-        const ring = 10 + pulsePhase * 22;
-        fx.beginPath(); fx.arc(today.x, today.y, ring, 0, Math.PI * 2);
-        fx.strokeStyle = `rgba(40,84,66,${0.4 * (1 - pulsePhase)})`; fx.lineWidth = 2; fx.stroke();
+        const spread = 1 - (1 - pulsePhase) ** 2;
+        fx.beginPath(); fx.arc(today.x, today.y, 8 + spread * 20, 0, Math.PI * 2);
+        fx.strokeStyle = `rgba(40,84,66,${0.4 * (1 - spread)})`; fx.lineWidth = 1.5; fx.stroke();
         return;
       }
       for (const mark of closedMarks) {
@@ -376,7 +380,9 @@ export function createPathsScene(root, { labels = true } = {}) {
     const began = performance.now();
     const loop = now => {
       if (fxMode !== mode) return;
-      drawFx(((now - began) % 1800) / 1800);
+      // A frame's timestamp can be a little earlier than `began`; a negative
+      // phase gave the ring a negative radius, which threw and froze it.
+      drawFx((Math.max(0, now - began) % 1800) / 1800);
       pulse = requestAnimationFrame(loop);
     };
     pulse = requestAnimationFrame(loop);

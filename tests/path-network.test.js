@@ -462,6 +462,7 @@ test('generates a deterministic bounded tree with stable identifiers', () => {
     boundaryMode: 'contain', exitMargin: 40, originY: null, originSlope: 0,
     maxTips: 64, maxEdges: 300, envelopeAge: 25, settleYears: 6, waveStrength: 1, openingAngle: 120,
     endingRate: 0,
+    fanOut: 0, centerBias: 0, bigForkChance: 0, bigForkAge: 10,
     sampleAgeStep: 1,
     turnMin: 4.5, turnMax: 14, turnStrength: 4.8, maxSlope: 7.2,
     crowdingStrength: 1.15, crowdingRadius: 58, crowdingSplitSuppression: 0.22,

@@ -68,6 +68,9 @@ function settingsFor(input = {}) {
     todayFade: clamp(Number.isFinite(source.todayFade) ? source.todayFade : 0, 0, 300),
     grayOpacity: clamp(Number.isFinite(source.grayOpacity) ? source.grayOpacity : 0.58, 0, 1),
     edgeFade: clamp(Number.isFinite(source.edgeFade) ? source.edgeFade : 0.16, 0, 0.3),
+    // Older saved settings have one edge fade for every side.
+    verticalFade: Number.isFinite(source.verticalFade) ? clamp(source.verticalFade, 0, 0.4)
+      : clamp(Number.isFinite(source.edgeFade) ? source.edgeFade : 0.16, 0, 0.3),
   };
 }
 
@@ -202,28 +205,35 @@ export function createLabRenderer(canvas) {
     return { stops: trimmed };
   }
 
-  function boundaryMask(rect, bounds, amount) {
-    if (amount <= 0) return;
+  function boundaryMask(rect, bounds, amount, verticalAmount = amount) {
+    if (amount <= 0 && verticalAmount <= 0) return;
     const fieldLeft = currentView.world({ x: bounds.x + 40, y: bounds.y }).x;
     const fieldRight = currentView.world({ x: bounds.x + bounds.width - 40, y: bounds.y }).x;
     const fieldTop = currentView.world({ x: bounds.x, y: bounds.y }).y;
     const fieldBottom = currentView.world({ x: bounds.x, y: bounds.y + bounds.height }).y;
     context.save();
     context.globalCompositeOperation = 'destination-in';
-    const horizontal = context.createLinearGradient(
-      fieldRight - (fieldRight - fieldLeft) * amount,
-      0,
-      fieldRight,
-      0,
-    );
-    horizontal.addColorStop(0, '#000');
-    horizontal.addColorStop(1, '#0000');
-    context.fillStyle = horizontal;
-    context.fillRect(0, 0, rect.width, rect.height);
+    if (amount > 0) {
+      const horizontal = context.createLinearGradient(
+        fieldRight - (fieldRight - fieldLeft) * amount,
+        0,
+        fieldRight,
+        0,
+      );
+      horizontal.addColorStop(0, '#000');
+      horizontal.addColorStop(1, '#0000');
+      context.fillStyle = horizontal;
+      context.fillRect(0, 0, rect.width, rect.height);
+    }
+    if (verticalAmount <= 0) { context.restore(); return; }
     const vertical = context.createLinearGradient(0, fieldTop, 0, fieldBottom);
+    // Eased, so lines thin out into the page rather than meeting a visible band.
+    const v = Math.max(1e-4, verticalAmount);
     vertical.addColorStop(0, '#0000');
-    vertical.addColorStop(amount, '#000');
-    vertical.addColorStop(1 - amount, '#000');
+    vertical.addColorStop(v * 0.5, '#00000040');
+    vertical.addColorStop(v, '#000');
+    vertical.addColorStop(1 - v, '#000');
+    vertical.addColorStop(1 - v * 0.5, '#00000040');
     vertical.addColorStop(1, '#0000');
     context.fillStyle = vertical;
     context.fillRect(0, 0, rect.width, rect.height);
@@ -244,7 +254,7 @@ export function createLabRenderer(canvas) {
   function label(text, x, y, align = 'left') {
     context.save();
     context.fillStyle = '#596860';
-    context.font = '400 14px "Avenir Next", AvenirNext, "Segoe UI", sans-serif';
+    context.font = '400 15px "Avenir Next", AvenirNext, "Segoe UI", sans-serif';
     context.textAlign = align;
     context.textBaseline = 'alphabetic';
     context.fillText(text, x, y);
@@ -299,7 +309,7 @@ export function createLabRenderer(canvas) {
       for (const edge of network?.edges ?? []) route(edge.points, '#8daa91', settings.lineWidth);
     }
 
-    boundaryMask(rect, bounds, settings.edgeFade);
+    boundaryMask(rect, bounds, settings.edgeFade, settings.verticalFade);
 
     if (selected) {
       route(

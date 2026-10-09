@@ -81,7 +81,7 @@ test('network adapter derives safe generator controls around spacing values', ()
 
   assert.deepEqual(options, {
     seed: 'choices-network-1', width: 1260, height: 740, maxAge: 70,
-    maxTips: 67, maxEdges: 267, sampleAgeStep: 1,
+    maxTips: 67, maxEdges: Math.round(67 * (4 + 12 * 0.85)) - 1, sampleAgeStep: 1,
     splitProbability: 1, splitMin: 0.5789, splitMax: 1.4211,
     openingSplitMin: 1, openingSplitMax: 3, openingBurst: 1, firstSplitAge: 0.1,
     turnStrength: 5.2, turnMin: 4.5, turnMax: 14,
@@ -92,6 +92,7 @@ test('network adapter derives safe generator controls around spacing values', ()
     forkSpread: 150, wideForkLevels: 1, laterBranchSpacing: 12,
     boundaryMode: 'exit', exitMargin: 40,
     envelopeAge: 25, settleYears: 6, waveStrength: 5.2 / 4.8, openingAngle: 150, endingRate: 0.01,
+    fanOut: 0.85, centerBias: 0.5, bigForkChance: 0.25, bigForkAge: 8,
     yPadding: 8,
   });
   assert.doesNotThrow(() => generateNetwork(options));
