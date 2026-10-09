@@ -93,3 +93,48 @@ export function person({ shirt = '#285442', hair = '#3a2a1f', ball = false, vari
     ${ball ? soccerBall(50.8, 51.3, 7.3) : ''}
   </svg>`;
 }
+
+// Alfredo and his dad on the hike map, in Maya's drawing language: a big round head, two ink dot eyes, one
+// hair shape, a T-shirt, round-capped limbs, dark rounded shoes and a flat ground shadow. SVG groups in the
+// map's units, feet at (0, 0), facing right. While they walk (`.walking` on an ancestor) each leg and the near
+// arm swing about the hip or shoulder (`walk-swing`, a and b out of step) and the body dips at each step
+// (`walk-bob`); the CSS that moves them is in journey.css.
+const TROUSERS = '#3b4a44';
+const swing = (x, y, phase, body, rest = 0) => `<g transform="translate(${x} ${y}) rotate(${rest})"><g class="walk-swing ${phase}">${body}</g></g>`;
+const shoe = (x, y, r) => `<path d="M${x} ${y}h${+(r * 1.9).toFixed(1)}" stroke="${INK}" stroke-width="${r * 2}" stroke-linecap="round"/>`;
+const limb = (d, color, width) => `<path d="${d}" stroke="${color}" stroke-width="${width}" stroke-linecap="round" fill="none"/>`;
+const shadow = (rx, ry) => `<path d="M${-rx} .6a${rx} ${ry} 0 1 0 ${2 * rx} 0a${rx} ${ry} 0 1 0 ${-2 * rx} 0z" fill="${INK}" opacity=".13"/>`;
+
+/** Alfredo, about 49 units tall, his head about 38% of that: a yellow T-shirt and dark shorts. */
+export function alfredo() {
+  const skin = '#c99a74';
+  const leg = `${limb('M0 5.6V14.6', skin, 4)}${shoe(0.2, 16, 2)}${limb('M0 -.4V6.6', TROUSERS, 5.8)}`;
+  return `<g class="walker alfredo">${shadow(9.6, 2.2)}<g class="walk-bob">
+    ${swing(-2.2, -18, 'b', leg, 7)}${swing(2.4, -18, 'a', leg, -6)}
+    ${limb('M.4 -31.5V-28', skin, 3.8)}
+    <path d="M-5.3 -29.6Q0 -30.9 5.4 -29.6L8.2 -25.2 6 -23.8 5.9 -19Q5.9 -16.6 3.8 -16.6H-3.8Q-5.9 -16.6 -5.9 -19L-6.1 -23.8 -8 -25.2Z" fill="${SUN}"/>
+    ${swing(5, -26.6, 'b', limb('M0 0Q2.2 4.6 1.4 9', skin, 4))}
+    <circle cx=".8" cy="-38.8" r="8.6" fill="${skin}"/>
+    <path d="M8.9 -41.4C9.6 -44.4 8 -47.2 5.3 -48 4.4 -49.8 1.6 -50.2 -.3 -49.2 -2.4 -50.1 -5.4 -49.6 -6.4 -47.6 -9.2 -46.8 -10.4 -43.8 -9.6 -41.1 -10.4 -38.8 -9.8 -36.4 -8.2 -35L-6.2 -34.6C-5.6 -37.2 -4.4 -39.4 -2.6 -40.6 .2 -41.2 2.6 -42.6 3.6 -44.4 4.6 -42.6 6.6 -41.4 8.9 -41.4Z" fill="#2c2019"/>
+    <path d="${dot(1.5, -37.4, 1.05)}${dot(6.2, -37.4, 1.05)}" fill="${INK}"/>
+  </g></g>`;
+}
+
+/** His dad, about 72 units tall (1.5 times Alfredo), his head about 27% of that: a short beard, a green
+ *  T-shirt, long dark trousers and a backpack. */
+export function dad() {
+  const skin = '#d9b18e';
+  const leg = `${limb('M0 0V26.4', TROUSERS, 5.4)}${shoe(0.4, 28.6, 2.3)}`;
+  return `<g class="walker dad">${shadow(13, 2.6)}<g class="walk-bob">
+    ${swing(-2.4, -31, 'a', leg, 5)}${swing(2.6, -31, 'b', leg, -4.5)}
+    ${limb('M.6 -54V-49', skin, 4.4)}
+    <rect x="-13.2" y="-50.6" width="10.4" height="20" rx="4" fill="#6f917a"/>
+    <rect x="-13.2" y="-41.6" width="6.4" height="8.4" rx="2.4" fill="${SAGE}"/>
+    <path d="M-6.6 -50.4Q0 -52.2 6.8 -50.4L10.2 -45 7.6 -43.2 7.2 -31.8Q7.2 -29.4 4.8 -29.4H-4.6Q-7 -29.4 -7 -31.8L-7.2 -43.2 -8.4 -44.6Z" fill="${FOREST}"/>
+    ${limb('M-4 -50.6Q2.6 -53 4.6 -43.4', '#6f917a', 2.2)}
+    ${swing(6.4, -46.4, 'a', limb('M0 0Q2.8 6.4 1.6 13.2', skin, 4.2))}
+    <circle cx="1" cy="-61.6" r="9.4" fill="${skin}"/>
+    <path d="M10.2 -64C10 -69.4 5.8 -72.4 .6 -72.2 -5.4 -72 -9.6 -67.6 -9.8 -62 -9.9 -59 -9 -56.6 -7.4 -55L-5.6 -55.2C-6 -57.4 -5.6 -60.2 -4 -62 -1 -62.6 2.6 -63.4 5.2 -65.4 6.8 -64.4 8.4 -64 10.2 -64ZM-6.2 -57.4C-4.6 -56.2 -2.4 -55.6 .4 -56.2 2.4 -56.8 3.4 -57.6 4.8 -57.4 6.6 -57.2 8.6 -57.6 10.1 -58.8 9.6 -55.4 7.4 -52.8 4.4 -52.3 .4 -51.6 -4 -53.6 -6.2 -57.4Z" fill="#4a3526"/>
+    <path d="${dot(1.8, -60.4, 1.15)}${dot(7, -60.4, 1.15)}" fill="${INK}"/>
+  </g></g>`;
+}
