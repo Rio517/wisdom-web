@@ -8,6 +8,7 @@ import { createSkillsScene } from './journey-skills.js';
 import { createPlayScene } from './journey-play.js';
 import { createExploreScene } from './journey-explore.js';
 import { createSortBoard } from './journey-sort.js';
+import { watchField } from '../../components/stage-field.js';
 
 const beats = beatList();
 const $ = selector => document.querySelector(selector);
@@ -35,6 +36,45 @@ if (scenes.paths.failed) {
   fallback.className = 'stage-note';
   fallback.textContent = t('lesson.ui.mapUnavailable');
   roots.paths.prepend(fallback);
+}
+
+// ——— Cover (design 002 v02 · A) ———
+// The first step fills the stage: the question in the middle of a faint
+// field. Begin lifts the words away, the paths grow out of the Beginning,
+// and then the narration arrives for the next step.
+const journeyRoot = $('#journey');
+const skipLink = document.querySelector('.skip-link');
+const cover = document.createElement('div');
+cover.className = 'cover-stage';
+cover.id = 'cover';
+cover.innerHTML = `<p class="beat-kicker lift">${escapeHTML(t('lesson.beat.cover.kicker'))}</p>
+  <h1 class="lift" id="cover-heading" tabindex="-1">${escapeHTML(t('map.coverQuestion'))}</h1>
+  <p class="cover-hint lift">${escapeHTML(t('map.coverHint'))}</p>
+  <div class="cover-actions lift"><button class="next-button" type="button" data-cover-begin>${escapeHTML(t('lesson.beat.cover.next'))}</button></div>`;
+roots.paths.append(cover);
+const pathsStack = roots.paths.querySelector('.map-stack');
+const ghost = document.createElement('img');
+ghost.id = 'map-ghost';
+ghost.alt = '';
+ghost.setAttribute('aria-hidden', 'true');
+pathsStack.prepend(ghost);
+const coverField = watchField(pathsStack, roots.paths.querySelector('#map-base'), ghost);
+
+/** 'true' shows the cover, 'leaving' keeps its full-width stage while the paths grow, null is the lesson layout. */
+function setCover(state) {
+  if (state) journeyRoot.dataset.cover = state;
+  else delete journeyRoot.dataset.cover;
+  if (state === 'true') cover.getAnimations({ subtree: true }).forEach(animation => animation.cancel());
+  skipLink?.setAttribute('href', state ? '#cover' : '#narration');
+}
+
+/** The cover's lines lift and fade in turn: 480 ms each, 70 ms apart (690 ms in all). */
+function liftCover() {
+  if (prefersReducedMotion()) return;
+  [...cover.querySelectorAll('.lift')].forEach((line, position) => line.animate(
+    [{ transform: 'none', opacity: 1 }, { transform: 'translateY(-36px)', opacity: 0 }],
+    { duration: 480, delay: position * 70, easing: 'cubic-bezier(.4, 0, .7, .2)', fill: 'forwards' },
+  ));
 }
 
 let index = 0;
@@ -193,6 +233,9 @@ async function go(target, { animate = true, focus = 'none', history = 'replace' 
   const run = token;
   const item = beats[target];
   const sequential = animate && target === previousIndex + 1 && rootFor(previous.chapter.id) === rootFor(item.chapter.id) && previous.chapter === item.chapter;
+  const leavingCover = sequential && previous.beat.id === 'cover' && Boolean(journeyRoot.dataset.cover);
+  if (item.beat.id === 'cover') setCover('true');
+  else if (!leavingCover) setCover(null);
   const fragment = `#${item.fragment}`;
   if (location.hash !== fragment) {
     if (history === 'push') window.history.pushState(null, '', fragment);
@@ -206,8 +249,8 @@ async function go(target, { animate = true, focus = 'none', history = 'replace' 
   renderControls(item);
   $('#stage-description').textContent = item.beat.alt ?? '';
   $('#announcer').textContent = t('lesson.ui.announce', { chapter: item.chapter.title, step: item.beatIndex + 1, total: item.chapter.beats.length, heading: item.beat.heading });
-  if (focus === 'heading') $('#beat-heading').focus({ preventScroll: true });
-  if (focus === 'next' && !$('#next').hidden) $('#next').focus({ preventScroll: true });
+  if (focus === 'heading') (journeyRoot.dataset.cover ? $('#cover-heading') : $('#beat-heading')).focus({ preventScroll: true });
+  if (focus === 'next' && !leavingCover && !$('#next').hidden) $('#next').focus({ preventScroll: true });
 
   const rootId = rootFor(item.chapter.id);
   const zoom = animate && previous.chapter.id === 'paths' && previous.beat.id === 'outside' && item.chapter.id === 'hike' && item.beatIndex === 0;
@@ -224,8 +267,24 @@ async function go(target, { animate = true, focus = 'none', history = 'replace' 
     if (run.cancelled) return;
     if (rootId === 'skills' && item.beat.id === 'fork' && animate) scene.show('fork', { animate: true, token: run });
     if (rootId === 'play' || rootId === 'explore') scene.show();
+  } else if (leavingCover) {
+    // Full width while the paths grow; the narration arrives once they have.
+    setCover('leaving');
+    liftCover();
+    if (!(await wait(320, run))) return;
+    await scene.show(item.beat.id, { from: 'cover', animate: true, token: run });
+    if (run.cancelled) return;
+    setCover(null);
+    const narration = $('#narration');
+    if (!prefersReducedMotion()) {
+      narration.classList.remove('is-arriving');
+      void narration.offsetWidth;
+      narration.classList.add('is-arriving');
+    }
+    if (focus === 'next' && !$('#next').hidden) $('#next').focus({ preventScroll: true });
   } else {
     scene.show(item.beat.id, { from: sequential ? previous.beat.id : null, animate: sequential, token: run });
+    if (item.beat.id === 'cover') coverField.snapshot();
   }
   const board = scenes.hike.sortBoard;
   board.hidden = item.beat.id !== 'sort';
@@ -243,6 +302,7 @@ async function go(target, { animate = true, focus = 'none', history = 'replace' 
 
 // ——— Events ———
 $('#next').addEventListener('click', () => go(index + 1, { focus: 'next' }));
+cover.querySelector('[data-cover-begin]').addEventListener('click', () => go(1, { focus: 'next' }));
 $('#back').addEventListener('click', () => go(index - 1, { animate: false, focus: index - 1 === 0 ? 'heading' : 'none' }));
 $('#chapter-list').addEventListener('click', event => {
   const button = event.target.closest('[data-chapter]');

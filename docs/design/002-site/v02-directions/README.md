@@ -1,6 +1,6 @@
 # v02 — Directions
 
-Created: 2026-10-09. Updated: 2026-10-09. Status: path field implemented on the working branch; three home and cover directions ready as playable prototypes; owner pick pending.
+Created: 2026-10-09. Updated: 2026-10-09. Status: path field implemented on the working branch; three home and cover directions ready as playable prototypes; the owner picked A on 2026-10-09; built in [v03](../v03-stage-build/README.md).
 
 Question: after the owner's feedback on the launched home page and lesson cover, (1) does the path field keep splitting and fan out toward the top and bottom instead of running level, and (2) which of three centred, animated directions should the home page and the lesson cover take?
 
@@ -75,11 +75,11 @@ After the design review, the directions use a stronger right-hand fade (0.16, a 
 
 ### Review images
 
-Before the click, mid-animation and settled, at 1440 × 900 and 2560 × 1440 (after the review fixes). Baseline (today's home, with the round's shell and field fixes): [1440](baseline-home-1440-v01.png) · [2560](baseline-home-2560-v01.png).
+Before the click, mid-animation and settled (A home settled: v02 captures replace v01, which were taken before the click), at 1440 × 900 and 2560 × 1440 (after the review fixes). Baseline (today's home, with the round's shell and field fixes): [1440](baseline-home-1440-v01.png) · [2560](baseline-home-2560-v01.png).
 
 **A · Stage**
 
-- Home: [before, 1440](dir-a-home-1-before-1440-v01.png) · [mid, 1440](dir-a-home-2-mid-1440-v01.png) · [settled, 1440](dir-a-home-3-settled-1440-v01.png) · [before, 2560](dir-a-home-1-before-2560-v01.png) · [mid, 2560](dir-a-home-2-mid-2560-v01.png) · [settled, 2560](dir-a-home-3-settled-2560-v01.png)
+- Home: [before, 1440](dir-a-home-1-before-1440-v01.png) · [mid, 1440](dir-a-home-2-mid-1440-v01.png) · [settled, 1440](dir-a-home-3-settled-1440-v02.png) · [before, 2560](dir-a-home-1-before-2560-v01.png) · [mid, 2560](dir-a-home-2-mid-2560-v01.png) · [settled, 2560](dir-a-home-3-settled-2560-v02.png)
 - Lesson cover: [before, 1440](dir-a-cover-1-before-1440-v01.png) · [mid, 1440](dir-a-cover-2-mid-1440-v01.png) · [settled, 1440](dir-a-cover-3-settled-1440-v01.png) · [before, 2560](dir-a-cover-1-before-2560-v01.png) · [mid, 2560](dir-a-cover-2-mid-2560-v01.png) · [settled, 2560](dir-a-cover-3-settled-2560-v01.png)
 
 **B · Left third**

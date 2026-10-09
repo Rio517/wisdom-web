@@ -262,7 +262,9 @@ export function createLabRenderer(canvas) {
   }
 
   function paint(network, projection, inputSettings = {}, selected = false, future = null) {
-    const rect = canvas.getBoundingClientRect();
+    // Layout size: a transform on an ancestor must not change the bitmap.
+    const box = canvas.getBoundingClientRect();
+    const rect = { width: canvas.clientWidth || box.width, height: canvas.clientHeight || box.height };
     const pixelRatio = canvas.ownerDocument?.defaultView?.devicePixelRatio
       ?? globalThis.window?.devicePixelRatio ?? 1;
     const bitmap = canvasBitmap(rect, pixelRatio);

@@ -158,11 +158,32 @@ h1, h2, h3, h4 { font-family: var(--font-field); font-weight: 500; }
 .callout[data-leader="down"]::before { left: 18px; top: 100%; width: 1.5px; height: var(--leader, 26px); }
 .callout[data-leader="up"]::before { left: 18px; bottom: 100%; width: 1.5px; height: var(--leader, 26px); }
 @keyframes callout-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
-.cover-line { @apply absolute grid gap-3; transform: translateY(-50%); max-width: min(560px, 70%); animation: callout-in 800ms 200ms cubic-bezier(.2,.7,.2,1) both; }
-.cover-line.is-leaving { animation: cover-out 380ms ease-in forwards; }
-@keyframes cover-out { from { opacity: 1; transform: translateY(-50%); } to { opacity: 0; transform: translate(-16px, -50%); } }
-.cover-line strong { font: 500 clamp(40px, 4.4vw, 64px)/1.02 var(--font-field); letter-spacing: -.025em; color: var(--color-ink); }
-.cover-line span { @apply text-[17px]; color: var(--color-quiet); }
+/* ——— Cover (design 002 v02 · A): the question over a faint field, full width; Begin grows the paths ——— */
+.cover-stage { display: none; }
+.journey[data-cover] { grid-template-columns: minmax(0, 1fr); }
+.journey[data-cover] .narration { display: none; }
+.journey[data-cover] .stage { margin: 4px 20px 20px; background: transparent; }
+.journey[data-cover="true"] .cover-stage { display: block; position: absolute; z-index: 3; left: 50%; top: 47%; transform: translate(-50%, -50%); width: min(1000px, calc(100% - 96px)); text-align: center; }
+.journey[data-cover="leaving"] .cover-stage { display: block; position: absolute; z-index: 3; left: 50%; top: 47%; transform: translate(-50%, -50%); width: min(1000px, calc(100% - 96px)); text-align: center; pointer-events: none; }
+/* Paper behind the words, so the faint field never runs through them. */
+.cover-stage::before { content: ""; position: absolute; inset: -12% -18%; z-index: -1; background: radial-gradient(closest-side, var(--color-paper) 55%, #fbfbf800); transition: opacity 400ms ease; }
+/* The paper goes with the words, so the growing paths aren't cut by it. */
+.journey[data-cover="leaving"] .cover-stage::before { opacity: 0; }
+.cover-stage .beat-kicker { font-size: clamp(15px, 1vw, 18px); }
+.cover-stage h1 { margin: 0; font: 500 clamp(48px, 5.4vw, 104px)/1 var(--font-field); letter-spacing: -.03em; color: var(--color-ink); text-wrap: balance; outline: none; }
+.cover-hint { max-width: 40ch; margin: 26px auto 0; font: clamp(22px, 1.6vw, 30px)/1.45 var(--font-field); color: var(--color-ink); text-wrap: pretty; }
+.cover-actions { display: flex; justify-content: center; margin-top: 34px; }
+.cover-actions .next-button { min-height: 54px; padding: 0 30px; font-size: 18px; }
+/* The faint field is a still image (src/components/stage-field.js) and clears as the paths start to grow. */
+#map-ghost { display: none; position: absolute; inset: 0; width: 100%; height: 100%; opacity: .12; }
+.journey[data-cover] .map-stack[data-grow="hidden"] #map-ghost { display: block; }
+/* The paths grow out of the Beginning as a widening circle (the lesson's other steps keep their wipe). */
+.journey[data-cover] .map-stack #map-base { clip-path: circle(0px at var(--ox) var(--oy)); }
+.journey[data-cover] .map-stack[data-grow="hidden"] #map-base { visibility: hidden; }
+.journey[data-cover] .map-stack[data-grow="growing"] #map-base { clip-path: circle(var(--reach) at var(--ox) var(--oy)); transition: clip-path 2.2s cubic-bezier(.33, .12, .25, 1), opacity 700ms ease; }
+.journey[data-cover] .map-stack[data-grow="shown"] #map-base { clip-path: none; }
+.narration.is-arriving { animation: narration-in 520ms cubic-bezier(.2, .7, .2, 1) both; }
+@keyframes narration-in { from { opacity: 0; transform: translateX(28px); } to { opacity: 1; transform: none; } }
 .stage-note { @apply m-0 px-6 pb-4 pt-2 text-[15px]; color: var(--color-quiet); }
 
 /* ——— Map chips and key ——— */
@@ -501,6 +522,8 @@ dialog::backdrop { background: #23302d66; }
   .chapter-trail { grid-column: 1 / -1; grid-row: 2; max-width: none; }
   .journey { height: auto; grid-template-columns: 1fr; }
   .stage { margin: 0 16px; height: 56vh; min-height: 470px; }
+  .journey[data-cover] .stage { margin: 0 16px 16px; height: calc(100dvh - 128px); min-height: 520px; }
+  .journey[data-cover="true"] .cover-stage { width: calc(100% - 48px); }
   .stage:has(> .scene-skills:not([hidden])) { height: max(56vh, 680px); } /* two lanes of skill boxes need the room */
   .narration { padding: 8px 24px 28px; }
   .narration-body { overflow: visible; }

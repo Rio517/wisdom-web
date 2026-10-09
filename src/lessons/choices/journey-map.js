@@ -85,23 +85,33 @@ export function createPathsScene(root, { labels = true, edgeFade = null } = {}) 
     if (!snapshot) snapshot = createExplorationSession({ age: STORY_AGE }).snapshot();
     return snapshot;
   };
-  const rect = () => stack.getBoundingClientRect();
+  // Layout size, which a transform (a scene fading in at 98.5%) doesn't
+  // change; the on-screen box would, and every beat would repaint for it.
+  const rect = () => {
+    const box = stack.getBoundingClientRect();
+    return { left: box.left, top: box.top, width: stack.clientWidth || box.width, height: stack.clientHeight || box.height };
+  };
   const view = () => fitOverview(data().network.bounds, rect(), undefined, data().network.maxAge);
 
-  // Both canvases depend only on the stage's size, so a beat change that
-  // keeps the size reuses them; repainting on every beat cost a long frame
-  // right as an animation started.
-  let paintedFor = '';
-  function paintBase() {
+  // Each canvas depends only on the stage's size, so a beat change that keeps
+  // the size reuses it; repainting on every beat cost a long frame right as
+  // an animation started. The Today canvas is painted only once a beat shows
+  // it (the cover and the first grow don't).
+  const painted = { base: '', today: '' };
+  function paintBase(withToday = true) {
     if (failed) return;
     const r = rect();
     const size = `${Math.round(r.width)}x${Math.round(r.height)}@${devicePixelRatio || 1}`;
-    if (size === paintedFor) return;
-    paintedFor = size;
     const { network, projection } = data();
-    if (!overview) overview = generateNetwork(networkOptionsForLab(LAB_DEFAULTS, { today: STORY_AGE }));
-    baseRenderer.paint(overview, projection, renderSettings, false);
-    todayRenderer.paint(network, projection, renderSettings, true);
+    if (painted.base !== size) {
+      painted.base = size;
+      if (!overview) overview = generateNetwork(networkOptionsForLab(LAB_DEFAULTS, { today: STORY_AGE }));
+      baseRenderer.paint(overview, projection, renderSettings, false);
+    }
+    if (withToday && painted.today !== size) {
+      painted.today = size;
+      todayRenderer.paint(network, projection, renderSettings, true);
+    }
   }
 
   function chooseClosed() {
@@ -362,31 +372,8 @@ export function createPathsScene(root, { labels = true, edgeFade = null } = {}) 
 
   function renderCallouts(mode) {
     if (!labels && callouts) { callouts.replaceChildren(); return; }
-    if (mode === 'cover-leaving') {
-      const title = callouts.querySelector('.cover-line');
-      callouts.replaceChildren(...(title ? [title] : []));
-      if (title) {
-        title.classList.add('is-leaving');
-        title.addEventListener('animationend', () => title.remove(), { once: true });
-        setTimeout(() => title.remove(), 600);
-      }
-      return;
-    }
+    // The cover's words are page HTML now (the lesson cover, design 002 v02 · A).
     callouts.replaceChildren();
-    if (!failed && mode === 'cover') {
-      const birth = view().world(data().projection.past[0]);
-      const title = document.createElement('div');
-      title.className = 'cover-line';
-      title.style.left = `${birth.x + 64}px`;
-      title.style.top = `${birth.y}px`;
-      const question = document.createElement('strong');
-      question.textContent = t('map.coverQuestion');
-      const hint = document.createElement('span');
-      hint.textContent = t('map.coverHint');
-      title.append(question, hint);
-      callouts.append(title);
-      return;
-    }
     if (failed || !['travel', 'outside', 'wrap'].includes(mode)) return;
     const v = view();
     const r = rect();
@@ -513,7 +500,7 @@ export function createPathsScene(root, { labels = true, edgeFade = null } = {}) 
 
   async function show(beatId, { from = null, animate = true, token } = {}) {
     current = beatId;
-    paintBase();
+    paintBase(!['cover', 'many'].includes(beatId));
     if (beatId === 'outside' && !closedMarks.length) closedMarks = chooseMarks();
     if (!animate || failed) { setState(FINAL[beatId]); return; }
 
@@ -566,7 +553,7 @@ export function createPathsScene(root, { labels = true, edgeFade = null } = {}) 
 
   function resize() {
     if (!current || root.hidden) return;
-    paintBase();
+    paintBase(!['cover', 'many'].includes(current));
     if (fxMode === 'travel') { drawFx(); return; }
     setState(FINAL[current] ?? FINAL.many);
   }
