@@ -274,27 +274,44 @@ h1, h2, h3, h4 { font-family: var(--font-field); font-weight: 500; }
 .explore-actions { display: flex; gap: 8px; }
 
 /* ——— Hike ——— */
-.scene-hike svg.hike-map { @apply absolute inset-0 block h-full w-full; --path: #dfcfae; --path-edge: #a99572; --path-ink: #6f5d40; }
-/* Trail: a tan footpath with a darker edge and a dashed centre line. Never blue. */
-.hike-map .trail-edge { fill: none; stroke: var(--path-edge); stroke-width: 15; stroke-linecap: round; stroke-linejoin: round; }
-.hike-map .trail-planned { fill: none; stroke: var(--path); stroke-width: 11; stroke-linecap: round; stroke-linejoin: round; }
-.hike-map .trail-dash { fill: none; stroke: var(--path-ink); stroke-width: 2.6; stroke-dasharray: 9 9; stroke-linecap: butt; }
+/* The map's three layers share one box and one coordinate system: the background drawing, the water
+   (a canvas drawn by journey-hike-water.js), then the trail, the people and the labels. */
+.scene-hike svg.hike-bg, .scene-hike canvas.hike-water, .scene-hike svg.hike-map { @apply absolute inset-0 block h-full w-full; }
+.scene-hike canvas.hike-water { pointer-events: none; transition: opacity 300ms ease; }
+/* The water fades in once it has drawn, rather than popping in after the map. */
+.scene-hike canvas.hike-water[data-ready="false"] { opacity: 0; }
+.scene-hike svg.hike-map { --path: #dfcfae; --path-edge: #a99572; --path-ink: #6f5d40; }
+.hike-bg .lake-shore { fill: var(--color-paper-deep); stroke: var(--color-paper-deep); stroke-width: 5; stroke-linejoin: round; }
+/* Trail: a tan footpath with a darker edge and a dashed centre line, drawn as bands that narrow
+   with distance. It opens into the yard at the trailhead in the same colours. Never blue. */
+.hike-map .trail-edge-fill { fill: var(--path-edge); }
+.hike-map .trail-planned-fill { fill: var(--path); }
+.hike-map .trail-dash-fill { fill: var(--path-ink); }
 .hike-map .trail-walked { fill: none; stroke: var(--color-forest); stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
 .hike-map .trail-walked.first { stroke: var(--color-sage); stroke-width: 5; }
+.hike-map .trail-start { fill: var(--color-forest); }
 .hike-map .trail-closed-seg { fill: none; stroke: var(--color-clay); stroke-width: 5; stroke-dasharray: 3 8; stroke-linecap: round; opacity: 0; transition: opacity 500ms; }
-.hike-map .trail-alt { fill: none; stroke: var(--color-forest); stroke-width: 5; stroke-linecap: round; }
 .hike-map .trail-alt-plan { opacity: 0; transition: opacity 500ms; }
 .hike-map .loop { fill: none; stroke: var(--color-forest); stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; transition: opacity 500ms; }
-/* Water: lake blue, wide, with a darker bank line and flow strokes. */
-.hike-map .water-fill { fill: var(--color-lake-soft); stroke: var(--color-lake); stroke-width: 3; }
-.hike-map .water-fill-flat { fill: var(--color-lake-soft); }
-.hike-map .water-glint { stroke: var(--color-lake); stroke-width: 3; stroke-linecap: round; fill: none; opacity: .7; }
-.hike-map .stream-edge { fill: none; stroke: var(--color-lake); stroke-width: 34; stroke-linecap: butt; }
-.hike-map .stream-water { fill: none; stroke: var(--color-lake-soft); stroke-width: 28; stroke-linecap: butt; }
-.hike-map .stream-flow { fill: none; stroke: var(--color-lake); stroke-width: 3.5; stroke-linecap: round; stroke-dasharray: 16 34; animation: flow 1.6s linear infinite; }
-.hike-map .splash { fill: none; stroke: white; stroke-width: 3; stroke-linecap: round; }
-@keyframes flow { to { stroke-dashoffset: -50; } }
-/* Labels: ink on a paper-coloured plate; sizes come from the map scale (16px and 15px on screen). */
+/* The lake's far shore is the second hill band's own colour, so the lake sits in the land. */
+.hike-map .lake-far-bank { fill: #d2ddd3; }
+.hike-map .lake-waterline { fill: none; stroke: var(--color-water-bank); stroke-width: 1.4; stroke-linecap: round; }
+.hike-map .bridge-deck { fill: #b59a78; }
+.hike-map .bridge-face { fill: #7b6a55; }
+.hike-map .bridge-plank { fill: none; stroke: #7b6a55; stroke-width: .7; opacity: .6; }
+.hike-map .bridge-post { fill: none; stroke: #7b6a55; stroke-width: 2.2; stroke-linecap: round; }
+.hike-map .bridge-rail { fill: none; stroke: #7b6a55; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.hike-map .bridge-post.far, .hike-map .bridge-rail.far { stroke-width: 1.8; }
+.hike-map .cabin-wall { fill: var(--color-clay); }
+.hike-map .cabin-plank { stroke: var(--color-cello); stroke-width: 1.3; }
+.hike-map .cabin-roof { fill: var(--color-forest-deep); }
+.hike-map .cabin-door { fill: var(--color-cello); }
+.hike-map .cabin-window { fill: var(--color-sun-soft); stroke: var(--color-cello); stroke-width: 1.5; }
+.hike-map .cabin-frame { stroke: var(--color-cello); stroke-width: 1.3; }
+.hike-map .cabin-chimney { fill: var(--color-mist); }
+.hike-map .cabin-chimney-cap { fill: var(--color-quiet); }
+.hike-map .table-wood { fill: var(--color-clay); }
+.hike-map .table-leg { stroke: var(--color-cello); stroke-width: 2; stroke-linecap: round; fill: none; }
 .hike-map .place-label { font: 700 var(--lbl, 20px) var(--font-guide); fill: var(--color-ink); paint-order: stroke; stroke: var(--color-paper); stroke-width: calc(var(--lbl, 20px) * .45); stroke-linejoin: round; stroke-linecap: round; }
 .hike-map .place-label.small { font-size: var(--lbl-s, 19px); font-weight: 600; fill: var(--color-ink); }
 .hike-map .place-label.clay { fill: var(--color-clay); }
@@ -305,12 +322,20 @@ h1, h2, h3, h4 { font-family: var(--font-field); font-weight: 500; }
 .hike-map .rain line:nth-child(2n) { animation-delay: -300ms; }
 .hike-map .rain line:nth-child(3n) { animation-delay: -600ms; }
 @keyframes rain { from { transform: translate(0, -14px); opacity: 0; } 30% { opacity: 1; } to { transform: translate(-6px, 26px); opacity: 0; } }
-.hike-map .falls-line { stroke: white; stroke-width: 3; stroke-linecap: round; stroke-dasharray: 8 10; animation: falls 1.2s linear infinite; }
-@keyframes falls { to { stroke-dashoffset: -36; } }
+/* Alfredo and his dad walking: legs and the near arms swing about the hip or shoulder, and the body
+   dips a little at each step. Still unless they walk, and still under reduced motion. */
 .hike-map .walkers { transition: none; }
-.hike-map .walker-bob { animation: bob 520ms ease-in-out infinite alternate; animation-play-state: paused; }
-.hike-map .walkers.walking .walker-bob { animation-play-state: running; }
-@keyframes bob { from { transform: translateY(0); } to { transform: translateY(-2.5px); } }
+.hike-map .walk-swing { transform-origin: 0 0; }
+.hike-map .walkers.walking .walk-swing.a { animation: walk-stride 1040ms linear infinite; }
+.hike-map .walkers.walking .walk-swing.b { animation: walk-stride 1040ms linear infinite reverse; }
+.hike-map .walkers.walking .walk-bob { animation: walk-step 520ms ease-in-out infinite; }
+@keyframes walk-stride {
+  0% { transform: rotate(0deg); animation-timing-function: ease-out; }
+  25% { transform: rotate(16deg); animation-timing-function: ease-in-out; }
+  75% { transform: rotate(-16deg); animation-timing-function: ease-in; }
+  100% { transform: rotate(0deg); }
+}
+@keyframes walk-step { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(1.6px); } }
 .hike-map .trail-closed-seg.alarm { animation: alarm 520ms ease-in-out 3; }
 @keyframes alarm { 50% { stroke-width: 9; stroke: #b5532b; } }
 @keyframes pop { from { transform: scale(0); } to { transform: scale(1); } }
@@ -569,5 +594,6 @@ dialog::backdrop { background: #23302d66; }
 
 @media (prefers-reduced-motion: reduce) {
   .skill-box.is-growing { animation: none; }
+  .hike-map .walkers.walking .walk-swing, .hike-map .walkers.walking .walk-bob { animation: none; }
   *, *::before, *::after { animation-duration: 0.001ms !important; animation-delay: 0s !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
 }
