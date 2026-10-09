@@ -333,10 +333,8 @@ function run() {
       const button = $('#life-pause');
       if (!button) return;
       button.textContent = t(state.playing || !state.started ? 'lesson.ui.pause' : 'lesson.ui.play');
-      if (state.complete) {
-        if (document.activeElement === button) $('#next').focus({ preventScroll: true });
-        button.parentElement.classList.add('is-done');
-      }
+      if (state.complete && document.activeElement === button) $('#next').focus({ preventScroll: true });
+      button.parentElement.classList.toggle('is-done', state.complete);
     },
   });
   player.setPace(settings.pace);

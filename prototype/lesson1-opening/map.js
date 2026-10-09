@@ -365,7 +365,11 @@ export function createPathsScene(root, { edgeFade = null } = {}) {
     adds: { grow: 'shown', fxModeValue: 'life', calloutMode: 'adds' },
   };
 
+  // True from the hike's arrival until the paths show again: a resize then (the stage takes the
+  // hike's height below 990px) must not bring the chips back or repaint a field that is fading out.
+  let leaving = false;
   function restore() {
+    leaving = false;
     for (const canvas of [baseCanvas, fxCanvas, lifeCanvas]) { canvas.style.opacity = ''; canvas.style.transition = ''; }
   }
 
@@ -400,6 +404,7 @@ export function createPathsScene(root, { edgeFade = null } = {}) {
 
   /** The hike's arrival (§4): the field goes, then Sam's route. */
   function fadeField(duration) {
+    leaving = true;
     callouts.querySelectorAll('.map-chip').forEach(element => element.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 160, fill: 'forwards' }));
     stopPulse();
     baseCanvas.style.transition = `opacity ${duration}ms ease`;
@@ -412,7 +417,7 @@ export function createPathsScene(root, { edgeFade = null } = {}) {
 
   function resize() {
     size = null; route = null;
-    if (!current || root.hidden) return;
+    if (!current || root.hidden || leaving) return;
     paintBase();
     setState(FINAL[current] ?? FINAL.life);
   }
