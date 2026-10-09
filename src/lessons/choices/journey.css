@@ -303,8 +303,8 @@ h1, h2, h3, h4 { font-family: var(--font-field); font-weight: 500; }
 /* The bar uses the lanes' own columns: "Time" over the fork, the steps from the lane edge. */
 .season-bar { @apply mb-3 grid items-center; grid-template-columns: var(--fork-w) minmax(0, 1fr); min-height: 52px; }
 .season-bar label { @apply text-[15px] font-semibold; color: var(--color-quiet); }
-.season-track { @apply flex min-w-0 items-center gap-4; }
-.season-steps { @apply relative grid min-w-0 flex-1; grid-auto-flow: column; grid-auto-columns: 1fr; max-width: 620px; --dot-y: 12px; }
+.season-track { @apply flex min-w-0 flex-wrap items-center gap-x-4 gap-y-1; }
+.season-steps { @apply relative grid min-w-0; flex: 1 1 100%; grid-auto-flow: column; grid-auto-columns: 1fr; max-width: 620px; --dot-y: 12px; }
 .season-steps::before { content: ""; position: absolute; left: 10%; right: 10%; top: calc(var(--dot-y) - 1.5px); height: 3px; background: var(--color-mist); border-radius: 3px; }
 .season-steps .season-fill { position: absolute; left: 10%; top: calc(var(--dot-y) - 1.5px); height: 3px; background: var(--color-forest); border-radius: 3px; transition: width 600ms cubic-bezier(.3,.7,.2,1); }
 .season-step { @apply relative z-10 flex min-h-11 flex-col items-center justify-start rounded-full border-0 bg-transparent px-1 text-[15px] leading-tight; padding-top: calc(var(--dot-y) - 8px); color: var(--color-quiet); }
@@ -315,7 +315,7 @@ h1, h2, h3, h4 { font-family: var(--font-field); font-weight: 500; }
 .season-step:not(:disabled):hover { color: var(--color-forest); }
 .season-step:disabled { cursor: default; }
 .scrub-hint { display: none; }
-.scene-skills[data-scrub="true"] .scrub-hint { display: inline-block; @apply ml-2 rounded-full px-3 py-1 text-[15px] font-semibold; background: var(--color-sun-soft); color: #7a5412; }
+.scene-skills[data-scrub="true"] .scrub-hint { display: inline-block; max-width: 100%; @apply rounded-full px-3 py-1 text-[15px] font-semibold; background: var(--color-sun-soft); color: #7a5412; }
 .lanes-wrap { @apply relative grid min-h-0; grid-template-columns: var(--fork-w) minmax(0, 1fr); }
 .fork { position: absolute; left: 0; top: 0; width: var(--fork-w); height: 100%; overflow: visible; }
 .fork path { fill: none; stroke-width: 4; stroke-linecap: round; transition: stroke-dashoffset 900ms cubic-bezier(.3,.7,.2,1); stroke-dasharray: 300; stroke-dashoffset: 0; }
