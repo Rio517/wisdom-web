@@ -71,6 +71,7 @@ body { min-width: 0; overflow: hidden; }
 .l2-result:empty { display: none; }
 .l2-result > p, .l2-result-row > p { margin: 0; font: 17px/1.5 var(--font-field); animation: text-in 380ms ease-out both; }
 .l2-result-row { display: grid; gap: 8px; }
+.l2-start-chips { display: flex; flex-wrap: wrap; gap: 8px; }
 .l2-start-chip { display: flex; align-items: center; gap: 10px; width: fit-content; max-width: 100%; margin: 0; border-radius: 14px; padding: 8px 14px 8px 10px; background: var(--color-paper-deep); font: 15px/1.35 var(--font-guide); }
 .l2-start-chip[data-move="up"], .l2-start-chip[data-move="small"] { background: #28544214; }
 .l2-chip-icon svg { display: block; width: 24px; height: 24px; }
@@ -143,15 +144,15 @@ body { min-width: 0; overflow: hidden; }
 .l2-cal-week { display: grid; grid-template-columns: 62px minmax(0, 1fr); align-items: center; gap: 8px; }
 .l2-cal-label { font: 600 15px/1.15 var(--font-guide); color: var(--color-quiet); }
 .l2-cal-days { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 5px; margin: 0; padding: 0; list-style: none; }
-.l2-tile { position: relative; display: grid; place-items: center; aspect-ratio: 1; max-height: 40px; border: 1.5px solid var(--color-rule); border-radius: 10px; background: white; }
+.l2-tile { position: relative; display: grid; place-items: center; aspect-ratio: 1; max-height: 40px; container-type: inline-size; border: 1.5px solid var(--color-rule); border-radius: 10px; background: white; }
 .l2-tile[data-weekend="true"] { background: var(--color-paper-deep); }
 .l2-tile[data-state="today"] { border: 2px solid var(--color-forest); }
 .l2-tile-wd { font: 700 15px var(--font-guide); color: var(--color-quiet); }
 .l2-tile[data-state="done"] .l2-tile-wd { display: none; }
 .l2-tile-icons { display: none; align-items: center; justify-content: center; }
 .l2-tile[data-state="done"] .l2-tile-icons { display: flex; }
-.l2-tile-icon svg { display: block; width: 22px; height: 22px; }
-.l2-tile-icons[data-count="2"] .l2-tile-icon svg { width: 16px; height: 16px; }
+.l2-tile-icon svg { display: block; width: min(22px, 70cqw); height: min(22px, 70cqw); }
+.l2-tile-icons[data-count="2"] .l2-tile-icon svg { width: min(16px, 40cqw); height: min(16px, 40cqw); }
 .l2-tile-icons[data-count="2"] { gap: 1px; }
 
 /* ——— Panel: the Starting track (the lesson) ——— */

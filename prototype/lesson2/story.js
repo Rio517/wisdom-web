@@ -76,6 +76,8 @@ export function soccerLine(entry) {
   const day = DAYS[entry.index];
   if (day.event === 'rain') return t('l2.res.rain');
   if (entry.soccer.includes('trick')) return t('l2.res.trick');
-  if (entry.soccer.includes('soccer')) return t('l2.res.soccer');
+  // The first practice says who started it; later ones say it in a few words.
+  const first = DAYS.findIndex(other => other.kind === 'soccer' && !other.event);
+  if (entry.soccer.includes('soccer')) return t(entry.index === first ? 'l2.res.soccer' : 'l2.res.soccerAgain');
   return '';
 }

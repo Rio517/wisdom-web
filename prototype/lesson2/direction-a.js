@@ -19,6 +19,8 @@ export function start(app) {
   let decisions;
   let timer = 0;
   let checked = false;
+  let cueShown = '';
+  let feltStage = -1;
 
   const life = () => replay(decisions);
 
@@ -27,6 +29,8 @@ export function start(app) {
     plan = { routine: 'cello', moment: null, setup: null };
     decisions = [];
     checked = false;
+    cueShown = '';
+    feltStage = -1;
     ui = mountFrame(app, 'a', { onRestart: reset });
     showPlan();
   }
@@ -109,12 +113,17 @@ export function start(app) {
     const comes = fit === 'ok' || fit === 'tired';
     const last = decisions[index - 1];
     const next = last?.plan[routine] === 'skip' ? nextChanceLine(index - 1, plan.moment, index) : '';
-    const feel = comes && DAYS[index].event !== 'snag'
-      ? `<p class="l2-feel">${esc(t(`l2.feel.${startingStage(startingLevel(now.tally[routine]))}`))}</p>` : '';
+    // The feeling shows when it changes, and the cue when the plan is new.
+    const stage = startingStage(startingLevel(now.tally[routine]));
+    const feel = comes && DAYS[index].event !== 'snag' && stage !== feltStage ? `<p class="l2-feel">${esc(t(`l2.feel.${stage}`))}</p>` : '';
+    if (feel) feltStage = stage;
+    const cuePlan = `${plan.moment}/${plan.setup}`;
+    const cue = cuePlan !== cueShown ? cueLine(routine, plan.moment, plan.setup) : '';
+    cueShown = cuePlan;
     const note = fitLine(index);
     const card = addCard(ui.feed, `${dayHead(index, { routine, next })}
       ${note ? `<p class="l2-fit">${esc(note)}</p>` : ''}
-      ${cueLine(routine, plan.moment, plan.setup)}
+      ${cue}
       ${feel}
       ${optionsMarkup(options)}
       <div class="l2-result" data-role="result"></div>`, { className: 'l2-day-card', day: index });

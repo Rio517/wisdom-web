@@ -137,13 +137,13 @@ export function cueLine(routine, moment, setup) {
     <span class="l2-cue-item">${ICONS[setup]}<span>${esc(t(`l2.setup.${setup}.your`))}</span></span></p>`;
 }
 
-/** Option buttons. Each option: { label, kind, icon }. */
+/** Option buttons. Each option: { label, kind, icon }. Rest and skip labels say what they are, so only the others get a caption. */
 export function optionsMarkup(options, { name = '' } = {}) {
   return `<ul class="l2-options" data-count="${options.length}" ${name ? `aria-label="${esc(name)}"` : ''}>${options.map((option, i) => `<li>
     <button type="button" class="l2-opt" data-option="${i}" data-kind="${option.kind}" aria-pressed="false">
       <span class="l2-opt-icon">${ICONS[option.icon] ?? ''}</span>
       <span class="l2-opt-label">${esc(option.label)}</span>
-      <span class="l2-opt-kind">${esc(t(`l2.kind.${option.kind}`))}</span>
+      ${['moment', 'other', 'luck'].includes(option.kind) ? `<span class="l2-opt-kind">${esc(t(`l2.kind.${option.kind}`))}</span>` : ''}
     </button></li>`).join('')}</ul>`;
 }
 
@@ -151,11 +151,14 @@ export function markChosen(container, button) {
   container.querySelectorAll('.l2-opt, .l2-chip-choice').forEach(other => other.setAttribute('aria-pressed', String(other === button)));
 }
 
-/** "Starting cello · Getting easier ↑" — the track's move, in words, on the card. */
+/**
+ * "Starting · Easier today." — the track's move, in words, on the card. The
+ * stage itself is on the panel's track; screen readers hear both here.
+ */
 export function startChip(routine, entry) {
   const move = entry.moved === 'up' ? (entry.after - entry.before < 0.06 ? 'small' : 'up') : entry.moved === 'down' ? 'down' : 'still';
   return `<p class="l2-start-chip" data-move="${move}"><span class="l2-chip-icon">${routineIcon(routine)}</span>
-    <span><strong>${esc(t(`l2.start.title.${routine}`))}:</strong> ${esc(stageWord(entry.after))} · <span class="l2-chip-move">${esc(t(`l2.start.delta.${move === 'small' ? 'small' : move}`))}</span></span></p>`;
+    <span><span class="sr-only">${esc(t(`l2.start.title.${routine}`))}: ${esc(stageWord(entry.after))}. </span><span aria-hidden="true">${esc(t('l2.start.chipLabel'))} · </span><span class="l2-chip-move">${esc(t(`l2.start.delta.${move}`))}</span></span></p>`;
 }
 
 // ——— Panel ———

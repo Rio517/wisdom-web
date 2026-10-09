@@ -250,7 +250,7 @@ export function start(app) {
     }
     const entry = live(index, { plan: decided, options: { details, extra } });
     const lines = bothLine(entry, index)
-      ? [`<p>${esc(bothLine(entry, index))}</p>`, ...ROUTINES.map(routine => startChip(routine, entry.routines[routine]))]
+      ? [`<p>${esc(bothLine(entry, index))}</p>`, `<div class="l2-start-chips">${ROUTINES.map(routine => startChip(routine, entry.routines[routine])).join('')}</div>`]
       : ROUTINES.map(routine => `<div class="l2-result-row"><p>${esc(resultLine(routine, entry.routines[routine], index))}</p>${startChip(routine, entry.routines[routine])}</div>`);
     const soccer = soccerLine(entry);
     const result = card.querySelector('[data-role="result"]');

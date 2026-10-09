@@ -261,11 +261,15 @@ export function start(app) {
     const { life } = state();
     const entry = life.log.at(-1);
     panel.update(life, { current: index, moves: movesFor(entry) });
-    const lines = ROUTINES.map(routine => {
-      const item = entry.routines[routine];
-      const text = t(`l2.b.res.${resultKey(item)}`, { Routine: RoutineWord(routine), routine: routineWord(routine), slot: item.slot ? slotIn(item.slot) : '' });
-      return { text, chip: startChip(routine, item) };
-    });
+    const keys = ROUTINES.map(routine => resultKey(entry.routines[routine]));
+    const chips = ROUTINES.map(routine => startChip(routine, entry.routines[routine]));
+    // When both went the same way, one sentence says it for both.
+    const lines = keys[0] === keys[1] && ['moment', 'other', 'skip', 'rest'].includes(keys[0])
+      ? [{ text: t(`l2.b.res.both.${keys[0]}`), chip: `<div class="l2-start-chips">${chips.join('')}</div>` }]
+      : ROUTINES.map((routine, i) => {
+        const item = entry.routines[routine];
+        return { text: t(`l2.b.res.${keys[i]}`, { Routine: RoutineWord(routine), routine: routineWord(routine), slot: item.slot ? slotIn(item.slot) : '' }), chip: chips[i] };
+      });
     const soccer = soccerLine(entry);
     card.querySelector('[data-role="result"]').innerHTML = `${lines.map(line => `<div class="l2-result-row"><p>${esc(line.text)}</p>${line.chip}</div>`).join('')}
       ${soccer ? `<p class="l2-soccer-line">${ICONS.soccerSmall}<span>${esc(soccer)}</span></p>` : ''}`;
