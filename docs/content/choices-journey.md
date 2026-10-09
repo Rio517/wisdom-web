@@ -18,7 +18,7 @@ Picture: A single dot marks the beginning of a life.
 
 ### A life can go many ways.
 
-Each line is one way a life could go. Lines split and bend and cross. Nobody walks them all. Nobody needs to.
+Each line is one way a life could go. Lines split and bend. Nobody walks them all. Nobody needs to.
 
 Picture: Hundreds of green paths branch out from one starting dot and spread across the map.
 
