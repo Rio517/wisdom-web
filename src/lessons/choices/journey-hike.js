@@ -37,6 +37,8 @@ const TREE_SPOTS = [
   [96, 520, .9], [64, 560, .8], [150, 500, .8], [262, 480, .7], [330, 466, .7],
 ];
 // Keep trees clear of the trails, the water and the drawn features (lake, rocks, trailhead, loops, ranger).
+// The ranger's speech bubble, beside him at the bridge.
+const BUBBLE_X = 716;
 const NO_TREE_BOXES = [[400, 590, 560, 700], [880, 250, 1130, 325], [0, 548, 190, 700], [100, 690, 640, 800], [700, 505, 1000, 580], [1004, 360, 1200, 600]];
 
 // The trail narrows with distance: full width at the trailhead, half at the lake.
@@ -309,7 +311,7 @@ function foregroundSVG() {
     <path d="M-9 -30 h18 M-5 -30 q5 -8 10 0" stroke="#4d5e36" stroke-width="3" fill="#4d5e36" stroke-linecap="round"/>
   </g>
   <text id="ranger-label" class="place-label small fade-item" x="684" y="612" text-anchor="middle">${tx('hike.ranger')}</text>
-  <g id="ranger-bubble" class="fade-item" transform="translate(716 532)">
+  <g id="ranger-bubble" class="fade-item" transform="translate(${BUBBLE_X} 532)">
     <rect id="bubble-rect" x="20" y="0" width="236" height="46" rx="16" fill="#fbfbf8" stroke="#c5cec8" stroke-width="2"/><path d="M24 14 l-22 14 l24 4z" fill="#fbfbf8"/>
     <text id="bubble-text" x="138" y="30" text-anchor="middle" class="place-label small bubble">${tx('hike.rangerTip')}</text>
   </g>
@@ -521,9 +523,13 @@ export function createHikeScene(root) {
     const size = bubbleText.getBBox();
     if (size.width) {
       const width = Math.ceil(size.width + 36);
+      // A long tip slides the bubble a little left, over its tail, rather than past the map's edge.
+      const over = BUBBLE_X + 20 + width + 1 - (600 + box.width / k / 2 - 2 / k);
+      const left = 20 - Math.min(14, Math.max(0, over));
+      bubbleRect.setAttribute('x', String(left));
       bubbleRect.setAttribute('width', String(width));
       bubbleRect.setAttribute('height', String(Math.ceil(size.height + 18)));
-      bubbleText.setAttribute('x', String(20 + width / 2));
+      bubbleText.setAttribute('x', String(left + width / 2));
       bubbleText.setAttribute('y', String(Math.ceil(size.height + 18) / 2 + size.height * 0.3));
     }
   }
@@ -573,7 +579,7 @@ export function createHikeScene(root) {
     respond: { learned: ['water', 'map', 'landmarks', 'rest'], shown: ['#turn-flag', '#closed-sign', '#picnic'], closed: true, alt: 1, loops: 0 },
   };
   STATE.retry.at = ['main', bridge - 0.012, 1];
-  STATE.retry.second = [0, bridge];
+  STATE.retry.second = [0, bridge - 0.012];
   STATE.closed = { ...STATE.retry, ...STATE.closed };
   STATE.respond = { ...STATE.retry, ...STATE.respond, at: ['alt', 1, 1], bottles: [4, 0.5] };
   STATE.sort = STATE.respond;
@@ -688,7 +694,8 @@ export function createHikeScene(root) {
       applyState('closed');
       show('#storm', false);
       $('#alt-plan').style.opacity = '1';
-      show('#ranger-bubble', false);
+      // The ranger has helped: he goes as they set off, as in the settled picture.
+      for (const selector of ['#ranger-bubble', '#ranger', '#ranger-label']) show(selector, false);
       if (!(await walk({ path: altPath, length: altLength, from: 0, to: 1, duration: 3200, token, trace: altPath, bottles: { count: 4, from: 0.72, to: 0.5 } }))) return;
       show('#picnic', true);
       return;
