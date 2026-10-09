@@ -166,5 +166,6 @@ At the end of that 2026-09-07 pass, the redesigned short lesson, owner visual se
 - Wrote proposal 015 (Lesson 2 structure C accepted) and extended the habits research with sources B5–B18.
 - Changed deployment to release tags on `main` and moved checks to a nightly workflow.
 - Built the picked home direction, A ("Stage"), into the home page and the lesson cover: a centred sentence over a faint field, no sidebar, words that lift away and paths that grow; a softer right edge on the lesson map and idle repaints after a resize.
+- Built three playable directions for Lesson 2's two-week soccer, cello and reading game, reviewed and revised once (play time 3.3–4.1 minutes), and drafted Maya's habit beats in English with evidence tags.
 - Verified: 240 tests pass and the build produces 25 pages; layouts measured at 1440×900, 1024×768, 768×1024 and 744×1133 in all four languages.
 
