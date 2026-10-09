@@ -198,22 +198,21 @@ export function createSkillsScene(root) {
     root.dataset.scrub = String(scrubbable);
     const sequential = animate && from;
     if (beatId === 'fork') {
+      // The split, then season one: a full calendar, and still only a small difference.
+      if (!animate) { lanes.dataset.split = 'true'; setSeason(1); return; }
       setSeason(0);
       lanes.dataset.split = 'false';
-      if (animate) { await wait(420, token); if (token?.cancelled || current !== 'fork') return; }
+      if (!(await wait(420, token)) || current !== 'fork') return;
       lanes.dataset.split = 'true';
+      if (!(await wait(900, token)) || current !== 'fork') return;
+      setSeason(1, { animate: true });
       return;
     }
     lanes.dataset.split = 'true';
-    if (beatId === 'slow') {
-      if (sequential && from === 'fork') { setSeason(0); await wait(250, token); if (token?.cancelled) return; }
-      setSeason(1, { animate: sequential });
-      return;
-    }
     if (beatId === 'builds') {
-      if (sequential && from === 'slow') {
+      if (sequential && from === 'fork') {
         setSeason(1);
-        if (!(await wait(300, token))) return;
+        if (!(await wait(300, token)) || current !== 'builds') return;
         setSeason(2, { animate: true });
         if (!(await wait(1500, token)) || current !== 'builds') return;
         setSeason(3, { animate: true });
@@ -222,20 +221,24 @@ export function createSkillsScene(root) {
       setSeason(3);
       return;
     }
-    if (beatId === 'transfer') {
-      if (sequential && from === 'builds') setSeason(3);
-      setBasketball({ animate: sequential });
-      return;
-    }
     if (beatId === 'never-late') {
-      if (sequential && from === 'transfer') {
-        setBasketball();
-        if (!(await wait(250, token))) return;
+      if (sequential && from === 'builds' && sport === 'soccer') {
+        setBasketball({ animate: true });
+        if (!(await wait(450, token))) return;
       }
       setBasketball({ late: true, animate: sequential });
     }
   }
 
+  /** "Trying something new" on the builds beat: open shows the basketball boxes, closed returns to the reader's season. */
+  function closer(open, { animate = false } = {}) {
+    current = open ? 'transfer' : 'builds';
+    scrubbable = !open;
+    root.dataset.scrub = String(scrubbable);
+    if (open) setBasketball({ animate });
+    else setSeason(season);
+  }
+
   new ResizeObserver(() => { if (current) setSeasonBar(sport === 'basketball' ? 4 : season); }).observe(root);
-  return { show, hide() {} };
+  return { show, closer, hide() {} };
 }

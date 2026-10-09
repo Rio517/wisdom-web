@@ -40,6 +40,7 @@ for (const chapter of chaptersFor(t)) {
     if (beat.closer) {
       add(`> **${beat.closer.heading}**`, '>');
       beat.closer.body.forEach((paragraph, index) => add(`> ${paragraph}`, ...(index < beat.closer.body.length - 1 ? ['>'] : [])));
+      if (beat.closer.alt) add('>', `> Picture while open: ${beat.closer.alt}`);
       add('');
     }
     if (beat.takeaways) { for (const item of beat.takeaways) add(`- **${item.heading}** ${item.text}`); add(''); }

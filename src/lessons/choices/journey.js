@@ -1,4 +1,4 @@
-import { CHAPTERS, beatList } from './journey-story.js';
+import { CHAPTERS, FRAGMENT_ALIASES, beatList } from './journey-story.js';
 import { t } from '../../i18n/runtime.js';
 import { ICONS } from './journey-icons.js';
 import { createToken, prefersReducedMotion, wait } from './journey-motion.js';
@@ -12,6 +12,11 @@ import { watchField } from '../../components/stage-field.js';
 
 const beats = beatList();
 const $ = selector => document.querySelector(selector);
+/** The beat a URL fragment points at, following merged beats' old fragments; -1 when none. */
+const beatForHash = hash => {
+  const fragment = hash.slice(1);
+  return beats.findIndex(item => item.fragment === (FRAGMENT_ALIASES[fragment] ?? fragment));
+};
 const escapeHTML = value => String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;');
 
 const roots = {
@@ -353,8 +358,17 @@ document.addEventListener('keydown', event => {
   if (event.key === 'ArrowLeft' && index > 0) { event.preventDefault(); go(index - 1, { animate: false, focus: index - 1 === 0 ? 'heading' : 'none' }); }
 });
 
+// A closer with its own picture changes the stage while it is open.
+$('#beat-extra').addEventListener('toggle', event => {
+  const item = beats[index];
+  if (!event.target.matches('details.closer') || !item.beat.closer?.alt) return;
+  const { open } = event.target;
+  scenes[rootFor(item.chapter.id)].closer?.(open, { animate: true });
+  $('#stage-description').textContent = open ? item.beat.closer.alt : item.beat.alt;
+}, true);
+
 window.addEventListener('popstate', () => {
-  const target = beats.findIndex(item => `#${item.fragment}` === location.hash);
+  const target = beatForHash(location.hash);
   if (target >= 0 && target !== index) go(target, { animate: false, focus: 'heading' });
 });
 
@@ -363,6 +377,6 @@ $('#open-reading').addEventListener('click', () => dialog.showModal());
 dialog.querySelector('[data-close]').addEventListener('click', () => dialog.close());
 
 // ——— Start ———
-const initial = Math.max(0, beats.findIndex(item => `#${item.fragment}` === location.hash));
+const initial = Math.max(0, beatForHash(location.hash));
 index = initial;
 go(initial, { animate: false });

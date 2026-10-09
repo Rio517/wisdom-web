@@ -27,9 +27,7 @@ const STRUCTURE = [
   ] },
   { id: 'skills', beats: [
     { id: 'fork', body: 2 },
-    { id: 'slow', body: 2 },
-    { id: 'builds', body: 2, scrub: true },
-    { id: 'transfer', body: 2 },
+    { id: 'builds', body: 2, scrub: true, closer: 2, closerPicture: true },
     { id: 'never-late', body: 2 },
   ] },
   { id: 'play', beats: [{ id: 'game', body: 2, game: true }] },
@@ -68,7 +66,10 @@ export function chaptersFor(t = runtimeT) {
       }
       if (beat.learned) record.learned = beat.learned;
       if (beat.sort) record.sort = beat.sort.map(card => ({ ...card, label: t(`lesson.sort.${card.id}`) }));
-      if (beat.closer) record.closer = { heading: t(`${key}.closer.heading`), body: range(beat.closer).map(n => t(`${key}.closer.body${n}`)) };
+      if (beat.closer) {
+        record.closer = { heading: t(`${key}.closer.heading`), body: range(beat.closer).map(n => t(`${key}.closer.body${n}`)) };
+        if (beat.closerPicture) record.closer.alt = t(`${key}.closer.alt`);
+      }
       if (beat.scrub) record.scrub = true;
       if (beat.game) record.game = true;
       if (beat.explore) record.explore = true;
@@ -90,6 +91,9 @@ export function learnedFor(t = runtimeT) {
   return Object.fromEntries(Object.entries(LEARNED_ICONS).map(([id, icon]) => [id, { icon, label: t(`lesson.learned.${id}`) }]));
 }
 export const LEARNED = learnedFor();
+
+/** Fragments of beats that were merged away, so old links land on the beat that holds their words. */
+export const FRAGMENT_ALIASES = { 'skills-slow': 'skills-fork', 'skills-transfer': 'skills-builds' };
 
 export function beatList(chapters = CHAPTERS) {
   return chapters.flatMap((chapter, chapterIndex) => chapter.beats.map((beat, beatIndex) => ({
@@ -120,7 +124,8 @@ function readingBeat(beat, { t, learned, gameDays }) {
     parts.push(`<div class="reading-sort"><p><strong>${escapeHTML(t('reading.theirChoices'))}</strong> ${mine.join(' · ')}</p><p><strong>${escapeHTML(t('reading.outsideControl'))}</strong> ${not.join(' · ')}</p></div>`);
   }
   if (beat.closer) {
-    parts.push(`<aside class="reading-closer"><h4>${escapeHTML(beat.closer.heading)}</h4>${beat.closer.body.map(p => `<p>${escapeHTML(p)}</p>`).join('')}</aside>`);
+    const picture = beat.closer.alt ? `<p class="reading-visual"><span>${escapeHTML(t('reading.picture'))}</span> ${escapeHTML(beat.closer.alt)}</p>` : '';
+    parts.push(`<aside class="reading-closer"><h4>${escapeHTML(beat.closer.heading)}</h4>${beat.closer.body.map(p => `<p>${escapeHTML(p)}</p>`).join('')}${picture}</aside>`);
   }
   if (beat.game && gameDays) {
     parts.push(`<p>${escapeHTML(t('reading.gameIntro'))}</p><ol class="reading-days">`);

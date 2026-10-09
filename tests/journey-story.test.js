@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { CHAPTERS, LEARNED, beatList, renderJourneyReading } from '../src/lessons/choices/journey-story.js';
+import { CHAPTERS, FRAGMENT_ALIASES, LEARNED, beatList, renderJourneyReading } from '../src/lessons/choices/journey-story.js';
 
 test('the journey keeps the approved order: big picture, hike, compounding, game, explore, takeaways', () => {
   assert.deepEqual(CHAPTERS.map(chapter => chapter.id), ['paths', 'hike', 'skills', 'play', 'explore', 'wrap']);
@@ -13,6 +13,23 @@ test('every beat has a stable unique fragment, a heading, text and a picture des
   for (const { beat } of beats) {
     assert.ok(beat.heading && beat.body.length, beat.id);
     assert.ok(beat.alt, `${beat.id} describes its picture`);
+  }
+});
+
+test('Maya takes three beats; basketball is an optional closer with its own picture', () => {
+  const skills = CHAPTERS.find(chapter => chapter.id === 'skills');
+  assert.deepEqual(skills.beats.map(beat => beat.id), ['fork', 'builds', 'never-late']);
+  const builds = skills.beats[1];
+  assert.ok(builds.scrub, 'learning builds keeps its scrub');
+  assert.equal(builds.closer.body.length, 2);
+  assert.ok(builds.closer.alt, 'the closer describes its picture');
+});
+
+test('old fragments of merged beats land on the beat that holds their words', () => {
+  const fragments = new Set(beatList().map(item => item.fragment));
+  for (const [old, current] of Object.entries(FRAGMENT_ALIASES)) {
+    assert.ok(!fragments.has(old), `${old} is still a beat`);
+    assert.ok(fragments.has(current), `${old} → ${current}`);
   }
 });
 
