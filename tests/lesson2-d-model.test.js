@@ -4,7 +4,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  DAYS, DEFAULT_PICKS, HOME, KINDS, CHOICES, replay, startingLevel, startingStage, frontierIndex, startingGotEasier,
+  DAYS, DEFAULT_PICKS, NO_PICKS, HOME, KINDS, CHOICES, replay, startingLevel, startingStage, frontierIndex, startingGotEasier,
 } from '../prototype/lesson2/model-d.js';
 
 // A small seeded generator so a failure can be replayed.
@@ -127,4 +127,12 @@ test('the lucky day grows the sport more, and picks change only names', () => {
   assert.deepEqual(Object.keys(piano.skills.instrument), ['readingMusic', 'bothHands']);
   assert.equal(frontierIndex([null]), 0);
   assert.equal(frontierIndex(DAYS.map(() => 'quiet')), DAYS.length);
+});
+
+test('a row not picked yet has no skills and nothing breaks', () => {
+  const none = replay(Array(DAYS.length).fill(null), NO_PICKS);
+  for (const kind of KINDS) assert.deepEqual(none.skills[kind], {});
+  const some = replay(Array(DAYS.length).fill(null), { ...NO_PICKS, quiet: 'chess' });
+  assert.deepEqual(Object.keys(some.skills.quiet), ['openings', 'checkmates']);
+  assert.deepEqual(some.starting, { instrument: 0, quiet: 0 });
 });

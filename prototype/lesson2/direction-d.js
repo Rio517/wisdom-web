@@ -10,7 +10,7 @@ import { skillBoxMarkup, setSkillBox } from '../../src/lessons/choices/journey-s
 import { prefersReducedMotion } from '../../src/lessons/choices/journey-motion.js';
 import { ICONS, ACTIVITY_ICON } from './icons-d.js';
 import {
-  DAYS, KINDS, HOME, CHOICES, DEFAULT_PICKS, SKILLS,
+  DAYS, KINDS, HOME, CHOICES, NO_PICKS, SKILLS,
   replay, frontierIndex, startingStage, lightStep, startingGotEasier,
 } from './model-d.js';
 
@@ -37,7 +37,7 @@ const weekday = index => t(`l2.wd.${DAYS[index].weekday}`);
 const listOf = items => new Intl.ListFormat(t.locale, { type: 'conjunction' }).format(items);
 
 export function start(app) {
-  let picks = { ...DEFAULT_PICKS };
+  let picks = { ...NO_PICKS };
   let started = false;
   let choices = Array(DAYS.length).fill(null);
   let state = replay(choices, picks);
@@ -49,6 +49,7 @@ export function start(app) {
   let advanceTimer = null;
   let suppressFocusActivate = false;
   let rafPending = false;
+  const picked = () => KINDS.every(kind => picks[kind]);
 
   const frame = mountFrame(app, 'd', { onRestart: restart });
   const main = app.querySelector('.l2');
@@ -83,11 +84,15 @@ export function start(app) {
     return `<li class="play-card d-pick" data-role="pick" aria-labelledby="d-pick-heading">
       <p class="kicker d-kicker">${esc(t('l2.d.pick.kicker'))}</p>
       <h2 class="play-heading" id="d-pick-heading" tabindex="-1">${esc(t('l2.d.pick.heading'))}</h2>
+      <p class="d-pick-hint">${esc(t('l2.d.pick.hint'))}</p>
       ${KINDS.map(kind => `<ul class="play-options d-pick-row" aria-label="${esc(t(`l2.d.pick.group.${kind}`))}">${CHOICES[kind].map(id => `<li>
         <button type="button" class="play-activity d-pick-option" data-kind="${kind}" data-pick="${id}" aria-pressed="${picks[kind] === id}">
           <span class="play-activity-icon">${ICONS[ACTIVITY_ICON[id]]}</span><span class="play-activity-label">${esc(t(`l2.d.act.${id}`))}</span>
         </button></li>`).join('')}</ul>`).join('')}
-      <div class="d-pick-actions"><button type="button" class="solid-pill" data-action="start">${esc(t('l2.d.pick.start'))}</button></div>
+      <div class="d-pick-actions">
+        <button type="button" class="btn btn-quiet" data-action="random">${esc(t('l2.d.pick.random'))}</button>
+        <button type="button" class="btn btn-primary" data-action="start" aria-disabled="true">${esc(t('l2.d.pick.start'))}</button>
+      </div>
     </li>`;
   }
 
@@ -107,7 +112,7 @@ export function start(app) {
   }
 
   const pathMarkup = () => '<i class="d-path-dot"></i><i class="d-path-fill"></i>';
-  const boxIcon = activity => `<span class="d-box-icon" aria-hidden="true">${ICONS[ACTIVITY_ICON[activity]]}</span>`;
+  const boxIcon = activity => `<span class="d-box-icon" aria-hidden="true">${activity ? ICONS[ACTIVITY_ICON[activity]] : ''}</span>`;
 
   function endCardMarkup() {
     return `<li class="play-card play-end d-end" data-role="end" aria-labelledby="d-end-heading" hidden>
@@ -121,22 +126,27 @@ export function start(app) {
     </li>`;
   }
 
+  // The days name the picks, so they appear once every row has one.
+  const daysMarkup = () => (picked() ? `${DAYS.map(dayCardMarkup).join('')}${endCardMarkup()}` : '');
+
   function buildFeed() {
-    feed.innerHTML = `${pickCardMarkup()}${DAYS.map(dayCardMarkup).join('')}${endCardMarkup()}`;
+    feed.innerHTML = `${pickCardMarkup()}${daysMarkup()}`;
   }
 
   /** Rebuild the day cards and the end card (the pick card stays, with its focus). */
   function rebuildDays() {
     feed.querySelectorAll('.play-card[data-day], .d-end, .l2-own').forEach(li => li.remove());
-    feed.insertAdjacentHTML('beforeend', `${DAYS.map(dayCardMarkup).join('')}${endCardMarkup()}`);
+    feed.insertAdjacentHTML('beforeend', daysMarkup());
   }
 
+  /** The three boxes; a row not picked yet is an empty placeholder of the same size. */
   function buildPanel() {
+    const blank = '\u00a0';
     panel.innerHTML = `<div class="d-boxes">${KINDS.map(kind => {
       const activity = picks[kind];
       return skillBoxMarkup({
-        id: `d-box-${kind}`, group: kind, title: t(`l2.d.act.${activity}`), owner: t('play.you'),
-        skills: SKILLS[activity].map(id => ({ id, label: t(`l2.d.skill.${id}`) })),
+        id: `d-box-${kind}`, group: kind, title: activity ? t(`l2.d.act.${activity}`) : blank, owner: t('play.you'),
+        skills: activity ? SKILLS[activity].map(id => ({ id, label: t(`l2.d.skill.${id}`) })) : ['a', 'b'].map(id => ({ id, label: blank })),
       });
     }).join('')}</div>`;
     for (const kind of KINDS) {
@@ -144,11 +154,19 @@ export function start(app) {
       const activity = picks[kind];
       box.classList.add('d-box');
       box.dataset.kind = kind;
+      if (!activity) {
+        box.classList.add('d-box-empty');
+        box.removeAttribute('aria-label');
+        box.setAttribute('aria-hidden', 'true');
+      }
       box.querySelector('h3').insertAdjacentHTML('afterbegin', boxIcon(activity));
       if (!HOME.includes(kind)) continue;
+      const meter = activity
+        ? `role="meter" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="${esc(t('l2.d.startMeter', { title: t(`l2.d.act.${activity}`) }))}"`
+        : '';
       box.querySelector('header').insertAdjacentHTML('afterend', `<div class="d-start-row" data-role="start">
-        <span class="skill-name d-start-name">${esc(t('l2.d.starting'))}</span>
-        <span class="d-path" role="meter" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="${esc(t('l2.d.startMeter', { title: t(`l2.d.act.${activity}`) }))}">${pathMarkup()}</span>
+        <span class="skill-name d-start-name">${activity ? esc(t('l2.d.starting')) : blank}</span>
+        <span class="d-path" ${meter}>${pathMarkup()}</span>
       </div>`);
     }
   }
@@ -168,6 +186,7 @@ export function start(app) {
 
   function paintPanel(s) {
     for (const kind of KINDS) {
+      if (!picks[kind]) continue;
       const box = panel.querySelector(`#d-box-${kind}`);
       setSkillBox(box, s.skills[kind], { ghost: ghost?.[kind] ?? null });
       if (HOME.includes(kind)) paintStarting(box, s.starting[kind]);
@@ -176,6 +195,7 @@ export function start(app) {
 
   function updateEnd() {
     const li = feed.querySelector('.d-end');
+    if (!li) return;
     const complete = started && currentIndex >= DAYS.length;
     li.hidden = !complete;
     li.classList.toggle('is-complete', complete);
@@ -244,6 +264,14 @@ export function start(app) {
     requestAnimationFrame(() => { rafPending = false; syncActiveFromScroll(); });
   }
 
+  /** A panel card that changed grows a little and settles (never flips). */
+  function grow(box) {
+    if (!box || prefersReducedMotion()) return;
+    box.classList.remove('d-grow');
+    void box.offsetWidth;
+    box.classList.add('d-grow');
+  }
+
   function pulse(el) {
     if (!el) return;
     el.classList.remove('play-pop');
@@ -253,6 +281,7 @@ export function start(app) {
 
   function updateCard(index) {
     const li = cardElement(index);
+    if (!li) return;
     const chosen = choices[index];
     const future = isFutureDay(index);
     li.classList.toggle('is-chosen', chosen != null);
@@ -292,6 +321,7 @@ export function start(app) {
       button.disabled = started;
     });
     card.querySelector('.d-pick-actions').hidden = started;
+    card.querySelector('[data-action="start"]').setAttribute('aria-disabled', String(!picked()));
   }
 
   function updateAll() {
@@ -391,7 +421,7 @@ export function start(app) {
       const { change, chips, settle } = TIMING.glow;
       box.classList.add('is-glow');
       changedRows(box, entry).forEach(row => row.classList.add('is-changed'));
-      later(change, () => paintPanel(after));
+      later(change, () => { grow(box); paintPanel(after); });
       later(chips, () => addChips(box, entry));
       later(settle, () => panel.querySelectorAll('.is-glow, .is-changed').forEach(el => el.classList.remove('is-glow', 'is-changed')));
       later(chips + CHIP_LIFE, () => clearChange());
@@ -400,7 +430,7 @@ export function start(app) {
       const { land, change, chips } = TIMING.lines;
       const target = box.querySelector('.d-box-icon');
       drawLine(optionIcon, target);
-      later(land, () => { target.classList.remove('d-land'); void target.offsetWidth; target.classList.add('d-land'); });
+      later(land, () => grow(box));
       later(change, () => paintPanel(after));
       later(chips, () => addChips(box, entry));
       later(chips + CHIP_LIFE, () => clearChange());
@@ -441,19 +471,38 @@ export function start(app) {
     playChange(entry, before, state, icon, next);
   }
 
-  function choosePick(kind, id) {
-    if (started || picks[kind] === id) return;
-    picks = { ...picks, [kind]: id };
+  function setPicks(next) {
+    const changed = KINDS.filter(kind => next[kind] !== picks[kind]);
+    picks = next;
     state = replay(choices, picks);
     rebuildDays();
     buildPanel();
     paintPanel(state);
     updateAll();
-    pulse(feed.querySelector(`.d-pick-option[data-pick="${id}"] .play-activity-icon`));
-    pulse(panel.querySelector(`#d-box-${kind} .d-box-icon`));
+    for (const kind of changed) {
+      pulse(feed.querySelector(`.d-pick-option[data-pick="${picks[kind]}"] .play-activity-icon`));
+      grow(panel.querySelector(`#d-box-${kind}`));
+    }
+  }
+
+  function choosePick(kind, id) {
+    if (started || picks[kind] === id) return;
+    setPicks({ ...picks, [kind]: id });
+  }
+
+  /** One per row at random, never the row's current pick, so each press shows a change. */
+  function randomPicks() {
+    if (started) return;
+    const next = Object.fromEntries(KINDS.map(kind => {
+      const pool = CHOICES[kind].filter(id => id !== picks[kind]);
+      return [kind, pool[Math.floor(Math.random() * pool.length)]];
+    }));
+    setPicks(next);
+    announce(live, listOf(KINDS.map(kind => t(`l2.d.act.${picks[kind]}`))));
   }
 
   function startDays() {
+    if (!picked()) return;
     started = true;
     currentIndex = frontierIndex(choices);
     updateAll();
@@ -493,7 +542,7 @@ export function start(app) {
   }
 
   function restart() {
-    picks = { ...DEFAULT_PICKS };
+    picks = { ...NO_PICKS };
     started = false;
     ghost = null;
     choices = Array(DAYS.length).fill(null);
@@ -554,6 +603,7 @@ export function start(app) {
     suppressFocusActivate = false;
     const action = event.target.closest('[data-action]')?.dataset.action;
     if (action === 'start') { startDays(); return; }
+    if (action === 'random') { randomPicks(); return; }
     if (action === 'own') { showOwnPlan(); return; }
     if (action === 'again') { playAgain(); return; }
     if (action === 'print') { window.print(); return; }

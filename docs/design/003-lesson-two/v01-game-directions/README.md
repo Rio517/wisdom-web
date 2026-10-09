@@ -53,11 +53,14 @@ Related: [015 — Lesson 2 proposal](../../../product/015-lesson-two-proposal.md
 - The bars' screen-reader values still use Lesson 1's level words.
 - No fresh-context design review yet.
 
+**After the owner's notes on the pick screen.** Nothing is pre-selected: the panel shows three empty dashed cards, and the days appear once each row has a pick. The heading reads *Pick three things you want to get better at.* with *One from each row.* under it; another card in a row swaps the pick. **Start** sits at the card's right edge, faded until every row has a pick, with a white **Random** button to its left that picks one per row (never the current one) and can still be changed. Panel cards no longer pop their icon when they change: the card grows a little (scale 1.04, 420 ms) and settles, with no rotation and no motion under reduced motion. The twelve play-throughs were run again (keyboard and mouse, Random and tapped picks, a row swap, the faded Start ignored): no problems or console errors. Work on D stopped here.
+
 **Shots** (headless, after a scripted play):
 
 | Moment | 1440×900 | 744×1133 |
 | --- | --- | --- |
 | Pick screen | [1440](d-1-pick-1440-v01.png) | [744](d-1-pick-744-v01.png) · [German](d-1-pick-744-de-v01.png) |
+| Pick screen after the owner's notes (v02) | [1440](d-1-pick-1440-v02.png) | [744](d-1-pick-744-v02.png) · [German](d-1-pick-744-de-v02.png) |
 | A day just after a tap, Lines (the line landing) | [1440](d-2-day-lines-1440-v01.png) | [744](d-2-day-lines-744-v01.png) |
 | The same moment, Glow | [1440](d-2-day-glow-1440-v01.png) | [744](d-2-day-glow-744-v01.png) · [German, Lines](d-2-day-744-de-v01.png) |
 | The party chosen: nothing grows, nothing drops | [1440](d-3-party-1440-v01.png) | [744](d-3-party-744-v01.png) |

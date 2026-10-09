@@ -13,7 +13,9 @@ export const CHOICES = {
   quiet: ['reading', 'drawing', 'chess'],
   sport: ['soccer', 'gymnastics', 'swimming'],
 };
+// The model's default (the lesson's example); the pick screen starts empty.
 export const DEFAULT_PICKS = { instrument: 'cello', quiet: 'reading', sport: 'soccer' };
+export const NO_PICKS = { instrument: null, quiet: null, sport: null };
 
 /** Two skills per activity (labels: l2.d.skill.<id>). */
 export const SKILLS = {
@@ -101,7 +103,8 @@ function levelsFrom(counts, picks) {
   const starting = Object.fromEntries(HOME.map(kind => [kind, startingLevel(counts[kind].usual, counts[kind].other)]));
   const skills = Object.fromEntries(KINDS.map(kind => {
     const { normal, lucky } = counts[kind];
-    return [kind, Object.fromEntries(SKILLS[picks[kind]].map((id, i) => [id, skillLevel(STEPS[i], normal, lucky)]))];
+    // A row not picked yet has no skills.
+    return [kind, Object.fromEntries((SKILLS[picks[kind]] ?? []).map((id, i) => [id, skillLevel(STEPS[i], normal, lucky)]))];
   }));
   return { starting, skills };
 }
