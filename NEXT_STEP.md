@@ -2,7 +2,7 @@
 
 ## Current state
 
-**The site is deployed.** On 2026-09-27 the owner approved the guided journey as Lesson 1 and asked for the main site. It is an Astro static site at the repository root. `main` deploys to GitHub Pages through `.github/workflows/deploy.yml` (tests, build, deploy), with the custom domain `wisdom.knyflores.com` set in the Pages settings. Every route was verified from GitHub's Pages servers.
+**The site is deployed.** On 2026-09-27 the owner approved the guided journey as Lesson 1 and asked for the main site. It is an Astro static site at the repository root. A release tag `v*` on a commit in `main` deploys to GitHub Pages through `.github/workflows/deploy.yml` (tests, build, deploy; since 2026-10-09 pushes alone deploy nothing, and `.github/workflows/ci.yml` runs tests and the build nightly), with the custom domain `wisdom.knyflores.com` set in the Pages settings. Every route was verified from GitHub's Pages servers.
 
 **Live at <https://wisdom.knyflores.com/>** since 2026-09-30. The Namecheap `CNAME` (`wisdom` → `rio517.github.io.`) is in place; GitHub issued the certificate (expires 2026-12-29, renewed automatically) after the custom domain was removed and re-added, and HTTPS is enforced, so `http://` redirects.
 

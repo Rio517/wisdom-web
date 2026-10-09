@@ -19,8 +19,10 @@ The agent setup is in the repo, so it works for anyone who clones it:
 - **Skills:** `.claude/skills/wisdom-design/SKILL.md` condenses the design
   system (tokens, motifs, hard rules, what to avoid) and loads on any UI work.
 - **Permissions:** `.claude/settings.json` allows the project's npm scripts
-  and `git add`, and asks before a force push or a push to `main` (which
-  deploys).
+  and `git add`, and asks before a force push or a push to `main`.
+- **Deploys:** a release tag (`v2026.10.09`, then `v2026.10.09.2`, …) on a
+  commit in `main` deploys the site; pushes deploy nothing. Tests and the build
+  run nightly (`.github/workflows/ci.yml`) and before each deploy.
 - **No MCP servers or hooks are committed.** The site is a static Astro
   build, so there is no running app for an agent to query.
 - **Browsers:** bring your own headless Playwright or Chrome DevTools MCP to
