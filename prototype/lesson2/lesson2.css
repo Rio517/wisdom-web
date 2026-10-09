@@ -60,7 +60,7 @@ body { min-width: 0; overflow: hidden; }
 .l2-options { --cols: 2; display: grid; grid-template-columns: repeat(var(--cols), minmax(0, 1fr)); gap: 12px; margin: 0; padding: 0; list-style: none; }
 .l2-options[data-count="3"] { --cols: 3; }
 .l2-opt { display: grid; align-content: start; justify-items: center; gap: 6px; width: 100%; height: 100%; border: 1.5px solid var(--color-rule); border-radius: 18px; background: var(--color-paper); padding: 16px 10px 14px; color: var(--color-ink); transition: transform 160ms ease, border-color 160ms ease, background-color 160ms ease; }
-.l2-opt:not(:disabled):hover { transform: translateY(-2px); border-color: var(--color-forest); background: white; }
+.l2-opt:not(:disabled):hover { border-color: var(--color-forest); background: white; }
 .l2-opt:not(:disabled):active { transform: scale(.98); }
 .l2-opt[aria-pressed="true"] { border-color: var(--color-forest); background: #28544212; }
 .l2-opt:disabled { cursor: default; }
