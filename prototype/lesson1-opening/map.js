@@ -18,67 +18,116 @@ const CLAY = '#9a5f3e';
 const OPEN = '#4f7d5f'; // the lesson's "door that opens" green
 const PAPER = '#fbfbf8';
 
-/** The lesson's route curve: monotone cubic, forward only, no loops (journey-map.js). */
-function tangents(points) {
-  const slopes = points.slice(1).map((point, index) => {
-    const previous = points[index];
-    return point.x > previous.x ? (point.y - previous.y) / (point.x - previous.x) : 0;
+/**
+ * Sam's route is one smooth curve through his points (a cubic Hermite spline
+ * in x, so it only moves forward and never loops). The tangent at each point
+ * follows the field's own lines there, unless that would fight a rise or a drop:
+ * - inside a climb or a fall, the curve keeps the climb's slope;
+ * - where a level stretch meets a climb or a fall, it eases in and out (an S,
+ *   never a corner), so the years between the record deal and the split arc
+ *   gently over;
+ * - the drop is an S that bottoms out just before the setback marker, and the
+ *   climb after it leaves gently: two shaping knots (not stops) sit just
+ *   outside the marker, a little above it, so the bottom is a U, not a V.
+ * Slopes are dy/dx in screen pixels.
+ */
+const LEVEL = 0.25; // a chord flatter than this (about 14 degrees) is a level stretch
+function routeKnots(points, field, markerRadius) {
+  const knots = [];
+  points.forEach((point, index) => {
+    const previous = points[index - 1];
+    const drop = LIFE_STEPS[index].kind === 'drop';
+    // Just outside the setback marker, on both sides, a tenth of the way back
+    // up the fall (or the climb after it).
+    if (drop && previous) {
+      const gap = Math.min(markerRadius + 1, 0.4 * (point.x - previous.x));
+      knots.push({ x: point.x - gap, y: point.y - 0.1 * (point.y - previous.y), step: null });
+    }
+    knots.push({ x: point.x, y: point.y, step: index, flow: field[index] ?? 0 });
+    const next = points[index + 1];
+    if (drop && next) {
+      const gap = Math.min(markerRadius + 1, 0.4 * (next.x - point.x));
+      knots.push({ x: point.x + gap, y: point.y + 0.1 * (next.y - point.y), step: null });
+    }
   });
-  return points.map((_, index) => {
-    if (index === 0) return slopes[0];
-    if (index === points.length - 1) return slopes.at(-1);
-    const before = slopes[index - 1]; const after = slopes[index];
-    return before * after > 0 ? 2 * before * after / (before + after) : 0;
+  const chord = knots.slice(1).map((knot, index) => (knot.y - knots[index].y) / Math.max(1e-6, knot.x - knots[index].x));
+  const kind = slope => (Math.abs(slope) < LEVEL ? 0 : Math.sign(slope));
+  const between = (value, a, b) => Math.max(Math.min(a, b), Math.min(Math.max(a, b), value));
+  knots.forEach((knot, index) => {
+    const flow = knot.flow;
+    const before = chord[index - 1]; const after = chord[index];
+    // A shaping knot keeps the fall (or climb) monotone through it.
+    if (knot.step === null) { knot.m = before * after > 0 ? 2 * before * after / (before + after) : 0; return; }
+    // The setback itself: already turning up, so the drop's lowest point is just before it.
+    if (LIFE_STEPS[knot.step].kind === 'drop' && after !== undefined) { knot.m = Math.min(0, 0.25 * after); return; }
+    if (index === 0) { knot.m = between(flow, chord[0] - 0.2, chord[0] + 0.2); return; }
+    if (index === knots.length - 1) { knot.m = between(flow, chord.at(-1) - 0.2, chord.at(-1) + 0.2); return; }
+    const a = kind(before); const b = kind(after);
+    if (!a && !b) { knot.m = between(flow, Math.min(before, after) - 0.12, Math.max(before, after) + 0.12); return; }
+    if (a && a === b) { knot.m = 2 * before * after / (before + after); return; }
+    if (a && b) { knot.m = between(flow, 0.1 * after, 0.3 * after); return; }
+    // Easing into or out of a climb or a fall: the slope through both
+    // neighbours (as a Catmull-Rom spline would, a little fuller), held to
+    // half the climb.
+    const level = a ? after : before; const steep = a ? before : after;
+    const through = (knots[index + 1].y - knots[index - 1].y) / Math.max(1e-6, knots[index + 1].x - knots[index - 1].x);
+    knot.m = between(1.3 * through, level, 0.5 * steep);
   });
+  return knots;
 }
-function tracePath(context, points) {
-  const tangent = tangents(points);
-  context.moveTo(points[0].x, points[0].y);
-  for (let index = 1; index < points.length; index += 1) {
-    const start = points[index - 1]; const end = points[index];
-    const handle = (end.x - start.x) / 3;
-    if (handle <= 0) { context.lineTo(end.x, end.y); continue; }
-    context.bezierCurveTo(start.x + handle, start.y + tangent[index - 1] * handle,
-      end.x - handle, end.y - tangent[index] * handle, end.x, end.y);
+/** The cubic Bézier controls from one knot to the next. */
+function piece(start, end) {
+  const handle = (end.x - start.x) / 3;
+  return [start, { x: start.x + handle, y: start.y + start.m * handle }, { x: end.x - handle, y: end.y - end.m * handle }, end];
+}
+function tracePath(context, knots) {
+  context.moveTo(knots[0].x, knots[0].y);
+  for (let index = 1; index < knots.length; index += 1) {
+    const [, c1, c2, end] = piece(knots[index - 1], knots[index]);
+    context.bezierCurveTo(c1.x, c1.y, c2.x, c2.y, end.x, end.y);
   }
 }
 
 /**
- * The same curve as tracePath, as segments the traveller can walk: each one
- * a cubic with a table from arc length to t, so a walk's eased progress is
- * an even distance along the line, not along x (the drop would otherwise
- * be over in a blink).
+ * The same curve as tracePath, as one stretch per step that the traveller can
+ * walk (one cubic piece, or two beside the setback), with a table from
+ * distance along the line to a point on it, so a walk's eased progress is an
+ * even distance along the line, not along x (the drop would otherwise be over
+ * in a blink).
  */
-function walkable(points) {
-  const tangent = tangents(points);
-  return points.slice(1).map((end, index) => {
-    const start = points[index];
-    const handle = (end.x - start.x) / 3;
-    const c = [start, { x: start.x + handle, y: start.y + tangent[index] * handle },
-      { x: end.x - handle, y: end.y - tangent[index + 1] * handle }, end];
-    const at = u => {
-      const v = 1 - u;
-      return {
-        x: v * v * v * c[0].x + 3 * v * v * u * c[1].x + 3 * v * u * u * c[2].x + u * u * u * c[3].x,
-        y: v * v * v * c[0].y + 3 * v * v * u * c[1].y + 3 * v * u * u * c[2].y + u * u * u * c[3].y,
-      };
-    };
-    const table = [0];
-    let previous = at(0);
-    for (let i = 1; i <= 32; i += 1) {
-      const point = at(i / 32);
-      table.push(table[i - 1] + Math.hypot(point.x - previous.x, point.y - previous.y));
-      previous = point;
-    }
-    const length = table[32];
+function walkable(knots) {
+  const stops = knots.map((knot, index) => (knot.step === null ? -1 : index)).filter(index => index >= 0);
+  const cubic = (c, u) => {
+    const v = 1 - u;
     return {
-      at,
+      x: v * v * v * c[0].x + 3 * v * v * u * c[1].x + 3 * v * u * u * c[2].x + u * u * u * c[3].x,
+      y: v * v * v * c[0].y + 3 * v * v * u * c[1].y + 3 * v * u * u * c[2].y + u * u * u * c[3].y,
+    };
+  };
+  return stops.slice(1).map((last, index) => {
+    const first = stops[index];
+    const pieces = [];
+    for (let k = first; k < last; k += 1) pieces.push(piece(knots[k], knots[k + 1]));
+    // Points along the step's stretch, evenly in the curve's parameter, with the distance to each.
+    const samples = [knots[first]];
+    const table = [0];
+    pieces.forEach(c => {
+      for (let i = 1; i <= 32; i += 1) {
+        const point = cubic(c, i / 32);
+        const previous = samples.at(-1);
+        table.push(table.at(-1) + Math.hypot(point.x - previous.x, point.y - previous.y));
+        samples.push(point);
+      }
+    });
+    const length = table.at(-1);
+    return {
       atFraction(fraction) {
         const target = Math.max(0, Math.min(1, fraction)) * length;
         let i = 1;
-        while (i < 32 && table[i] < target) i += 1;
+        while (i < table.length - 1 && table[i] < target) i += 1;
         const span = table[i] - table[i - 1] || 1;
-        return at((i - 1 + (target - table[i - 1]) / span) / 32);
+        const along = (target - table[i - 1]) / span;
+        return { x: samples[i - 1].x + (samples[i].x - samples[i - 1].x) * along, y: samples[i - 1].y + (samples[i].y - samples[i - 1].y) * along };
       },
     };
   });
@@ -149,6 +198,32 @@ export function createPathsScene(root, { edgeFade = null } = {}) {
     }
     return ageToX(age);
   }
+  /** The slope of the field's own lines around each point, nearer lines counting more. */
+  function fieldSlopes(points, v) {
+    if (!overview) overview = generateNetwork(networkOptionsForLab(LAB_DEFAULTS, { today: STORY_AGE }));
+    const radius = 28;
+    const sums = points.map(() => ({ slope: 0, weight: 0 }));
+    const left = Math.min(...points.map(point => point.x)) - radius;
+    const right = Math.max(...points.map(point => point.x)) + radius;
+    for (const edge of overview.edges) {
+      let previous = null;
+      for (const raw of edge.points) {
+        const point = v.world(raw);
+        if (previous && point.x - previous.x > 0.5 && point.x > left && previous.x < right) {
+          const mx = (point.x + previous.x) / 2; const my = (point.y + previous.y) / 2;
+          const slope = (point.y - previous.y) / (point.x - previous.x);
+          points.forEach((at, index) => {
+            const distance = Math.hypot(mx - at.x, my - at.y);
+            if (distance >= radius) return;
+            const weight = 1 - distance / radius;
+            sums[index].slope += weight * slope; sums[index].weight += weight;
+          });
+        }
+        previous = point;
+      }
+    }
+    return sums.map(({ slope, weight }) => (weight ? slope / weight : 0));
+  }
   let route = null;
   function lifeRoute() {
     const r = rect();
@@ -161,7 +236,8 @@ export function createPathsScene(root, { edgeFade = null } = {}) {
     const left = Math.max(0, Math.floor(Math.min(...points.map(point => point.x)) - pad));
     const top = Math.max(0, Math.floor(Math.min(...points.map(point => point.y)) - pad));
     const box = { left, top, width: Math.min(r.width, Math.ceil(Math.max(...points.map(point => point.x)) + pad)) - left, height: Math.min(r.height, Math.ceil(Math.max(...points.map(point => point.y)) + pad)) - top };
-    route = { key, points, box, segments: walkable(points) };
+    const knots = routeKnots(points, fieldSlopes(points, v), 8.5 * sizeFactor());
+    route = { key, points, box, knots, segments: walkable(knots) };
     return route;
   }
   function travellerAt(pos) {
@@ -223,14 +299,14 @@ export function createPathsScene(root, { edgeFade = null } = {}) {
   function drawLife() {
     const r = rect();
     sizeLife();
-    const { points } = lifeRoute();
+    const { points, knots } = lifeRoute();
     const frame = lifeFrame;
     const head = travellerAt(frame.pos);
     // The route so far, cut at the traveller (the route never runs backwards).
     if (frame.pos > 0) {
       lx.save();
       lx.beginPath(); lx.rect(0, 0, head.x + 0.5, r.height); lx.clip();
-      lx.beginPath(); tracePath(lx, points);
+      lx.beginPath(); tracePath(lx, knots);
       lx.strokeStyle = FOREST; lx.lineWidth = 3.8; lx.lineCap = 'round'; lx.lineJoin = 'round'; lx.stroke();
       lx.restore();
     }
@@ -435,6 +511,7 @@ export function createPathsScene(root, { edgeFade = null } = {}) {
     settle() { size = null; route = null; paintBase(); drawFx(); },
     hide() { stopPulse(); },
     lifePoints: () => lifeRoute().points,
+    lifeKnots: () => lifeRoute().knots,
     failed,
   };
 }
