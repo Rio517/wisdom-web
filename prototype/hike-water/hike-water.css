@@ -1,0 +1,30 @@
+/* The lesson's own styles, plus the few rules this round adds. */
+@import "../../src/lessons/choices/journey.css";
+
+/* The map's three layers share one box: background SVG, water, then the rest. */
+.scene-hike svg.hike-bg,
+.scene-hike canvas.hike-water { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
+.scene-hike canvas.hike-water { pointer-events: none; transition: opacity 300ms ease; }
+/* Three.js versions draw a moment after the map; fade the water in rather than pop it. */
+.scene-hike canvas.hike-water[data-ready="false"] { opacity: 0; }
+
+/* Version switch in place of the chapter trail. */
+.hw-versions { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+.hw-versions a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px; border: 1px solid var(--color-rule); border-radius: 999px; color: var(--color-forest); font-size: 16px; font-weight: 600; text-decoration: none; }
+.hw-versions a:hover { border-color: var(--color-forest); }
+.hw-versions a[aria-current="page"] { background: var(--color-forest); border-color: var(--color-forest); color: white; }
+.hw-all { display: inline-flex; align-items: center; text-decoration: none; }
+@media (max-width: 900px) {
+  .hw-versions { grid-column: 1 / -1; grid-row: 2; padding-bottom: 10px; }
+}
+
+
+/* Front page. */
+body.hw-index-body { overflow: auto; }
+.hw-index { max-width: 760px; margin: 0 auto; padding: clamp(28px, 5vw, 72px); }
+.hw-index h1 { margin: 0 0 18px; font-size: clamp(34px, 4vw, 48px); line-height: 1.05; letter-spacing: -.02em; }
+.hw-lede { margin: 0 0 28px; font: 20px/1.6 var(--font-field); color: var(--color-ink); }
+.hw-list { display: grid; gap: 18px; margin: 0; padding: 0; list-style: none; }
+.hw-list li { border-top: 1px solid var(--color-rule); padding-top: 16px; }
+.hw-list a { font-size: 20px; font-weight: 600; color: var(--color-forest); text-underline-offset: 4px; }
+.hw-list p { margin: 6px 0 0; font-size: 17px; line-height: 1.5; color: var(--color-quiet); }

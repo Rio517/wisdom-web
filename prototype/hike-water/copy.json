@@ -1,0 +1,13 @@
+{
+  "hikeWater.title": "Which water does the hike keep?",
+  "hikeWater.lede": "Three versions of the water on Alfredo’s hike map, at the Halfway step. The stream comes over the mountains, the waterfall is back in its rock, and a side stream joins the main one below the bridge. The map, trail and story are the same in each; only the water’s look changes.",
+  "hikeWater.versionsLabel": "Water versions",
+  "hikeWater.all": "All versions",
+  "hikeWater.a.name": "A · Flat",
+  "hikeWater.a.about": "Canvas 2D, no Three.js. Flat layered water, a darker bank and a lighter body, with light dashes drifting downstream, streaks falling down the sheet and rings on the pool and the lake.",
+  "hikeWater.b.name": "B · Three.js, flat",
+  "hikeWater.b.about": "A Three.js layer draws only the water, still in flat colours: soft bands moving along the streams, a falling sheet with foam where it lands, gentle rings on the pool and the lake.",
+  "hikeWater.c.name": "C · Three.js with light",
+  "hikeWater.c.about": "B plus light on the water: small moving glints on the streams and the lake, a soft shimmer on the fall, and streams a touch darker in the middle than at their edges.",
+  "hikeWater.fallback": "This browser has no WebGL, so the map shows version A’s still drawing."
+}
