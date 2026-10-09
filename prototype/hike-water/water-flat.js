@@ -3,7 +3,7 @@
 // falling down the sheet, rings on the pool and the lake. Its still frame is
 // also what versions B and C show when WebGL is not available, so it follows
 // every change to their shapes.
-import { MAIN, SIDE, STREAMS, POOL, LAKE_SHORE, FALL, IMPACT, LAKE_RINGS, FAR_RIDGE, bankWidth, outline, insetLoop, fallEdges, fit } from './geometry.js';
+import { MAIN, SIDE, STREAMS, POOL, LAKE_SHORE, FALL, IMPACT, LAKE_RINGS, HILL, bankWidth, outline, insetLoop, fallEdges, fit } from './geometry.js';
 import { waterColors, cssColor } from './water-colors.js';
 
 const TAU = Math.PI * 2;
@@ -40,7 +40,8 @@ export function createFlatWater(canvas) {
   if (!ctx) throw new Error('Canvas 2D is not available');
   const colors = waterColors();
   const fill = name => cssColor(colors[name]);
-  const ridge = new Path2D(FAR_RIDGE);
+  // The main stream is clipped to the green hill, so it starts at the hill's crest.
+  const hill = new Path2D(HILL);
   const streams = STREAMS.map(stream => ({
     stream,
     clip: stream === MAIN,
@@ -78,7 +79,7 @@ export function createFlatWater(canvas) {
       c.fillStyle = fill(layer === 'bank' ? 'bank' : 'body');
       for (const piece of streams) {
         c.save();
-        if (piece.clip) c.clip(ridge);
+        if (piece.clip) c.clip(hill);
         c.fill(piece[layer]);
         c.restore();
       }
@@ -118,7 +119,7 @@ export function createFlatWater(canvas) {
     const samples = stream.samples;
     const end = stream === SIDE ? stream.flowLength - 14 : stream.flowLength;
     c.save();
-    if (piece.clip) c.clip(ridge);
+    if (piece.clip) c.clip(hill);
     c.strokeStyle = fill('light');
     c.lineCap = 'round';
     for (const lane of LANES) {

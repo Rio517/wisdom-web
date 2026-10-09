@@ -6,7 +6,7 @@ import { LEARNED } from '../../src/lessons/choices/journey-story.js';
 import { t } from '../../src/i18n/runtime.js';
 import { ICONS } from '../../src/lessons/choices/journey-icons.js';
 import { tween, ease, wait } from '../../src/lessons/choices/journey-motion.js';
-import { FAR_RIDGE, LAKE_SHORE, MAIN as STREAM, keepClear, outline } from './geometry.js';
+import { FAR_RIDGE, HILL, FALL, LAKE_SHORE, MAIN as STREAM, fallEdges, keepClear, outline } from './geometry.js';
 
 const tx = key => String(t(key)).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;');
 
@@ -43,36 +43,59 @@ const FAR_Y = 309;
 const taper = y => 1 - 0.5 * Math.min(1, Math.max(0, (NEAR_Y - y) / (NEAR_Y - FAR_Y)));
 const n1 = value => value.toFixed(1);
 
-// A footbridge seen from the side where the trail crosses the stream: a gently arched
-// deck, three posts and a handrail. Its ends rest on the trail either side of the water.
+// The footbridge where the trail crosses the stream, in a three-quarter view drawn
+// flat: a plank deck along the trail's direction, gently arched, with a near rail
+// and a far rail (higher on screen and a little shorter), three posts each. The
+// deck is a little wider than the trail, whose ends run under it on both banks.
 function bridgeMarkup() {
   const [cx, cy] = [628, 505];
   const [dx, dy] = [0.9765, -0.2154]; // the trail's direction at the crossing
-  const half = 25;
-  const thick = 5;
-  const L = [cx - dx * half, cy - dy * half + 1];
-  const R = [cx + dx * half, cy + dy * half + 1];
-  const C = [cx, cy - 10];
-  const at = t => [0, 1].map(i => (1 - t) ** 2 * L[i] + 2 * (1 - t) * t * C[i] + t ** 2 * R[i]);
+  const [nx, ny] = [-dy, dx]; // across the trail, towards the viewer
+  const half = { near: 25, far: 23 };
+  const width = 6.6; // half the deck's width
+  const arch = 4.2;
+  const face = 2.6; // the near edge's visible thickness
+  const at = (s, side) => {
+    const h = side > 0 ? half.near : half.far;
+    return [cx + dx * h * s + nx * width * side, cy + dy * h * s + ny * width * side - arch * (1 - s * s)];
+  };
   const p = ([x, y], down = 0) => `${n1(x)} ${n1(y + down)}`;
-  const deck = `M${p(L)} Q${p(C)} ${p(R)} L${p(R, thick)} Q${p(C, thick)} ${p(L, thick)} Z`;
-  // The plank ends along the deck's edge.
-  const planks = Array.from({ length: 11 }, (_, i) => at((i + 0.5) / 11)).map(b => `M${p(b, 1.6)} L${p(b, thick)}`).join(' ');
-  const posts = [0.08, 0.5, 0.92].map(at);
-  const tops = posts.map(([x, y]) => [x, y - 12]);
-  const railControl = [2 * tops[1][0] - (tops[0][0] + tops[2][0]) / 2, 2 * tops[1][1] - (tops[0][1] + tops[2][1]) / 2];
+  const steps = Array.from({ length: 13 }, (_, i) => -1 + i / 6);
+  const edge = (side, down = 0) => steps.map(s => p(at(s, side), down));
+  const deck = `M${edge(-1).join(' L')} L${edge(1).reverse().join(' L')} Z`;
+  const faceBand = `M${edge(1).join(' L')} L${edge(1, face).reverse().join(' L')} Z`;
+  const planks = Array.from({ length: 11 }, (_, i) => -1 + (2 * (i + 1)) / 12).map(s => `M${p(at(s, -1))} L${p(at(s, 1))}`).join(' ');
+  const posts = [-0.9, 0, 0.9];
+  const rail = (side, height, foot) => {
+    const tops = steps.filter(s => Math.abs(s) <= 0.9 + 1e-6).map(s => p(at(s, side), -height));
+    const stems = posts.map(s => `M${p(at(s, side), foot)} L${p(at(s, side), -height)}`).join(' ');
+    return { stems, rail: `M${tops.join(' L')}` };
+  };
+  const far = rail(-1, 9.4, 1.5);
+  const near = rail(1, 11, face);
   return `<g id="bridge">
-    <path class="bridge-post" d="${posts.map((b, i) => `M${p(b)} L${p(tops[i])}`).join(' ')}"/>
-    <path class="bridge-rail" d="M${p(tops[0])} Q${p(railControl)} ${p(tops[2])}"/>
+    <path class="bridge-post far" d="${far.stems}"/><path class="bridge-rail far" d="${far.rail}"/>
+    <path class="bridge-face" d="${faceBand}"/>
     <path class="bridge-deck" d="${deck}"/>
-    <path class="bridge-top" d="M${p(L, 1.2)} Q${p(C, 1.2)} ${p(R, 1.2)}"/>
     <path class="bridge-plank" d="${planks}"/>
+    <path class="bridge-post" d="${near.stems}"/><path class="bridge-rail" d="${near.rail}"/>
   </g>`;
 }
 
-// The trailhead: a small plank cabin with a pitched roof, and a picnic table beside it.
+// The trailhead: a flat dirt clearing seen at a low angle (about 4:1, with a gently
+// uneven edge) under a small plank cabin, a picnic table and the trail's start.
+const CLEARING = { cx: 88, cy: 673, rx: 76, ry: 19 };
+function clearingPath() {
+  const { cx, cy, rx, ry } = CLEARING;
+  const points = Array.from({ length: 96 }, (_, i) => {
+    const a = (i / 96) * Math.PI * 2;
+    const r = 1 + 0.022 * Math.sin(3 * a + 0.6) + 0.014 * Math.sin(5 * a + 2.1);
+    return `${n1(cx + Math.cos(a) * rx * r)} ${n1(cy + Math.sin(a) * ry * r)}`;
+  });
+  return `M${points.join(' L')} Z`;
+}
 function cabinMarkup() {
-  return `<g id="cabin" transform="translate(56 652)">
+  return `<g id="cabin" transform="translate(66 660)">
     <rect class="cabin-chimney" x="12" y="-59" width="7" height="20"/><rect class="cabin-chimney-cap" x="11" y="-61" width="9" height="3"/>
     <path class="cabin-wall" d="M-26 0 V-31 L0 -50 L26 -31 V0 Z"/>
     <path class="cabin-plank" d="M-26 -8 H26 M-26 -16 H26 M-26 -24 H26 M-15 -32 H15 M-7 -40 H7"/>
@@ -80,7 +103,7 @@ function cabinMarkup() {
     <rect class="cabin-door" x="-16" y="-20" width="10" height="20"/>
     <rect class="cabin-window" x="5" y="-24" width="13" height="11"/><path class="cabin-frame" d="M11.5 -24 V-13 M5 -18.5 H18"/>
   </g>
-  <g id="picnic-table" transform="translate(87 693) scale(1.2)">
+  <g id="picnic-table" transform="translate(90 688) scale(1.2)">
     <path class="table-leg" d="M-3 -11.5 L-11 0 M3 -11.5 L11 0 M-14 -6.8 H14"/>
     <rect class="table-wood" x="-10" y="-14" width="20" height="3"/>
     <rect class="table-wood" x="-18" y="-8.2" width="8" height="2.6"/><rect class="table-wood" x="10" y="-8.2" width="8" height="2.6"/>
@@ -113,19 +136,93 @@ function tree([x, y, s]) {
   return `<g class="tree" data-x="${x}" data-y="${y}" data-s="${s}" transform="translate(${x} ${y}) scale(${s})"><path d="M0 -44 L15 -8 H-15 Z" fill="${fill}"/><path d="M0 -30 L18 4 H-18 Z" fill="${fill}"/><rect x="-2.5" y="4" width="5" height="8" fill="#7b6a55"/></g>`;
 }
 
+// Alfredo and his dad in the lessons' figure style (as Maya): a big round head, two ink
+// dot eyes, one hair shape, a T-shirt, round-capped limbs, dark rounded shoes and a
+// flat ground shadow. Drawn in map units, feet on the trail at (0, 0), facing right.
+// Each leg and the near arm swing about their hip or shoulder while the pair walks.
+const INK = '#23302d';
+const swing = (x, y, phase, body, rest = 0) => `<g transform="translate(${x} ${y}) rotate(${rest})"><g class="hw-swing ${phase}">${body}</g></g>`;
+const shoe = (x, y, r) => `<path d="M${x} ${y}h${(r * 1.9).toFixed(1)}" stroke="${INK}" stroke-width="${r * 2}" stroke-linecap="round"/>`;
+
+// Alfredo, about 49 units tall: head about 38% of his height. Yellow T-shirt, dark shorts.
+function alfredoMarkup() {
+  const skin = '#c99a74';
+  const leg = `<path d="M0 5.6 V14.6" stroke="${skin}" stroke-width="4" stroke-linecap="round"/>${shoe(0.2, 16, 2)}<path d="M0 -0.4 V6.6" stroke="#3b4a44" stroke-width="5.8" stroke-linecap="round"/>`;
+  return `<g class="hw-figure" id="alfredo">
+    ${swing(-2.2, -18, 'b', leg, 7)}${swing(2.4, -18, 'a', leg, -6)}
+    <path d="M0.4 -31.5 V-28" stroke="${skin}" stroke-width="3.8" stroke-linecap="round"/>
+    <path d="M-5.3 -29.6 Q0 -30.9 5.4 -29.6 L8.2 -25.2 L6 -23.8 L5.9 -19 Q5.9 -16.6 3.8 -16.6 H-3.8 Q-5.9 -16.6 -5.9 -19 L-6.1 -23.8 L-8 -25.2 Z" fill="#e0a93b"/>
+    ${swing(5, -26.6, 'b', `<path d="M0 0 Q2.2 4.6 1.4 9" stroke="${skin}" stroke-width="4" stroke-linecap="round" fill="none"/>`)}
+    <circle cx="0.8" cy="-38.8" r="8.6" fill="${skin}"/>
+    <path d="M8.9 -41.4 C 9.6 -44.4 8 -47.2 5.3 -48 C 4.4 -49.8 1.6 -50.2 -0.3 -49.2 C -2.4 -50.1 -5.4 -49.6 -6.4 -47.6 C -9.2 -46.8 -10.4 -43.8 -9.6 -41.1 C -10.4 -38.8 -9.8 -36.4 -8.2 -35 L -6.2 -34.6 C -5.6 -37.2 -4.4 -39.4 -2.6 -40.6 C 0.2 -41.2 2.6 -42.6 3.6 -44.4 C 4.6 -42.6 6.6 -41.4 8.9 -41.4 Z" fill="#2c2019"/>
+    <path d="${dots([[1.5, -37.4], [6.2, -37.4]], 1.05)}" fill="${INK}"/>
+  </g>`;
+}
+
+// His dad, about 72 units tall (1.5 times Alfredo): head about 27% of his height, a short
+// beard, a green T-shirt, long dark trousers and a backpack.
+function dadMarkup() {
+  const skin = '#d9b18e';
+  const leg = `<path d="M0 0 V26.4" stroke="#3b4a44" stroke-width="5.4" stroke-linecap="round"/>${shoe(0.4, 28.6, 2.3)}`;
+  return `<g class="hw-figure" id="dad">
+    ${swing(-2.4, -31, 'a', leg, 5)}${swing(2.6, -31, 'b', leg, -4.5)}
+    <path d="M0.6 -54 V-49" stroke="${skin}" stroke-width="4.4" stroke-linecap="round"/>
+    <rect x="-13.2" y="-50.6" width="10.4" height="20" rx="4" fill="#6f917a"/>
+    <rect x="-13.2" y="-41.6" width="6.4" height="8.4" rx="2.4" fill="#8daa91"/>
+    <path d="M-6.6 -50.4 Q0 -52.2 6.8 -50.4 L10.2 -45 L7.6 -43.2 L7.2 -31.8 Q7.2 -29.4 4.8 -29.4 H-4.6 Q-7 -29.4 -7 -31.8 L-7.2 -43.2 L-8.4 -44.6 Z" fill="#285442"/>
+    <path d="M-4 -50.6 Q2.6 -53 4.6 -43.4" stroke="#6f917a" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+    ${swing(6.4, -46.4, 'a', `<path d="M0 0 Q2.8 6.4 1.6 13.2" stroke="${skin}" stroke-width="4.2" stroke-linecap="round" fill="none"/>`)}
+    <circle cx="1" cy="-61.6" r="9.4" fill="${skin}"/>
+    <path d="M10.2 -64 C 10 -69.4 5.8 -72.4 0.6 -72.2 C -5.4 -72 -9.6 -67.6 -9.8 -62 C -9.9 -59 -9 -56.6 -7.4 -55 L -5.6 -55.2 C -6 -57.4 -5.6 -60.2 -4 -62 C -1 -62.6 2.6 -63.4 5.2 -65.4 C 6.8 -64.4 8.4 -64 10.2 -64 Z M -6.2 -57.4 C -4.6 -56.2 -2.4 -55.6 0.4 -56.2 C 2.4 -56.8 3.4 -57.6 4.8 -57.4 C 6.6 -57.2 8.6 -57.6 10.1 -58.8 C 9.6 -55.4 7.4 -52.8 4.4 -52.3 C 0.4 -51.6 -4 -53.6 -6.2 -57.4Z" fill="#4a3526"/>
+    <path d="${dots([[1.8, -60.4], [7, -60.4]], 1.15)}" fill="${INK}"/>
+  </g>`;
+}
+
+const dots = (centres, r) => centres.map(([x, y]) => `M${x - r} ${y}a${r} ${r} 0 1 0 ${2 * r} 0a${r} ${r} 0 1 0 ${-2 * r} 0z`).join('');
+
 function walkersMarkup() {
-  return `<g class="walkers" id="walkers"><g class="walker-flip" id="walker-flip"><g transform="scale(1.9)"><g class="walker-bob">
-    <ellipse cx="0" cy="1" rx="17" ry="3.5" fill="#23302d" opacity=".12"/>
-    <path d="M1 0 V-9 M7 0 V-9" stroke="#3b4a44" stroke-width="3" stroke-linecap="round"/>
-    <rect x="-1.5" y="-24" width="11" height="16" rx="5" fill="#285442"/>
-    <rect x="-5.5" y="-22" width="6" height="10" rx="2.5" fill="#6f917a"/>
-    <circle cx="4" cy="-29" r="5.2" fill="#d9b18e"/>
-    <path d="M-1.2 -30.5 a5.2 5.2 0 0 1 10.4 0 z" fill="#4a3526"/>
-    <path d="M-12 0 V-7 M-7 0 V-7" stroke="#3b4a44" stroke-width="2.6" stroke-linecap="round"/>
-    <rect x="-14" y="-19" width="9.5" height="12.5" rx="4.5" fill="#e0a93b"/>
-    <circle cx="-9.5" cy="-23.5" r="4.4" fill="#c99a74"/>
-    <path d="M-13.9 -24.5 a4.4 4.4 0 0 1 8.8 0 z" fill="#2c2019"/>
-  </g></g></g></g>`;
+  return `<g class="walkers" id="walkers"><g class="walker-flip" id="walker-flip">
+    <path d="M-5 0.6a13 2.6 0 1 0 26 0a13 2.6 0 1 0-26 0z M-20.6 2.1a9.6 2.2 0 1 0 19.2 0a9.6 2.2 0 1 0-19.2 0z" fill="${INK}" opacity=".13"/>
+    <g class="hw-bob"><g transform="translate(8 0)">${dadMarkup()}</g>
+    <g transform="translate(-11 1.5)">${alfredoMarkup()}</g>
+  </g></g></g>`;
+}
+
+// The second rock: a smaller boulder standing behind the fall's rock on the right.
+// Its left third is hidden, and its top runs behind the fall rock's edge at a clear angle.
+function sideRockMarkup() {
+  return `<g id="side-rock">
+    <path d="M1124 566 C 1122 522, 1134 484, 1156 463 C 1166 453, 1178 446, 1187 451 C 1195 458, 1197 515, 1195 566 Z" fill="#b3c3b8"/>
+    <path d="M1184 449 C 1193 458, 1197 512, 1195 566 H1180 C 1185 520, 1188 480, 1184 449 Z" fill="#a6b8ab"/>
+    <path d="M1146 474 C 1158 459, 1172 447, 1185 450 C 1172 451, 1160 458, 1148 476 Z" fill="#c9d6cc"/>
+  </g>`;
+}
+
+// The fall's rock. A notch is cut into its top where the fall pours out: the sheet's top
+// edge is flush with the notch floor, and the notch and the darker channel below it
+// follow the sheet's edges, FALL.margin outside them on both sides.
+function fallsRockMarkup() {
+  const { top, bottom, margin } = FALL;
+  const left = FALL.lip[0] - margin;
+  const right = FALL.lip[1] + margin;
+  const r = 1.8;
+  const body = `M1016 564 C 1010 500, 1022 440, 1044 402 C 1049 391, 1055 383, ${left - 2.6} 380.6 Q${left} 380 ${left} 383.2`
+    + ` L${left} ${top - r} Q${left} ${top} ${left + r} ${top} L${right - r} ${top} Q${right} ${top} ${right} ${top - r}`
+    + ` L${right} 381.6 Q${right} 378.8 ${right + 2.6} 378.7 C 1117 378, 1127 384, 1132 392 C 1154 422, 1162 500, 1158 564 Z`;
+  const caps = `M1044 402 C 1049 391, 1055 383, ${left - 2.6} 380.6 Q${left} 380 ${left} 383.2 L${left} 386 C ${left - 6} 386.4, 1050 393, 1044 402 Z`
+    + ` M${right} 385 L${right} 381.6 Q${right} 378.8 ${right + 2.6} 378.7 C 1117 378, 1127 384, 1132 392 C 1124 387.5, 1116 385, ${right} 385 Z`;
+  // The channel: the sheet's edges moved out by the margin, from the notch floor to the rock's foot.
+  const rows = Array.from({ length: 17 }, (_, i) => i / 16);
+  const edge = (f, side) => fallEdges(f)[side] + (side ? margin : -margin);
+  const y = f => top + (bottom - top) * f;
+  const channel = `M${rows.map(f => `${n1(edge(f, 0))} ${n1(y(f))}`).join(' L')} L${n1(edge(1, 0))} 566`
+    + ` L${n1(edge(1, 1))} 566 L${rows.slice().reverse().map(f => `${n1(edge(f, 1))} ${n1(y(f))}`).join(' L')} Z`;
+  return `<g id="falls-rock">
+    <path d="${body}" fill="#b3c3b8"/>
+    <path d="M1120 384 C 1142 402, 1160 470, 1158 564 H1120 C 1126 500, 1128 430, 1120 384 Z" fill="#a6b8ab"/>
+    <path d="${caps}" fill="#c9d6cc"/>
+    <path class="falls-channel" d="${channel}" fill="#9fb2a6"/>
+  </g>`;
 }
 
 // Layer 1: the flat hills and the waterfall's rock. No water.
@@ -133,20 +230,11 @@ function backgroundSVG() {
   return `<svg class="hike-bg" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false">
   <path d="${FAR_RIDGE}" fill="#e2e9e2"/>
   <path d="M-400 420 L0 400 L120 330 L230 380 L340 300 L460 380 L600 290 L720 360 L850 290 L915 240 L1100 238 L1150 270 L1200 290 L1600 330 V1200 H-400 Z" fill="#d2ddd3"/>
-  <path d="M-400 480 L0 470 C 200 430, 380 470, 560 430 S 900 380, 1200 420 L1600 440 V1200 H-400 Z" fill="#e5ece3"/>
+  <path d="${HILL}" fill="#e5ece3"/>
   <path d="M-400 620 L0 610 C 250 580, 500 640, 760 600 S 1050 560, 1200 590 L1600 600 V1200 H-400 Z" fill="#edf2ea"/>
   <path class="lake-shore" d="M${LAKE_SHORE.map(([x, y]) => `${n1(x)} ${n1(y)}`).join(' L')} Z"/>
-  <g id="side-rock">
-    <path d="M1134 566 C 1131 522, 1142 482, 1162 464 C 1175 453, 1190 456, 1195 473 C 1200 500, 1199 538, 1197 566 Z" fill="#b3c3b8"/>
-    <path d="M1182 458 C 1193 466, 1199 508, 1197 566 H1181 C 1186 522, 1188 484, 1182 458 Z" fill="#a6b8ab"/>
-    <path d="M1152 470 C 1160 458, 1178 451, 1190 459 C 1176 456, 1162 461, 1152 470 Z" fill="#c9d6cc"/>
-  </g>
-  <g id="falls-rock">
-    <path d="M1016 564 C 1010 500, 1022 440, 1044 402 C 1048 392, 1053 385, 1060 381 L1064 389 Q1065 391 1068 391 L1100 391 Q1103 391 1104 389 L1109 379 C 1117 378, 1127 384, 1132 392 C 1154 422, 1162 500, 1158 564 Z" fill="#b3c3b8"/>
-    <path d="M1120 384 C 1142 402, 1160 470, 1158 564 H1120 C 1126 500, 1128 430, 1120 384 Z" fill="#a6b8ab"/>
-    <path d="M1044 402 C 1048 392, 1053 385, 1060 381 L1062.5 386 C 1055 390, 1049 395, 1044 402 Z M1109 379 C 1117 378, 1127 384, 1132 392 C 1124 387, 1116 385, 1107 384 Z" fill="#c9d6cc"/>
-    <path d="M1061 566 L1064 391 L1104 391 L1107 566 Z" fill="#9fb2a6"/>
-  </g>
+  ${sideRockMarkup()}
+  ${fallsRockMarkup()}
 </svg>`;
 }
 
@@ -154,6 +242,7 @@ function backgroundSVG() {
 function foregroundSVG() {
   const trees = [...TREE_SPOTS].sort((a, b) => a[1] - b[1]).map(tree).join('');
   return `<svg class="hike-map" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false">
+  <path class="trailhead-clearing" d="${clearingPath()}"/>
   ${trees}
   <g id="rock" transform="translate(0 26)">
     <path d="M424 656 L436 618 L466 596 L506 600 L534 624 L544 656 Z" fill="#9aa59d"/>
@@ -300,8 +389,15 @@ export function createHikeScene(root) {
       if (distance < best) { best = distance; bridge = i / 400; }
     }
   }
+  // The halfway flag stands on the trail's far edge just ahead of where the pair stops,
+  // so it shows beside them rather than behind them. Its words stay where they were,
+  // under the stopping point.
   const turnPoint = main.getPointAtLength(mainLength * TURN);
-  $('#turn-flag').setAttribute('transform', `translate(${turnPoint.x} ${turnPoint.y - 10})`);
+  const flagPoint = main.getPointAtLength(mainLength * TURN + 30);
+  const flagShift = [flagPoint.x - turnPoint.x, flagPoint.y - 8 - (turnPoint.y - 10)];
+  const flagTextX = String(n1(30 - flagShift[0]));
+  $('#turn-flag').setAttribute('transform', `translate(${n1(flagPoint.x)} ${n1(flagPoint.y - 8)})`);
+  $('#turn-flag-text').setAttribute('y', n1(54 - flagShift[1]));
 
   const setTrace = (element, length, from, to) => {
     const visible = Math.max(0, (to - from) * length);
@@ -324,7 +420,7 @@ export function createHikeScene(root) {
     const lines = words.length > 1 ? [words.slice(0, cut).join(' '), words.slice(cut).join(' ')] : [words[0]];
     text.replaceChildren(...lines.map((line, i) => {
       const span = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
-      span.setAttribute('x', '30');
+      span.setAttribute('x', flagTextX);
       if (i) span.setAttribute('dy', '1.15em');
       span.textContent = line;
       return span;

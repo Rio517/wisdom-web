@@ -3,16 +3,17 @@
 
 export const VIEW = { width: 1200, height: 800 };
 
-// The far ridge (the first background band). The main stream comes over it at a saddle.
+// The far ridge (the first background band).
 export const FAR_RIDGE = 'M-400 330 L0 330 L90 250 L170 300 L280 170 L380 280 L470 210 L560 300 L700 140 L820 260 L900 190 L1010 250 L1100 160 L1200 240 L1600 300 V1200 H-400 Z';
-// The two crest lines either side of that saddle; water above them is behind the ridge.
-export const SADDLE = [[280, 170], [380, 280], [470, 210]];
+// The green hill (the third background band). The main stream starts at its crest.
+const HILL_CURVES = [[[0, 470], [200, 430], [380, 470], [560, 430]], [[560, 430], [740, 390], [900, 380], [1200, 420]]];
+export const HILL = 'M-400 480 L0 470 C 200 430, 380 470, 560 430 S 900 380, 1200 420 L1600 440 V1200 H-400 Z';
 
-// Main stream: over the far ridge at the saddle, through the notch in the second ridge,
-// under the bridge (628, 505), past the junction and out at the bottom edge.
+// Main stream: from behind the hill's crest, down under the bridge (628, 505), past
+// the junction and out at the bottom edge. The first key is behind the crest.
 const MAIN_KEYS = [
-  [368, 240], [381, 284], [404, 322], [436, 352], [462, 384], [494, 412], [546, 434], [596, 456],
-  [621, 481], [628, 505], [634, 548], [637, 600], [631, 650], [622, 694], [611, 742], [609, 800],
+  [594, 408], [597, 424], [600, 440], [607, 457], [617, 474], [624, 490],
+  [628, 505], [634, 548], [637, 600], [631, 650], [622, 694], [611, 742], [609, 800],
   [619, 870], [612, 950], [603, 1040],
 ];
 // Side stream: from the pool at the waterfall's foot, leftwards, into the main stream below the bridge.
@@ -21,15 +22,16 @@ const SIDE_KEYS = [
   [748, 631], [712, 649], [678, 666], [648, 684], [622, 702],
 ];
 
-// Width (map units) by depth: narrow at the ridge, widest at the bottom.
-const MAIN_WIDTH = [[240, 5], [284, 6.5], [384, 11], [440, 15], [505, 25], [600, 29], [676, 30], [740, 38], [880, 44], [1060, 48]];
+// Width (map units) by depth: narrow at the hill's crest, widest at the bottom.
+const MAIN_WIDTH = [[422, 8], [450, 13], [478, 19], [505, 25], [600, 29], [676, 30], [740, 38], [880, 44], [1060, 48]];
 const SIDE_WIDTH = [[556, 10], [620, 12], [702, 15]];
 
 export const POOL = { cx: 1084, cy: 554, rx: 56, ry: 14 };
-// The fall pours over a notch in the rock's top lip (y 387) and runs the full height
-// into the pool, ending inside its surface. A little wider at the lip, then narrower,
-// then wider again at the foot.
-export const FALL = { top: 386, bottom: 551, lip: [1066, 1102], neck: [1070, 1098], neckAt: 0.12, foot: [1066, 1102] };
+// The fall pours from the floor of a notch in the rock's top (y 391) and runs the full
+// height into the pool, ending inside its surface. A little wider at the lip, then
+// narrower, then wider again at the foot. The notch and the darker channel in the
+// rock behind it follow the sheet's edges, `margin` outside them on both sides.
+export const FALL = { top: 391, bottom: 551, lip: [1066, 1102], neck: [1070, 1098], neckAt: 0.12, foot: [1066, 1102], margin: 3.5 };
 export const IMPACT = [1084, 551];
 
 /** The fall's left and right edges at `f` (0 at the lip, 1 at the foot). */
@@ -227,19 +229,42 @@ export function along(stream, fraction) {
   return stream.samples[index];
 }
 
-/** The far ridge's crest height at x near the saddle (water above it is hidden). */
-export function crestY(x) {
-  const [a, b, c] = SADDLE;
-  if (x <= a[0] || x >= c[0]) return -Infinity;
-  if (x <= b[0]) return a[1] + (b[1] - a[1]) * (x - a[0]) / (b[0] - a[0]);
-  return b[1] + (c[1] - b[1]) * (x - b[0]) / (c[0] - b[0]);
+// The hill's crest as a polyline, for clipping the stream behind it.
+const HILL_CREST = (() => {
+  const points = [];
+  for (const [a, b, c, d] of HILL_CURVES) {
+    for (let i = points.length ? 1 : 0; i <= 120; i += 1) {
+      const t = i / 120;
+      const u = 1 - t;
+      const mix = k => u * u * u * a[k] + 3 * u * u * t * b[k] + 3 * u * t * t * c[k] + t * t * t * d[k];
+      points.push([mix(0), mix(1)]);
+    }
+  }
+  return points;
+})();
+
+/** The green hill's crest height at `x` (water above it is behind the hill). */
+export function hillCrestY(x) {
+  if (x <= HILL_CREST[0][0]) return HILL_CREST[0][1];
+  for (let i = 1; i < HILL_CREST.length; i += 1) {
+    const [x1, y1] = HILL_CREST[i];
+    if (x <= x1) {
+      const [x0, y0] = HILL_CREST[i - 1];
+      return y0 + (y1 - y0) * (x - x0) / (x1 - x0);
+    }
+  }
+  return HILL_CREST[HILL_CREST.length - 1][1];
 }
+// Three points on the crest around the stream's source, for the shaders' clip.
+export const SOURCE_CREST = [-30, 0, 30].map(dx => [MAIN_KEYS[1][0] + dx, hillCrestY(MAIN_KEYS[1][0] + dx)]);
+/** Whether a point of the main stream shows, below the hill's crest. */
+export const belowCrest = (x, y) => y > hillCrestY(x);
 
 /** Circles [x, y, radius] that trees and labels keep clear of. */
 export function keepClear(margin = 12) {
   const spots = [];
   for (const stream of STREAMS) {
-    stream.samples.forEach((p, i) => { if (i % 4 === 0) spots.push([p.x, p.y, p.w / 2 + margin]); });
+    stream.samples.forEach((p, i) => { if (i % 4 === 0 && belowCrest(p.x, p.y)) spots.push([p.x, p.y, p.w / 2 + margin]); });
   }
   for (let i = 0; i < 24; i += 1) {
     const angle = (i / 24) * Math.PI * 2;

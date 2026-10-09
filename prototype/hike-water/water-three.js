@@ -16,7 +16,7 @@
 import {
   WebGLRenderer, Scene, OrthographicCamera, Mesh, BufferGeometry, BufferAttribute, ShaderMaterial, DoubleSide,
 } from 'three';
-import { MAIN, SIDE, POOL, LAKE, LAKE_SHORE, FALL, IMPACT, LAKE_RINGS, SADDLE, fallEdges, insetLoop, ellipseLoop, visibleBounds } from './geometry.js';
+import { MAIN, SIDE, POOL, LAKE, LAKE_SHORE, FALL, IMPACT, LAKE_RINGS, SOURCE_CREST, fallEdges, insetLoop, ellipseLoop, visibleBounds } from './geometry.js';
 import { waterColors } from './water-colors.js';
 import { FLOW_SPEED } from './water-flat.js';
 
@@ -77,15 +77,16 @@ const STREAM_FRAGMENT = /* glsl */ `
   ${COMMON}
   uniform float uClip;
   uniform float uFlowSpeed;
-  uniform vec2 uSaddleA;
-  uniform vec2 uSaddleB;
-  uniform vec2 uSaddleC;
+  uniform vec2 uCrestA;
+  uniform vec2 uCrestB;
+  uniform vec2 uCrestC;
   varying vec4 vData; // across (-1..1), distance in from the bank, flow distance, half width
   varying vec2 vPos;
+  // The green hill's crest around the stream's source.
   float crest(float x) {
-    if (x <= uSaddleA.x || x >= uSaddleC.x) return -1e4;
-    if (x <= uSaddleB.x) return mix(uSaddleA.y, uSaddleB.y, (x - uSaddleA.x) / (uSaddleB.x - uSaddleA.x));
-    return mix(uSaddleB.y, uSaddleC.y, (x - uSaddleB.x) / (uSaddleC.x - uSaddleB.x));
+    if (x <= uCrestA.x || x >= uCrestC.x) return -1e4;
+    if (x <= uCrestB.x) return mix(uCrestA.y, uCrestB.y, (x - uCrestA.x) / (uCrestB.x - uCrestA.x));
+    return mix(uCrestB.y, uCrestC.y, (x - uCrestB.x) / (uCrestC.x - uCrestB.x));
   }
   void main() {
     float across = vData.x;
@@ -93,7 +94,7 @@ const STREAM_FRAGMENT = /* glsl */ `
     float flow = vData.z;
     float halfWidth = vData.w;
     float alpha = inside(edge);
-    // Behind the far ridge: hidden above its crest.
+    // Behind the hill: hidden above its crest.
     if (uClip > 0.5) alpha *= inside(vPos.y - crest(vPos.x));
     if (alpha < 0.003) discard;
     float bank = 0.6 + 0.24 * halfWidth;
@@ -364,9 +365,9 @@ export function createThreeWater(canvas, { light = false, onLost } = {}) {
   const streamUniforms = clip => ({
     uClip: { value: clip ? 1 : 0 },
     uFlowSpeed: { value: FLOW_SPEED },
-    uSaddleA: { value: SADDLE[0] },
-    uSaddleB: { value: SADDLE[1] },
-    uSaddleC: { value: SADDLE[2] },
+    uCrestA: { value: SOURCE_CREST[0] },
+    uCrestB: { value: SOURCE_CREST[1] },
+    uCrestC: { value: SOURCE_CREST[2] },
   });
   const pondUniforms = (pond, sources, ringSize, cycle, foam, bank, depth) => ({
     uBankWidth: { value: bank },
