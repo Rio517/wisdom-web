@@ -14,7 +14,7 @@
 // motion is redrawn each frame, on a small canvas the size of that step. Labels,
 // the choices to pick, rings and the end card are HTML over the canvases.
 import { canvasBitmap } from '../../src/engine/path-presentation.js';
-import { hash } from '../../src/lessons/choices/journey-choices.js';
+import { hash, stepLabel } from '../../src/lessons/choices/journey-choices.js';
 import { ease, prefersReducedMotion } from '../../src/lessons/choices/journey-motion.js';
 import { t } from '../../src/i18n/runtime.js';
 import { createLifeTree, isSurprise } from './explore-tree.js';
@@ -61,6 +61,11 @@ const SEEDS = {
   officeJob: 'sam-officeJob-34',
 };
 
+// A what-if is told about Sam, so its labels never speak to "you": a step takes
+// the opening's third-person words where it has them, and a step or example
+// choice still addressed to the reader is left out of the pool.
+const whatIfLabel = id => (t.has(`opening.whatif.step.${id}`) ? t(`opening.whatif.step.${id}`) : stepLabel(id));
+const personNeutral = words => !/\b(you|your|yours|yourself)\b/i.test(words);
 const trees = new Map();
 function treeFor(alt) {
   if (!trees.has(alt.key)) {
@@ -75,6 +80,8 @@ function treeFor(alt) {
       firstGap: alt.gap ?? 1,
       spread: 0.26,
       settle: 0.5,
+      label: whatIfLabel,
+      keep: personNeutral,
     }));
   }
   return trees.get(alt.key);

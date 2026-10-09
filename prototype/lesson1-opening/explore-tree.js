@@ -1,6 +1,6 @@
 // Study copy of createLifeTree from src/lessons/choices/journey-explore.js for
 // the Lesson 1 opening (design 001 v13, round 3). The same lazily grown,
-// seeded tree of example choices, with five changes so it can grow a life from
+// seeded tree of example choices, with six changes so it can grow a life from
 // one of Sam's forks:
 // - `start`: the root is a given node (an alternative Sam didn't take), not age 3;
 // - `end`: the life stops at 41, Sam's last step, instead of 70;
@@ -13,9 +13,12 @@
 // - `spread` and `settle`: how far a fork's options may swing (the explorer's
 //   0.38) and how strongly a life drifts back toward the middle (the explorer's
 //   0.8 keeps 80% of its height), so a life that starts high or low isn't held
-//   there: where a choice starts on the map doesn't decide where its life ends.
+//   there: where a choice starts on the map doesn't decide where its life ends;
+// - `label` and `keep`: a step's words can come from elsewhere (the what-if
+//   tells Sam's life in the third person), and a step or example choice whose
+//   words `keep` rejects is left out of the pool.
 // Pure: no DOM.
-import { hash, labelsForFork, closedReason, availableSteps, stepLabel } from '../../src/lessons/choices/journey-choices.js';
+import { hash, labelsForFork, closedReason, availableSteps, stepLabel, bandFor, bandChoices } from '../../src/lessons/choices/journey-choices.js';
 
 const LOOKAHEAD = 4;
 export const isSurprise = node => node.kind === 'lucky' || node.kind === 'roadblock';
@@ -30,7 +33,7 @@ export function gapFor(age) {
   return 11;
 }
 
-export function createLifeTree({ seed, start, end = 41, taken: before = [], firstBand = null, firstGap = 1, spread = 0.38, settle = 0.8 }) {
+export function createLifeTree({ seed, start, end = 41, taken: before = [], firstBand = null, firstGap = 1, spread = 0.38, settle = 0.8, label = stepLabel, keep = () => true }) {
   const nodes = new Map();
   nodes.set('r', {
     id: 'r', age: start.age, y: start.y, ay: start.y, parent: null,
@@ -49,7 +52,7 @@ export function createLifeTree({ seed, start, end = 41, taken: before = [], firs
   // more often when the life's own chain has one waiting.
   function surpriseFor(node, path, taken) {
     if (node.kind !== 'choice' || node.age < 6 || node.age > end - 4) return null;
-    const waiting = availableSteps(node.age, taken, node.step).filter(item => item.kind !== 'choice');
+    const waiting = availableSteps(node.age, taken, node.step).filter(item => item.kind !== 'choice' && keep(label(item.id)));
     if (!waiting.length) return null;
     const fromChain = waiting.filter(item => item.after.length);
     if (hash(key(`${node.id}:surprise`)) > (fromChain.length ? 0.42 : 0.22)) return null;
@@ -109,22 +112,22 @@ export function createLifeTree({ seed, start, end = 41, taken: before = [], firs
 
     const surprise = surpriseFor(node, path, taken);
     if (surprise) {
-      add(0, { ...surprise, label: stepLabel(surprise.id) });
+      add(0, { ...surprise, label: label(surprise.id) });
       return node.children.map(child => nodes.get(child));
     }
 
     const count = hash(key(`${id}:count`)) < (node.age < 19 ? 0.5 : 0.35) ? 3 : 2;
     const open = availableSteps(node.age, taken, node.step)
       .filter(item => item.kind === 'choice')
-      .map(item => ({ ...item, label: stepLabel(item.id) }))
-      .filter(item => !used.includes(item.label));
+      .map(item => ({ ...item, label: label(item.id) }))
+      .filter(item => keep(item.label) && !used.includes(item.label));
     const chain = rankChain(open.filter(item => item.after.length), path);
     const starters = open.filter(item => !item.after.length)
       .sort((a, b) => hash(key(`${id}:${a.id}`)) - hash(key(`${id}:${b.id}`)));
     // Up to two steps that build on the path, then something new.
     const picked = chain.slice(0, count - 1);
     if (starters.length && hash(key(`${id}:starter`)) < 0.6) picked.push(starters[0]);
-    const avoid = [...used, ...picked.map(item => item.label)];
+    const avoid = [...used, ...picked.map(item => item.label), ...bandChoices(bandFor(node.age)).filter(choice => !keep(choice))];
     const { labels, byFamily } = labelsForFork(node.age, key(id), count - picked.length, avoid);
     const options = [...picked, ...labels.map(label => ({ id: null, kind: 'choice', label, byFamily }))]
       .sort((a, b) => hash(key(`${id}:order:${a.label}`)) - hash(key(`${id}:order:${b.label}`)));
