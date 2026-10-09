@@ -74,12 +74,12 @@ body { min-width: 0; overflow: hidden; }
 .l2-start-chips { display: flex; flex-wrap: wrap; gap: 8px; }
 .l2-start-chip { display: flex; align-items: center; gap: 10px; width: fit-content; max-width: 100%; margin: 0; border-radius: 14px; padding: 8px 14px 8px 10px; background: var(--color-paper-deep); font: 15px/1.35 var(--font-guide); }
 .l2-start-chip[data-move="first"], .l2-start-chip[data-move="up"], .l2-start-chip[data-move="small"] { background: #28544214; }
+.l2-chip-icon { display: flex; gap: 4px; }
 .l2-chip-icon svg { display: block; width: 24px; height: 24px; }
 .l2-chip-move { color: var(--color-quiet); }
 .l2-start-chip[data-move="first"] .l2-chip-move, .l2-start-chip[data-move="up"] .l2-chip-move, .l2-start-chip[data-move="small"] .l2-chip-move { color: var(--color-forest); font-weight: 600; }
 .l2-soccer-line { display: flex; align-items: center; gap: 10px; margin: 8px 0 0; font: 15px/1.4 var(--font-guide); color: var(--color-quiet); }
 .l2-soccer-line svg { flex: none; width: 22px; height: 22px; }
-.l2-continue { justify-self: start; margin-top: 4px; }
 .l2-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px; margin-top: 18px; }
 .l2-hint { margin: 0; font: 600 15px var(--font-guide); color: #7a5412; }
 
@@ -103,7 +103,10 @@ body { min-width: 0; overflow: hidden; }
 .l2-chip-choice:disabled { cursor: default; }
 
 /* Event rows (C) and the plan check */
-.l2-ask { margin: -4px 0 12px; font: 600 15px var(--font-guide); color: var(--color-quiet); }
+.l2-again { margin: -4px 0 0; font: 600 15px var(--font-guide); color: var(--color-quiet); }
+.l2-add, .l2-change { min-height: 44px; padding: 0 16px; font-weight: 600; justify-self: start; }
+.l2-add[aria-pressed="true"] { border-color: var(--color-forest); background: #28544214; color: var(--color-forest); }
+.l2-add:disabled { opacity: .45; cursor: default; }
 .l2-ask-row + .l2-ask-row { margin-top: 14px; }
 .l2-ask-name { display: flex; align-items: center; gap: 8px; margin: 0 0 8px; font: 600 15px/1.35 var(--font-guide); }
 .l2-ask-name svg { flex: none; width: 24px; height: 24px; }

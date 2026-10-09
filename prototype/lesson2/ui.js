@@ -169,11 +169,24 @@ export function markChosen(container, button) {
 /**
  * "Starting · Easier today." — the track's move, in words, on the card. The
  * stage itself is on the panel's track; screen readers hear both here.
+ * `items` maps each routine to its day item (or the last one of a stretch).
  */
-export function startChip(routine, entry) {
-  const move = moveOf(entry);
-  return `<p class="l2-start-chip" data-move="${move}"><span class="l2-chip-icon">${routineIcon(routine)}</span>
-    <span><span class="sr-only">${esc(t(`l2.start.title.${routine}`))}: ${esc(stageWord(entry.after))}. </span><span aria-hidden="true">${esc(t('l2.start.chipLabel'))} · </span><span class="l2-chip-move">${esc(t(`l2.start.delta.${move}`))}</span></span></p>`;
+export function moveChip(routines, items, move, text) {
+  const stages = routines.map(routine => `${esc(t(`l2.start.title.${routine}`))}: ${esc(stageWord(items[routine].after))}.`).join(' ');
+  return `<p class="l2-start-chip" data-move="${move}"><span class="l2-chip-icon">${routines.map(routineIcon).join('')}</span>
+    <span><span class="sr-only">${stages} </span><span aria-hidden="true">${esc(t('l2.start.chipLabel'))} · </span><span class="l2-chip-move">${esc(text)}</span></span></p>`;
+}
+
+export function startChip(routine, item) {
+  const move = moveOf(item);
+  return moveChip([routine], { [routine]: item }, move, t(`l2.start.delta.${move}`));
+}
+
+/** A day's Starting chips: one chip when every routine moved the same way. */
+export function startChips(routines, items) {
+  const moves = routines.map(routine => moveOf(items[routine]));
+  if (moves.every(move => move === moves[0])) return moveChip(routines, items, moves[0], t(`l2.start.delta.${moves[0]}`));
+  return `<div class="l2-start-chips">${routines.map(routine => startChip(routine, items[routine])).join('')}</div>`;
 }
 
 // ——— Panel ———

@@ -64,7 +64,7 @@ export function resultLine(routine, item, index) {
     case 'moment':
       if (item.tired) return t(`l2.res.tired.${routine}`);
       return item.fresh ? t(`l2.res.fresh.${routine}`) : t(`l2.res.moment.${routine}.${item.stageBefore}`);
-    case 'other': return t(`l2.res.other.${routine}`);
+    case 'other': return t(day.kind === 'weekend' || day.kind === 'sunday' ? `l2.res.weekend.${routine}` : `l2.res.other.${routine}`);
     case 'skip': return item.moved === 'down' ? t(`l2.res.slip.${routine}`) : t(`l2.res.skip.${routine}`);
     case 'rest': return t(day.kind === 'weekend' || day.kind === 'sunday' ? 'l2.res.restWeekend' : 'l2.res.rest');
     case 'luck': return t(`l2.res.luck.${routine}`);
