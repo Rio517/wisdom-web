@@ -70,10 +70,15 @@ export const STAGES = [0, 0.2, 0.45, 0.7]; // takes a push · a little easier ·
 
 export const emptyTally = () => ({ moment: 0, other: 0, skips: 0, rests: 0, luck: 0, gone: 0 });
 
-/** Starting level, 0..1, from counts alone. */
+/**
+ * Starting level, 0..1, from counts alone (never from runs of days). Misses
+ * past the first two slip it back a little, but never below the stage the
+ * reader had reached: a missed day never takes a stage away.
+ */
 export function startingLevel({ moment = 0, other = 0, skips = 0 } = {}) {
-  const grown = 1 - ((1 - STEP.moment) ** moment) * ((1 - STEP.other) ** other);
-  return Math.max(0, round(grown - SLIP * Math.max(0, skips - FREE_SKIPS)));
+  const grown = round(1 - ((1 - STEP.moment) ** moment) * ((1 - STEP.other) ** other));
+  const slipped = round(grown - SLIP * Math.max(0, skips - FREE_SKIPS));
+  return Math.max(STAGES[startingStage(grown)], slipped);
 }
 
 export function startingStage(level) {
