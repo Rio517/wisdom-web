@@ -71,8 +71,8 @@ function bridgeMarkup() {
     const stems = posts.map(s => `M${p(at(s, side), foot)} L${p(at(s, side), -height)}`).join(' ');
     return { stems, rail: `M${tops.join(' L')}` };
   };
-  const far = rail(-1, 9.4, 1.5);
-  const near = rail(1, 11, face);
+  const far = rail(-1, 13, 1.5);
+  const near = rail(1, 16, face);
   return `<g id="bridge">
     <path class="bridge-post far" d="${far.stems}"/><path class="bridge-rail far" d="${far.rail}"/>
     <path class="bridge-face" d="${faceBand}"/>
@@ -84,7 +84,7 @@ function bridgeMarkup() {
 
 // The trailhead: a flat dirt clearing seen at a low angle (about 4:1, with a gently
 // uneven edge) under a small plank cabin, a picnic table and the trail's start.
-const CLEARING = { cx: 88, cy: 673, rx: 76, ry: 19 };
+const CLEARING = { cx: 85, cy: 673.5, rx: 75, ry: 19.5 };
 function clearingPath() {
   const { cx, cy, rx, ry } = CLEARING;
   const points = Array.from({ length: 96 }, (_, i) => {
@@ -95,7 +95,7 @@ function clearingPath() {
   return `M${points.join(' L')} Z`;
 }
 function cabinMarkup() {
-  return `<g id="cabin" transform="translate(66 660)">
+  return `<g id="cabin" transform="translate(56 662)">
     <rect class="cabin-chimney" x="12" y="-59" width="7" height="20"/><rect class="cabin-chimney-cap" x="11" y="-61" width="9" height="3"/>
     <path class="cabin-wall" d="M-26 0 V-31 L0 -50 L26 -31 V0 Z"/>
     <path class="cabin-plank" d="M-26 -8 H26 M-26 -16 H26 M-26 -24 H26 M-15 -32 H15 M-7 -40 H7"/>
