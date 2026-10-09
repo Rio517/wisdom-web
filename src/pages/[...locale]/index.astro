@@ -1,9 +1,6 @@
 ---
-// Home (design 002 v02 · A, "Stage"): one sentence in the middle of a faint
-// path field; on click the words lift away and the paths grow out of the
-// Beginning. Below: the lesson, the roadmap, and a line for grown-ups.
 import SiteLayout from '../../layouts/SiteLayout.astro';
-import { LESSON_PATH, UI, href, lessonsFor } from '../../data/site.js';
+import { SITE, LESSON_PATH, UI, href, lessonsFor, choicesChaptersFor } from '../../data/site.js';
 import { getTranslator } from '../../i18n/index.js';
 import { localeStaticPaths } from '../../i18n/config.js';
 
@@ -11,48 +8,78 @@ export const getStaticPaths = localeStaticPaths;
 const { locale } = Astro.props;
 const t = getTranslator(locale);
 const link = path => href(locale, path);
+const chapters = choicesChaptersFor(t);
+const stops = chapters.map((chapter, index) => ({ ...chapter, x: ((index + 0.5) / chapters.length) * 1000 }));
+const third = (stops[1].x - stops[0].x) / 3;
+let trail = `M ${stops[0].x} 20 C ${stops[0].x + third} 4, ${stops[1].x - third} 36, ${stops[1].x} 20`;
+for (let i = 2; i < stops.length; i += 1) trail += ` S ${stops[i].x - third} ${i % 2 ? 36 : 4}, ${stops[i].x} 20`;
 ---
-<SiteLayout description={t('site.description')} current="home" locale={locale} stage clientMessages={['map.', 'lesson.ui.mapUnavailable']}>
-  <section class="stage-home" aria-labelledby="hero-title">
-    <figure class="stage-field" aria-label={t('home.mapLabel')}>
-      <div class="map-stack" data-grow="hidden" data-state="overview">
-        <img id="map-ghost" alt="" aria-hidden="true" />
-        <canvas id="map-base" aria-hidden="true"></canvas>
-        <canvas id="map-today" aria-hidden="true"></canvas>
-        <canvas id="map-fx" aria-hidden="true"></canvas>
-        <div id="map-callouts" aria-hidden="true"></div>
+<SiteLayout description={t('site.description')} current="home" locale={locale} clientMessages={['map.', 'lesson.ui.mapUnavailable']}>
+  <div class="page">
+    <section class="hero" aria-labelledby="hero-title">
+      <div>
+        <p class="kicker">{t('home.kicker')}</p>
+        <h1 id="hero-title">{t('home.title')}</h1>
+        <p class="hero-lede">{t('home.lede')}</p>
+        <div class="actions">
+          <a class="btn btn-primary" href={link(LESSON_PATH)}>{t('home.startLesson')}<Fragment set:html={UI.arrow} /></a>
+          <a class="btn btn-quiet" href={link('/choices/')}>{t('home.aboutLesson')}</a>
+        </div>
       </div>
-    </figure>
-    <div class="stage-copy">
-      <p class="kicker lift">{t('home.kicker')}</p>
-      <h1 id="hero-title" class="lift">{t('home.title')}</h1>
-      <p class="stage-summary lift">{t('home.lede')}</p>
-      <div class="stage-actions lift">
-        <button class="btn btn-primary" type="button" data-grow-start>{t('home.watch')}</button>
-      </div>
-    </div>
-    <div class="stage-after" hidden>
-      <p class="stage-settled">{t('home.settled')}</p>
-      <div class="stage-actions">
-        <a class="btn btn-primary" href={link(LESSON_PATH)}>{t('home.startLesson')}<Fragment set:html={UI.arrow} /></a>
-        <a class="btn btn-quiet" href={link('/choices/')}>{t('home.aboutLesson')}</a>
-      </div>
-    </div>
-  </section>
+      <figure class="hero-map" aria-label={t('home.mapLabel')}>
+        <div class="map-stack" data-grow="hidden" data-state="overview">
+          <canvas id="map-base" aria-hidden="true"></canvas>
+          <canvas id="map-today" aria-hidden="true"></canvas>
+          <canvas id="map-fx" aria-hidden="true"></canvas>
+          <div id="map-callouts" aria-hidden="true"></div>
+        </div>
+        <figcaption class="hero-caption">{t('home.mapCaption')}</figcaption>
+      </figure>
+    </section>
 
-  <div class="home-below">
-    <section class="home-lesson" aria-labelledby="lesson-1-title">
-      <p class="kicker">{t('home.lesson.kicker')}</p>
-      <h2 id="lesson-1-title">{t('home.lesson.title')}</h2>
-      <p class="home-lede">{t('home.lesson.lede')}</p>
-      <div class="stage-actions">
-        <a class="btn btn-primary" href={link(LESSON_PATH)}>{t('home.startJourney')}<Fragment set:html={UI.arrow} /></a>
-        <a class="btn btn-quiet" href={link(`${LESSON_PATH}read/`)}>{t('home.readText')}</a>
+    <section class="section" id="lesson-1" aria-labelledby="lesson-1-title">
+      <div class="lesson-feature">
+        <div class="lesson-feature-head">
+          <div>
+            <p class="kicker">{t('home.lesson.kicker')}</p>
+            <h2 id="lesson-1-title">{t('home.lesson.title')}</h2>
+            <p class="page-lede">{t('home.lesson.lede')}</p>
+          </div>
+          <span class="status-pill" data-status="available">{t('site.status.available')}</span>
+        </div>
+        <ul class="meta-row">
+          <li><Fragment set:html={UI.clock} />{t('home.meta.time')}</li>
+          <li><Fragment set:html={UI.people} />{t('home.meta.ages')}</li>
+          <li><Fragment set:html={UI.device} />{t('home.meta.devices')}</li>
+          <li><Fragment set:html={UI.text} />{t('home.meta.text')}</li>
+        </ul>
+        <div class="chapter-map">
+          <svg class="chapter-line" viewBox="0 0 1000 40" preserveAspectRatio="none" aria-hidden="true"><path d={trail} /></svg>
+          <ol class="chapter-stops" aria-label={t('home.chapters')}>
+            {stops.map(chapter => (
+              <li class="chapter-stop">
+                <a href={chapter.href}>
+                  <span class="stop-icon" set:html={chapter.icon} />
+                  <span class="stop-num">{chapter.number}</span>
+                  <strong>{chapter.title}</strong>
+                  <span class="stop-text">{chapter.text}</span>
+                </a>
+              </li>
+            ))}
+          </ol>
+        </div>
+        <div class="actions">
+          <a class="btn btn-primary" href={link(LESSON_PATH)}>{t('home.startJourney')}<Fragment set:html={UI.arrow} /></a>
+          <a class="btn btn-quiet" href={link(`${LESSON_PATH}read/`)}>{t('home.readText')}</a>
+          <a class="text-link" href={link('/choices/notes/')}>{t('home.notes')}</a>
+        </div>
       </div>
     </section>
 
-    <section class="home-roadmap" aria-labelledby="roadmap-title">
-      <h2 id="roadmap-title">{t('home.roadmap.title')}</h2>
+    <section class="section" aria-labelledby="roadmap-title">
+      <div class="section-head">
+        <h2 id="roadmap-title">{t('home.roadmap.title')}</h2>
+      </div>
       <ol class="roadmap">
         {lessonsFor(t).map(lesson => (
           <li data-status={lesson.status}>
@@ -68,58 +95,48 @@ const link = path => href(locale, path);
       </ol>
     </section>
 
-    <p class="home-grownups"><a href={link('/choices/notes/')}>{t('home.grownups')}</a></p>
+    <section class="section" aria-labelledby="grownups-title">
+      <div class="band">
+        <div>
+          <h2 id="grownups-title">{t('home.together.title')}</h2>
+          <p>{t('home.together.text')}</p>
+          <ul class="promise-list">
+            <li><Fragment set:html={UI.check} />{t('home.together.fictional')}</li>
+            <li><Fragment set:html={UI.check} />{t('home.together.research')}</li>
+            <li><Fragment set:html={UI.check} />{t('home.together.privacy')}</li>
+            <li><Fragment set:html={UI.check} />{t('home.together.access')}</li>
+          </ul>
+        </div>
+        <div class="link-cards">
+          <a class="link-card" href={link('/choices/notes/')}><div><strong>{t('home.card.notes.title')}</strong><span>{t('home.card.notes.text')}</span></div><Fragment set:html={UI.arrow} /></a>
+          <a class="link-card" href={link('/about/')}><div><strong>{t('home.card.about.title')}</strong><span>{t('home.card.about.text')}</span></div><Fragment set:html={UI.arrow} /></a>
+          <a class="link-card" href={SITE.research}><div><strong>{t('home.card.research.title')}</strong><span>{t('home.card.research.text')}</span></div><Fragment set:html={UI.external} /></a>
+        </div>
+      </div>
+    </section>
   </div>
 
   <script>
     import { createPathsScene } from '../../lessons/choices/journey-map.js';
     import { createToken, prefersReducedMotion, wait } from '../../lessons/choices/journey-motion.js';
-    import { watchField } from '../../components/stage-field.js';
 
-    const section = document.querySelector('.stage-home');
-    const figure = section?.querySelector('.stage-field');
-    if (section && figure) {
-      const stack = figure.querySelector('.map-stack');
-      const copy = section.querySelector('.stage-copy');
-      const after = section.querySelector('.stage-after');
-      // A softer right-hand end than the lesson's: on a full-width stage the
-      // line ends otherwise stand in a wall short of the screen edge.
-      const scene = createPathsScene(figure, { labels: false, edgeFade: 0.16 });
-      const field = watchField(stack, figure.querySelector('#map-base'), figure.querySelector('#map-ghost'));
-      scene.show('cover', { animate: false });
-      field.snapshot();
+    const figure = document.querySelector('.hero-map');
+    if (figure) {
+      const scene = createPathsScene(figure, { labels: false });
       let token = createToken();
-
-      const settle = () => {
-        after.hidden = false;
-        requestAnimationFrame(() => after.classList.add('is-in'));
-        after.querySelector('a')?.focus({ preventScroll: true });
-      };
-      section.querySelector('[data-grow-start]')?.addEventListener('click', async () => {
+      const play = async () => {
         token.cancel();
-        const run = token = createToken();
-        if (scene.failed || prefersReducedMotion()) {
-          copy.hidden = true;
-          scene.show('travel', { animate: false });
-          stack.dataset.grow = 'shown';
-          settle();
-          return;
-        }
-        copy.classList.add('is-leaving');
-        // Lines lift and fade in turn: 480 ms each, 70 ms apart (690 ms in all).
-        const lines = [...copy.querySelectorAll('.lift')];
-        const exits = lines.map((line, index) => line.animate(
-          [{ transform: 'none', opacity: 1 }, { transform: 'translateY(-36px)', opacity: 0 }],
-          { duration: 480, delay: index * 70, easing: 'cubic-bezier(.4, 0, .7, .2)', fill: 'forwards' },
-        ));
-        Promise.all(exits.map(exit => exit.finished)).then(() => { copy.hidden = true; });
-        // The paths start before the words have quite gone.
-        if (!(await wait(320, run))) return;
+        token = createToken();
+        const run = token;
+        if (scene.failed) return;
+        if (prefersReducedMotion()) { scene.show('travel', { animate: false }); return; }
+        scene.show('cover', { animate: false });
+        if (!(await wait(700, run))) return;
         await scene.show('many', { from: 'cover', animate: true, token: run });
-        if (run.cancelled || !(await wait(200, run))) return;
+        if (run.cancelled || !(await wait(300, run))) return;
         await scene.show('travel', { from: 'many', animate: true, token: run });
-        if (!run.cancelled) settle();
-      });
+      };
+      play();
     }
   </script>
 </SiteLayout>

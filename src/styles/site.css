@@ -51,71 +51,44 @@ p { text-wrap: pretty; }
 .meta-row svg { width: 18px; height: 18px; color: var(--color-sage); }
 .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 14px; margin-top: 30px; }
 
-/* ——— Stage layout (home): no sidebar; the Index button opens the drawer ——— */
-.site-shell[data-layout="stage"] { display: block; }
-.stage-topbar { position: relative; z-index: 10; display: flex; align-items: center; justify-content: space-between; gap: 24px; height: 72px; padding: 0 clamp(16px, 3vw, 48px); }
-.stage-topbar-left { display: flex; align-items: center; gap: 18px; }
-.stage-topbar .nav-opener { position: static; display: inline-flex; }
-.stage-topbar .brand { color: var(--color-ink); text-decoration: none; }
-.stage-topbar .brand-name { display: block; font: 500 26px/1 var(--font-field); letter-spacing: -.01em; }
-.stage-topbar-link { font: 600 16px var(--font-guide); color: var(--color-forest); text-decoration: none; }
-.stage-topbar-link:hover { text-decoration: underline; }
-.page-stage-footer { max-width: 1040px; margin: 0 auto; }
+/* ——— Home hero ——— */
+.hero { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: clamp(28px, 4vw, 64px); align-items: center; min-height: min(640px, calc(100vh - 110px)); }
+.hero h1 { margin: 0 0 22px; font-size: clamp(44px, 4.3vw, 66px); line-height: .98; letter-spacing: -.03em; }
+.hero-lede { margin: 0; max-width: 34ch; font: 22px/1.5 var(--font-field); color: #34423e; }
+.hero-map { position: relative; height: clamp(400px, 46vw, 560px); border-radius: 28px; background: var(--color-paper-deep); overflow: hidden; }
+.hero-map .map-stack { position: absolute; inset: 22px 18px 34px; }
+.hero-map canvas { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
+.hero-map #map-today { opacity: 0; visibility: hidden; transition: opacity 700ms ease, visibility 0s 700ms; }
+.hero-map .map-stack[data-state="today"] #map-today { opacity: 1; visibility: visible; transition: opacity 700ms ease, visibility 0s; }
+.hero-map .map-stack[data-state="today"] #map-base { opacity: 0; }
+.hero-map #map-base { transition: opacity 700ms ease; }
+.hero-map .map-stack[data-grow="hidden"] #map-base { clip-path: inset(0 100% 0 0); }
+.hero-map .map-stack[data-grow="growing"] #map-base { clip-path: inset(0 0 0 0); transition: clip-path 2.2s cubic-bezier(.35,.1,.25,1), opacity 700ms; }
+.hero-caption { position: absolute; left: 24px; bottom: 12px; margin: 0; font-size: 15px; color: var(--color-quiet); }
 
-/* ——— Home stage (design 002 v02 · A): one sentence over a faint field; the paths grow from the Beginning ——— */
-@property --grow { syntax: "<length>"; inherits: true; initial-value: 0px; }
-.stage-home { position: relative; height: calc(100svh - 72px); min-height: 600px; overflow: hidden; }
-.stage-field { position: absolute; inset: 0 clamp(8px, 2vw, 40px) 8px; margin: 0; }
-.stage-field .map-stack { position: absolute; inset: 0; }
-.stage-field canvas, .stage-field #map-ghost { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
-/* The faint field waits under the words and clears the moment the paths
-   start to grow: never two full-size layers at once, and no fade, which cost
-   long frames on slow machines. */
-.stage-field #map-ghost { opacity: .12; }
-.stage-field #map-ghost:not([src]) { visibility: hidden; }
-/* Until the still copy exists, the field itself stands in at the same strength. */
-.stage-field .map-stack[data-grow="hidden"]:not([data-ghost]) #map-base { visibility: visible; opacity: .12; clip-path: none; }
-.stage-field .map-stack:not([data-grow="hidden"]) #map-ghost { visibility: hidden; }
-/* A widening circle from the Beginning dot, on the compositor. Fully clipped
-   is still a layer; hidden is not. */
-.stage-field #map-base { clip-path: circle(0px at var(--ox) var(--oy)); transition: opacity 700ms ease; }
-.stage-field .map-stack[data-grow="hidden"] #map-base { visibility: hidden; }
-.stage-field .map-stack[data-grow="growing"] #map-base { clip-path: circle(var(--reach) at var(--ox) var(--oy)); transition: clip-path 2.2s cubic-bezier(.33, .12, .25, 1), opacity 700ms ease; }
-.stage-field .map-stack[data-grow="shown"] #map-base { clip-path: none; }
-.stage-field #map-today { opacity: 0; visibility: hidden; transition: opacity 700ms ease, visibility 0s 700ms; }
-.stage-field .map-stack[data-state="today"] #map-today { opacity: 1; visibility: visible; transition: opacity 700ms ease, visibility 0s; }
-.stage-field .map-stack[data-state="today"] #map-base { opacity: 0; }
-
-.stage-copy { position: absolute; z-index: 2; left: 50%; top: 47%; transform: translate(-50%, -50%); width: min(1100px, calc(100% - 96px)); text-align: center; }
-/* Paper behind the words, so the faint field never runs through them. */
-.stage-copy::before { content: ""; position: absolute; inset: -12% -18%; z-index: -1; background: radial-gradient(closest-side, var(--color-paper) 55%, transparent); transition: opacity 400ms ease; }
-/* The paper goes with the words, so the growing paths aren't cut by it. */
-.stage-copy.is-leaving::before { opacity: 0; }
-.stage-copy h1 { margin: 0; font: 500 clamp(48px, 5.4vw, 104px)/1.0 var(--font-field); letter-spacing: -.03em; color: var(--color-ink); }
-.stage-copy .kicker { font-size: clamp(15px, 1vw, 18px); }
-.stage-summary { max-width: 40ch; margin: 26px auto 0; font: clamp(22px, 1.6vw, 30px)/1.45 var(--font-field); color: var(--color-ink); text-wrap: pretty; }
-.stage-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px 14px; margin-top: 34px; }
-.stage-home .btn { min-height: 54px; padding: 0 28px; font-size: 18px; }
-.stage-after { position: absolute; z-index: 3; left: 50%; bottom: clamp(40px, 6vh, 72px); transform: translate(-50%, 12px); width: min(760px, calc(100% - 48px)); text-align: center; opacity: 0; transition: opacity 500ms ease, transform 500ms cubic-bezier(.2, .7, .2, 1); }
-.stage-after.is-in { opacity: 1; transform: translate(-50%, 0); }
-.stage-after .stage-actions { margin-top: 18px; }
-.stage-after .btn-quiet { background: var(--color-paper); }
-.stage-settled { display: inline-block; margin: 0; border-radius: 18px; background: color-mix(in srgb, var(--color-paper) 90%, transparent); padding: 8px 18px; font: 500 19px/1.4 var(--font-guide); color: var(--color-ink); }
-
-/* ——— Below the stage: the lesson, the roadmap, a line for grown-ups ——— */
-.home-below { max-width: 960px; margin: 0 auto; padding: clamp(64px, 10vh, 120px) clamp(24px, 5vw, 48px) 72px; }
-.home-lesson { text-align: center; }
-.home-lesson h2 { margin: 0; font-size: clamp(40px, 3.6vw, 60px); line-height: 1.05; letter-spacing: -.02em; }
-.home-lede { max-width: 40ch; margin: 18px auto 0; font: 22px/1.5 var(--font-field); color: var(--color-ink); }
-.home-roadmap { margin-top: clamp(72px, 10vh, 120px); }
-.home-roadmap > h2 { margin: 0 0 18px; text-align: center; font-size: clamp(28px, 2.4vw, 38px); line-height: 1.1; }
-.home-grownups { margin: 56px 0 0; text-align: center; font: 19px/1.5 var(--font-field); }
-
-/* ——— Roadmap ——— */
+/* ——— Lesson feature ——— */
+.lesson-feature { border-radius: 30px; background: white; border: 1px solid var(--color-rule); padding: clamp(28px, 3.4vw, 48px); }
+.lesson-feature-head { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 28px; align-items: start; }
+.lesson-feature h2 { margin: 0 0 14px; font-size: clamp(34px, 3.2vw, 46px); line-height: 1.05; letter-spacing: -.02em; }
+.lesson-feature .page-lede { max-width: 58ch; font-size: 20px; }
 .status-pill { display: inline-flex; align-items: center; gap: 8px; border-radius: 999px; padding: 6px 13px; font: 600 15px var(--font-guide); background: #2854421a; color: var(--color-forest); }
 .status-pill::before { content: ""; width: 7px; height: 7px; border-radius: 99px; background: currentColor; }
 .status-pill[data-status="next"] { background: var(--color-sun-soft); color: #7a5412; }
 .status-pill[data-status="planned"] { background: var(--color-paper-deep); color: var(--color-quiet); }
+
+.chapter-map { position: relative; margin-top: 40px; }
+.chapter-map svg.chapter-line { position: absolute; left: 0; right: 0; top: 12px; width: 100%; height: 40px; overflow: visible; }
+.chapter-line path { fill: none; stroke: var(--color-sage); stroke-width: 2.5; stroke-dasharray: 2 8; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+.chapter-stops { position: relative; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; margin: 0; padding: 0; list-style: none; }
+.chapter-stop a { display: grid; justify-items: center; gap: 10px; padding: 0 4px 6px; text-align: center; text-decoration: none; color: var(--color-ink); border-radius: 16px; }
+.chapter-stop .stop-icon { display: grid; place-items: center; width: 64px; height: 64px; border-radius: 999px; background: var(--color-paper-deep); border: 2px solid white; box-shadow: 0 0 0 1.5px var(--color-rule); transition: transform 200ms cubic-bezier(.3,1.4,.5,1), box-shadow 200ms; }
+.chapter-stop .stop-icon svg { width: 34px; height: 34px; }
+.chapter-stop a:hover .stop-icon { transform: translateY(-3px); box-shadow: 0 0 0 2px var(--color-forest); }
+.chapter-stop strong { font: 600 17px var(--font-guide); }
+.chapter-stop span.stop-text { font-size: 15px; line-height: 1.4; color: var(--color-quiet); }
+.chapter-stop .stop-num { font: 600 15px var(--font-guide); color: #6f917a; letter-spacing: .04em; }
+
+/* ——— Roadmap ——— */
 .roadmap { position: relative; margin: 0; padding: 0; list-style: none; display: grid; gap: 0; }
 .roadmap::before { content: ""; position: absolute; left: 25px; top: 30px; bottom: 30px; width: 2px; background: repeating-linear-gradient(to bottom, var(--color-mist) 0 3px, transparent 3px 9px); }
 .roadmap li { position: relative; display: grid; grid-template-columns: 52px minmax(0, 1fr) auto; gap: 22px; align-items: center; padding: 18px 0; border-bottom: 1px solid #e7ece6; }
@@ -137,6 +110,9 @@ p { text-wrap: pretty; }
 .band { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: clamp(28px, 4vw, 64px); align-items: start; border-radius: 30px; background: var(--color-paper-deep); padding: clamp(28px, 3.4vw, 48px); }
 .band h2 { margin: 0 0 14px; font-size: clamp(28px, 2.4vw, 36px); }
 .band p { margin: 0 0 12px; font: 19px/1.55 var(--font-field); }
+.promise-list { margin: 18px 0 0; padding: 0; list-style: none; display: grid; gap: 12px; }
+.promise-list li { display: grid; grid-template-columns: 26px 1fr; gap: 10px; font: 19px/1.5 var(--font-field); }
+.promise-list svg { width: 22px; height: 22px; margin-top: 2px; color: var(--color-forest); }
 .link-cards { display: grid; gap: 10px; }
 .link-card { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 12px; border-radius: 18px; background: white; border: 1px solid var(--color-rule); padding: 18px 20px; text-decoration: none; color: var(--color-ink); transition: border-color 180ms, transform 180ms; }
 .link-card:hover { border-color: var(--color-forest); transform: translateX(3px); }
@@ -198,6 +174,9 @@ p { text-wrap: pretty; }
 
 /* ——— Tablet ——— */
 @media (max-width: 1280px) {
+  .hero { grid-template-columns: minmax(0, 1fr); min-height: 0; gap: 32px; }
+  .hero-lede { max-width: 46ch; }
+  .hero-map { height: auto; aspect-ratio: 16 / 10; }
 }
 @media (max-width: 1100px) {
   .site-shell, .site-shell[data-nav="collapsed"] { grid-template-columns: minmax(0, 1fr); }
@@ -207,10 +186,13 @@ p { text-wrap: pretty; }
   .site-topbar .nav-opener { position: static; display: inline-flex; }
   .site-shell[data-nav="collapsed"] > .nav-opener { display: none; }
   .page { padding-top: 40px; }
+  .chapter-stops { grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: 30px; }
+  .chapter-map svg.chapter-line { display: none; }
   .band, .overview-hero { grid-template-columns: minmax(0, 1fr); }
   .chapter-list { grid-template-columns: minmax(0, 1fr); }
 }
 @media (max-width: 700px) {
+  .lesson-feature-head { grid-template-columns: minmax(0, 1fr); }
   .roadmap li { grid-template-columns: 52px minmax(0, 1fr); }
   .roadmap li .status-pill { grid-column: 2; justify-self: start; }
 }

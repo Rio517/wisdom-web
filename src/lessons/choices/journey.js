@@ -44,7 +44,7 @@ if (scenes.paths.failed) {
 
 // ——— Cover (design 002 v02 · A) ———
 // The first step fills the stage: the question in the middle of a faint
-// field. Begin lifts the words away, the paths grow out of the Beginning,
+// field. "Watch the paths grow" lifts the words away, the paths grow out of the Beginning,
 // and then the narration arrives for the next step.
 const journeyRoot = $('#journey');
 const skipLink = document.querySelector('.skip-link');
@@ -53,7 +53,7 @@ cover.className = 'cover-stage';
 cover.id = 'cover';
 cover.innerHTML = `<p class="beat-kicker lift">${escapeHTML(t('lesson.beat.cover.kicker'))}</p>
   <h1 class="lift" id="cover-heading" tabindex="-1">${escapeHTML(t('map.coverQuestion'))}</h1>
-  <p class="cover-hint lift">${escapeHTML(t('map.coverHint'))}</p>
+  <p class="cover-hint lift">${escapeHTML(t('lesson.beat.cover.lede'))}</p>
   <div class="cover-actions lift"><button class="next-button" type="button" data-cover-begin>${escapeHTML(t('lesson.beat.cover.next'))}</button></div>`;
 roots.paths.append(cover);
 const pathsStack = roots.paths.querySelector('.map-stack');

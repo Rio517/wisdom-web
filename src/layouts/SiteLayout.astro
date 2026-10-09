@@ -7,35 +7,24 @@ import DraftNote from '../components/DraftNote.astro';
 import { SITE, UI, href } from '../data/site.js';
 import { getTranslator } from '../i18n/index.js';
 
-// `stage`: no sidebar; a top bar whose Index button opens the drawer (home, design 002 v02 · A).
-interface Props { title?: string; description?: string; current?: string; locale: string; clientMessages?: boolean | string[]; noindex?: boolean; stage?: boolean }
-const { title, description, current, locale, clientMessages = false, noindex = false, stage = false } = Astro.props;
+interface Props { title?: string; description?: string; current?: string; locale: string; clientMessages?: boolean | string[]; noindex?: boolean }
+const { title, description, current, locale, clientMessages = false, noindex = false } = Astro.props;
 const t = getTranslator(locale);
 ---
 <BaseLayout title={title} description={description} locale={locale} clientMessages={clientMessages} noindex={noindex}>
   <a class="skip-link" href="#main">{t('common.skipToContent')}</a>
-  <div class="site-shell" data-nav="open" data-layout={stage ? 'stage' : undefined}>
-    <SiteNav current={current} locale={locale} mode={stage ? 'drawer' : 'sidebar'} />
-    {!stage && <button class="nav-opener" type="button" data-nav-open><Fragment set:html={UI.menu} />{t('nav.index')}</button>}
+  <div class="site-shell" data-nav="open">
+    <SiteNav current={current} locale={locale} />
+    <button class="nav-opener" type="button" data-nav-open><Fragment set:html={UI.menu} />{t('nav.index')}</button>
     <div class="site-main">
-      {stage ? (
-        <header class="stage-topbar">
-          <div class="stage-topbar-left">
-            <button class="nav-opener" type="button" data-nav-open aria-label={t('nav.open')}><Fragment set:html={UI.menu} />{t('nav.index')}</button>
-            <a class="brand" href={href(locale, '/')} aria-current={current === 'home' ? 'page' : undefined}><span class="brand-name">{t('site.name')}</span></a>
-          </div>
-          <a class="stage-topbar-link" href={href(locale, '/about/')}>{t('nav.about')}</a>
-        </header>
-      ) : (
-        <header class="site-topbar">
-          <button class="nav-opener" type="button" data-nav-open aria-label={t('nav.open')}><Fragment set:html={UI.menu} />{t('nav.index')}</button>
-          <a class="brand" href={href(locale, '/')}><span class="brand-name">{t('site.name')}</span></a>
-        </header>
-      )}
+      <header class="site-topbar">
+        <button class="nav-opener" type="button" data-nav-open aria-label={t('nav.open')}><Fragment set:html={UI.menu} />{t('nav.index')}</button>
+        <a class="brand" href={href(locale, '/')}><span class="brand-name">{t('site.name')}</span></a>
+      </header>
       <main id="main" tabindex="-1">
         <DraftNote locale={locale} />
         <slot />
-        <div class={stage ? 'page page-stage-footer' : 'page'} style="padding-top: 0; padding-bottom: 40px;">
+        <div class="page" style="padding-top: 0; padding-bottom: 40px;">
           <footer class="site-footer">
             <p>{t('footer.note')}</p>
             <div class="footer-links">
