@@ -503,15 +503,22 @@ dialog::backdrop { background: #23302d66; }
   .lane-box { min-width: 0; }
   .scene-skills { --fork-w: 64px; }
 }
-/* The same calendar on a wider screen whose badges are too long for the row (fitCalendars in journey-skills.js).
+/* The same calendar on a wider screen whose badges are too long for the row, and on a tablet where even
+   that squeezes the weeks, the badge beside its label (fitCalendars in journey-skills.js).
    :where() keeps the base specificity, so the short-screen rules below still tighten it. */
-:where(.calendar[data-compact="true"]) .growth { padding: 2px 6px; }
-:where(.calendar[data-compact="true"]) .growth-long { display: none; }
-:where(.calendar[data-compact="true"]) .week { width: 10px; height: 10px; border-radius: 3px; }
-:where(.calendar[data-compact="true"]) .calendar-rows { grid-template-columns: minmax(0, 1fr); row-gap: 7px; }
-:where(.calendar[data-compact="true"]) .calendar-row { row-gap: 2px; }
-:where(.calendar[data-compact="true"]) .calendar-row small { min-width: 0; font-size: 15px; line-height: 1.2; }
-:where(.calendar[data-compact="true"]) .calendar-track { gap: 2px; }
+:where(.calendar:is([data-fit="compact"], [data-fit="tight"])) .growth { padding: 2px 6px; }
+:where(.calendar:is([data-fit="compact"], [data-fit="tight"])) .growth-long { display: none; }
+:where(.calendar:is([data-fit="compact"], [data-fit="tight"])) .week { width: 10px; height: 10px; border-radius: 3px; }
+:where(.calendar:is([data-fit="compact"], [data-fit="tight"])) .calendar-rows { grid-template-columns: minmax(0, 1fr); row-gap: 7px; }
+:where(.calendar:is([data-fit="compact"], [data-fit="tight"])) .calendar-row { row-gap: 2px; }
+:where(.calendar:is([data-fit="compact"], [data-fit="tight"])) .calendar-row small { min-width: 0; font-size: 15px; line-height: 1.2; }
+:where(.calendar:is([data-fit="compact"], [data-fit="tight"])) .calendar-track { gap: 2px; }
+:where(.calendar[data-fit="tight"]) .calendar-row { display: flex; flex-wrap: wrap; align-items: center; column-gap: 2px; }
+:where(.calendar[data-fit="tight"]) .calendar-track { display: contents; }
+:where(.calendar[data-fit="tight"]) .calendar-row::after { content: ""; order: 2; flex-basis: 100%; }
+:where(.calendar[data-fit="tight"]) .calendar-row small { margin-right: 4px; }
+:where(.calendar[data-fit="tight"]) .growth { order: 1; margin-left: 0; }
+:where(.calendar[data-fit="tight"]) .week { order: 3; }
 @media (max-width: 1180px) {
   .journey-header { grid-template-columns: auto 1fr auto; gap: 14px; padding: 0 18px; }
   .journey-brand span { display: none; }

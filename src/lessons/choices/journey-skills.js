@@ -120,15 +120,20 @@ export function createSkillsScene(root) {
     fitCalendars();
   }
 
-  // Long badges ("a progressé beaucoup") squeeze the week squares. When a square would drop under
-  // 8px, both calendars take the tablet layout: label above the weeks, the badge without "grew".
+  // Long badges ("a progressé beaucoup") squeeze the week squares. Both calendars step down a layout
+  // while they do: "compact" (squares under 8px) puts each label above its weeks and drops "grew"
+  // from the badge, as tablets show it; "tight" (squares at their 6px floor, the badge spilling into
+  // the skill box) also moves the badge up beside its label.
   function fitCalendars() {
     if (!root.offsetWidth) return;
     const calendars = root.querySelectorAll('.calendar');
-    calendars.forEach(calendar => { calendar.dataset.compact = 'false'; });
     const weeks = [...root.querySelectorAll('.calendar-row:not([hidden]) .week')];
-    const tight = weeks.some(week => week.offsetWidth < 8);
-    calendars.forEach(calendar => { calendar.dataset.compact = String(tight); });
+    const setFit = fit => calendars.forEach(calendar => { calendar.dataset.fit = fit; });
+    const squeezed = below => weeks.some(week => week.offsetWidth < below);
+    setFit('full');
+    if (!squeezed(8)) return;
+    setFit('compact');
+    if (squeezed(7)) setFit('tight');
   }
 
   function setCalendar(key, upTo, { basket = 0, animateSeason = null } = {}) {
