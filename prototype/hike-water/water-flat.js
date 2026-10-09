@@ -1,8 +1,9 @@
 // Version A: flat water in Canvas 2D. Layered flat fills (a darker bank, a
 // lighter body) and slow flat motion: light dashes drifting downstream, streaks
 // falling down the sheet, rings on the pool and the lake. Its still frame is
-// also what versions B and C show when WebGL is not available.
-import { MAIN, SIDE, STREAMS, POOL, LAKE, FALL, IMPACT, LAKE_RINGS, FAR_RIDGE, bankWidth, outline, fit } from './geometry.js';
+// also what versions B and C show when WebGL is not available, so it follows
+// every change to their shapes.
+import { MAIN, SIDE, STREAMS, POOL, LAKE_SHORE, FALL, IMPACT, LAKE_RINGS, FAR_RIDGE, bankWidth, outline, insetLoop, fallEdges, fit } from './geometry.js';
 import { waterColors, cssColor } from './water-colors.js';
 
 const TAU = Math.PI * 2;
@@ -17,9 +18,11 @@ const ellipse = (cx, cy, rx, ry) => {
   path.ellipse(cx, cy, Math.max(0.1, rx), Math.max(0.1, ry), 0, 0, TAU);
   return path;
 };
-const fallEdge = (y, side) => {
-  const f = (y - FALL.top) / (FALL.bottom - FALL.top);
-  return side < 0 ? FALL.topLeft + (FALL.footLeft - FALL.topLeft) * f : FALL.topRight + (FALL.footRight - FALL.topRight) * f;
+const fallEdge = (y, side) => fallEdges(Math.max(0, Math.min(1, (y - FALL.top) / (FALL.bottom - FALL.top))))[side < 0 ? 0 : 1];
+// The sheet's outline, inset from its sides by `inset` and starting `top` below the lip.
+const fallOutline = (inset, top = 0) => {
+  const rows = Array.from({ length: 17 }, (_, i) => FALL.top + top + (FALL.bottom - FALL.top - top) * (i / 16));
+  return [...rows.map(y => [fallEdge(y, -1) + inset, y]), ...rows.reverse().map(y => [fallEdge(y, 1) - inset, y])];
 };
 
 // Drift speed downstream, in near map units per second. The walkers move at about 130.
@@ -46,11 +49,15 @@ export function createFlatWater(canvas) {
     flows: Float32Array.from(stream.samples, p => p.flow),
   }));
   const poolBank = bankWidth(POOL.ry * 2) * 0.8;
-  const fallShape = polygon([[FALL.topLeft, FALL.top], [FALL.topRight, FALL.top], [FALL.footRight, FALL.bottom], [FALL.footLeft, FALL.bottom]]);
-  const fallBody = polygon([[FALL.topLeft + 1.4, FALL.top + 1.2], [FALL.topRight - 1.4, FALL.top + 1.2], [FALL.footRight - 1.6, FALL.bottom], [FALL.footLeft + 1.6, FALL.bottom]]);
-  const lakeBank = bankWidth(LAKE.ry * 2) * 0.7;
-  const lakeBody = ellipse(LAKE.cx, LAKE.cy, LAKE.rx - lakeBank, LAKE.ry - lakeBank);
+  const fallShape = polygon(fallOutline(0));
+  const fallBody = polygon(fallOutline(1.4, 1.2));
+  const lakeShore = polygon(LAKE_SHORE);
+  const lakeBody = polygon(insetLoop(LAKE_SHORE, 3.2));
   const poolBody = ellipse(POOL.cx, POOL.cy, POOL.rx - poolBank, POOL.ry - poolBank);
+  // Pool rings stay off the sheet: the pool's body less the fall (even-odd).
+  const poolRingClip = new Path2D();
+  poolRingClip.addPath(poolBody);
+  poolRingClip.addPath(fallShape);
 
   const cache = document.createElement('canvas');
   const cacheCtx = cache.getContext('2d');
@@ -65,11 +72,6 @@ export function createFlatWater(canvas) {
     c.setTransform(1, 0, 0, 1, 0, 0);
     c.clearRect(0, 0, cache.width, cache.height);
     toMap(c);
-    // The fall's sheet, behind the pool.
-    c.fillStyle = fill('bank');
-    c.fill(fallShape);
-    c.fillStyle = fill('fall');
-    c.fill(fallBody);
     // Every bank first, then every body, so the side stream and the pool join the
     // main stream without a bank line across the water.
     for (const layer of ['bank', 'body']) {
@@ -82,14 +84,20 @@ export function createFlatWater(canvas) {
       }
       c.fill(layer === 'bank' ? ellipse(POOL.cx, POOL.cy, POOL.rx, POOL.ry) : poolBody);
     }
-    // Foam where the fall meets the pool.
+    // The fall's sheet over the pool, so the pool's far rim never shows through its foot.
+    c.fillStyle = fill('bank');
+    c.fill(fallShape);
+    c.fillStyle = fill('fall');
+    c.fill(fallBody);
+    // White water where it lands, spreading out over the pool.
     c.fillStyle = fill('foam');
-    c.fill(ellipse(IMPACT[0], IMPACT[1] + 1.5, 19, 4.4));
-    c.fill(ellipse(IMPACT[0] - 25, IMPACT[1] + 4, 6, 1.8));
-    c.fill(ellipse(IMPACT[0] + 26, IMPACT[1] + 4.5, 7, 1.8));
+    c.fill(ellipse(IMPACT[0], IMPACT[1] + 1.5, 23, 5));
+    c.fill(ellipse(IMPACT[0] - 30, IMPACT[1] + 4.5, 7, 1.9));
+    c.fill(ellipse(IMPACT[0] + 31, IMPACT[1] + 5, 8, 1.9));
+    c.fill(ellipse(IMPACT[0] - 12, IMPACT[1] + 8, 6, 1.4));
     // Mirror Lake.
     c.fillStyle = fill('bank');
-    c.fill(ellipse(LAKE.cx, LAKE.cy, LAKE.rx, LAKE.ry));
+    c.fill(lakeShore);
     c.fillStyle = fill('body');
     c.fill(lakeBody);
   }
@@ -149,7 +157,7 @@ export function createFlatWater(canvas) {
       c.beginPath();
       for (; y < FALL.bottom; y += period) {
         const a = Math.max(FALL.top + 3, y);
-        const b = Math.min(FALL.bottom - 8, y + dash);
+        const b = Math.min(FALL.bottom - 11, y + dash);
         if (b <= a) continue;
         const xa = fallEdge(a, -1) + (fallEdge(a, 1) - fallEdge(a, -1)) * f;
         const xb = fallEdge(b, -1) + (fallEdge(b, 1) - fallEdge(b, -1)) * f;
@@ -164,7 +172,7 @@ export function createFlatWater(canvas) {
     c.lineWidth = 1.3;
     // Pool: rings spread from where the fall lands.
     c.save();
-    c.clip(poolBody);
+    c.clip(poolRingClip, 'evenodd');
     for (let i = 0; i < 2; i += 1) {
       const phase = (time / 4.2 + i / 2) % 1;
       c.strokeStyle = cssColor(colors.ring, 0.75 * (1 - phase) * Math.min(1, phase * 6));

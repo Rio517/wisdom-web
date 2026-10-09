@@ -6,11 +6,11 @@ import { LEARNED } from '../../src/lessons/choices/journey-story.js';
 import { t } from '../../src/i18n/runtime.js';
 import { ICONS } from '../../src/lessons/choices/journey-icons.js';
 import { tween, ease, wait } from '../../src/lessons/choices/journey-motion.js';
-import { FAR_RIDGE, keepClear } from './geometry.js';
+import { FAR_RIDGE, LAKE_SHORE, MAIN as STREAM, keepClear, outline } from './geometry.js';
 
 const tx = key => String(t(key)).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;');
 
-const MAIN = 'M110 660 C 180 650, 230 612, 300 596 S 410 566, 452 548 S 560 520, 628 505 C 690 492, 716 452, 748 420 S 800 360, 846 332 S 916 262, 968 246';
+const MAIN = 'M110 660 C 180 650, 230 612, 300 596 S 410 566, 452 548 S 560 520, 628 505 C 690 492, 716 452, 748 420 S 800 360, 846 332 S 884 316, 905 309';
 // The Waterfall Trail leaves the bridge eastwards, above the side stream, to a lookout beside the falls.
 const ALT = 'M628 505 C 668 498, 712 497, 756 503 S 880 522, 930 525 S 984 528, 1002 530';
 const TRAILHEAD = [112, 664];
@@ -35,7 +35,77 @@ const TREE_SPOTS = [
   [96, 520, .9], [64, 560, .8], [150, 500, .8], [262, 480, .7], [330, 466, .7],
 ];
 // Keep trees clear of the trails, the water and the drawn features (lake, rock, trailhead, loops, ranger).
-const NO_TREE_BOXES = [[400, 590, 560, 700], [945, 215, 1175, 285], [15, 585, 185, 700], [100, 690, 640, 800], [700, 505, 1000, 580], [1004, 360, 1172, 580]];
+const NO_TREE_BOXES = [[400, 590, 560, 700], [880, 250, 1130, 325], [0, 548, 190, 700], [100, 690, 640, 800], [700, 505, 1000, 580], [1004, 360, 1200, 580]];
+
+// The trail narrows with distance: full width at the trailhead, half at the lake.
+const NEAR_Y = 660;
+const FAR_Y = 309;
+const taper = y => 1 - 0.5 * Math.min(1, Math.max(0, (NEAR_Y - y) / (NEAR_Y - FAR_Y)));
+const n1 = value => value.toFixed(1);
+
+// A footbridge seen from the side where the trail crosses the stream: a gently arched
+// deck, three posts and a handrail. Its ends rest on the trail either side of the water.
+function bridgeMarkup() {
+  const [cx, cy] = [628, 505];
+  const [dx, dy] = [0.9765, -0.2154]; // the trail's direction at the crossing
+  const half = 25;
+  const thick = 5;
+  const L = [cx - dx * half, cy - dy * half + 1];
+  const R = [cx + dx * half, cy + dy * half + 1];
+  const C = [cx, cy - 10];
+  const at = t => [0, 1].map(i => (1 - t) ** 2 * L[i] + 2 * (1 - t) * t * C[i] + t ** 2 * R[i]);
+  const p = ([x, y], down = 0) => `${n1(x)} ${n1(y + down)}`;
+  const deck = `M${p(L)} Q${p(C)} ${p(R)} L${p(R, thick)} Q${p(C, thick)} ${p(L, thick)} Z`;
+  // The plank ends along the deck's edge.
+  const planks = Array.from({ length: 11 }, (_, i) => at((i + 0.5) / 11)).map(b => `M${p(b, 1.6)} L${p(b, thick)}`).join(' ');
+  const posts = [0.08, 0.5, 0.92].map(at);
+  const tops = posts.map(([x, y]) => [x, y - 12]);
+  const railControl = [2 * tops[1][0] - (tops[0][0] + tops[2][0]) / 2, 2 * tops[1][1] - (tops[0][1] + tops[2][1]) / 2];
+  return `<g id="bridge">
+    <path class="bridge-post" d="${posts.map((b, i) => `M${p(b)} L${p(tops[i])}`).join(' ')}"/>
+    <path class="bridge-rail" d="M${p(tops[0])} Q${p(railControl)} ${p(tops[2])}"/>
+    <path class="bridge-deck" d="${deck}"/>
+    <path class="bridge-top" d="M${p(L, 1.2)} Q${p(C, 1.2)} ${p(R, 1.2)}"/>
+    <path class="bridge-plank" d="${planks}"/>
+  </g>`;
+}
+
+// The trailhead: a small plank cabin with a pitched roof, and a picnic table beside it.
+function cabinMarkup() {
+  return `<g id="cabin" transform="translate(56 652)">
+    <rect class="cabin-chimney" x="12" y="-59" width="7" height="20"/><rect class="cabin-chimney-cap" x="11" y="-61" width="9" height="3"/>
+    <path class="cabin-wall" d="M-26 0 V-31 L0 -50 L26 -31 V0 Z"/>
+    <path class="cabin-plank" d="M-26 -8 H26 M-26 -16 H26 M-26 -24 H26 M-15 -32 H15 M-7 -40 H7"/>
+    <path class="cabin-roof" d="M-34 -29 L0 -55 L34 -29 L30 -25.5 L0 -49 L-30 -25.5 Z"/>
+    <rect class="cabin-door" x="-16" y="-20" width="10" height="20"/>
+    <rect class="cabin-window" x="5" y="-24" width="13" height="11"/><path class="cabin-frame" d="M11.5 -24 V-13 M5 -18.5 H18"/>
+  </g>
+  <g id="picnic-table" transform="translate(30 690) scale(1.35)">
+    <path class="table-leg" d="M-3 -11.5 L-11 0 M3 -11.5 L11 0 M-14 -6.8 H14"/>
+    <rect class="table-wood" x="-10" y="-14" width="20" height="3"/>
+    <rect class="table-wood" x="-18" y="-8.2" width="8" height="2.6"/><rect class="table-wood" x="10" y="-8.2" width="8" height="2.6"/>
+  </g>`;
+}
+
+// The lake's far shore: a strip of the land around it laid over the water's far edge,
+// so the lake sits in the land with the ground rising behind it. Its lower edge is
+// the waterline.
+const FAR_BANK = (() => {
+  const east = LAKE_SHORE.reduce((best, p, i) => (p[0] > LAKE_SHORE[best][0] ? i : best), 0);
+  const far = [...LAKE_SHORE.slice(east), LAKE_SHORE[0]];
+  const n = far.length - 1;
+  const ease = i => Math.min(1, Math.min(i, n - i) / (n * 0.12));
+  const waterline = far.map(([x, y], i) => [x, y + ease(i) * (4 + 1.6 * Math.sin(x / 17) + 1.1 * Math.sin(x / 7.3))]);
+  const line = points => points.map(([x, y]) => `${n1(x)} ${n1(y)}`).join(' L');
+  return {
+    land: `M${line(waterline)} L${line(far.map(([x, y]) => [x, y - 16]).reverse())} Z`,
+    waterline: `M${line(waterline)}`,
+  };
+})();
+
+// Small trees on the lake's far shore, standing just behind the water.
+const SHORE_TREES = [[910, 281, 0.5], [929, 277, 0.42], [1080, 272, 0.44], [1099, 276, 0.52]];
+const shoreTree = ([x, y, s], i) => `<g transform="translate(${x} ${y}) scale(${s})"><path d="M0 -44 L15 -8 H-15 Z M0 -30 L18 4 H-18 Z" fill="${i % 2 ? '#8daa91' : '#6f917a'}"/></g>`;
 
 function tree([x, y, s]) {
   const index = TREE_SPOTS.findIndex(spot => spot[0] === x && spot[1] === y);
@@ -65,11 +135,17 @@ function backgroundSVG() {
   <path d="M-400 420 L0 400 L120 330 L230 380 L340 300 L460 380 L600 290 L720 360 L850 290 L915 240 L1100 238 L1150 270 L1200 290 L1600 330 V1200 H-400 Z" fill="#d2ddd3"/>
   <path d="M-400 480 L0 470 C 200 430, 380 470, 560 430 S 900 380, 1200 420 L1600 440 V1200 H-400 Z" fill="#e5ece3"/>
   <path d="M-400 620 L0 610 C 250 580, 500 640, 760 600 S 1050 560, 1200 590 L1600 600 V1200 H-400 Z" fill="#edf2ea"/>
+  <path class="lake-shore" d="M${LAKE_SHORE.map(([x, y]) => `${n1(x)} ${n1(y)}`).join(' L')} Z"/>
+  <g id="side-rock">
+    <path d="M1134 566 C 1131 522, 1142 482, 1162 464 C 1175 453, 1190 456, 1195 473 C 1200 500, 1199 538, 1197 566 Z" fill="#b3c3b8"/>
+    <path d="M1182 458 C 1193 466, 1199 508, 1197 566 H1181 C 1186 522, 1188 484, 1182 458 Z" fill="#a6b8ab"/>
+    <path d="M1152 470 C 1160 458, 1178 451, 1190 459 C 1176 456, 1162 461, 1152 470 Z" fill="#c9d6cc"/>
+  </g>
   <g id="falls-rock">
-    <path d="M1016 564 C 1010 500, 1022 440, 1044 402 C 1062 374, 1108 368, 1132 392 C 1154 422, 1162 500, 1158 564 Z" fill="#b3c3b8"/>
+    <path d="M1016 564 C 1010 500, 1022 440, 1044 402 C 1048 392, 1053 385, 1060 381 L1064 389 Q1065 391 1068 391 L1100 391 Q1103 391 1104 389 L1109 379 C 1117 378, 1127 384, 1132 392 C 1154 422, 1162 500, 1158 564 Z" fill="#b3c3b8"/>
     <path d="M1120 384 C 1142 402, 1160 470, 1158 564 H1120 C 1126 500, 1128 430, 1120 384 Z" fill="#a6b8ab"/>
-    <path d="M1044 402 C 1062 374, 1108 368, 1132 392 C 1106 381, 1066 383, 1044 402 Z" fill="#c9d6cc"/>
-    <path d="M1062 564 L1065 398 C 1068 384, 1100 384, 1103 398 L1106 564 Z" fill="#9fb2a6"/>
+    <path d="M1044 402 C 1048 392, 1053 385, 1060 381 L1062.5 386 C 1055 390, 1049 395, 1044 402 Z M1109 379 C 1117 378, 1127 384, 1132 392 C 1124 387, 1116 385, 1107 384 Z" fill="#c9d6cc"/>
+    <path d="M1061 566 L1064 391 L1104 391 L1107 566 Z" fill="#9fb2a6"/>
   </g>
 </svg>`;
 }
@@ -86,19 +162,27 @@ function foregroundSVG() {
     <path d="M404 656 L412 642 L430 642 L436 656 Z" fill="#9aa59d"/>
   </g>
   <g id="loops">${LOOP_SPOTS.map((spot, i) => `<path class="loop" id="loopc-${i}" d="${connectorPath(spot)}"/><path class="loop" id="loop-${i}" d="${loopPath(spot)}"/>`).join('')}</g>
-  <path class="trail-edge" d="${MAIN}"/>
-  <path class="trail-planned" d="${MAIN}"/>
-  <path class="trail-dash" d="${MAIN}"/>
-  <g class="trail-alt-plan" id="alt-plan"><path class="trail-edge" d="${ALT}"/><path class="trail-planned" d="${ALT}"/><path class="trail-dash" d="${ALT}"/></g>
-  <path class="trail-walked first" id="walked-first" d="${MAIN}"/>
-  <path class="trail-walked" id="walked-second" d="${MAIN}"/>
-  <path class="trail-closed-seg" id="closed-seg" d="${MAIN}"/>
-  <path class="trail-walked" id="walked-alt" d="${ALT}"/>
-  <path class="trail-closed-seg" id="whatif" d="${MAIN}" style="stroke-dasharray: 3 9"/>
-  <g transform="translate(628 505) rotate(-14)"><rect x="-24" y="-11" width="48" height="22" rx="3" fill="#b59a78"/><path d="M-24 -11 h48 M-24 11 h48" stroke="#7b6a55" stroke-width="3"/><path d="M-12 -11 v22 M0 -11 v22 M12 -11 v22" stroke="#7b6a55" stroke-width="1.5"/></g>
-  <g transform="translate(66 650)"><path d="M-22 0 V-20 L0 -38 L22 -20 V0 Z" fill="#fbfbf8" stroke="#285442" stroke-width="3" stroke-linejoin="round"/><rect x="-6" y="-14" width="12" height="14" fill="#285442"/></g>
-  <text class="place-label" x="84" data-x="84" y="584" text-anchor="middle">${tx('hike.trailhead')}</text>
-  <text class="place-label" x="1066" data-x="1066" y="204" text-anchor="middle">${tx('hike.lake')}</text>
+  <path class="lake-far-bank" d="${FAR_BANK.land}"/><path class="lake-waterline" d="${FAR_BANK.waterline}"/>
+  <g class="shore-trees">${SHORE_TREES.map(shoreTree).join('')}</g>
+  <defs>
+    <mask id="hw-dry" maskUnits="userSpaceOnUse" x="-400" y="-400" width="2000" height="1600"><rect x="-400" y="-400" width="2000" height="1600" fill="white"/><path class="mask-cut" fill="black"/></mask>
+    <mask id="hw-trail" maskUnits="userSpaceOnUse" x="-400" y="-400" width="2000" height="1600"><g class="mask-trail" fill="white"></g><path class="mask-cut" fill="black"/></mask>
+  </defs>
+  <g mask="url(#hw-dry)">
+    <g id="trail-main"></g>
+    <g class="trail-alt-plan" id="alt-plan"></g>
+  </g>
+  <g mask="url(#hw-trail)">
+    <path class="trail-walked first" id="walked-first" d="${MAIN}"/>
+    <path class="trail-walked" id="walked-second" d="${MAIN}"/>
+    <path class="trail-closed-seg" id="closed-seg" d="${MAIN}"/>
+    <path class="trail-walked" id="walked-alt" d="${ALT}"/>
+    <path class="trail-closed-seg" id="whatif" d="${MAIN}" style="stroke-dasharray: 3 9"/>
+  </g>
+  ${bridgeMarkup()}
+  ${cabinMarkup()}
+  <text class="place-label" x="62" data-x="62" y="578" text-anchor="middle">${tx('hike.trailhead')}</text>
+  <text class="place-label" x="1003" data-x="1003" y="254" text-anchor="middle">${tx('hike.lake')}</text>
   <text class="place-label small" x="412" data-x="412" y="672" text-anchor="end" id="rock-label">${tx('hike.rock')}</text>
   <text class="place-label small" x="652" data-x="652" y="792" id="stream-label">${tx('hike.stream')}</text>
   <text class="place-label" x="1102" data-x="1102" y="608" text-anchor="middle" id="falls-label">${tx('hike.waterfall')}</text>
@@ -148,6 +232,63 @@ export function createHikeScene(root) {
   const flip = $('#walker-flip');
   const bottlesEl = $('#bottles');
   const learnedEl = $('#learned');
+
+  // The trail as tapered ribbons (edge, path, centre dashes), plus the masks that
+  // taper the walked lines and leave the water clear under the bridge.
+  {
+    const sample = path => {
+      const length = path.getTotalLength();
+      const count = Math.max(2, Math.ceil(length / 3));
+      const pts = Array.from({ length: count + 1 }, (_, i) => {
+        const { x, y } = path.getPointAtLength((length * i) / count);
+        return { x, y };
+      });
+      pts.forEach((p, i) => {
+        const a = pts[Math.max(0, i - 1)];
+        const b = pts[Math.min(count, i + 1)];
+        const d = Math.hypot(b.x - a.x, b.y - a.y) || 1;
+        p.nx = -(b.y - a.y) / d;
+        p.ny = (b.x - a.x) / d;
+      });
+      return { pts, length, step: length / count };
+    };
+    const side = (p, h, sign) => `${n1(p.x + p.nx * h * sign)} ${n1(p.y + p.ny * h * sign)}`;
+    // A filled band of half-width `width(k)`, with round ends.
+    const band = ({ pts }, width, cls) => {
+      const half = p => width(taper(p.y));
+      const edges = [...pts.map(p => side(p, half(p), 1)), ...pts.slice().reverse().map(p => side(p, half(p), -1))];
+      const ends = [pts[0], pts[pts.length - 1]].map(p => `<circle cx="${n1(p.x)}" cy="${n1(p.y)}" r="${n1(half(p))}"/>`).join('');
+      return `<g class="${cls}"><path d="M${edges.join(' L')} Z"/>${ends}</g>`;
+    };
+    const dashes = ({ pts, length, step }) => {
+      const at = s => {
+        const f = Math.max(0, Math.min(pts.length - 1, s / step));
+        const [a, b] = [pts[Math.floor(f)], pts[Math.ceil(f)]];
+        const u = f - Math.floor(f);
+        return { x: a.x + (b.x - a.x) * u, y: a.y + (b.y - a.y) * u, nx: a.nx + (b.nx - a.nx) * u, ny: a.ny + (b.ny - a.ny) * u };
+      };
+      const parts = [];
+      for (let s = 4; s < length - 3;) {
+        const k = taper(at(s).y);
+        const end = Math.min(length - 3, s + 9 * k);
+        const h = Math.max(0.7, 1.3 * k);
+        const row = [at(s), at((s + end) / 2), at(end)];
+        parts.push(`M${[...row.map(p => side(p, h, 1)), ...row.reverse().map(p => side(p, h, -1))].join(' L')} Z`);
+        s += 18 * k;
+      }
+      return `<path class="trail-dash-fill" d="${parts.join(' ')}"/>`;
+    };
+    const trail = path => {
+      const line = sample(path);
+      return band(line, k => 7.5 * k, 'trail-edge-fill') + band(line, k => 5.5 * k, 'trail-planned-fill') + dashes(line);
+    };
+    $('#trail-main').innerHTML = trail(main);
+    $('#alt-plan').innerHTML = trail(altPath);
+    $('.mask-trail').innerHTML = [main, altPath].map(path => band(sample(path), k => 2.5 * k + 0.3, '')).join('');
+    const crossing = outline({ samples: STREAM.samples.filter(p => p.y > 430 && p.y < 590) }, -0.4);
+    const cut = `M${crossing.map(([x, y]) => `${n1(x)} ${n1(y)}`).join(' L')} Z`;
+    root.querySelectorAll('.mask-cut').forEach(node => node.setAttribute('d', cut));
+  }
 
   // Where the bridge sits along the main trail.
   let bridge = 0.5;

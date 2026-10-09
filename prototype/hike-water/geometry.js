@@ -26,11 +26,32 @@ const MAIN_WIDTH = [[240, 5], [284, 6.5], [384, 11], [440, 15], [505, 25], [600,
 const SIDE_WIDTH = [[556, 10], [620, 12], [702, 15]];
 
 export const POOL = { cx: 1084, cy: 554, rx: 56, ry: 14 };
-export const LAKE = { cx: 1066, cy: 248, rx: 104, ry: 26 };
-// The fall's sheet inside the rock: a slight trapezoid, widening at the foot.
-export const FALL = { top: 392, bottom: 556, topLeft: 1070, topRight: 1098, footLeft: 1066, footRight: 1102 };
-export const IMPACT = [1084, 552];
-export const LAKE_RINGS = [[1028, 252], [1104, 244]];
+// The fall pours over a notch in the rock's top lip (y 387) and runs the full height
+// into the pool, ending inside its surface. A little wider at the lip, then narrower,
+// then wider again at the foot.
+export const FALL = { top: 386, bottom: 551, lip: [1066, 1102], neck: [1070, 1098], neckAt: 0.12, foot: [1066, 1102] };
+export const IMPACT = [1084, 551];
+
+/** The fall's left and right edges at `f` (0 at the lip, 1 at the foot). */
+export function fallEdges(f) {
+  const { lip, neck, neckAt, foot } = FALL;
+  if (f <= neckAt) {
+    const u = f / neckAt;
+    const e = u * u * (3 - 2 * u);
+    return [lip[0] + (neck[0] - lip[0]) * e, lip[1] + (neck[1] - lip[1]) * e];
+  }
+  const u = (f - neckAt) / (1 - neckAt);
+  return [neck[0] + (foot[0] - neck[0]) * u, neck[1] + (foot[1] - neck[1]) * u];
+}
+
+// Mirror Lake: in the land below the dip in the skyline, seen at a low angle (about
+// 5:1), with an uneven shore. Clockwise on screen from the west end: near shore, east
+// end, far shore. The trail ends at the near shore's west part.
+const LAKE_KEYS = [
+  [888, 291], [898, 299], [914, 305], [936, 309], [962, 311], [990, 310], [1012, 313], [1040, 314], [1068, 311],
+  [1092, 305], [1110, 298], [1118, 289], [1112, 280], [1094, 274], [1068, 271], [1046, 273], [1024, 270],
+  [998, 268], [968, 270], [942, 274], [916, 279], [898, 285],
+];
 
 const table = (rows, value) => {
   if (value <= rows[0][0]) return rows[0][1];
@@ -95,6 +116,61 @@ function resample(points, spacing) {
   if (Math.hypot(lx - out[out.length - 1].x, ly - out[out.length - 1].y) > spacing * 0.3) out.push({ x: lx, y: ly, s: total });
   return out;
 }
+
+// The same spline through a closed loop of keys, evenly resampled; no repeated end point.
+function closedCurve(keys, spacing) {
+  const n = keys.length;
+  const wrapped = [keys[n - 2], keys[n - 1], ...keys, keys[0], keys[1]];
+  const open = spline(wrapped);
+  // Keep the part from the first key round to the first key again.
+  const perSegment = 24;
+  const start = 2 * perSegment;
+  const end = start + n * perSegment;
+  const loop = open.slice(start, end + 1).map(([x, y]) => [x, y]);
+  const even = resample(loop, spacing).map(({ x, y }) => [x, y]);
+  if (Math.hypot(even[0][0] - even[even.length - 1][0], even[0][1] - even[even.length - 1][1]) < spacing * 0.5) even.pop();
+  return even;
+}
+
+/** A closed outline moved inwards by `inset` map units (negative moves it out). */
+export function insetLoop(points, inset) {
+  const n = points.length;
+  let area = 0;
+  for (let i = 0; i < n; i += 1) {
+    const [ax, ay] = points[i];
+    const [bx, by] = points[(i + 1) % n];
+    area += ax * by - bx * ay;
+  }
+  const turn = Math.sign(area) || 1;
+  return points.map((p, i) => {
+    const a = points[(i + n - 1) % n];
+    const b = points[(i + 1) % n];
+    const length = Math.hypot(b[0] - a[0], b[1] - a[1]) || 1;
+    const tx = (b[0] - a[0]) / length;
+    const ty = (b[1] - a[1]) / length;
+    // Inward normal: to the left of travel for a positive (clockwise on screen) loop.
+    const nx = -ty * turn;
+    const ny = tx * turn;
+    return [p[0] + nx * inset, p[1] + ny * inset];
+  });
+}
+
+/** An ellipse as a closed outline. */
+export function ellipseLoop({ cx, cy, rx, ry }, segments = 72) {
+  return Array.from({ length: segments }, (_, i) => {
+    const angle = (i / segments) * Math.PI * 2;
+    return [cx + Math.cos(angle) * rx, cy + Math.sin(angle) * ry];
+  });
+}
+
+export const LAKE_SHORE = closedCurve(LAKE_KEYS, 3);
+export const LAKE = (() => {
+  const xs = LAKE_SHORE.map(p => p[0]);
+  const ys = LAKE_SHORE.map(p => p[1]);
+  const [left, right, top, bottom] = [Math.min(...xs), Math.max(...xs), Math.min(...ys), Math.max(...ys)];
+  return { cx: (left + right) / 2, cy: (top + bottom) / 2, rx: (right - left) / 2, ry: (bottom - top) / 2, left, right, top, bottom };
+})();
+export const LAKE_RINGS = [[952, 291], [1046, 290]];
 
 /**
  * A stream as evenly spaced samples. Each sample has a position, a unit normal,
@@ -165,12 +241,11 @@ export function keepClear(margin = 12) {
   for (const stream of STREAMS) {
     stream.samples.forEach((p, i) => { if (i % 4 === 0) spots.push([p.x, p.y, p.w / 2 + margin]); });
   }
-  for (const pond of [POOL, LAKE]) {
-    for (let i = 0; i < 24; i += 1) {
-      const angle = (i / 24) * Math.PI * 2;
-      spots.push([pond.cx + Math.cos(angle) * pond.rx * 0.8, pond.cy + Math.sin(angle) * pond.ry * 0.8, pond.ry * 0.2 + margin]);
-    }
+  for (let i = 0; i < 24; i += 1) {
+    const angle = (i / 24) * Math.PI * 2;
+    spots.push([POOL.cx + Math.cos(angle) * POOL.rx * 0.8, POOL.cy + Math.sin(angle) * POOL.ry * 0.8, POOL.ry * 0.2 + margin]);
   }
+  LAKE_SHORE.forEach((p, i) => { if (i % 4 === 0) spots.push([p[0], p[1], margin + 4]); });
   return spots;
 }
 

@@ -3,19 +3,25 @@
 // B moves soft bands along the streams, a falling sheet with foam, gentle rings;
 // C adds light: small moving glints, a shimmer on the fall, a darker middle.
 //
-// One renderer, five meshes (main stream, side stream, fall, pool, lake), one
+// One renderer, five meshes (lake, pool, side stream, main stream, fall), one
 // draw call each, no textures. Each piece writes how far a pixel is from its own
 // bank as depth, so where pieces overlap (the side stream entering the main one,
-// the pool) the piece whose middle it is wins: the banks join without a seam.
+// the pool) the piece whose middle it is wins: the banks join without a seam. The
+// fall is drawn last and above everything, so the pool's far rim never shows
+// through its foot.
+//
+// The shaders are plain GLSL strings with no Three.js chunks: they use only
+// `position`, `projectionMatrix` and `modelViewMatrix` from the library, so they
+// can move to raw WebGL as they are.
 import {
   WebGLRenderer, Scene, OrthographicCamera, Mesh, BufferGeometry, BufferAttribute, ShaderMaterial, DoubleSide,
 } from 'three';
-import { MAIN, SIDE, POOL, LAKE, FALL, IMPACT, LAKE_RINGS, SADDLE, visibleBounds } from './geometry.js';
+import { MAIN, SIDE, POOL, LAKE, LAKE_SHORE, FALL, IMPACT, LAKE_RINGS, SADDLE, fallEdges, insetLoop, ellipseLoop, visibleBounds } from './geometry.js';
 import { waterColors } from './water-colors.js';
 import { FLOW_SPEED } from './water-flat.js';
 
 const FRINGE = 1.6; // map units of soft outer edge
-const RING_SEGMENTS = 72;
+const FALL_Z = 40; // above every other piece's depth
 
 const COMMON = /* glsl */ `
   uniform float uTime;
@@ -117,8 +123,11 @@ const STREAM_FRAGMENT = /* glsl */ `
 `;
 
 const POND_VERTEX = /* glsl */ `
+  attribute float aEdge;
+  varying float vEdge;
   varying vec2 vPos;
   void main() {
+    vEdge = aEdge;
     vPos = position.xy;
     gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
   }
@@ -127,14 +136,15 @@ const POND_VERTEX = /* glsl */ `
 const POND_FRAGMENT = /* glsl */ `
   ${COMMON}
   uniform vec2 uCenter;
-  uniform vec2 uRadius;
+  uniform float uDepth;    // how far in from the shore the middle is, roughly
   uniform vec4 uSources;   // two ring centres
   uniform vec2 uRingSize;  // a ring's largest radii
   uniform float uRingCycle;
   uniform float uFoamOn;
   uniform float uBankWidth;
+  varying float vEdge;     // distance in from the shore (map units), negative outside
   varying vec2 vPos;
-  // Distance (map units) to an ellipse's rim, close to the rim; positive inside.
+  // Distance (map units) to an ellipse's rim, close to the rim; positive inside. Used for the rings.
   float rimDistance(vec2 d, vec2 radius) {
     float r = length(d / radius);
     float g = length(d / (radius * radius));
@@ -147,12 +157,12 @@ const POND_FRAGMENT = /* glsl */ `
     return (1.0 - smoothstep(0.35, 1.1, line)) * (1.0 - phase) * smoothstep(0.0, 0.12, phase);
   }
   void main() {
-    float edge = rimDistance(vPos - uCenter, uRadius);
+    float edge = vEdge;
     float alpha = inside(edge);
     if (alpha < 0.003) discard;
     float bank = uBankWidth;
     float bankMix = 1.0 - smoothstep(bank * 0.55, bank * 1.3, edge);
-    float centre = clamp(edge / uRadius.y, 0.0, 1.0);
+    float centre = clamp(edge / uDepth, 0.0, 1.0);
     vec3 color = uBody;
 #ifdef LIGHT
     color = mix(uBody, uDeep, smoothstep(0.1, 1.0, centre) * 0.8);
@@ -165,8 +175,9 @@ const POND_FRAGMENT = /* glsl */ `
     }
     color = mix(color, uRing, clamp(rings, 0.0, 1.0) * 0.6);
     if (uFoamOn > 0.5) {
-      // Foam where the fall lands: a white patch with a slowly churning edge.
-      vec2 f = (vPos - uCenter - vec2(0.0, -2.0)) / vec2(21.0, 5.2);
+      // Foam where the fall lands: a white patch with a slowly churning edge, spreading
+      // out over the water a little wider than the sheet.
+      vec2 f = (vPos - uCenter - vec2(0.0, -1.5)) / vec2(28.0, 6.2);
       float churn = noise(vec2(atan(f.y, f.x) * 2.2 + uTime * 0.7, uTime * 0.5)) - 0.5;
       float foam = 1.0 - smoothstep(0.78, 1.0, length(f) + churn * 0.42);
       float flecks = step(0.72, noise(vPos * vec2(0.32, 0.9) + vec2(uTime * 0.6, 0.0))) * (1.0 - smoothstep(1.0, 1.9, length(f)));
@@ -195,22 +206,26 @@ const FALL_VERTEX = /* glsl */ `
 const FALL_FRAGMENT = /* glsl */ `
   ${COMMON}
   uniform vec3 uSheet;
+  uniform float uLength;
   varying vec3 vFall;
   varying vec2 vPos;
   void main() {
     float across = vFall.x;
+    float down = vFall.y;
     float width = vFall.z;
     float edge = min(across, 1.0 - across) * width;
-    float alpha = inside(edge);
+    // Soft sides and top; the foot fades out inside the pool, where its foam takes over.
+    float alpha = inside(edge) * inside(down * uLength) * (1.0 - smoothstep(0.955, 1.0, down));
     if (alpha < 0.003) discard;
-    float bankMix = 1.0 - smoothstep(0.7, 2.0, edge);
+    float bankMix = (1.0 - smoothstep(0.7, 2.0, edge)) * (1.0 - smoothstep(0.9, 0.96, down));
     // The falling sheet: long soft streaks, stretched down the fall, sliding downwards.
     float n = noise(vec2(across * 7.0, vPos.y * 0.024 - uTime * 0.9)) * 0.62
             + noise(vec2(across * 12.0 + 4.0, vPos.y * 0.041 - uTime * 1.25)) * 0.38;
     float streak = smoothstep(0.5, 0.72, n);
     vec3 color = mix(uSheet, uFoam, streak * 0.9);
-    // The lip, where the water turns over the rock.
-    color = mix(color, uFoam, (1.0 - smoothstep(0.0, 0.05, vFall.y)) * 0.6);
+    // The lip, where the water turns over the rock, and the white water at the foot.
+    color = mix(color, uFoam, (1.0 - smoothstep(0.0, 0.05, down)) * 0.6);
+    color = mix(color, uFoam, smoothstep(0.86, 0.975, down) * 0.85);
 #ifdef LIGHT
     // A slight lighter shimmer travelling down the sheet.
     float shimmer = 0.5 + 0.5 * sin((vPos.y / 36.0 - uTime * 0.5) * 6.2832 + across * 2.0);
@@ -254,38 +269,62 @@ function streamGeometry(stream) {
   return geometry;
 }
 
-// An ellipse as a fan; depth is a cone, highest in the middle.
-function pondGeometry({ cx, cy, rx, ry }) {
-  const position = new Float32Array((RING_SEGMENTS + 1) * 3);
-  position.set([cx, cy, ry], 0);
-  for (let i = 0; i < RING_SEGMENTS; i += 1) {
-    const angle = (i / RING_SEGMENTS) * Math.PI * 2;
-    position.set([cx + Math.cos(angle) * (rx + FRINGE * 1.5), cy + Math.sin(angle) * (ry + FRINGE * 1.5), -FRINGE], (i + 1) * 3);
-  }
+// A pond from its shore outline: a strip round the shore whose `aEdge` is the exact
+// distance in from the shore, then triangles in to a spine along the pond's length,
+// where `aEdge` is the spine point's distance to the shore. Depth is `aEdge` too, so
+// the middle is highest. Works for the oval pool and the uneven lake alike.
+function pondGeometry(loop, { inset = 2.5, spineEnd }) {
+  const n = loop.length;
+  const outer = insetLoop(loop, -FRINGE);
+  const inner = insetLoop(loop, inset);
+  const xs = loop.map(p => p[0]);
+  const ys = loop.map(p => p[1]);
+  const left = Math.min(...xs) + spineEnd;
+  const right = Math.max(...xs) - spineEnd;
+  const midY = (Math.min(...ys) + Math.max(...ys)) / 2;
+  const shoreDistance = (x, y) => Math.min(...loop.map(([px, py]) => Math.hypot(px - x, py - y)));
+  const position = new Float32Array(n * 3 * 3);
+  const edge = new Float32Array(n * 3);
+  loop.forEach(([x], i) => {
+    const sx = Math.max(left, Math.min(right, x));
+    const depth = Math.max(inset + 0.5, shoreDistance(sx, midY));
+    position.set([outer[i][0], outer[i][1], -FRINGE, inner[i][0], inner[i][1], inset, sx, midY, depth], i * 9);
+    edge.set([-FRINGE, inset, depth], i * 3);
+  });
   const index = [];
-  for (let i = 0; i < RING_SEGMENTS; i += 1) index.push(0, i + 1, ((i + 1) % RING_SEGMENTS) + 1);
+  for (let i = 0; i < n; i += 1) {
+    const j = (i + 1) % n;
+    for (let row = 0; row < 2; row += 1) {
+      const a = i * 3 + row;
+      const b = j * 3 + row;
+      index.push(a, b, a + 1, a + 1, b, b + 1);
+    }
+  }
   const geometry = new BufferGeometry();
   geometry.setAttribute('position', new BufferAttribute(position, 3));
+  geometry.setAttribute('aEdge', new BufferAttribute(edge, 1));
   geometry.setIndex(index);
   return geometry;
 }
 
-// The fall's sheet: a strip of rows down the rock, widening a little at the foot.
+// The fall's sheet: a strip of rows from the notch in the rock's lip down into the
+// pool, a little above every other piece so it always covers the pool's far rim.
 function fallGeometry() {
-  const rows = 10;
-  const position = new Float32Array((rows + 1) * 2 * 3);
-  const fall = new Float32Array((rows + 1) * 2 * 3);
-  for (let r = 0; r <= rows; r += 1) {
-    const f = r / rows;
-    const y = FALL.top + (FALL.bottom - FALL.top) * f;
-    const left = FALL.topLeft + (FALL.footLeft - FALL.topLeft) * f;
-    const right = FALL.topRight + (FALL.footRight - FALL.topRight) * f;
+  const rows = 16;
+  const length = FALL.bottom - FALL.top;
+  const position = new Float32Array((rows + 2) * 2 * 3);
+  const fall = new Float32Array((rows + 2) * 2 * 3);
+  for (let r = 0; r <= rows + 1; r += 1) {
+    // Row 0 is the soft fringe just above the lip.
+    const f = r === 0 ? -FRINGE / length : (r - 1) / rows;
+    const y = FALL.top + length * f;
+    const [left, right] = fallEdges(Math.max(0, f));
     const width = right - left;
-    position.set([left - FRINGE, y, 0, right + FRINGE, y, 0], r * 6);
+    position.set([left - FRINGE, y, FALL_Z, right + FRINGE, y, FALL_Z], r * 6);
     fall.set([-FRINGE / width, f, width, 1 + FRINGE / width, f, width], r * 6);
   }
   const index = [];
-  for (let r = 0; r < rows; r += 1) {
+  for (let r = 0; r <= rows; r += 1) {
     const a = r * 2;
     index.push(a, a + 2, a + 1, a + 1, a + 2, a + 3);
   }
@@ -329,20 +368,20 @@ export function createThreeWater(canvas, { light = false, onLost } = {}) {
     uSaddleB: { value: SADDLE[1] },
     uSaddleC: { value: SADDLE[2] },
   });
-  const pondUniforms = (pond, sources, ringSize, cycle, foam, bank) => ({
+  const pondUniforms = (pond, sources, ringSize, cycle, foam, bank, depth) => ({
     uBankWidth: { value: bank },
     uCenter: { value: [pond.cx, pond.cy] },
-    uRadius: { value: [pond.rx, pond.ry] },
+    uDepth: { value: depth },
     uSources: { value: sources.flat() },
     uRingSize: { value: ringSize },
     uRingCycle: { value: cycle },
     uFoamOn: { value: foam ? 1 : 0 },
   });
-  add(pondGeometry(LAKE), material(POND_VERTEX, POND_FRAGMENT, pondUniforms(LAKE, LAKE_RINGS, [40, 9.5], 5.6, false, 4.2)), 0);
-  add(fallGeometry(), material(FALL_VERTEX, FALL_FRAGMENT, { uSheet: { value: colors.fall } }), 1);
-  add(pondGeometry(POOL), material(POND_VERTEX, POND_FRAGMENT, pondUniforms(POOL, [[IMPACT[0], IMPACT[1] + 1], [IMPACT[0], IMPACT[1] + 1]], [POOL.rx - 4, POOL.ry - 2], 4.2, true, 3)), 2);
-  add(streamGeometry(SIDE), material(STREAM_VERTEX, STREAM_FRAGMENT, streamUniforms(false)), 3);
-  add(streamGeometry(MAIN), material(STREAM_VERTEX, STREAM_FRAGMENT, streamUniforms(true)), 4);
+  add(pondGeometry(LAKE_SHORE, { spineEnd: 12 }), material(POND_VERTEX, POND_FRAGMENT, pondUniforms(LAKE, LAKE_RINGS, [40, 9.5], 5.6, false, 4.2, 18)), 0);
+  add(pondGeometry(ellipseLoop(POOL), { spineEnd: POOL.ry }), material(POND_VERTEX, POND_FRAGMENT, pondUniforms(POOL, [[IMPACT[0], IMPACT[1] + 2], [IMPACT[0], IMPACT[1] + 2]], [POOL.rx - 4, POOL.ry - 2], 4.2, true, 3, 12)), 1);
+  add(streamGeometry(SIDE), material(STREAM_VERTEX, STREAM_FRAGMENT, streamUniforms(false)), 2);
+  add(streamGeometry(MAIN), material(STREAM_VERTEX, STREAM_FRAGMENT, streamUniforms(true)), 3);
+  add(fallGeometry(), material(FALL_VERTEX, FALL_FRAGMENT, { uSheet: { value: colors.fall }, uLength: { value: FALL.bottom - FALL.top } }), 4);
 
   // Map units in, y down: the camera's top is the smaller y.
   const camera = new OrthographicCamera(0, 1200, 0, 800, 0.1, 400);
