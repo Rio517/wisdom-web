@@ -6,6 +6,8 @@ The current entry is [choices.html](choices.html): a short lesson about life’s
 
 The separate [path lab](path-lab.html) retains the working algorithm and tuning controls. [index.html](index.html) preserves the earlier Mika study specified by product 008; it is not the current lesson.
 
+[lesson1-opening/](lesson1-opening/index.html) is a playable mockup of the new start of Lesson 1: the cover, Sam's life on the path field, "Choices add up" and the fade into the hike. Its review round is [design 001 v13](../docs/design/001-choices-explainer/v13-lesson1-opening/README.md).
+
 The [editable lesson draft](../docs/content/choices-story.md) separates the three-part main explanation from the optional four-scene hike. The life map spans the page, with compact hideable text on the right. The hike preserves its two setbacks and return to the main lesson; it is not required to complete the explanation.
 
 ## Install and run

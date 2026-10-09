@@ -8,6 +8,8 @@ The first complete website is [002 — Site shell and home, v01 — Launch](002-
 
 Newest implementation for review: [v09 — Guided journey](001-choices-explainer/v09-guided-journey/README.md) ([013](../product/013-choices-guided-journey.md)). The previous live implementation is [v08 — Alfredo lesson](001-choices-explainer/v08-alfredo-lesson/README.md). The older rounds below remain design history.
 
+The new opening of Lesson 1, as a playable mockup for review: [v13 — Lesson 1 opening](001-choices-explainer/v13-lesson1-opening/README.md), with a [six-frame strip](001-choices-explainer/v13-lesson1-opening/opening-life-strip-1440-v01.png) of Sam's life on the map.
+
 Maya, redrawn from the picked concept (A · Garden) for review: [v12 — Maya figure](001-choices-explainer/v12-maya-figure/README.md), with a [size strip](001-choices-explainer/v12-maya-figure/size-strip-v01.png) beside the concept.
 
 All Choices design work belongs to [001 — Choices explainer](001-choices-explainer/README.md). That stable study contains the numbered review rounds, their questions, dates, status and relationship to the product documents.

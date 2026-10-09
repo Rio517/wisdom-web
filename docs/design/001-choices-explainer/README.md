@@ -20,6 +20,7 @@ The earlier [opening](v06-flat-canvas/opening-desktop-v06.png), [full context](v
 
 | Round | Date | Question and artifact type | Status |
 | --- | --- | --- | --- |
+| [v13 — Lesson 1 opening](v13-lesson1-opening/README.md) | 2026-10-09 | Does the opening tell one life clearly? A playable mockup: the cover, Sam's life growing point by point on the path field, "Choices add up", then the fade into the hike. | Mockup on a branch; owner review pending; not published. |
 | [v12 — Maya figure](v12-maya-figure/README.md) | 2026-10-09 | Does the new Maya, redrawn from the picked concept (A · Garden), match it in both of her lanes at every size? | Implemented on a branch; owner review pending; not published. |
 | [v10 — Voice pass](v10-voice-pass/README.md) | 2026-10-09 | Does Lesson 1 read in one warm narrator's voice at an 8–12 reading level, with good luck as well as bad, and does a chain-based explorer show choices building on each other? | Implemented on a branch; owner review pending; not published. |
 | [v09 — Guided journey](v09-guided-journey/README.md) | 2026-09-26 | Does a guided, animated journey (big picture → hike → two-path compounding → game) explain the lesson better than v08's static map with text cards? | Implemented locally; owner review pending; not published. |
