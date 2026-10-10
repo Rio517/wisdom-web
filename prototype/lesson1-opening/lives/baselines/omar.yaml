@@ -39,7 +39,6 @@ steps:
     echoes: [electrician, borrowsTools]
   - node: bigCustomer
     age: 30
-    line: "A big company becomes his customer. Luck!"
     move: 2
     echoes: [ownBusiness]
   - node: becomesParent
