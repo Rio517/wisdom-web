@@ -1,0 +1,122 @@
+# Test fixture for the lives engine (not the real store): science, code and making things.
+
+- id: chessClub
+  label: Joins the chess club
+  line: "{name} joins the chess club."
+  if: "{name} had joined the chess club"
+  kind: choice
+  ages: [7, 13]
+  tags: [chess, thinking]
+
+- id: codingClub
+  label: Joins a coding club
+  line: "{name} joins a coding club after school."
+  if: "{name} had joined a coding club"
+  kind: choice
+  ages: [9, 14]
+  tags: [tech, thinking]
+
+- id: scienceFair
+  label: Enters a science fair
+  line: "{name} builds a volcano for the science fair."
+  if: "{name} had entered the science fair"
+  kind: choice
+  ages: [9, 15]
+  tags: [science]
+
+- id: teacherNotices
+  label: A teacher notices
+  line: "A teacher notices {his} work and lends {him} books."
+  kind: lucky
+  ages: [9, 18]
+  after: [thinking, science, tech]
+  move: 1
+
+- id: buildsApp
+  label: Builds an app
+  line: "{name} builds a little app for {his} friends."
+  if: "{name} had built an app"
+  kind: choice
+  ages: [13, 30]
+  after: [tech]
+  tags: [tech, maker]
+
+- id: studiesScience
+  label: Studies science
+  line: "{name} studies science at college."
+  if: "{name} had studied science"
+  kind: choice
+  ages: [17, 22]
+  after: [science, thinking, tech]
+  tags: [study, science]
+
+- id: failsExam
+  label: Fails a big exam
+  line: "{name} fails a big exam and has to retake it."
+  kind: setback
+  ages: [15, 25]
+  after: [study, thinking]
+  move: -1
+
+- id: scholarship
+  label: Wins a scholarship
+  line: "{name} wins a scholarship. Luck and hard work."
+  kind: lucky
+  ages: [16, 22]
+  after: [teacherNotices, study]
+  move: 2
+  tags: [study]
+
+- id: labJob
+  label: Works in a lab
+  line: "{name} gets a job in a lab."
+  if: "{name} had worked in a lab"
+  kind: choice
+  ages: [21, 45]
+  after: [study]
+  unless: [job]
+  tags: [job, science]
+
+- id: discovery
+  label: A big discovery
+  line: "{his} team finds something new. Luck!"
+  kind: lucky
+  ages: [24, 60]
+  after: [labJob]
+  move: 2
+
+- id: startsBusiness
+  label: Starts a business
+  line: "{name} starts a small business."
+  if: "{name} had started a business"
+  kind: choice
+  ages: [20, 50]
+  after: [tech, maker, savings, job]
+  unless: [business]
+  tags: [business, job]
+
+- id: bigCustomer
+  label: Wins a big customer
+  line: "A big company becomes {his} customer."
+  kind: lucky
+  ages: [22, 60]
+  after: [business]
+  move: 2
+
+- id: businessCloses
+  label: The business closes
+  line: "Times get hard. The business closes."
+  kind: setback
+  ages: [22, 60]
+  after: [business]
+  drops: [business, job]
+  move: -2
+
+- id: teachesCoding
+  label: Teaches coding
+  line: "{name} teaches coding to children on Saturdays."
+  if: "{name} had taught coding"
+  kind: choice
+  ages: [20, 65]
+  after: [tech]
+  tags: [teaching]

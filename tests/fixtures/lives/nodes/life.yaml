@@ -1,0 +1,146 @@
+# Test fixture for the lives engine (not the real store): things that can come to any life.
+
+- id: born
+  label: Born
+  line: "{name} is born."
+  kind: start
+  ages: [0, 0]
+
+- id: asksForHelp
+  label: Asks for help
+  line: "{name} asks a friend for help."
+  if: "{name} had asked for help"
+  kind: choice
+  ages: [12, 70]
+  after: [setback]
+  within: 2
+  tags: [helped]
+
+- id: movesHome
+  label: Moves back home
+  line: "{name} moves back in with {his} family."
+  if: "{name} had moved back home"
+  kind: choice
+  ages: [18, 45]
+  after: [setback]
+  within: 2
+  tags: [home]
+
+- id: officeJob
+  label: Takes an office job
+  line: "{name} takes a job in an office."
+  if: "{name} had taken an office job"
+  kind: choice
+  ages: [18, 60]
+  unless: [job]
+  tags: [job, office]
+
+- id: becomesParent
+  label: Becomes a parent
+  line: "{name} becomes a parent."
+  kind: event
+  ages: [21, 44]
+  unless: [parent]
+  tags: [parent]
+
+- id: newTown
+  label: Moves to a new town
+  line: "The family moves to a new town. No friends yet."
+  kind: setback
+  ages: [6, 14]
+  move: -1
+
+- id: friendForLife
+  label: A friend for life
+  line: "{name} meets a friend for life."
+  kind: lucky
+  ages: [8, 60]
+  move: 1
+  weight: 0.6
+
+- id: illForMonths
+  label: Ill for months
+  line: "{name} is ill for a few months."
+  kind: setback
+  ages: [10, 60]
+  move: -1
+  weight: 0.6
+
+- id: grandparentCare
+  label: Helps a grandparent
+  line: "{his} grandmother needs care. {name} helps every week."
+  kind: event
+  ages: [16, 40]
+  tags: [caring]
+
+- id: losesJob
+  label: Loses a job
+  line: "The company closes. {name} loses {his} job."
+  kind: setback
+  ages: [20, 60]
+  after: [job]
+  drops: [job]
+  move: -2
+
+- id: findsNewJob
+  label: Finds a new job
+  line: "{name} finds a new job after months of looking."
+  if: "{name} had found a new job"
+  kind: choice
+  ages: [20, 60]
+  after: [losesJob, businessCloses]
+  within: 2
+  unless: [job]
+  tags: [job]
+
+- id: movesCity
+  label: Moves to the city
+  line: "{name} moves to the big city."
+  if: "{name} had moved to the city"
+  kind: choice
+  ages: [18, 40]
+  unless: [city]
+  tags: [city]
+
+- id: learnsToCook
+  label: Learns to cook
+  line: "{name} learns to cook from {his} uncle."
+  if: "{name} had learned to cook"
+  kind: choice
+  ages: [10, 40]
+  tags: [cooking]
+
+- id: opensCafe
+  label: Opens a café
+  line: "{name} opens a small café."
+  if: "{name} had opened a café"
+  kind: choice
+  ages: [24, 55]
+  after: [cooking]
+  unless: [business]
+  tags: [business, job]
+
+- id: volunteers
+  label: Volunteers
+  line: "{name} volunteers at the food bank."
+  if: "{name} had volunteered"
+  kind: choice
+  ages: [14, 70]
+  tags: [helping]
+
+- id: settlesDown
+  label: Finds a partner
+  line: "{name} meets someone kind. They move in together."
+  kind: event
+  ages: [22, 45]
+  unless: [partner]
+  tags: [partner]
+  move: 1
+
+- id: adoptsDog
+  label: Adopts a dog
+  line: "{name} adopts a scruffy dog from the shelter."
+  if: "{name} had adopted a dog"
+  kind: choice
+  ages: [10, 70]
+  tags: [dog]

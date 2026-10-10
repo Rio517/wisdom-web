@@ -1,0 +1,153 @@
+# Test fixture for the lives engine (not the real store): music.
+
+- id: choir
+  label: Joins a choir
+  line: "{his} parents sign {him} up for choir."
+  if: "{his} parents had picked choir"
+  kind: choice
+  by: family
+  ages: [4, 9]
+  tags: [music, sings]
+
+- id: guitar
+  label: Picks guitar
+  line: "{name} picks guitar."
+  if: "{name} had picked guitar"
+  kind: choice
+  ages: [7, 16]
+  tags: [music, instrument]
+
+- id: drums
+  label: Picks drums
+  line: "{name} picks drums."
+  if: "{name} had picked drums"
+  kind: choice
+  ages: [7, 16]
+  tags: [music, instrument]
+
+- id: startsBand
+  label: Starts a band
+  line: "{name} starts a band with two friends."
+  if: "{name} had started a band"
+  kind: choice
+  ages: [12, 19]
+  after: [instrument, sings]
+  unless: [band]
+  tags: [music, band]
+
+- id: ownSong
+  label: Writes a song
+  line: "The band writes its own song."
+  if: "{name}'s band had written its own song"
+  kind: choice
+  ages: [13, 25]
+  after: [band]
+  tags: [songs]
+
+- id: radioPlay
+  label: A DJ plays the song
+  line: "A radio DJ plays {his} song. Luck!"
+  kind: lucky
+  ages: [15, 40]
+  after: [songs]
+  move: 1
+
+- id: recordDeal
+  label: Signs a record deal
+  line: "A record label offers {him} a deal."
+  kind: event
+  ages: [17, 40]
+  after: [radioPlay]
+  within: 2
+  tags: [fame]
+  move: 1
+
+- id: partiesEveryNight
+  label: Parties every night
+  line: "Fame. Late nights, bad habits, money gone."
+  if: "{name} had partied every night"
+  kind: choice
+  ages: [18, 40]
+  after: [fame]
+  tags: [hardLiving]
+
+- id: keepsEarlyNights
+  label: Keeps early nights
+  line: "{name} keeps early nights, even on tour."
+  if: "{name} had kept early nights"
+  kind: choice
+  ages: [18, 40]
+  after: [fame]
+
+- id: savesTheMoney
+  label: Saves the money
+  line: "{name} puts the money away for later."
+  if: "{name} had saved the money"
+  kind: choice
+  ages: [18, 45]
+  after: [fame]
+  tags: [savings]
+
+- id: bandSplits
+  label: The band splits
+  line: "The band splits up."
+  kind: setback
+  ages: [16, 45]
+  after: [band]
+  drops: [band]
+  move: -2
+
+- id: givesMusicLessons
+  label: Gives music lessons
+  line: "{name} gives music lessons."
+  if: "{name} had given music lessons"
+  kind: choice
+  ages: [16, 70]
+  after: [instrument]
+  tags: [music, teaching]
+
+- id: teachesSchoolMusic
+  label: Teaches at a school
+  line: "{name} teaches music at the local school."
+  if: "{name} had taught at a school"
+  kind: choice
+  ages: [22, 65]
+  after: [teaching]
+  needs: [music]
+  tags: [teacher]
+
+- id: watchesChildPerform
+  label: Watches child perform
+  line: "{name} watches {his} child perform on stage."
+  kind: event
+  ages: [30, 70]
+  after: [parent]
+  needs: [music]
+  move: 1
+
+- id: olderBandInvite
+  label: Joins an older band
+  line: "An older band asks {him} to join."
+  kind: lucky
+  ages: [14, 30]
+  after: [instrument]
+  unless: [band]
+  tags: [band]
+  move: 1
+
+- id: playsWeddings
+  label: Plays at weddings
+  line: "{name} plays at weddings on Saturdays."
+  if: "{name} had played at weddings"
+  kind: choice
+  ages: [18, 60]
+  after: [instrument, sings]
+  tags: [gigs, job]
+
+- id: hurtsHand
+  label: Hurts a hand
+  line: "{name} hurts {his} hand. No playing for a year."
+  kind: setback
+  ages: [12, 60]
+  after: [instrument]
+  move: -1
