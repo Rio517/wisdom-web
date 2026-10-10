@@ -14,8 +14,8 @@
 // 2D drawing of the same water instead. With reduced motion it shows one still
 // frame. It pauses while the map is off screen, covered or the tab is hidden.
 import {
-  MAIN, SIDE, STREAMS, POOL, LAKE, LAKE_SHORE, LAKE_RINGS, FALL, IMPACT, HILL, SOURCE_CREST,
-  fallEdges, insetLoop, ellipseLoop, outline, bankWidth, fit,
+  MAIN, SIDE, STREAMS, POOL, POOL_SHORE, POOL_BANK, POOL_MOUTH, LAKE, LAKE_SHORE, LAKE_RINGS, FALL, IMPACT, HILL, SOURCE_CREST,
+  fallEdges, insetLoop, outline, bankWidth, fit,
 } from './journey-hike-geometry.js';
 
 const STILL_TIME = 1.7; // the moment the rings and streaks read best when nothing moves
@@ -85,9 +85,12 @@ float glint(vec2 cellSpace, float seed, float density) {
 `;
 
 // vData: across (-1..1), distance in from the bank, flow distance, half width.
-// The main stream is hidden above the green hill's crest, so it starts there.
+// The main stream is hidden above the green hill's crest, so it starts there. Within
+// uMouth.z of uMouth.xy (where the side stream leaves the pool) its middle is no deeper
+// than its edges, so its water matches the pool's where they meet.
 const STREAM = `${COMMON}
 uniform float uClip, uFlowSpeed;
+uniform vec3 uMouth;
 uniform vec2 uCrestA, uCrestB, uCrestC;
 float crest(float x) {
   if (x <= uCrestA.x || x >= uCrestC.x) return -1e4;
@@ -100,8 +103,9 @@ void main() {
   if (uClip > 0.5) alpha *= inside(vPos.y - crest(vPos.x));
   if (alpha < 0.003) discard;
   float bank = 0.6 + 0.24 * halfWidth;
+  float open = uMouth.z > 0.0 ? smoothstep(uMouth.z * 0.6, uMouth.z * 1.6, distance(vPos, uMouth.xy)) : 1.0;
   float bankMix = 1.0 - smoothstep(bank * 0.55, bank * 1.3, edge);
-  float centre = clamp(edge / max(halfWidth, 1e-3), 0.0, 1.0);
+  float centre = clamp(edge / max(halfWidth, 1e-3), 0.0, 1.0) * open;
   float drift = uTime * uFlowSpeed;
   float n = noise(vec2((flow - drift) * 0.026, across * 2.3)) * 0.62
           + noise(vec2((flow - drift * 1.35) * 0.041 + 3.7, across * 3.3 + 1.3)) * 0.38;
@@ -111,7 +115,8 @@ void main() {
   fragColor = vec4(mix(color, uBank, bankMix), alpha);
 }`;
 
-// vData.x: distance in from the shore (map units), negative outside.
+// vData.x: distance in from the shore (map units), negative outside; vData.y: the bank's
+// share there (none where the pool meets the rock).
 const POND = `${COMMON}
 uniform vec2 uCenter, uRingSize;
 uniform vec4 uSources;
@@ -129,7 +134,7 @@ void main() {
   float edge = vData.x;
   float alpha = inside(edge);
   if (alpha < 0.003) discard;
-  float bankMix = 1.0 - smoothstep(uBankWidth * 0.55, uBankWidth * 1.3, edge);
+  float bankMix = (1.0 - smoothstep(uBankWidth * 0.55, uBankWidth * 1.3, edge)) * vData.y;
   vec3 color = mix(uBody, uDeep, smoothstep(0.1, 1.0, clamp(edge / uDepth, 0.0, 1.0)) * 0.8);
   float rings = 0.0;
   for (int i = 0; i < 2; i++) {
@@ -197,8 +202,9 @@ function streamMesh({ samples }) {
 // A pond from its shore outline: a strip round the shore whose edge value is the exact
 // distance in from the shore, then triangles in to a spine along the pond's length,
 // whose edge value is the spine point's distance to the shore. Depth is the edge value
-// too, so the middle is highest. Works for the oval pool and the uneven lake alike.
-function pondMesh(loop, { inset = 2.5, spineEnd }) {
+// too, so the middle is highest. Works for the pool and the uneven lake alike. `bank` is the
+// bank band's share at each shore point.
+function pondMesh(loop, { inset = 2.5, spineEnd, bank = () => 1 }) {
   const n = loop.length;
   const outer = insetLoop(loop, -FRINGE);
   const inner = insetLoop(loop, inset);
@@ -213,8 +219,9 @@ function pondMesh(loop, { inset = 2.5, spineEnd }) {
   loop.forEach(([x], i) => {
     const sx = Math.max(left, Math.min(right, x));
     const depth = Math.max(inset + 0.5, shoreDistance(sx, midY));
+    const b = bank(i);
     pos.set([outer[i][0], outer[i][1], -FRINGE, inner[i][0], inner[i][1], inset, sx, midY, depth], i * 9);
-    data.set([-FRINGE, 0, 0, 0, inset, 0, 0, 0, depth, 0, 0, 0], i * 12);
+    data.set([-FRINGE, b, 0, 0, inset, b, 0, 0, depth, b, 0, 0], i * 12);
   });
   const index = [];
   for (let i = 0; i < n; i += 1) {
@@ -273,20 +280,22 @@ function webglWater(canvas, colors) {
   const shared = {
     uBank: colors.bank, uBody: colors.body, uDeep: colors.deep, uBand: colors.light, uFoam: colors.foam, uRing: colors.ring,
   };
-  const streamUniforms = clip => ({
-    uClip: clip ? 1 : 0, uFlowSpeed: FLOW_SPEED, uCrestA: SOURCE_CREST[0], uCrestB: SOURCE_CREST[1], uCrestC: SOURCE_CREST[2],
+  const streamUniforms = (clip, mouth = [0, 0, -1]) => ({
+    uMouth: mouth, uClip: clip ? 1 : 0, uFlowSpeed: FLOW_SPEED, uCrestA: SOURCE_CREST[0], uCrestB: SOURCE_CREST[1], uCrestC: SOURCE_CREST[2],
   });
   const pondUniforms = ({ cx, cy }, sources, ringSize, cycle, foam, bank, depth) => ({
     uCenter: [cx, cy], uSources: sources.flat(), uRingSize: ringSize, uRingCycle: cycle, uFoamOn: foam ? 1 : 0, uBankWidth: bank, uDepth: depth,
   });
   const impact = [IMPACT[0], IMPACT[1] + 2];
+  // The foam is centred just in front of where the sheet lands.
+  const foamAt = { cx: IMPACT[0], cy: IMPACT[1] + 3 };
   // The meshes are built on the first frame after the shaders start compiling, so neither step
   // holds up the page for long.
   let pieces = null;
   const build = () => [
     [1, pondMesh(LAKE_SHORE, { spineEnd: 12 }), pondUniforms(LAKE, LAKE_RINGS, [40, 9.5], 5.6, false, 4.2, 18)],
-    [1, pondMesh(ellipseLoop(POOL), { spineEnd: POOL.ry }), pondUniforms(POOL, [impact, impact], [POOL.rx - 4, POOL.ry - 2], 4.2, true, 3, 12)],
-    [0, streamMesh(SIDE), streamUniforms(false)],
+    [1, pondMesh(POOL_SHORE, { spineEnd: POOL.ry, bank: i => POOL_BANK[i] }), pondUniforms(foamAt, [impact, impact], [POOL.rx - 4, POOL.ry * 1.6], 4.2, true, 3, 12)],
+    [0, streamMesh(SIDE), streamUniforms(false, POOL_MOUTH)],
     [0, streamMesh(MAIN), streamUniforms(true)],
     [2, sheetMesh(), { uSheet: colors.fall, uLength: FALL.bottom - FALL.top }],
   ].map(([which, mesh, uniforms]) => {
@@ -423,7 +432,8 @@ function stillWater(canvas, colors) {
   const poolBank = bankWidth(POOL.ry * 2) * 0.8;
   const fallShape = polygon(fallOutline(0));
   const lakeBody = polygon(insetLoop(LAKE_SHORE, 3.2));
-  const poolBody = ellipse(POOL.cx, POOL.cy, POOL.rx - poolBank, POOL.ry - poolBank);
+  const poolShore = polygon(POOL_SHORE);
+  const poolBody = polygon(insetLoop(POOL_SHORE, i => poolBank * POOL_BANK[i]));
   const time = STILL_TIME;
 
   function dashes(piece) {
@@ -471,17 +481,20 @@ function stillWater(canvas, colors) {
         ctx.fill(piece[layer]);
         ctx.restore();
       }
-      ctx.fill(layer === 'bank' ? ellipse(POOL.cx, POOL.cy, POOL.rx, POOL.ry) : poolBody);
+      ctx.fill(layer === 'bank' ? poolShore : poolBody);
     }
     // The fall's sheet over the pool, then white water where it lands.
     ctx.fillStyle = fill('bank');
     ctx.fill(fallShape);
     ctx.fillStyle = fill('fall');
     ctx.fill(polygon(fallOutline(1.4, 1.2)));
+    ctx.save();
+    ctx.clip(poolShore);
     ctx.fillStyle = fill('foam');
     for (const [dx, dy, rx, ry] of [[0, 1.5, 23, 5], [-30, 4.5, 7, 1.9], [31, 5, 8, 1.9], [-12, 8, 6, 1.4]]) {
       ctx.fill(ellipse(IMPACT[0] + dx, IMPACT[1] + dy, rx, ry));
     }
+    ctx.restore();
     ctx.fillStyle = fill('bank');
     ctx.fill(polygon(LAKE_SHORE));
     ctx.fillStyle = fill('body');

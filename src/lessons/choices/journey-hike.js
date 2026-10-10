@@ -6,7 +6,7 @@ import { LEARNED } from './journey-story.js';
 import { t } from '../../i18n/runtime.js';
 import { ICONS, alfredo, dad } from './journey-icons.js';
 import { tween, ease, wait } from './journey-motion.js';
-import { FAR_RIDGE, HILL, GROUND, FALL, FALLS_DROP, LAKE_SHORE, MAIN as STREAM, fallEdges, groundY, hillCrestY, keepClear, outline, pathTrack } from './journey-hike-geometry.js';
+import { FAR_RIDGE, HILL, GROUND, FALL, FALLS_DROP, POOL, RISE_LEVEL, LAKE_SHORE, MAIN as STREAM, fallEdges, groundY, hillCrestY, keepClear, outline, pathTrack } from './journey-hike-geometry.js';
 
 // Everything above the green hill's crest: where the trail's far stretch shows.
 const ABOVE_HILL = `M-400 -400 L1600 -400 L1600 440 L${Array.from({ length: 121 }, (_, i) => 1200 - i * 10).map(x => `${x} ${hillCrestY(x).toFixed(1)}`).join(' L')} L-400 480 Z`;
@@ -265,13 +265,19 @@ function fallsMarkup() {
   </g>`;
 }
 
-// The near ground rises in front of the falls: its edge runs level round the pool, hiding the
-// rocks' feet, so the pool lies on flat ground on top of the hill. To the left it slopes down
+// The near ground rises in front of the falls: its edge runs level on both sides of the pool,
+// hiding the rocks' lower third, so the pool lies on flat ground on top of the hill. To the left it slopes down
 // into the ground's own edge. Same colour as the ground, so there is no seam.
 const RISE = (() => {
-  const level = x => 526 + 0.8 * Math.sin(x / 23 + 1.2) + 0.5 * Math.sin(x / 9.1);
+  const base = x => RISE_LEVEL + 0.8 * Math.sin(x / 23 + 1.2) + 0.5 * Math.sin(x / 9.1);
+  // Under the pool and just past its two ends the edge comes down to the ends' level, so the
+  // rock's foot meets the water's rounded ends with no ground between them.
+  const level = x => {
+    const u = Math.max(0, Math.min(1, 1 - (Math.abs(x - POOL.cx) - POOL.rx) / 14));
+    return base(x) + (POOL.ends + 1.2 - base(x)) * u * u * (3 - 2 * u);
+  };
   const flat = Array.from({ length: 51 }, (_, i) => 1004 + i * 4).map(x => `${n1(x)} ${n1(level(x))}`).join(' L');
-  return `M820 ${n1(groundY(820) + 1)} C 880 ${n1(groundY(880))}, 948 ${n1(level(960) + 10)}, 1004 ${n1(level(1004))} L${flat} L1600 526 V1200 H820 Z`;
+  return `M820 ${n1(groundY(820) + 1)} C 880 ${n1(groundY(880))}, 948 ${n1(level(960) + 10)}, 1004 ${n1(level(1004))} L${flat} L1600 ${RISE_LEVEL} V1200 H820 Z`;
 })();
 
 // Mirror Lake's clearing, where the far stretch ends: the trailhead yard's bare ground, far

@@ -25,23 +25,46 @@ const MAIN_KEYS = [
   [628, 505], [634, 548], [637, 600], [631, 650], [622, 694], [611, 742], [609, 800],
   [619, 870], [612, 950], [603, 1040],
 ];
-// Side stream: from the pool at the waterfall's foot, leftwards, into the main stream below the bridge.
+// Side stream: out of the pool's front lip at the waterfall's foot, down the hill leftwards,
+// into the main stream below the bridge.
 const SIDE_KEYS = [
-  [1068, 568.5], [1030, 573.5], [996, 582], [966, 596.9], [928, 609.8], [880, 614.5], [832, 611.4], [788, 617],
+  [1058.5, 545], [1044, 553], [1024, 563], [994, 578.5], [964, 594.5], [928, 609.8], [880, 614.5], [832, 611.4], [788, 617],
   [748, 631], [712, 649], [678, 666], [648, 684], [622, 702],
 ];
 
 // Width (map units) by depth: narrow at the hill's crest, widest at the bottom.
 const MAIN_WIDTH = [[422, 8], [450, 13], [478, 19], [505, 25], [600, 29], [676, 30], [740, 38], [880, 44], [1060, 48]];
-const SIDE_WIDTH = [[568, 10], [624, 12], [702, 15]];
+const SIDE_WIDTH = [[546, 10], [624, 12], [702, 15]];
 
-export const POOL = { cx: 1084, cy: 554 + FALLS_DROP, rx: 56, ry: 14 };
-// The fall pours from the floor of a notch in the rock's top and runs the full height
-// into the pool, ending inside its surface. A little wider at the lip, then narrower,
-// then wider again at the foot. The notch and the darker channel in the rock behind
-// it follow the sheet's edges, `margin` outside them on both sides.
-export const FALL = { top: 391 + FALLS_DROP, bottom: 551 + FALLS_DROP, lip: [1066, 1102], neck: [1070, 1098], neckAt: 0.12, foot: [1066, 1102], margin: 3.5 };
-export const IMPACT = [1084, 551 + FALLS_DROP];
+// The near ground rises in front of the falls and hides the rocks' feet along a level
+// edge at about this height (`RISE` in journey-hike.js).
+export const RISE_LEVEL = 526;
+// The pool at the fall rock's foot, seen low (about 4.4:1). Its back runs along the rock's
+// foot, drawn a little over it so no ground shows between rock and water, and curves down
+// to the pool's two ends, where the rock's foot comes down to meet it (`RISE` dips there),
+// so the rock stands round the back of the water like a bowl. Its front is rounded. POOL_SHORE is its one outline: both water renderers, the
+// foam and the trees' keep-clear use it. POOL_BANK is the bank's share at each of its
+// points: none along the rock or where the side stream leaves, the full bank band round
+// the rest of the front.
+const POOL_BACK = RISE_LEVEL - 2.4;
+const POOL_CORNER = 9; // how far the back curves down to the pool's two ends
+const POOL_FRONT = 16; // from the ends' level to the front lip
+export const POOL = { cx: 1085, cy: POOL_BACK + (POOL_CORNER + POOL_FRONT) / 2, rx: 55, ry: (POOL_CORNER + POOL_FRONT) / 2, ends: POOL_BACK + POOL_CORNER };
+export const POOL_SHORE = Array.from({ length: 96 }, (_, i) => {
+  const angle = (i / 96) * Math.PI * 2;
+  const [c, s] = [Math.cos(angle), Math.sin(angle)];
+  // Front (s > 0) a little squarer than an ellipse, so it stays full out to the ends;
+  // back flatter than an ellipse, curving down mostly near the ends.
+  const x = POOL.cx + POOL.rx * Math.sign(c) * Math.abs(c) ** 0.8;
+  return [x, POOL.ends + (s > 0 ? POOL_FRONT * s ** 0.8 * (1 + 0.04 * Math.sin(angle * 3 + 0.8)) : -POOL_CORNER * (-s) ** 0.6)];
+});
+// The fall pours from the floor of a notch in the rock's top and drops straight into
+// the back of the pool, a few units in front of the rock, ending inside the water. A
+// little wider at the lip, then narrower, then wider again at the foot. The notch and
+// the darker channel in the rock behind it follow the sheet's edges, `margin` outside
+// them on both sides.
+export const FALL = { top: 391 + FALLS_DROP, bottom: POOL_BACK + 8.5, lip: [1066, 1102], neck: [1070, 1098], neckAt: 0.12, foot: [1066, 1102], margin: 3.5 };
+export const IMPACT = [1084, POOL_BACK + 7];
 
 /** The fall's left and right edges at `f` (0 at the lip, 1 at the foot). */
 export function fallEdges(f) {
@@ -135,8 +158,9 @@ function closedCurve(keys, spacing) {
   return even;
 }
 
-/** A closed outline moved inwards by `inset` map units (negative moves it out). */
+/** A closed outline moved inwards by `inset` map units (negative moves it out), or by `inset(i)` at point i. */
 export function insetLoop(points, inset) {
+  const by = typeof inset === 'function' ? inset : () => inset;
   const n = points.length;
   let area = 0;
   for (let i = 0; i < n; i += 1) {
@@ -150,15 +174,7 @@ export function insetLoop(points, inset) {
     const b = points[(i + 1) % n];
     const length = Math.hypot(b[0] - a[0], b[1] - a[1]) || 1;
     // Inward normal: to the left of travel for a positive (clockwise on screen) loop.
-    return [p[0] - (b[1] - a[1]) / length * turn * inset, p[1] + (b[0] - a[0]) / length * turn * inset];
-  });
-}
-
-/** An ellipse as a closed outline. */
-export function ellipseLoop({ cx, cy, rx, ry }, segments = 72) {
-  return Array.from({ length: segments }, (_, i) => {
-    const angle = (i / segments) * Math.PI * 2;
-    return [cx + Math.cos(angle) * rx, cy + Math.sin(angle) * ry];
+    return [p[0] - (b[1] - a[1]) / length * turn * by(i), p[1] + (b[0] - a[0]) / length * turn * by(i)];
   });
 }
 
@@ -200,6 +216,26 @@ function buildStream(keys, widths, { wobble = 0.06, phase = 0 } = {}) {
 export const MAIN = buildStream(MAIN_KEYS, MAIN_WIDTH);
 export const SIDE = buildStream(SIDE_KEYS, SIDE_WIDTH, { wobble: 0.05, phase: 1.9 });
 export const STREAMS = [SIDE, MAIN];
+
+const smooth = (a, b, x) => {
+  const u = Math.max(0, Math.min(1, (x - a) / (b - a)));
+  return u * u * (3 - 2 * u);
+};
+// Where the side stream leaves the pool: the first point of its middle line outside the
+// pool's outline, and a radius round it in which neither the pool nor the stream draws a
+// bank, so the two waters run into each other.
+const insidePool = (x, y) => {
+  let inside = false;
+  for (let i = 0, j = POOL_SHORE.length - 1; i < POOL_SHORE.length; j = i, i += 1) {
+    const [[xi, yi], [xj, yj]] = [POOL_SHORE[i], POOL_SHORE[j]];
+    if ((yi > y) !== (yj > y) && x < xi + (xj - xi) * (y - yi) / (yj - yi)) inside = !inside;
+  }
+  return inside;
+};
+const mouth = SIDE.samples.find(p => !insidePool(p.x, p.y));
+export const POOL_MOUTH = [mouth.x, mouth.y, mouth.w * 0.8];
+export const POOL_BANK = POOL_SHORE.map(([x, y]) => smooth(POOL.ends - 1, POOL.ends + 5, y)
+  * smooth(POOL_MOUTH[2] * 0.6, POOL_MOUTH[2] * 1.6, Math.hypot(x - POOL_MOUTH[0], y - POOL_MOUTH[1])));
 
 /** Bank width (map units) for a stream of width `w`: thin far away, a little more up close. */
 export const bankWidth = w => 0.6 + 0.12 * w;
@@ -253,10 +289,7 @@ export function keepClear(margin = 12) {
   for (const stream of STREAMS) {
     stream.samples.forEach((p, i) => { if (i % 4 === 0 && p.y > hillCrestY(p.x)) spots.push([p.x, p.y, p.w / 2 + margin]); });
   }
-  for (let i = 0; i < 24; i += 1) {
-    const angle = (i / 24) * Math.PI * 2;
-    spots.push([POOL.cx + Math.cos(angle) * POOL.rx * 0.8, POOL.cy + Math.sin(angle) * POOL.ry * 0.8, POOL.ry * 0.2 + margin]);
-  }
+  POOL_SHORE.forEach((p, i) => { if (i % 3 === 0) spots.push([p[0], p[1], margin + 2]); });
   LAKE_SHORE.forEach((p, i) => { if (i % 4 === 0) spots.push([p[0], p[1], margin + 4]); });
   return spots;
 }
