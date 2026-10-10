@@ -2,25 +2,25 @@
 # The schema and the rules are in ../README.md.
 
 - id: storiesAtBedtime
-  label: Bedtime stories
-  line: "A story every night before sleep."
-  if: "{his} family had read bedtime stories every night"
+  label: Hears bedtime stories
+  line: "{his} mum reads {him} a story every night."
+  if: "{his} family had read {him} a story every night"
   kind: choice
   by: family
   ages: [2, 7]
   tags: [words, reading]
 
 - id: libraryVisits
-  label: Weekly library visits
-  line: "{his} family visits the library every week."
-  if: "{his} family had visited the library every week"
+  label: Visits the library
+  line: "{his} grandad takes {him} to the library every week."
+  if: "{his} family had taken {him} to the library every week"
   kind: choice
   by: family
   ages: [3, 8]
   tags: [words, reading, library]
 
 - id: twoLanguagesHome
-  label: Two languages at home
+  label: Hears two languages
   line: "{name} hears two languages at home."
   if: "{his} family had spoken two languages at home"
   kind: choice
@@ -30,11 +30,20 @@
 
 - id: readNightly
   label: Reads every night
-  line: "{name} reads a little every night, even with a torch."
+  line: "{name} reads every night, sometimes under the covers with a torch."
   if: "{name} had read every night"
   kind: choice
   ages: [5, 10]
   tags: [words, reading]
+
+- id: kindLibrarian
+  label: A librarian helps out
+  line: "A librarian saves the best new books for {him}. Luck!"
+  kind: lucky
+  ages: [6, 14]
+  tags: [words, reading, library]
+  move: 1
+  weight: 0.6
 
 - id: writesStories
   label: Writes stories
@@ -88,7 +97,7 @@
   tags: [words, languages]
 
 - id: exchangeTrip
-  label: A free exchange place
+  label: Wins an exchange trip
   line: "{name} wins a free place on an exchange trip. Luck!"
   kind: lucky
   ages: [12, 18]
@@ -143,7 +152,7 @@
 
 - id: publishersSayNo
   label: Publishers say no
-  line: "Publisher after publisher says no to the book."
+  line: "Publisher after publisher says no to {his} book."
   kind: setback
   ages: [18, 60]
   after: [book]
@@ -162,7 +171,7 @@
 
 - id: rewritesTheBook
   label: Rewrites the book
-  line: "{name} rewrites the book from the first page."
+  line: "{name} rewrites {his} book from the first page."
   if: "{name} had rewritten the book"
   kind: choice
   ages: [18, 62]
@@ -170,9 +179,9 @@
   tags: [words, book]
   within: 2
 
-- id: publishesItHimself
-  label: Publishes it alone
-  line: "{name} prints the book {himself} and sells it locally."
+- id: selfPublishes
+  label: Publishes it {himself}
+  line: "{name} prints {his} book {himself} and sells it locally."
   if: "{name} had published the book {himself}"
   kind: choice
   ages: [18, 62]
@@ -180,12 +189,21 @@
   tags: [words, book]
   within: 2
 
+- id: joinsWritingGroup
+  label: Joins a writing group
+  line: "{name} joins a writing group, and they read each other's work."
+  if: "{name} had joined a writing group"
+  kind: choice
+  ages: [16, 70]
+  after: [writing, book]
+  tags: [words, writing, helped]
+
 - id: bookDeal
   label: A publisher says yes
-  line: "A publisher wants the book at last. Luck and patience!"
+  line: "A publisher wants {his} book at last. Luck and patience!"
   kind: lucky
   ages: [20, 66]
-  after: [keepsWriting, rewritesTheBook, publishesItHimself]
+  after: [keepsWriting, rewritesTheBook, selfPublishes]
   tags: [words, published]
   move: 3
 
@@ -224,13 +242,12 @@
   if: "{name} had started a town newsletter"
   kind: choice
   ages: [20, 62]
-  after: [paperCloses]
+  after: [journalism, community]
   tags: [words, journalism, community]
-  within: 2
 
 - id: bookshopJob
   label: Works in a bookshop
-  line: "{name} works in a bookshop among the shelves."
+  line: "{name} works in a bookshop, finding each customer the right book."
   if: "{name} had worked in a bookshop"
   kind: choice
   ages: [16, 60]
@@ -294,7 +311,7 @@
 
 - id: writesHealthLeaflets
   label: Writes health leaflets
-  line: "{name} writes clear leaflets that help patients understand."
+  line: "{name} writes clear leaflets so patients understand their medicine."
   if: "{name} had written health leaflets"
   kind: choice
   ages: [22, 60]

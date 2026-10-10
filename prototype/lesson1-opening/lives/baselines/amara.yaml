@@ -1,4 +1,5 @@
-# Amara: words, a reader from the start, a lucky trip abroad, many publishers saying no, and a book at 38.
+# Amara: words, a reader from the start, a lucky trip abroad, publishers saying
+# no, a writing group, and a book at 38: steady, with one big surprise late.
 # The schema is in ../README.md.
 
 id: amara
@@ -12,7 +13,7 @@ steps:
     alts: [libraryVisits, twoLanguagesHome]
   - node: readNightly
     age: 7
-    alts: [writesStories, looksAfterPet]
+    alts: [looksAfterPet, startPiano]
     echoes: [storiesAtBedtime]
   - node: writesStories
     age: 10
@@ -21,10 +22,9 @@ steps:
   - node: schoolPaper
     age: 12
     alts: [startsNewspaper, dramaClub]
-    echoes: [readNightly, writesStories]
+    echoes: [writesStories]
   - node: exchangeTrip
     age: 14
-    line: "She wins a free place on an exchange trip. Luck!"
     echoes: [schoolPaper]
   - node: studyLanguages
     age: 18
@@ -37,29 +37,31 @@ steps:
     echoes: [studyLanguages]
   - node: writesABook
     age: 26
+    line: "She writes a whole book in the evenings."
     alts: [reportsForPaper, translatesBooks]
-    echoes: [readNightly, writesStories]
+    echoes: [writesStories]
   - node: publishersSayNo
     age: 28
     line: "Ten publishers say no to her book."
-  - node: rewritesTheBook
+  - node: joinsWritingGroup
     age: 29
-    alts: [publishesItHimself, startsABlog]
-    echoes: [writesABook]
-  - node: keepsWriting
+    move: 1
+    alts: [keepsWriting, takesAYearOff]
+  - node: rewritesTheBook
     age: 31
-    line: "She keeps writing anyway."
-    alts: [bookshopJob, teachesALanguage]
+    alts: [selfPublishes, startsABlog]
+    echoes: [writesABook, joinsWritingGroup]
   - node: moveAbroad
     age: 33
+    line: "She moves to the country she visited at fourteen."
     alts: [takesJobNearFamily, changesCareers]
-    echoes: [exchangeTrip, studyLanguages]
+    echoes: [exchangeTrip]
   - node: bookDeal
     age: 38
     line: "A publisher wants her book at last. Luck and patience!"
     move: 2
-    echoes: [writesABook, keepsWriting]
+    echoes: [rewritesTheBook, writesABook]
   - node: joinsBookGroup
     age: 42
-    alts: [teachesALanguage, startsABlog]
+    line: "She joins a book group and never mentions her own."
     echoes: [readNightly]

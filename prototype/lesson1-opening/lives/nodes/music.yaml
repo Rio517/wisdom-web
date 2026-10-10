@@ -4,7 +4,7 @@
 - id: choir
   label: Joins a choir
   line: "{his} parents sign {him} up for choir."
-  if: "{his} parents had picked choir"
+  if: "{his} family had picked choir"
   kind: choice
   by: family
   ages: [4, 9]
@@ -50,6 +50,16 @@
   kind: choice
   ages: [7, 16]
   tags: [music, instrument, drumming]
+
+- id: givenOldPiano
+  label: Gets an old piano
+  line: "A neighbour who is moving gives {him} an old piano. Luck!"
+  kind: lucky
+  ages: [6, 14]
+  unless: [piano]
+  tags: [music, instrument, piano]
+  move: 1
+  weight: 0.6
 
 - id: joinsChoir
   label: Joins the school choir
@@ -99,7 +109,7 @@
   tags: [music, band]
 
 - id: bandInvite
-  label: An older band invites
+  label: A band invites {him}
   line: "An older band asks {him} to join. Luck!"
   kind: lucky
   ages: [12, 22]
@@ -151,7 +161,7 @@
   if: "{name} had recorded an album"
   kind: choice
   ages: [18, 45]
-  after: [fame, radioPlay]
+  after: [fame, radioPlay, gigs]
   unless: [album]
   tags: [music, album]
 
@@ -203,7 +213,7 @@
 
 - id: switchesInstrument
   label: Tries a new instrument
-  line: "{name} learns a different instrument while the hand heals."
+  line: "{name} learns a different instrument while {his} hand heals."
   if: "{name} had tried a new instrument"
   kind: choice
   ages: [15, 50]
@@ -243,7 +253,7 @@
 
 - id: givesMusicLessons
   label: Gives music lessons
-  line: "{name} gives music lessons."
+  line: "{name} gives music lessons in {his} front room."
   if: "{name} had given music lessons"
   kind: choice
   ages: [16, 70]
@@ -261,7 +271,7 @@
   tags: [music, teacher, job]
 
 - id: watchesChildPerform
-  label: Watches child perform
+  label: Cheers {his} child on
   line: "{name} watches {his} child perform on stage."
   kind: event
   ages: [30, 70]

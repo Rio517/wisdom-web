@@ -2,9 +2,9 @@
 # The schema and the rules are in ../README.md.
 
 - id: oldComputerAtHome
-  label: A computer at home
-  line: "{his} parents set up an old computer in the hall."
-  if: "{his} parents had set up an old computer at home"
+  label: Gets an old computer
+  line: "{his} aunt sets up an old computer in the hall."
+  if: "{his} family had set up an old computer at home"
   kind: choice
   by: family
   ages: [4, 9]
@@ -45,7 +45,7 @@
   tags: [tech, computers, fixing]
 
 - id: codeTeacherSpots
-  label: A teacher spots it
+  label: Gets a better computer
   line: "A teacher spots {his} project and lends a better computer. Luck!"
   kind: lucky
   ages: [10, 17]
@@ -54,8 +54,8 @@
   move: 1
 
 - id: gameGoesFar
-  label: The game goes far
-  line: "Friends share the game with their friends. Luck!"
+  label: "{his} game catches on"
+  line: "Friends share {his} game with their friends. Luck!"
   kind: lucky
   ages: [14, 30]
   after: [games]
@@ -87,6 +87,7 @@
   if: "{name} had learned to code on an evening course"
   kind: choice
   ages: [22, 50]
+  unless: [code]
   tags: [tech, code, study]
   weight: 0.8
 
@@ -111,7 +112,7 @@
 
 - id: studioCloses
   label: The studio closes
-  line: "The studio closes, and the team is let go."
+  line: "The game studio closes, and {name} loses {his} job."
   kind: setback
   ages: [22, 50]
   after: [studio]
@@ -119,12 +120,13 @@
   move: -2
 
 - id: freelancesCode
-  label: Takes freelance work
-  line: "{name} takes freelance jobs, one client at a time."
-  if: "{name} had taken freelance work"
+  label: Codes for clients
+  line: "{name} writes code for small clients, one job at a time."
+  if: "{name} had written code for clients"
   kind: choice
   ages: [22, 60]
-  after: [studioCloses]
+  after: [studioCloses, jobEnds]
+  needs: [code]
   tags: [tech, job]
   within: 2
 
@@ -138,8 +140,8 @@
   tags: [tech, owner, business]
 
 - id: launchDayBug
-  label: A bug on launch day
-  line: "A bug brings the website down on launch day."
+  label: Launch day goes wrong
+  line: "A bug crashes {his} website on launch day."
   kind: setback
   ages: [20, 60]
   after: [developer, websites]
@@ -159,7 +161,7 @@
 - id: asksForReview
   label: Asks for a second look
   line: "{name} asks a colleague to look at the code too."
-  if: "{name} had asked a colleague to look"
+  if: "{name} had asked a colleague to check the code"
   kind: choice
   ages: [20, 60]
   after: [launchDayBug]
@@ -241,11 +243,12 @@
 
 - id: takesSteadyJob
   label: Takes a steady job
-  line: "{name} takes a steady job at a company that is hiring."
-  if: "{name} had taken a steady job elsewhere"
+  line: "{name} takes a steady coding job at a big company."
+  if: "{name} had taken a steady job instead"
   kind: choice
   ages: [22, 55]
-  after: [studioCloses]
+  after: [studioCloses, jobEnds]
+  needs: [code]
   tags: [tech, job, developer]
   within: 2
 

@@ -3,8 +3,8 @@
 
 - id: footballClub
   label: Joins a football club
-  line: "{his} parents sign {him} up for a football club."
-  if: "{his} parents had picked football club"
+  line: "{his} mum signs {him} up for a football club."
+  if: "{his} family had picked a football club"
   kind: choice
   by: family
   ages: [4, 9]
@@ -12,8 +12,8 @@
 
 - id: learnsToSwim
   label: Learns to swim
-  line: "{his} parents take {him} to swimming lessons."
-  if: "{his} parents had picked swimming lessons"
+  line: "{his} grandma takes {him} to swimming lessons."
+  if: "{his} family had picked swimming lessons"
   kind: choice
   by: family
   ages: [3, 8]
@@ -51,6 +51,15 @@
   ages: [8, 15]
   tags: [sport, climbing, club]
 
+- id: winsSportsCamp
+  label: Wins a camp place
+  line: "{name} wins a free week at a summer sports camp. Luck!"
+  kind: lucky
+  ages: [8, 15]
+  tags: [sport, club]
+  move: 1
+  weight: 0.6
+
 - id: joinsSwimClub
   label: Joins the swim club
   line: "{name} joins the swimming club."
@@ -62,7 +71,7 @@
 
 - id: schoolTeam
   label: Joins the school team
-  line: "{name} joins the school team."
+  line: "{name} joins the school team and never misses a practice."
   if: "{name} had joined the school team"
   kind: choice
   ages: [9, 16]
@@ -78,7 +87,7 @@
   tags: [sport, tryout]
 
 - id: scoutWatches
-  label: A scout watches
+  label: A scout spots {him}
   line: "A scout comes to a match and notices {him}. Luck!"
   kind: lucky
   ages: [12, 18]
@@ -88,7 +97,7 @@
 
 - id: youthAcademy
   label: Joins a youth academy
-  line: "{name} joins a youth academy."
+  line: "{name} trains at a big club's youth academy after school."
   if: "{name} had joined a youth academy"
   kind: choice
   ages: [13, 19]
@@ -105,9 +114,9 @@
   tags: [sport, pro, job]
 
 - id: trainsHard
-  label: Trains every morning
+  label: Trains before school
   line: "{name} trains before school, four mornings a week."
-  if: "{name} had trained every morning"
+  if: "{name} had trained before school"
   kind: choice
   ages: [11, 17]
   after: [team, running, swimming, gymnastics, club]
@@ -132,7 +141,7 @@
   tags: [sport]
 
 - id: teamWinsLeague
-  label: Team wins the league
+  label: Wins the league
   line: "{his} team wins the league on the last day. Luck helps!"
   kind: lucky
   ages: [10, 24]
@@ -145,13 +154,13 @@
   line: "A local shop pays for the whole team's new kit."
   kind: lucky
   ages: [8, 20]
-  after: [team, club]
+  after: [team]
   tags: [sport]
   move: 1
 
 - id: leftOutOfSquad
-  label: Left out of the squad
-  line: "{name} is left out of the squad this season."
+  label: Not picked this season
+  line: "The coach leaves {name} out of the squad this season."
   kind: setback
   ages: [11, 25]
   after: [team, tryout]
@@ -170,7 +179,7 @@
 
 - id: trainsWithFriend
   label: Trains with a friend
-  line: "{name} trains with a friend on weekends."
+  line: "{name} trains with a friend at weekends."
   if: "{name} had trained with a friend"
   kind: choice
   ages: [11, 30]
@@ -179,7 +188,7 @@
   within: 2
 
 - id: kneeInjury
-  label: A bad knee injury
+  label: Hurts a knee badly
   line: "A bad knee injury stops {him} for months."
   kind: setback
   ages: [13, 32]
@@ -202,8 +211,9 @@
   line: "{name} tries swimming, a sport kinder to the joints."
   if: "{name} had tried a gentler sport"
   kind: choice
-  ages: [11, 40]
-  after: [kneeInjury, leftOutOfSquad]
+  ages: [13, 40]
+  after: [kneeInjury]
+  unless: [swimming]
   tags: [sport, swimming]
   within: 2
 
@@ -236,8 +246,8 @@
 
 - id: coachesAClub
   label: Coaches a club side
-  line: "{name} is asked to coach a club's senior side."
-  if: "{name} had coached a club's senior side"
+  line: "{name} takes charge of a local club's first team."
+  if: "{name} had coached a club's first team"
   kind: choice
   ages: [24, 60]
   after: [coachingCourse]
@@ -287,9 +297,9 @@
   tags: [sport, swimming]
 
 - id: teamPhysio
-  label: Helps as team physio
-  line: "{name} treats players' strains for a club."
-  if: "{name} had treated players' strains for a club"
+  label: Works as a team physio
+  line: "{name} looks after a club's players when they get hurt."
+  if: "{name} had looked after a club's players"
   kind: choice
   ages: [20, 60]
   after: [physio]

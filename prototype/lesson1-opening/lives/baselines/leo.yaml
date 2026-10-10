@@ -1,9 +1,10 @@
-# Ines: stage, a lucky part in a show, an ankle injury, teaching, a youth theatre, and a life that goes up and down twice.
+# Leo: stage, a lucky part in a show, an ankle injury, teaching, a youth
+# theatre that loses its hall, and a life that goes up and down twice.
 # The schema is in ../README.md.
 
-id: ines
-name: Ines
-pronoun: she
+id: leo
+name: Leo
+pronoun: he
 end: 41
 steps:
   - { node: born, age: 0 }
@@ -20,11 +21,9 @@ steps:
     echoes: [schoolPlay]
   - node: partInAShow
     age: 15
-    line: "A theatre offers her a part in a show. Luck!"
     echoes: [aDanceClass, dramaClub]
   - node: ankleInjury
     age: 18
-    line: "She hurts an ankle and cannot dance for months."
   - node: gentleDanceClass
     age: 19
     move: 1
@@ -37,25 +36,22 @@ steps:
   - node: startsYouthTheatre
     age: 27
     move: 1
-    alts: [directsAPlay, localTheatreGroup]
+    alts: [voiceActing, worksBackstage]
     echoes: [teachesDance, dramaClub]
   - node: becomesParent
     age: 29
-  - node: showCloses
+  - node: fundingEnds
     age: 32
-    label: Loses its hall
-    line: "The youth theatre loses its hall, and the shows stop."
-  - node: joinsLocalProduction
+    line: "The money runs out, and the youth theatre loses its hall."
+  - node: asksShopsForHelp
     age: 33
-    label: Joins a local show
-    line: "She joins a small local show that needs a cast."
+    line: "He asks local shops to chip in, and the shows go on."
     move: 1
-    alts: [auditionsAgain, worksBackstage]
+    alts: [movesToSchoolHall, localTheatreGroup]
   - node: directsAPlay
     age: 36
-    alts: [localTheatreGroup, learnsSomethingNew]
-    echoes: [startsYouthTheatre, joinsLocalProduction]
+    line: "He directs a play starring his first pupils, now grown up."
+    echoes: [startsYouthTheatre]
   - node: runsDramaWorkshops
     age: 41
-    alts: [startsNewHobby, learnsSomethingNew]
-    echoes: [startsYouthTheatre]
+    echoes: [schoolPlay]

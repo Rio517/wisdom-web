@@ -3,7 +3,7 @@
 
 - id: familyHelpsNeighbours
   label: Helps the neighbours
-  line: "{his} family takes soup to a neighbour, and {name} comes along."
+  line: "{his} grandma takes soup to a neighbour, and {name} comes along."
   if: "{his} family had taken soup to the neighbours"
   kind: choice
   by: family
@@ -19,17 +19,17 @@
   tags: [caring, helper]
 
 - id: looksAfterYounger
-  label: Minds a little sibling
+  label: Helps with a sibling
   line: "{name} helps look after a younger brother or sister."
   if: "{name} had helped look after a younger sibling"
   kind: choice
   ages: [10, 15]
-  tags: [caring, helper, carer]
+  tags: [caring, helper, carer, sibling]
 
 - id: firstAid
   label: Learns first aid
-  line: "{name} does a first-aid course."
-  if: "{name} had done a first-aid course"
+  line: "{name} learns first aid and practises on a dummy."
+  if: "{name} had learned first aid"
   kind: choice
   ages: [11, 16]
   tags: [caring, firstAidSkill, helper]
@@ -43,16 +43,16 @@
   tags: [caring, helper, carer]
 
 - id: babysits
-  label: Babysits
+  label: Starts babysitting
   line: "{name} babysits for families on the street."
   if: "{name} had started babysitting"
   kind: choice
   ages: [12, 18]
-  tags: [caring, carer, job, money]
+  tags: [caring, carer, earns, money]
 
 - id: volunteerClinic
   label: Helps at a clinic
-  line: "{name} helps out at a local clinic."
+  line: "{name} helps out on Saturdays at a local clinic."
   if: "{name} had helped out at a local clinic"
   kind: choice
   ages: [14, 20]
@@ -61,7 +61,7 @@
 
 - id: lastMinutePlace
   label: A place opens up
-  line: "A place on the nursing course opens at the last minute. Luck!"
+  line: "A nursing course offers {him} a late place. Luck!"
   kind: lucky
   ages: [16, 26]
   after: [clinic]
@@ -70,7 +70,7 @@
 
 - id: nurseTraining
   label: Trains as a nurse
-  line: "{name} trains as a nurse."
+  line: "{name} trains as a nurse and learns to stay calm."
   if: "{name} had trained as a nurse"
   kind: choice
   ages: [17, 26]
@@ -78,8 +78,8 @@
   tags: [caring, nurse, job, study]
 
 - id: nurseMentor
-  label: A mentor on the ward
-  line: "A senior nurse takes {him} under a wing. Luck!"
+  label: A nurse guides {him}
+  line: "A senior nurse takes {him} under her wing. Luck!"
   kind: lucky
   ages: [20, 45]
   after: [nurse]
@@ -125,12 +125,13 @@
   within: 2
 
 - id: parentIll
-  label: A parent is very ill
-  line: "A parent becomes very ill for a long time."
+  label: "{his} dad falls ill"
+  line: "{his} dad becomes very ill for a long time."
   kind: setback
   ages: [8, 45]
   tags: [caring, illness]
   move: -2
+  weight: 0.4
 
 - id: helpsAtHome
   label: Helps at home
@@ -147,17 +148,17 @@
   line: "{name} takes a year out of study to help at home."
   if: "{name} had taken a year off to help at home"
   kind: choice
-  ages: [18, 46]
+  ages: [18, 30]
   after: [parentIll]
   tags: [caring, carer]
   within: 2
 
 - id: burnedOut
-  label: A very hard winter
-  line: "A very hard winter on the ward leaves {him} worn out."
+  label: Gets worn out
+  line: "A long, hard winter at work leaves {him} worn out."
   kind: setback
   ages: [22, 55]
-  after: [nurse, carer, doctor]
+  after: [nurse, doctor, paramedic, careAssistant, joinsHomeCare]
   tags: [caring]
   move: -2
 
@@ -183,8 +184,8 @@
 
 - id: physio
   label: Trains as a physio
-  line: "{name} trains as a physiotherapist."
-  if: "{name} had trained as a physiotherapist"
+  line: "{name} trains as a physio, helping people heal after injuries."
+  if: "{name} had trained as a physio"
   kind: choice
   ages: [16, 40]
   after: [kneeInjury, handInjury, injury]
@@ -192,8 +193,8 @@
 
 - id: careAssistant
   label: Works as a carer
-  line: "{name} cares for people in a nursing home."
-  if: "{name} had worked as a care assistant"
+  line: "{name} cares for older people in a care home."
+  if: "{name} had worked in a care home"
   kind: choice
   ages: [18, 60]
   after: [clinic, carer, helper]
@@ -227,7 +228,7 @@
   tags: [caring, doctor, job]
 
 - id: childminder
-  label: Minds children
+  label: Looks after children
   line: "{name} looks after other people's children at home."
   if: "{name} had looked after other people's children"
   kind: choice

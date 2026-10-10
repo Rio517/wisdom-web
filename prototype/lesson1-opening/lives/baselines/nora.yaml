@@ -1,9 +1,10 @@
-# Noah: sport, an early peak at the academy, a knee injury at 17, and a long rebuild into coaching.
+# Nora: sport, an early peak at the academy, a knee injury at 17, help to
+# rebuild, and a long, happy road into coaching.
 # The schema is in ../README.md.
 
-id: noah
-name: Noah
-pronoun: he
+id: nora
+name: Nora
+pronoun: she
 end: 41
 steps:
   - { node: born, age: 0 }
@@ -17,9 +18,10 @@ steps:
   - node: trainsHard
     age: 11
     alts: [takesUpRunning, kitchenExperiments]
+    echoes: [schoolTeam]
   - node: scoutWatches
     age: 13
-    line: "A scout watches him score. Luck!"
+    line: "A scout watches her score. Luck!"
     echoes: [trainsHard]
   - node: youthAcademy
     age: 14
@@ -27,14 +29,13 @@ steps:
     echoes: [scoutWatches]
   - node: winsRegionalMedal
     age: 16
-    line: "He wins a medal at the regional games."
+    line: "She wins a medal at the regional games."
     echoes: [trainsHard]
   - node: kneeInjury
     age: 17
-    line: "A bad knee injury stops him for months."
   - node: restsAndRebuilds
     age: 18
-    label: Rebuilds slowly
+    line: "A physio helps her rebuild, one small exercise at a time."
     move: 1
     alts: [switchesSport, takesBreakFromSport]
   - node: coachKids
@@ -47,14 +48,18 @@ steps:
     echoes: [coachKids]
   - node: coachesAClub
     age: 27
-    line: "A club asks him to coach its senior side."
     move: 1
     alts: [refereesMatches, joinsWeekendLeague]
     echoes: [coachingCourse]
   - node: becomesParent
     age: 32
-  - node: coachesTownTeam
+  - node: trainsForMarathon
+    age: 35
+    line: "She trains for a marathon, knee and all."
+    alts: [swimsEveryMorning, learnsSomethingNew]
+    echoes: [restsAndRebuilds]
+  - node: mentorsSomeone
     age: 41
-    label: Coaches a town team
-    alts: [trainsForMarathon, learnsSomethingNew]
-    echoes: [coachKids]
+    label: Guides a young player
+    line: "She helps a young player come back from a knee injury."
+    echoes: [kneeInjury, restsAndRebuilds]
