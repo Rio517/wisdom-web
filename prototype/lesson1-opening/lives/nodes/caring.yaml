@@ -48,7 +48,7 @@
   if: "{name} had started babysitting"
   kind: choice
   ages: [12, 18]
-  tags: [caring, carer, job, money]
+  tags: [caring, carer, earns, money]
 
 - id: volunteerClinic
   label: Helps at a clinic
@@ -131,6 +131,7 @@
   ages: [8, 45]
   tags: [caring, illness]
   move: -2
+  weight: 0.4
 
 - id: helpsAtHome
   label: Helps at home
@@ -157,7 +158,7 @@
   line: "A long, hard winter at work leaves {him} worn out."
   kind: setback
   ages: [22, 55]
-  after: [nurse, doctor, careAssistant, joinsHomeCare]
+  after: [nurse, doctor, paramedic, careAssistant, joinsHomeCare]
   tags: [caring]
   move: -2
 

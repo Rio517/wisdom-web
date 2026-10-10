@@ -51,6 +51,16 @@
   ages: [7, 16]
   tags: [music, instrument, drumming]
 
+- id: givenOldPiano
+  label: Gets an old piano
+  line: "A neighbour who is moving gives {him} an old piano. Luck!"
+  kind: lucky
+  ages: [6, 14]
+  unless: [piano]
+  tags: [music, instrument, piano]
+  move: 1
+  weight: 0.6
+
 - id: joinsChoir
   label: Joins the school choir
   line: "{name} joins the school choir."
@@ -151,7 +161,7 @@
   if: "{name} had recorded an album"
   kind: choice
   ages: [18, 45]
-  after: [fame, radioPlay]
+  after: [fame, radioPlay, gigs]
   unless: [album]
   tags: [music, album]
 

@@ -51,6 +51,15 @@
   ages: [8, 15]
   tags: [sport, climbing, club]
 
+- id: winsSportsCamp
+  label: Wins a camp place
+  line: "{name} wins a free week at a summer sports camp. Luck!"
+  kind: lucky
+  ages: [8, 15]
+  tags: [sport, club]
+  move: 1
+  weight: 0.6
+
 - id: joinsSwimClub
   label: Joins the swim club
   line: "{name} joins the swimming club."

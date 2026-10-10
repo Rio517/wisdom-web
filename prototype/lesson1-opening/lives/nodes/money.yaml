@@ -32,7 +32,7 @@
   if: "{name} had delivered newspapers"
   kind: choice
   ages: [12, 16]
-  tags: [money, job]
+  tags: [money, earns]
 
 - id: helpsInFamilyShop
   label: Helps in a shop
@@ -40,7 +40,7 @@
   if: "{name} had helped in {his} uncle's shop"
   kind: choice
   ages: [10, 17]
-  tags: [money, job, shop]
+  tags: [money, earns, shop]
 
 - id: partTimeJob
   label: Gets a Saturday job
@@ -48,7 +48,7 @@
   if: "{name} had got a Saturday job"
   kind: choice
   ages: [14, 19]
-  tags: [money, job]
+  tags: [money, earns]
 
 - id: savesForSomethingBig
   label: Saves for a big goal
@@ -56,7 +56,7 @@
   if: "{name} had saved for something big"
   kind: choice
   ages: [14, 30]
-  after: [savings, job]
+  after: [savings, earns, job]
   tags: [money, savings]
 
 - id: learnsToBudget
@@ -74,8 +74,8 @@
   if: "{name} had worked in a shop"
   kind: choice
   ages: [16, 60]
-  after: [shop, job, stall]
   tags: [money, job, shop]
+  weight: 0.6
 
 - id: shopManager
   label: Becomes a shop manager
@@ -206,7 +206,7 @@
   kind: choice
   ages: [12, 60]
   after: [moneyGetsTight]
-  tags: [money, job]
+  tags: [money, earns]
   within: 2
 
 - id: takesSecondJob

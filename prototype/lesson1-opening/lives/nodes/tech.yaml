@@ -124,7 +124,8 @@
   if: "{name} had written code for clients"
   kind: choice
   ages: [22, 60]
-  after: [studioCloses]
+  after: [studioCloses, jobEnds]
+  needs: [code]
   tags: [tech, job]
   within: 2
 
@@ -245,7 +246,8 @@
   if: "{name} had taken a steady job instead"
   kind: choice
   ages: [22, 55]
-  after: [studioCloses]
+  after: [studioCloses, jobEnds]
+  needs: [code]
   tags: [tech, job, developer]
   within: 2
 

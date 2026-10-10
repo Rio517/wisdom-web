@@ -58,7 +58,7 @@
   kind: choice
   ages: [14, 20]
   after: [bakeSale, cooking, baking]
-  tags: [food, job, kitchen]
+  tags: [food, earns, kitchen]
 
 - id: chefOffer
   label: A chef takes {him} on

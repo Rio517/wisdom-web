@@ -26,6 +26,15 @@
   ages: [7, 13]
   tags: [making, fixing]
 
+- id: findsOldTools
+  label: Finds a box of tools
+  line: "{name} finds a box of old tools in the shed. Luck!"
+  kind: lucky
+  ages: [8, 15]
+  tags: [making, fixing]
+  move: 1
+  weight: 0.6
+
 - id: roboticsClub
   label: Joins the robot club
   line: "{name} joins the robot club after school."
@@ -71,9 +80,9 @@
 
 - id: robotBreaks
   label: The robot breaks
-  line: "The robot breaks down on the big day."
+  line: "{his} robot breaks down on the big day."
   kind: setback
-  ages: [11, 18]
+  ages: [11, 21]
   after: [robotContest]
   tags: [making]
   move: -1
@@ -81,7 +90,7 @@
 
 - id: rebuildsRobot
   label: Rebuilds the robot
-  line: "{name} rebuilds the robot and finds the real problem."
+  line: "{name} rebuilds {his} robot and finds the real problem."
   if: "{name} had rebuilt the robot"
   kind: choice
   ages: [12, 21]
@@ -91,19 +100,18 @@
 
 - id: asksMentorForHelp
   label: Asks an engineer
-  line: "{name} asks an engineer from the town to help."
+  line: "{name} asks an engineer from the town to help with {his} robot."
   if: "{name} had asked an engineer for help"
   kind: choice
   ages: [12, 21]
-  after: [robotBreaks]
+  after: [robots, robotBreaks]
   tags: [making, helped]
-  within: 2
 
 - id: robotPrize
   label: The robot wins a prize
-  line: "The robot wins a prize. Luck and tinkering!"
+  line: "{his} robot wins a prize. Luck and tinkering!"
   kind: lucky
-  ages: [11, 18]
+  ages: [11, 21]
   after: [robotContest]
   unless: [robotBreaks]
   tags: [making]

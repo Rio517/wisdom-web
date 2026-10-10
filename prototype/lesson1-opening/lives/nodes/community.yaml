@@ -123,26 +123,26 @@
   after: [campaign]
   tags: [community]
   move: -1
+  weight: 2
 
 - id: triesAgain
   label: Tries again together
   line: "{name} knocks on doors and tries again with neighbours."
   if: "{name} had tried again with the neighbours"
   kind: choice
-  ages: [25, 65]
-  after: [councilSaysNo]
+  ages: [24, 65]
+  after: [councilSaysNo, fundingEnds]
   tags: [community]
   within: 2
 
-- id: findsAnotherWay
-  label: Finds another way
-  line: "{name} finds another way to keep the books on the shelves."
-  if: "{name} had found another way to help"
+- id: startsLittleLibrary
+  label: Starts a tiny library
+  line: "{name} builds a little free library on {his} street."
+  if: "{name} had built a little library on {his} street"
   kind: choice
-  ages: [25, 65]
-  after: [councilSaysNo]
-  tags: [community]
-  within: 2
+  ages: [20, 70]
+  after: [councilSaysNo, library]
+  tags: [community, words, library]
 
 - id: townBacksCampaign
   label: Neighbours join in

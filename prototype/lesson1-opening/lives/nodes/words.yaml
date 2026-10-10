@@ -36,6 +36,15 @@
   ages: [5, 10]
   tags: [words, reading]
 
+- id: kindLibrarian
+  label: A librarian helps out
+  line: "A librarian saves the best new books for {him}. Luck!"
+  kind: lucky
+  ages: [6, 14]
+  tags: [words, reading, library]
+  move: 1
+  weight: 0.6
+
 - id: writesStories
   label: Writes stories
   line: "{name} fills a notebook with stories."

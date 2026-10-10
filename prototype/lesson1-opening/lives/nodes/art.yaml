@@ -50,6 +50,16 @@
   ages: [8, 14]
   tags: [art, crafts, sewing]
 
+- id: givenOldCamera
+  label: Gets an old camera
+  line: "{his} grandad passes on his old camera. Luck!"
+  kind: lucky
+  ages: [9, 16]
+  unless: [photography]
+  tags: [art, photography]
+  move: 1
+  weight: 0.6
+
 - id: focusOnArt
   label: Focuses on art
   line: "{name} chooses art as a main subject."
@@ -82,15 +92,15 @@
   line: "{name} sends {his} best drawings to an art school."
   if: "{name} had applied to art school"
   kind: choice
-  ages: [17, 22]
-  after: [artSubject]
+  ages: [17, 24]
+  after: [artSubject, drawsEveryDay, artClub]
   tags: [art, portfolio]
 
 - id: getsArtSchoolPlace
   label: Gets into art school
   line: "An art school offers {him} a place. Luck!"
   kind: lucky
-  ages: [17, 23]
+  ages: [17, 26]
   after: [portfolio]
   unless: [artSchoolSaysNo]
   tags: [art, study]
@@ -100,7 +110,7 @@
   label: Art school says no
   line: "The art school says no. It stings."
   kind: setback
-  ages: [17, 23]
+  ages: [17, 26]
   after: [portfolio]
   unless: [getsArtSchoolPlace]
   tags: [art]

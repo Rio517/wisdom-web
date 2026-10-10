@@ -65,7 +65,7 @@
   kind: choice
   ages: [14, 22]
   after: [garden, animals, outdoors]
-  tags: [nature, farm, job]
+  tags: [nature, farm, earns]
 
 - id: vetAssistant
   label: "Helps at a vet's"
@@ -92,7 +92,7 @@
   kind: choice
   ages: [18, 60]
   after: [garden]
-  tags: [nature, job, garden]
+  tags: [nature, job, garden, grower]
 
 - id: rentsAllotment
   label: Rents a garden plot
@@ -101,14 +101,14 @@
   kind: choice
   ages: [20, 70]
   after: [garden, farm]
-  tags: [nature, garden]
+  tags: [nature, garden, grower]
 
 - id: floodRuinsHarvest
   label: A flood ruins the crop
   line: "A flood washes away the whole harvest."
   kind: setback
   ages: [20, 60]
-  after: [garden, farm]
+  after: [grower]
   tags: [nature]
   move: -3
 
@@ -129,7 +129,7 @@
   kind: choice
   ages: [20, 60]
   after: [floodRuinsHarvest, dryYear]
-  tags: [nature, helped]
+  tags: [nature, helped, grower]
   within: 2
 
 - id: rebuildsAsCommunityGarden
@@ -139,7 +139,7 @@
   kind: choice
   ages: [20, 60]
   after: [floodRuinsHarvest]
-  tags: [nature, garden, community]
+  tags: [nature, garden, community, grower]
   within: 2
 
 - id: startsCommunityGarden
@@ -150,7 +150,7 @@
   ages: [25, 70]
   after: [garden]
   unless: [floodRuinsHarvest]
-  tags: [nature, garden, community]
+  tags: [nature, garden, community, grower]
 
 - id: wildlifeSpotted
   label: A rare bird visits
@@ -166,8 +166,8 @@
   line: "A neighbour offers {him} a field to use. Luck!"
   kind: lucky
   ages: [20, 60]
-  after: [garden, farm]
-  tags: [nature]
+  after: [grower]
+  tags: [nature, grower]
   move: 2
 
 - id: dryYear
@@ -175,7 +175,7 @@
   line: "A very dry summer shrivels the garden."
   kind: setback
   ages: [20, 60]
-  after: [garden, farm]
+  after: [grower]
   tags: [nature]
   move: -1
 
@@ -185,9 +185,8 @@
   if: "{name} had collected rainwater"
   kind: choice
   ages: [20, 60]
-  after: [dryYear]
-  tags: [nature]
-  within: 2
+  after: [dryYear, grower]
+  tags: [nature, grower]
 
 - id: plantsTougherPlants
   label: Plants for dry soil
@@ -232,7 +231,7 @@
   if: "{name} had grown a garden"
   kind: choice
   ages: [22, 70]
-  tags: [nature, garden]
+  tags: [nature, garden, grower]
   weight: 0.7
 
 - id: keepsBees
@@ -278,7 +277,7 @@
   kind: choice
   ages: [18, 70]
   after: [garden, building]
-  tags: [nature, garden]
+  tags: [nature, garden, grower]
 
 - id: growsForRestaurants
   label: Grows for restaurants

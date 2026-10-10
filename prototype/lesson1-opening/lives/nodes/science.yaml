@@ -169,9 +169,8 @@
   if: "{name} had left the lab"
   kind: choice
   ages: [22, 46]
-  after: [unkindSupervisor]
+  after: [unkindSupervisor, lab]
   tags: [science]
-  within: 2
 
 - id: newSupervisor
   label: Asks to change teams
@@ -196,16 +195,6 @@
   label: Starts the work again
   line: "{name} starts the work again, a bit wiser."
   if: "{name} had started the work again"
-  kind: choice
-  ages: [22, 55]
-  after: [samplesLost]
-  tags: [science]
-  within: 2
-
-- id: changesTheQuestion
-  label: Asks a new question
-  line: "{name} asks a different question the lab can still answer."
-  if: "{name} had asked a different question"
   kind: choice
   ages: [22, 55]
   after: [samplesLost]
