@@ -1,0 +1,63 @@
+# Zoe: art, a hard start (a move and a new school at 9), art school says no, a print shop, a children's book, and teaching.
+# The schema is in ../README.md.
+
+id: zoe
+name: Zoe
+pronoun: she
+end: 40
+steps:
+  - { node: born, age: 0 }
+  - node: paintsAtHome
+    age: 5
+    alts: [aDanceClass, familyFixesThings]
+  - node: familyMoves
+    age: 8
+    move: -1
+  - node: newSchool
+    age: 9
+    line: "She starts at a new school where nobody knows her."
+    move: -1
+  - node: makesNewFriends
+    age: 10
+    line: "She sits with someone new at lunch."
+    move: 1
+    alts: [artClub, readNightly]
+  - node: drawsEveryDay
+    age: 14
+    alts: [borrowsACamera, learnsToSew]
+    echoes: [paintsAtHome]
+  - node: focusOnArt
+    age: 16
+    alts: [studiesHardForExams, partTimeJob]
+    echoes: [drawsEveryDay]
+  - node: appliesToArtSchool
+    age: 18
+    alts: [startsWorking, travelsForAYear]
+    echoes: [focusOnArt]
+  - node: artSchoolSaysNo
+    age: 19
+    line: "Art school says no. It stings."
+  - node: worksInPrintShop
+    age: 20
+    line: "She takes a job in a print shop, among paper and ink."
+    alts: [studiesDesign, joinsSharedStudio]
+  - node: freelanceIllustrator
+    age: 24
+    move: 1
+    alts: [sellsAtCraftMarket, deliveryWork]
+    echoes: [drawsEveryDay, worksInPrintShop]
+  - node: childrensBookJob
+    age: 28
+    line: "A publisher asks her to draw a children's book. Luck!"
+    echoes: [freelanceIllustrator, worksInPrintShop]
+  - node: teachesArt
+    age: 33
+    move: 1
+    alts: [writesPictureBooks, paintsAMural]
+    echoes: [drawsEveryDay]
+  - node: writesPictureBooks
+    age: 40
+    label: Writes her own books
+    line: "She writes a picture book of her own."
+    alts: [learnsToPaint, startsNewHobby]
+    echoes: [childrensBookJob]

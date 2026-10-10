@@ -1,0 +1,65 @@
+# Amara: words, a reader from the start, a lucky trip abroad, many publishers saying no, and a book at 38.
+# The schema is in ../README.md.
+
+id: amara
+name: Amara
+pronoun: she
+end: 42
+steps:
+  - { node: born, age: 0 }
+  - node: storiesAtBedtime
+    age: 3
+    alts: [libraryVisits, twoLanguagesHome]
+  - node: readNightly
+    age: 7
+    alts: [writesStories, looksAfterPet]
+    echoes: [storiesAtBedtime]
+  - node: writesStories
+    age: 10
+    alts: [kitchenExperiments, startsViolin]
+    echoes: [readNightly]
+  - node: schoolPaper
+    age: 12
+    alts: [startsNewspaper, dramaClub]
+    echoes: [readNightly, writesStories]
+  - node: exchangeTrip
+    age: 14
+    line: "She wins a free place on an exchange trip. Luck!"
+    echoes: [schoolPaper]
+  - node: studyLanguages
+    age: 18
+    alts: [travelsForAYear, startsWorking]
+    echoes: [exchangeTrip]
+  - node: interpreter
+    age: 23
+    move: 1
+    alts: [teachesALanguage, bookshopJob]
+    echoes: [studyLanguages]
+  - node: writesABook
+    age: 26
+    alts: [reportsForPaper, translatesBooks]
+    echoes: [readNightly, writesStories]
+  - node: publishersSayNo
+    age: 28
+    line: "Ten publishers say no to her book."
+  - node: rewritesTheBook
+    age: 29
+    alts: [publishesItHimself, startsABlog]
+    echoes: [writesABook]
+  - node: keepsWriting
+    age: 31
+    line: "She keeps writing anyway."
+    alts: [bookshopJob, teachesALanguage]
+  - node: moveAbroad
+    age: 33
+    alts: [takesJobNearFamily, changesCareers]
+    echoes: [exchangeTrip, studyLanguages]
+  - node: bookDeal
+    age: 38
+    line: "A publisher wants her book at last. Luck and patience!"
+    move: 2
+    echoes: [writesABook, keepsWriting]
+  - node: joinsBookGroup
+    age: 42
+    alts: [teachesALanguage, startsABlog]
+    echoes: [readNightly]

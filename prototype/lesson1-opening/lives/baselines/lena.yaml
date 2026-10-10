@@ -1,0 +1,65 @@
+# Lena: science, a steady rise with one hard fall at 18, a new course, and a late lucky break.
+# The schema is in ../README.md.
+
+id: lena
+name: Lena
+pronoun: she
+end: 42
+steps:
+  - { node: born, age: 0 }
+  - node: puzzlesAndBlocks
+    age: 4
+    alts: [footballClub, singsAtHome]
+  - node: mathsClub
+    age: 8
+    alts: [chessClub, tryGymnastics]
+    echoes: [puzzlesAndBlocks]
+  - node: mathsTournament
+    age: 11
+    alts: [roboticsClub, secondLanguage]
+    echoes: [mathsClub]
+  - node: teacherSpotsTalent
+    age: 13
+    line: "A teacher spots her work. Luck!"
+    echoes: [mathsTournament]
+  - node: scienceSubjects
+    age: 15
+    alts: [debateTeam, dramaClub]
+    echoes: [teacherSpotsTalent]
+  - node: failsAnExam
+    age: 18
+    line: "She fails a big exam. It hurts."
+  - node: changesCourse
+    age: 19
+    label: Switches to statistics
+    line: "She switches to a course in statistics."
+    alts: [retakesTheExam, asksForHelp]
+  - node: studiesStatistics
+    age: 20
+    alts: [labTechnician, travelsForAYear]
+    echoes: [mathsClub]
+  - node: worksWithData
+    age: 24
+    line: "She finds work with numbers and computers."
+    move: 1
+    alts: [measuresRiverWater, startsWorking]
+    echoes: [studiesStatistics]
+  - node: leadsATeam
+    age: 28
+    alts: [takesBigProject, mentorsSomeone]
+  - node: becomesParent
+    age: 32
+    move: 1
+  - node: oldFriendJob
+    age: 34
+    line: "An old friend asks her to lead a data team. Luck!"
+    move: 2
+    echoes: [worksWithData]
+  - node: runsMathsClub
+    age: 38
+    alts: [crunchesForCharity, mentorsSomeone]
+    echoes: [mathsClub]
+  - node: learnsSomethingNew
+    age: 42
+    line: "She learns something new, just for the joy of it."
+    alts: [startsNewHobby, bigTrip]
