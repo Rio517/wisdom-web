@@ -300,7 +300,7 @@ function run() {
       : '';
     const steps = list();
     steps?.addEventListener('scroll', () => steps.classList.toggle('is-scrolled', steps.scrollTop > 2), { passive: true });
-    if (steps) fitList(steps);
+    if (steps) { fitList(steps); fitObserver.observe(steps); }
     if (animate && !prefersReducedMotion()) {
       body.classList.remove('is-changing');
       void body.offsetWidth;
@@ -344,41 +344,69 @@ function run() {
   // and the room left over goes between the rows. Lines that haven't arrived
   // keep their place unseen, so nothing moves as they arrive and nothing scrolls.
   const sideColumn = matchMedia('(min-width: 990px)');
+  const lastFit = new Map(); // a list's id and box size → the size it fitted at last time
   function fitList(box, { min = 15, max = 24 } = {}) {
     box.classList.remove('is-tight', 'is-snug');
     box.style.removeProperty('--fit-size');
     box.style.removeProperty('--fit-gap');
     [...box.children].forEach(row => row.classList.remove('is-folded', 'is-folded-more'));
-    if (!sideColumn.matches || !box.clientHeight) return;
-    const fits = size => { box.style.setProperty('--fit-size', `${size}px`); return box.scrollHeight <= box.clientHeight; };
-    if (!fits(min)) {
+    if (!sideColumn.matches || !box.clientHeight) { box.fitKey = 'unfitted'; return; } // under the map: no fit
+    // The largest size, to half a pixel, at which every row shows. Each try is a layout, so few
+    // tries: the size this list fitted at last time (else the middle), then a guess in proportion
+    // to the rows' height there, then beside the guess; halving what is left only if need be.
+    // (scrollHeight never reads less than the box, so the rows' own height is measured.)
+    const tried = new Map();
+    const fits = size => {
+      if (!tried.has(size)) { box.style.setProperty('--fit-size', `${size}px`); tried.set(size, box.scrollHeight <= box.clientHeight); }
+      return tried.get(size);
+    };
+    const snap = size => Math.min(max, Math.max(min, Math.floor(size * 2) / 2));
+    let fit = min - 0.5; let over = max + 0.5; // the largest size known to fit, the smallest known not to
+    const probe = size => { if (fits(size)) fit = Math.max(fit, size); else over = Math.min(over, size); };
+    const fitFor = `${box.id}:${box.clientWidth}x${box.clientHeight}`;
+    const first = snap(lastFit.get(fitFor) ?? (min + max) / 2);
+    probe(first);
+    const height = box.lastElementChild.getBoundingClientRect().bottom - box.getBoundingClientRect().top + box.scrollTop;
+    const guess = snap((first * (box.clientHeight - 4)) / Math.max(1, height));
+    probe(guess);
+    const beside = fits(guess) ? guess + 0.5 : guess - 0.5;
+    if (beside > fit && beside < over) probe(beside);
+    while (over - fit > 0.5) probe(Math.round(fit + over) / 2);
+    const lo = fit < min ? null : fit;
+    if (lo === null) {
       // Too long even at the smallest size (a long life, or an iPad held sideways): older lines fold
       // as they arrive (below), and the newest stays in view.
       box.style.removeProperty('--fit-size');
       box.classList.add('is-tight');
+      box.fitKey = `${box.clientWidth}x${box.clientHeight}:${box.children.length}`;
       const shown = [...box.children].filter(row => !row.classList.contains('is-pending'));
       if (box.id === 'life-steps' && shown.length) fold(shown.length - 1);
       if (shown.length) keepInView(shown.at(-1), box);
       return;
     }
-    let lo = min; let hi = max;
-    if (fits(hi)) lo = hi;
-    while (hi - lo > 0.25) { const mid = (lo + hi) / 2; if (fits(mid)) lo = mid; else hi = mid; }
+    lastFit.set(fitFor, lo);
     box.style.setProperty('--fit-size', `${lo.toFixed(2)}px`);
+    box.fitKey = `${box.clientWidth}x${box.clientHeight}:${box.children.length}`;
     const rows = box.children.length;
-    const spare = box.clientHeight - box.scrollHeight - 2;
+    // The room under the last row (scrollHeight never reads less than the box's own height).
+    const spare = box.getBoundingClientRect().bottom - box.lastElementChild.getBoundingClientRect().bottom - 4;
     if (rows > 1 && spare > 0) box.style.setProperty('--fit-gap', `${Math.min(lo * 0.9, spare / (rows - 1)).toFixed(2)}px`);
   }
   // Fit again when the column changes size (the cover lifting, a window resized).
+  // The list itself is watched too: its room changes when the heading or the controls
+  // change height (the web fonts arriving, a longer heading), with the column unchanged.
   let refit = null;
-  new ResizeObserver(() => {
+  const fitObserver = new ResizeObserver(() => {
     if (refit !== null) return;
     refit = requestAnimationFrame(() => {
       refit = null;
       const box = document.getElementById('whatif-list') ?? list();
-      if (box) fitList(box, box.id === 'whatif-list' ? WHAT_FIT : undefined);
+      // Not fitted yet (a what-if, fitted in a task of its own), or unchanged since: nothing to do.
+      if (!box?.fitKey || box.fitKey === `${box.clientWidth}x${box.clientHeight}:${box.children.length}`) return;
+      fitList(box, box.id === 'whatif-list' ? WHAT_FIT : undefined);
     });
-  }).observe(document.getElementById('narration-body'));
+  });
+  fitObserver.observe(document.getElementById('narration-body'));
   // Only a story too long for its column at the smallest size (is-tight): lines that
   // haven't arrived wait in one row each, and when the list would overflow, older
   // lines step down a size, oldest first, then one size more; then the rows close
@@ -491,6 +519,7 @@ function run() {
     lifeMap.focusFirstFork();
   }
   function backToLife() {
+    clearTimeout(pickTimer);
     scenes.paths.lifeMode('ended');
     scenes.paths.restAtEnd();
     showStoryWords();
@@ -500,11 +529,20 @@ function run() {
     lifeMap.card.querySelector('button').focus({ preventScroll: true });
   }
   let focusAfterPick = 'heading';
+  // The popover closes at once, and the new life is grown and laid out in a task of its own just
+  // after, so a pick is never one long task. A second pick before it runs replaces the first.
+  let pickTimer = 0;
   function pickChoice(key, { seed, focus = 'heading' } = {}) {
     if (!onLife() || !player.state.complete) return;
     focusAfterPick = focus;
-    scenes.paths.lifeMode('whatif');
-    lifeMap.pick(key, seed ? { seed } : {});
+    lifeMap.closeFork();
+    clearTimeout(pickTimer);
+    pickTimer = setTimeout(() => {
+      if (!onLife() || !player.state.complete) return;
+      // The map is measured before anything changes its look, so nothing forces a layout mid-task.
+      lifeMap.pick(key, seed ? { seed } : {});
+      scenes.paths.lifeMode('whatif');
+    }, 0);
   }
   /** "Try again": the same choice, a new life from it. */
   function tryAgain() {
@@ -535,10 +573,15 @@ function run() {
       <button type="button" class="pill-button" data-whatif="back">${esc(t('opening.whatif.back', { name: LIFE.name }))}</button></div>`;
     const timeline = $('#whatif-list');
     timeline.addEventListener('scroll', () => timeline.classList.toggle('is-scrolled', timeline.scrollTop > 2), { passive: true });
-    fitList(timeline, WHAT_FIT);
+    // Fitted in a task of its own, so a pick stays one short task; before any row shows, all the same.
+    // The address too: writing it makes the browser lay out the page first (to keep the scroll).
+    setTimeout(() => {
+      fitWhat(timeline);
+      if (lifeMap.what?.seed === seed) saveSettings({ fork: String(item.stepIndex), alt: item.id, seed });
+    }, 0);
+    fitObserver.observe(timeline);
     $('#stage-description').textContent = t('opening.whatif.alt', { name: LIFE.name, pronoun: LIFE.pronoun, end: life.end });
     announce(heading);
-    saveSettings({ fork: String(item.stepIndex), alt: item.id, seed });
     // Focus moves on the next frame, once the new words are laid out, so the pick stays one short task.
     const target = focusAfterPick;
     focusAfterPick = 'heading';
@@ -547,10 +590,13 @@ function run() {
       (target === 'again' ? $('[data-whatif="retry"]') : $('#beat-heading'))?.focus({ preventScroll: true });
     }));
   };
+  // A what-if's list is fitted once, before its first row shows.
+  const fitWhat = timeline => { if (timeline.isConnected && !timeline.fitKey) fitList(timeline, WHAT_FIT); };
   // The picked choice is dated at the person's own age for that step; the rest at their own ages.
   whatIf.onStep = (node, position) => {
     const row = $('#whatif-list')?.children[position];
     if (!row) return;
+    fitWhat(row.parentElement);
     row.classList.remove('is-pending');
     foldWhat(position);
     keepInView(row, row.parentElement);
@@ -565,6 +611,7 @@ function run() {
   whatIf.onDone = () => {
     const note = $('#whatif-list .whatif-note');
     if (note) {
+      fitWhat(note.parentElement);
       note.classList.remove('is-pending');
       foldWhat(note.parentElement.children.length - 1);
       keepInView(note, note.parentElement);

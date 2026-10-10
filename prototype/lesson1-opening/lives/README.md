@@ -17,6 +17,9 @@ grow from the fork. This folder holds everything those lives are made of:
 The tree page (`/prototype/lesson1-opening/lives/` on the prototype server)
 shows the store as a nested tree, the baselines, sample lives grown from any
 fork, and every problem the checker finds. It reloads when a file changes.
+With `?store=fixture` it shows the small test store in `tests/fixtures/lives`
+instead; the opening takes the same address option (and `&scale=6` copies the
+fixture's nodes six times, to measure it with about 400).
 
 ## Why nodes and not one big tree
 

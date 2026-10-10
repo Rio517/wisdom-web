@@ -744,8 +744,8 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
   }
   function closePop({ focusFork = false } = {}) {
     if (pop.hidden) return;
+    // Hidden, not emptied: taking out the focused chip would make the browser restyle the page then and there.
     pop.hidden = true;
-    pop.innerHTML = '';
     const fork = openFork;
     openFork = null;
     fork?.setAttribute('aria-expanded', 'false');
@@ -789,7 +789,18 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
 
   // The end card: lower right as in the explorer, unless that covers the route
   // or its labels; then the clear corner; on a stage too small for both, a bar.
+  // While the end card shows, grow one life no one sees, so the engine is warm and the first
+  // pick costs what later ones do.
+  let warmFor = null;
+  function warmUp() {
+    const first = model?.picks[0];
+    if (!first || warmFor === model.life.id) return;
+    warmFor = model.life.id;
+    const run = () => { if (model?.life.id === warmFor) grow(model.store, { baseline: model.life.id, forkIndex: first.stepIndex, alt: first.id, seed: 'warm-up' }); };
+    if (typeof requestIdleCallback === 'function') requestIdleCallback(run, { timeout: 2000 }); else setTimeout(run, 300);
+  }
   function showCard() {
+    warmUp();
     const g = geometry();
     const r = rect();
     card.hidden = false;
@@ -848,11 +859,17 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
     // Each new dot sits only where its own lines split: none lands on the real
     // path behind it, and the new life's last dot keeps clear of it.
     const realLine = g.edges.slice(k).flatMap(edge => edgePoints(edge, 30));
-    const gapTo = point => Math.min(...realLine.map(q => Math.hypot(q.x - point.x, q.y - point.y)));
+    const clearOf = (point, clearance) => {
+      for (const q of realLine) {
+        const dx = q.x - point.x;
+        if (dx < clearance && dx > -clearance && Math.hypot(dx, q.y - point.y) < clearance) return false;
+      }
+      return true;
+    };
     const r = rect();
     nodes.forEach((node, index) => {
       const clearance = index === nodes.length - 1 ? 30 : 18;
-      if (!index || gapTo(node.point) >= clearance) return;
+      if (!index || clearOf(node.point, clearance)) return;
       // Up or down, away from the real path on the side the dot is on; beside a
       // steep stretch of it, a little earlier or later instead. Never past a neighbour.
       const nearest = realLine.reduce((best, q) => (Math.hypot(q.x - node.point.x, q.y - node.point.y) < Math.hypot(best.x - node.point.x, best.y - node.point.y) ? q : best));
@@ -864,7 +881,7 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
         const moved = [[0, away], [0, -away], [side, 0], [-side, 0]]
           .filter(([sx]) => !sx || shift <= 28)
           .map(([sx, sy]) => ({ x: node.point.x + sx * shift, y: node.point.y + sy * shift }))
-          .find(point => point.y > TOP && point.y < r.height - BOTTOM && point.x > lo && point.x < hi && gapTo(point) >= clearance);
+          .find(point => point.y > TOP && point.y < r.height - BOTTOM && point.x > lo && point.x < hi && clearOf(point, clearance));
         if (moved) { node.point = moved; return; }
       }
     });

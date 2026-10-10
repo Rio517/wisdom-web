@@ -39,6 +39,8 @@
   .narration-body[data-beat="life"] .life-steps { flex: 1 1 auto; min-height: 0; overflow-y: auto; }
   .narration-body[data-beat="life"] .life-steps.is-playing { overflow-y: hidden; }
   .narration-body[data-beat="life"] .timeline { flex: 1 1 auto; min-height: 0; align-content: start; }
+  /* The column sets their size, never their rows: so each try while fitting lays out the list alone. */
+  .narration-body[data-beat="life"] .life-steps, .narration-body[data-beat="life"] .timeline { contain: strict; }
   .narration-body.whatif .timeline.is-scrolled { mask-image: linear-gradient(to bottom, transparent, #000 28px); }
   .narration-body.whatif #beat-heading { font-size: clamp(26px, 2.2vw, 36px); margin-bottom: 8px; }
   /* A narrow column: the three what-if buttons take two rows, not three. */
