@@ -265,6 +265,15 @@ function fallsMarkup() {
   </g>`;
 }
 
+// The near ground rises in front of the falls: its edge runs level round the pool, hiding the
+// rocks' feet, so the pool lies on flat ground on top of the hill. To the left it slopes down
+// into the ground's own edge. Same colour as the ground, so there is no seam.
+const RISE = (() => {
+  const level = x => 526 + 0.8 * Math.sin(x / 23 + 1.2) + 0.5 * Math.sin(x / 9.1);
+  const flat = Array.from({ length: 51 }, (_, i) => 1004 + i * 4).map(x => `${n1(x)} ${n1(level(x))}`).join(' L');
+  return `M820 ${n1(groundY(820) + 1)} C 880 ${n1(groundY(880))}, 948 ${n1(level(960) + 10)}, 1004 ${n1(level(1004))} L${flat} L1600 526 V1200 H820 Z`;
+})();
+
 // Mirror Lake's clearing, where the far stretch ends: the trailhead yard's bare ground, far
 // away (about 6:1, a gently uneven edge), with a tiny picnic table and a few small trees.
 const LAKE_YARD = { cx: 1140, cy: 299, rx: 29, ry: 5 };
@@ -279,7 +288,7 @@ const lakeYard = grow => {
 const LAKE_YARD_TREES = [[1131, 296, 0.38], [1160, 296, 0.46], [1171, 299, 0.36]];
 
 // Layer 1: the flat hills, the trail's far stretch (behind the green hill), the lake's shore band
-// and clearing, and the falls' rocks. No water.
+// and clearing, and the falls' rocks with the ground rising in front of them. No water.
 function backgroundSVG() {
   return `<svg class="hike-bg" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false">
   <path d="${FAR_RIDGE}" fill="#e2e9e2"/>
@@ -290,6 +299,7 @@ function backgroundSVG() {
   <path class="lake-shore" d="M${LAKE_SHORE.map(([x, y]) => `${n1(x)} ${n1(y)}`).join(' L')} Z"/>
   <path class="far-yard-edge" d="${lakeYard(0.9)}"/><path class="far-yard" d="${lakeYard(0)}"/>
   ${fallsMarkup()}
+  <path d="${RISE}" fill="#edf2ea"/>
 </svg>`;
 }
 
