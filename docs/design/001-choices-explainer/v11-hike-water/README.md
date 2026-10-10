@@ -1,6 +1,6 @@
 # v11 — Hike water
 
-Created: 2026-10-09. Updated: 2026-10-10 (round 4). Status: C is the lesson's hike, rebuilt on plain WebGL, with A's still drawing as its no-WebGL fallback; B is retired. The integration is on a branch for the owner's review; not published.
+Created: 2026-10-09. Updated: 2026-10-10 (round 5). Status: C is the lesson's hike, rebuilt on plain WebGL, with A's still drawing as its no-WebGL fallback; B is retired. The integration is on a branch for the owner's review; not published.
 
 **Question: which water does the hike keep?**
 
@@ -141,6 +141,22 @@ Halfway step unless noted. Each v02 sits beside its v01 in the [In the lesson](#
   - [the falls](site-hike-falls-v02.png): the pool on the hilltop, beside v01's [floating pool](site-hike-falls-v01.png).
 - [The pair at the crest and at the lake](site-hike-walkers-v02.png), at pixel ratio 3, placed with the check hook: at the crest, just before they go out of sight, and at 40% in the clearing. v01: [the pair at Halfway](site-hike-walkers-v01.png).
 - [Without WebGL](site-hike-nowebgl-1440-v02.png): A's still drawing with the raised ground (v01: [without WebGL](site-hike-nowebgl-1440-v01.png)).
+
+## Round 5 (the pool at the foot of the falls)
+
+The owner found the falls better, but the pool still looked wrong: it should lie right along the rock where the water falls into it. In round 4 a band of bare ground about 26 map units tall (about 32 px at 1920) lay between the rock's foot (the raised ground's level edge at y ≈ 526) and the pool's back rim (y 552.5), and the fall crossed that band to land in the middle of the pool.
+
+### Options
+
+Each is a 2x crop of the falls at 1920x1080, the Halfway step, drawn in the real scene from one shared pool outline. Only the outline, the raised ground's edge and the corner rocks differ.
+
+- [A, tucked against the cliff](hike-falls-option-a-v01.png): the pool's back is straight along the rock's foot, its front rounded (about 4.6:1), with a low flat boulder at each back corner. No gap, but the boulders read as small caps stuck on the water.
+- [B, a bowl in the rock](hike-falls-option-b-v01.png): the pool stays an ellipse, and the raised ground's edge dips round the pool's ends, so the rock's foot follows the pool's back arc. It reads at once as a pool the cliff stands in, but the rock shows lower near the ends than the brief's level edge.
+- [C, tucked with a depth band](hike-falls-option-c-v01.png): A without the boulders, a little flatter, with a flat darker band in the water along the rock. The band is too faint to read, and the square back corners look cut off.
+- [D, tucked with rounded ends](hike-falls-option-d-v01.png): A's straight back, rounding down to the ends over 5 units, with the rock's foot dipping only to meet them. Clean, but the straight back still reads as a shelf.
+- [E, between B and D](hike-falls-option-e-v01.png): the back curves down to the ends over 9 units, flatter than an ellipse, and the raised ground's edge comes down to the ends only within 14 units of them, level at 526 everywhere else.
+
+**Pick: E.** It keeps B's reading, a cliff standing round the back of its pool, while the raised ground stays level on both sides and keeps hiding the rocks' lower third. The rock meets the water along the whole back and round both ends, so there are no corners to hide and no extra objects.
 
 ## One geography for every version
 
