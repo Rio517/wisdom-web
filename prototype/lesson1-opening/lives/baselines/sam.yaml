@@ -43,7 +43,7 @@ steps:
   - node: givesMusicLessons
     age: 30
     label: Teaches guitar
-    alts: [writesForOthers, deliveryWork]
+    alts: [joinsAdultChoir, deliveryWork]
     line: "He teaches guitar. New songs."
     move: 1
     echoes: [guitar]
