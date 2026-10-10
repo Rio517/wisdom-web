@@ -98,7 +98,7 @@
 
 - id: runsFoodBank
   label: Helps run a food bank
-  line: "{name} helps run a food bank in the church hall."
+  line: "{name} helps run a food bank in the community hall."
   if: "{name} had helped run a food bank"
   kind: choice
   ages: [22, 65]

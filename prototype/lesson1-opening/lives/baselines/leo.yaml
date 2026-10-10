@@ -1,10 +1,10 @@
-# Ines: stage, a lucky part in a show, an ankle injury, teaching, a youth
+# Leo: stage, a lucky part in a show, an ankle injury, teaching, a youth
 # theatre that loses its hall, and a life that goes up and down twice.
 # The schema is in ../README.md.
 
-id: ines
-name: Ines
-pronoun: she
+id: leo
+name: Leo
+pronoun: he
 end: 41
 steps:
   - { node: born, age: 0 }
@@ -45,12 +45,12 @@ steps:
     line: "The money runs out, and the youth theatre loses its hall."
   - node: asksShopsForHelp
     age: 33
-    line: "She asks local shops to chip in, and the shows go on."
+    line: "He asks local shops to chip in, and the shows go on."
     move: 1
     alts: [movesToSchoolHall, localTheatreGroup]
   - node: directsAPlay
     age: 36
-    line: "She directs a play starring her first pupils, now grown up."
+    line: "He directs a play starring his first pupils, now grown up."
     echoes: [startsYouthTheatre]
   - node: runsDramaWorkshops
     age: 41
