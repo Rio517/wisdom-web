@@ -1,8 +1,8 @@
 // Study copy of src/lessons/choices/journey-map.js for the Lesson 1 opening
 // (design 001 v13). Same field, seed, renderer and cover; the Today canvas, the
-// gray and green states and the key are gone. When Sam's story starts the field
-// fades out and his life is drawn in the Explore chapter's language
-// (life-map.js); "Choices add up" puts its three chips on that drawing.
+// gray and green states and the key are gone. When the story starts the field
+// fades out and a life from the lives store is drawn in the Explore chapter's
+// language (life-map.js); "Choices add up" puts its three chips on that drawing.
 import { createExplorationSession } from '../../src/engine/choices-exploration.js';
 import { LAB_DEFAULTS, networkOptionsForLab } from '../../src/engine/lab-settings.js';
 import { generateNetwork } from '../../src/engine/path-network.js';
@@ -10,11 +10,27 @@ import { createLabRenderer, fitOverview } from '../../src/engine/lab-renderer.js
 import { canvasBitmap } from '../../src/engine/path-presentation.js';
 import { wait } from '../../src/lessons/choices/journey-motion.js';
 import { t } from '../../src/i18n/runtime.js';
-import { FINAL_FRAME } from './life.js';
+import { finalFrame } from './life.js';
 import { createLifeMap } from './life-map.js';
 
 const STORY_AGE = 12;
 const FOREST = '#285442';
+
+/**
+ * The three steps "Choices add up" names on a life: a choice of the person's
+ * own that builds on an earlier one ("His choice"), the first lucky break
+ * ("Luck") and the first setback ("Not his choice").
+ */
+export function addsSteps(life) {
+  const steps = life.steps;
+  const own = steps.findIndex(step => step.kind === 'choice' && !step.byFamily && step.age >= 8 && step.echoes.length);
+  const found = [
+    { step: own >= 0 ? own : steps.findIndex(step => step.kind === 'choice' && !step.byFamily && step.age >= 8), key: 'map.life.choice', tone: 'taken', tries: [{ dy: -30 }, { dy: 54 }, { dy: -52 }, { dy: 76 }] },
+    { step: steps.findIndex(step => step.kind === 'lucky'), key: 'map.life.luck', tone: 'possible', tries: [{ dy: -30 }, { dy: 54 }, { dy: -52 }, { dy: 76 }] },
+    { step: steps.findIndex(step => step.kind === 'setback'), key: 'map.life.notHis', tone: 'closed', tries: [{ dy: 54 }, { dy: 76 }, { dy: -30 }, { dy: -52 }] },
+  ];
+  return found.filter(item => item.step > 0);
+}
 
 export function createPathsScene(root, { edgeFade = null, life = {} } = {}) {
   const stack = root.querySelector('.map-stack');
@@ -30,7 +46,7 @@ export function createPathsScene(root, { edgeFade = null, life = {} } = {}) {
   let current = null;
   let pulse = null;
   let fxMode = 'none';
-  let lifeFrame = FINAL_FRAME;
+  let lifeFrame = finalFrame();
   const renderSettings = { ...LAB_DEFAULTS, ...(edgeFade === null ? {} : { edgeFade }), labels: { beginning: t('map.beginning'), today: age => t('map.today', { age }) } };
 
   const data = () => {
@@ -47,11 +63,11 @@ export function createPathsScene(root, { edgeFade = null, life = {} } = {}) {
   const view = () => fitOverview(data().network.bounds, rect(), undefined, data().network.maxAge);
   const beginning = () => view().world(data().projection.past[0]);
 
-  // Sam's life: Born sits on the field's Beginning dot.
+  // The life: Born sits on the field's Beginning dot.
   const lifeMap = createLifeMap(stack, { origin: beginning, before: callouts, ...life });
   const failed = baseRenderer.failed || !fx || lifeMap.failed;
   const { axis } = lifeMap.layers;
-  const lifeLayers = [axis, lifeMap.layers.grays, lifeMap.layers.dark, lifeMap.layers.live, lifeMap.layers.overlay];
+  const lifeLayers = [axis, lifeMap.layers.grays, lifeMap.layers.dark, lifeMap.layers.marks, lifeMap.layers.live, lifeMap.layers.overlay];
 
   const painted = { base: '' };
   function paintBase() {
@@ -75,7 +91,7 @@ export function createPathsScene(root, { edgeFade = null, life = {} } = {}) {
     return r;
   }
 
-  // The field shows on the cover and while it grows; Sam's story starts on an empty age line.
+  // The field shows on the cover and while it grows; the story starts on an empty age line.
   function setField(state, duration = 0) {
     stack.dataset.field = state;
     baseCanvas.style.transition = duration ? `opacity ${duration}ms ease` : 'none';
@@ -131,27 +147,21 @@ export function createPathsScene(root, { edgeFade = null, life = {} } = {}) {
     return true;
   }
 
-  // "His choice" on guitar, "Luck" on the radio play, "Not his choice" where the band splits.
-  const ADDS = [
-    { step: 2, key: 'map.life.choice', tone: 'taken', tries: [{ dy: -30 }, { dy: 54 }, { dy: -52 }, { dy: 76 }] },
-    { step: 5, key: 'map.life.luck', tone: 'possible', tries: [{ dy: -30 }, { dy: 54 }, { dy: -52 }, { dy: 76 }] },
-    { step: 8, key: 'map.life.notHis', tone: 'closed', tries: [{ dy: 54 }, { dy: 76 }, { dy: -30 }, { dy: -52 }] },
-  ];
   function renderCallouts(mode) {
     callouts.replaceChildren();
-    if (failed || mode !== 'adds') return;
+    if (failed || mode !== 'adds' || !lifeMap.life) return;
     const points = lifeMap.points();
     const placed = lifeMap.occupied();
-    ADDS.forEach((item, index) => {
+    addsSteps(lifeMap.life).forEach((item, index) => {
       for (const offset of item.tries) {
-        if (chip(t(item.key), points[item.step], item.tone, index, placed, offset)) break;
+        if (chip(t(item.key, { pronoun: lifeMap.life.pronoun }), points[item.step], item.tone, index, placed, offset)) break;
       }
     });
   }
 
   /**
    * A ring that breathes out from the Beginning (cover) or the route's end
-   * (Sam resting), on the compositor: redrawing the canvas each frame for
+   * (the traveller resting), on the compositor: redrawing the canvas each frame for
    * it cost a frame's budget on slow machines.
    */
   function startPulse(mode) {
@@ -202,7 +212,7 @@ export function createPathsScene(root, { edgeFade = null, life = {} } = {}) {
     current = beatId;
     restore();
     paintBase();
-    if (beatId === 'adds') { lifeFrame = FINAL_FRAME; lifeMap.setMode('adds'); }
+    if (beatId === 'adds') { lifeFrame = finalFrame(); lifeMap.setMode('adds'); }
     if (beatId === 'cover') setField('shown');
     if (!animate || failed) {
       if (beatId !== 'cover') setField('hidden');
@@ -210,7 +220,7 @@ export function createPathsScene(root, { edgeFade = null, life = {} } = {}) {
       return;
     }
     if (beatId === 'life' && from === 'cover') {
-      lifeFrame = { ...FINAL_FRAME, index: -1, resting: false };
+      lifeFrame = { ...finalFrame(), index: -1, resting: false };
       lifeMap.setMode('story');
       setField('shown');
       setState({ ...FINAL.cover, fxModeValue: 'none' });
@@ -225,7 +235,7 @@ export function createPathsScene(root, { edgeFade = null, life = {} } = {}) {
     setState(FINAL[beatId]);
   }
 
-  /** The player's sink: one moment of Sam's story. */
+  /** The player's sink: one moment of the story. */
   function setLife(frame) {
     const wasResting = lifeFrame.resting;
     lifeFrame = frame;
@@ -240,7 +250,7 @@ export function createPathsScene(root, { edgeFade = null, life = {} } = {}) {
     setField('hidden', duration);
   }
 
-  /** The hike's arrival (§4): the gray lives and the chips go, then Sam's route. */
+  /** The hike's arrival (§4): the gray lives and the chips go, then the route. */
   function fadeField(duration) {
     leaving = true;
     callouts.querySelectorAll('.map-chip').forEach(element => element.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 160, fill: 'forwards' }));

@@ -1,11 +1,13 @@
 /* The lesson's own styles, plus the few rules the opening adds (design 001 v13). */
 @import "../../src/lessons/choices/journey.css";
 
-/* ——— Sam's life: a compact list, the age in a quiet column on the left ——— */
-.life-steps { margin: 0; padding: 0 2px 2px 0; list-style: none; display: grid; row-gap: 6px; scrollbar-width: thin; }
-.life-step { display: grid; grid-template-columns: 52px minmax(0, 1fr); column-gap: 8px; align-items: baseline; }
-.life-age { font: 500 15px/1.2 var(--font-guide); color: var(--color-quiet); font-variant-numeric: tabular-nums; white-space: nowrap; }
-.life-line { font: 18px/1.35 var(--font-field); color: var(--color-ink); text-wrap: pretty; transition: color 450ms ease; }
+/* ——— The life: a list, the age in a quiet column on the left ———
+   Beside the stage, page.js fits the list to its column: --fit-size is the largest size at
+   which the whole story fits, --fit-gap the room left over, shared between the rows. */
+.life-steps { --size: var(--fit-size, 18px); margin: 0; padding: 0 2px 2px 0; list-style: none; display: grid; align-content: start; row-gap: calc(6px + var(--fit-gap, 0px)); scrollbar-width: thin; }
+.life-step { display: grid; grid-template-columns: calc(var(--size) * 2.9) minmax(0, 1fr); column-gap: 8px; align-items: baseline; }
+.life-age { font: 500 calc(var(--size) * .82)/1.2 var(--font-guide); color: var(--color-quiet); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.life-line { font: var(--size)/1.35 var(--font-field); color: var(--color-ink); text-wrap: pretty; transition: color 450ms ease; }
 /* Lines older than the last four step back; they stay in the list. */
 .life-step.is-past .life-line { color: var(--color-quiet); }
 /* Waiting lines keep their place (no layout shift) and stay readable to screen readers. */
@@ -13,41 +15,46 @@
 /* The closing line has no age. */
 .life-step.is-close .life-age { visibility: hidden; }
 @media (min-width: 990px) {
-  /* Folded: when the column is short, older lines step back a size, then one more, and still wrap to their whole text.
-     Snug: in the shortest column (1133x744) the rows close up as well. */
+  /* Only when the story can't fit its column even at the smallest size (is-tight): older lines step back a size,
+     then one more, and still wrap to their whole text. Snug: the rows close up as well. */
   .life-step.is-folded .life-line { font-size: 15px; line-height: 1.3; color: var(--color-quiet); }
   .life-step.is-folded-more .life-line { font-size: 14px; line-height: 1.25; }
   .life-steps.is-snug { row-gap: 1px; }
   .life-steps.is-snug .life-step.is-folded-more .life-line { line-height: 1.2; }
-  .life-step:is(.is-folded, .is-pending) .life-age { font-size: 13px; }
-  /* Lines still to come wait unseen in one row each, so the list doesn't jump as they arrive. */
-  .life-step.is-pending .life-line { white-space: nowrap; overflow: hidden; font-size: 15px; line-height: 1.3; }
+  .life-step.is-folded .life-age, .life-steps.is-tight .life-step.is-pending .life-age { font-size: 13px; }
+  /* There, lines still to come wait unseen in one row each, so the list doesn't jump as they arrive. */
+  .life-steps.is-tight .life-step.is-pending .life-line { white-space: nowrap; overflow: hidden; font-size: 15px; line-height: 1.3; }
 }
 .life-control { margin: 4px 0 0; }
 .life-control.is-done { visibility: hidden; }
 .life-pause { margin-left: -8px; }
 
-/* Beside the stage the column holds still: if the list is taller than its room, the list scrolls, not the column. */
+/* Beside the stage the column holds still, and the list takes all of it from the heading down to the
+   controls: it fits (page.js), and only a story too long for any size scrolls, after it has played. */
 @media (min-width: 990px) {
   .narration-body[data-beat="life"] { display: flex; flex-direction: column; overflow: hidden; padding-bottom: 4px; container-type: inline-size; }
   .narration-body[data-beat="life"] > * { flex: none; }
   .narration-body[data-beat="life"] #beat-heading { margin-bottom: 16px; }
-  .narration-body[data-beat="life"] > .beat-text { flex: 0 1 auto; min-height: 0; display: flex; flex-direction: column; }
-  .narration-body[data-beat="life"] .life-steps { flex: 0 1 auto; min-height: 0; overflow-y: auto; }
+  .narration-body[data-beat="life"] > .beat-text { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
+  .narration-body[data-beat="life"] .life-steps { flex: 1 1 auto; min-height: 0; overflow-y: auto; }
   .narration-body[data-beat="life"] .life-steps.is-playing { overflow-y: hidden; }
-  .narration-body[data-beat="life"] .timeline { flex: 0 1 auto; min-height: 0; }
+  .narration-body[data-beat="life"] .timeline { flex: 1 1 auto; min-height: 0; align-content: start; }
   .narration-body.whatif .timeline.is-scrolled { mask-image: linear-gradient(to bottom, transparent, #000 28px); }
-  .narration-body.whatif #beat-heading { font-size: clamp(28px, 2.4vw, 36px); margin-bottom: 10px; }
+  .narration-body.whatif #beat-heading { font-size: clamp(26px, 2.2vw, 36px); margin-bottom: 8px; }
+  /* A narrow column: the three what-if buttons take two rows, not three. */
+  @container (max-width: 330px) {
+    .whatif-actions { gap: 6px; margin-top: 10px; }
+    .whatif-actions :is(.solid-pill, .pill-button) { padding: 0 12px; font-size: 14px; }
+  }
   /* Scrolled: the top edge fades, so a line leaving the top is never cut in half. */
   .life-steps.is-scrolled { mask-image: linear-gradient(to bottom, transparent, #000 28px); }
   /* A narrow column (1280 and below): a touch smaller, so most lines keep to one row. */
   @container (max-width: 330px) {
     #beat-heading { margin-bottom: 12px; }
     .life-control { margin-top: 0; }
-    .life-steps { row-gap: 3px; }
-    .life-step { grid-template-columns: 44px minmax(0, 1fr); column-gap: 6px; }
-    .life-age { font-size: 13.5px; }
-    .life-line { font-size: 17px; line-height: 1.3; }
+    .life-steps { --size: var(--fit-size, 17px); row-gap: calc(3px + var(--fit-gap, 0px)); }
+    .life-step { grid-template-columns: calc(var(--size) * 2.65) minmax(0, 1fr); column-gap: 6px; }
+    .life-line { line-height: 1.3; }
   }
 }
 /* The Pause link takes a short row; its 44px target reaches over the gap around it. */
@@ -56,9 +63,11 @@
 /* Short screens: during the story the key hint gives its two rows to the lines. */
 @media (min-width: 990px) and (max-height: 820px) {
   .journey:has(.narration-body[data-beat="life"]) .key-hint { display: none; }
+  /* and a what-if gives its kicker to the new life's rows. */
+  .narration-body.whatif #beat-kicker { display: none; }
 }
 
-/* ——— Sam's life in the Explore chapter's language (life-map.js) ——— */
+/* ——— The life in the Explore chapter's language (life-map.js) ——— */
 .life-axis { position: absolute; inset: 0; pointer-events: none; opacity: 0; }
 .life-tick { position: absolute; top: 10px; bottom: 30px; width: 1px; margin-left: -.5px; background: repeating-linear-gradient(to bottom, #dde4dc 0 2px, transparent 2px 9px); }
 .life-tick b, .life-axis-name { position: absolute; font: 600 12px/1 var(--font-guide); color: var(--color-quiet); white-space: nowrap; }
@@ -75,7 +84,7 @@
 .life-label { transform: translateY(-80%); pointer-events: none; font: 650 15px/1 var(--font-guide); color: var(--color-forest); }
 .life-label.is-shown, .life-alt.is-shown { opacity: 1; }
 .life-leader { position: absolute; height: 1px; background: rgba(40, 84, 66, .45); transform-origin: 0 50%; }
-/* The choices he didn't make: gray labels that are also buttons. */
+/* The choices the person didn't make: gray labels that are also buttons. */
 .life-alt {
   --lift: calc(-0.8em - 3.5px);
   transform: translate(-50%, var(--lift)); padding: 2px 6px; border: 1.5px solid transparent; border-radius: 12px; background: transparent;
@@ -87,13 +96,20 @@
 .map-stack[data-life="choosing"] .life-alt { border-color: var(--color-sage); background: white; color: var(--color-ink); text-shadow: none; }
 .life-alt:not(:disabled):hover, .life-alt:not(:disabled):focus-visible { border-color: #376f9a; color: #2c5d82; background: #f3f8fb; text-shadow: none; transform: translate(-50%, var(--lift)) scale(1.05); }
 .life-alt:focus-visible { outline: 2px solid #376f9a; outline-offset: 2px; }
-/* A choice whose label had no clear room shows only while choosing; Sam's labels in its way step aside. */
-.map-stack:not([data-life="choosing"]) .life-alt.is-tight { visibility: hidden; }
-.map-stack[data-life="choosing"] .life-label.is-yielding { opacity: 0; }
-/* The forks whose choice can change. */
-.life-ring { position: absolute; width: 30px; height: 30px; margin: -15px 0 0 -15px; border-radius: 50%; border: 2px solid rgba(40,84,66,.38); opacity: 0; transform: scale(.6); transition: opacity 300ms ease, transform 300ms ease; pointer-events: none; }
-.life-ring.is-shown { opacity: 1; transform: none; animation: ring-breathe 1.8s 300ms ease-in-out infinite alternate; }
+/* The forks whose choice can change: while choosing, a breathing ring that is also a button. */
+.life-fork { position: absolute; width: 34px; height: 34px; margin: -17px 0 0 -17px; padding: 0; border: 0; border-radius: 50%; background: transparent; pointer-events: auto; cursor: pointer; }
+.life-fork::before { content: ""; position: absolute; inset: 2px; border-radius: 50%; border: 2px solid rgba(40,84,66,.38); animation: ring-breathe 1.8s 300ms ease-in-out infinite alternate; }
+.life-fork::after { content: ""; position: absolute; inset: -5px; border-radius: 50%; }
+.life-fork:hover::before, .life-fork[aria-expanded="true"]::before { border-color: var(--color-forest); animation: none; }
+.life-fork:focus-visible { outline: 3px solid var(--color-lake); outline-offset: 2px; border-radius: 50%; }
+.map-stack:not([data-life="choosing"]) .life-fork { visibility: hidden; pointer-events: none; }
 @keyframes ring-breathe { to { transform: scale(1.18); border-color: rgba(40,84,66,.16); } }
+/* A fork's popover: its other choices as chips, inside the stage. */
+.life-pop { position: absolute; z-index: 3; max-width: min(320px, calc(100% - 16px)); padding: 12px 14px 14px; border: 1px solid var(--color-rule); border-radius: 16px; background: white; pointer-events: auto; }
+.life-pop-title { margin: 0 0 9px; font: 600 14px/1.3 var(--font-guide); color: var(--color-quiet); }
+.life-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.life-chip { min-height: 36px; padding: 0 14px; border: 1.5px solid var(--color-sage); border-radius: 999px; background: white; font: 600 15px/1 var(--font-guide); color: var(--color-ink); cursor: pointer; }
+.life-chip:hover { border-color: var(--color-forest); color: var(--color-forest); }
 .life-pulse { position: absolute; border: 2px solid var(--color-forest); border-radius: 50%; transform: translate(-50%, -50%); opacity: 0; pointer-events: none; }
 /* The end card: the explorer's, wherever the route leaves room; on a small stage, a bar. */
 .life-end { z-index: 2; pointer-events: auto; width: min(300px, calc(100% - 44px)); padding: 18px 22px; }
@@ -104,24 +120,32 @@
 .life-end.is-bar .end-buttons { grid-row: 1 / span 2; grid-column: 2; margin: 0; }
 /* "Choices add up" names three steps; the gray choices' labels step back so its three labels have room. */
 .map-stack[data-life="adds"] .life-alt { opacity: 0; pointer-events: none; }
-/* On to the hike: the gray lives, the labels and the age line go first, then Sam's route, alone. */
-.map-stack[data-leaving] :is(.life-grays, .life-axis, .life-alt, .life-label, .life-ring, .life-end),
-.map-stack[data-leaving="route"] :is(.life-dark, .life-live) { opacity: 0 !important; transition: opacity var(--fade, 300ms) ease !important; }
+/* On to the hike: the gray lives, the labels and the age line go first, then the route, alone. */
+.map-stack[data-leaving] :is(.life-grays, .life-axis, .life-alt, .life-label, .life-fork, .life-pop, .life-end),
+.map-stack[data-leaving="route"] :is(.life-dark, .life-marks, .life-live) { opacity: 0 !important; transition: opacity var(--fade, 300ms) ease !important; }
 @media (prefers-reduced-motion: reduce) {
-  .life-ring.is-shown { animation: none; }
+  .life-fork::before { animation: none; }
   .life-label, .life-alt { transition: none; }
 }
 
-/* ——— After the story: a life Sam could have lived ——— */
+/* ——— After the story: a life the person could have lived ——— */
 .life-hint { margin: 10px 0 0; font: 16px/1.4 var(--font-field); color: var(--color-quiet); }
-.whatif-same { margin: 0 0 6px; font: 16px/1.4 var(--font-field); color: var(--color-quiet); }
-/* The picked life's events: the explorer's list, compact; it scrolls to the newest when the column is short. */
-.whatif .timeline { max-height: none; overflow-y: auto; scrollbar-width: thin; }
-.whatif .timeline-step { min-height: 34px; padding: 2px 8px 2px 2px; cursor: default; }
-.whatif .timeline-age { width: 28px; height: 28px; font-size: 14px; }
+.narration-body .whatif-same { margin: 0 0 4px; font: 500 15px/1.35 var(--font-guide); color: var(--color-quiet); }
+/* The picked life's events: the explorer's list, fitted to the column like the story (page.js).
+   Every row is there from the start, unseen until the new life reaches it. */
+.whatif .timeline { --size: var(--fit-size, 15px); max-height: none; overflow-y: auto; scrollbar-width: thin; gap: calc(2px + var(--fit-gap, 0px)); }
+.whatif .timeline li.is-pending { opacity: 0; }
+.whatif .timeline li .timeline-step { animation: none; }
+.whatif .timeline-step { grid-template-columns: calc(var(--size) * 2) 1fr; gap: 6px; min-height: calc(var(--size) * 1.95); padding: 1px 6px 1px 2px; font-size: var(--size); cursor: default; }
+.whatif .timeline-age { width: calc(var(--size) * 1.65); height: calc(var(--size) * 1.65); font-size: calc(var(--size) * .86); }
 .whatif .timeline-label { line-height: 1.3; }
+.whatif .timeline-label small { font-size: calc(var(--size) * .9); }
 .whatif .timeline-step:hover { background: transparent; }
-.whatif-note { margin: 10px 0 0; font-size: 15px; line-height: 1.4; color: var(--color-quiet); }
+.whatif .timeline li.whatif-note { margin: 6px 0 0; font-size: 15px; line-height: 1.4; color: var(--color-quiet); }
+/* Only a new life too long for its column (is-tight): older rows close up as it grows. */
+.whatif .timeline li.is-folded .timeline-step { min-height: calc(var(--size) * 1.4); font-size: calc(var(--size) * .9); }
+.whatif .timeline li.is-folded .timeline-age { width: calc(var(--size) * 1.3); height: calc(var(--size) * 1.3); font-size: calc(var(--size) * .72); }
+.whatif .timeline li.is-folded .timeline-kind { padding: 0 5px; }
 .whatif-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
 .whatif-actions .solid-pill, .whatif-actions .pill-button { min-height: 44px; }
 
@@ -137,6 +161,8 @@
 .mockup-option:hover { border-color: var(--color-forest); color: var(--color-forest); }
 .mockup-option[aria-pressed="true"] { border-color: var(--color-forest); background: var(--color-paper-deep); color: var(--color-forest); font-weight: 600; }
 .mockup-replay { color: var(--color-forest); }
+.mockup-select { min-height: 34px; padding: 0 10px; border: 1px solid var(--color-rule); border-radius: 999px; background: transparent; color: var(--color-ink); font: 15px/1.2 var(--font-guide); }
+.mockup-select:hover { border-color: var(--color-forest); }
 .journey[data-cover] > .stage { margin-bottom: 8px; }
 
 /* Stops and dots outside the opening are shown but don't play here. */

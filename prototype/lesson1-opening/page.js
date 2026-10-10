@@ -1,7 +1,8 @@
 // The Lesson 1 opening as a playable mockup (design 001 v13): the lesson's own
 // page, header, chapter trail, stage and narration, with the "Many paths"
-// chapter cut to three steps (the cover, Sam's life, "Choices add up") and the
-// fade into the hike's first step. Adapted from src/lessons/choices/journey.js.
+// chapter cut to three steps (the cover, one person's life, "Choices add up")
+// and the fade into the hike's first step. Adapted from src/lessons/choices/journey.js.
+// The lives come from the lives store (lives/README.md), read after the first paint.
 import { chaptersFor } from '../../src/lessons/choices/journey-story.js';
 import { t } from '../../src/i18n/runtime.js';
 import { createToken, prefersReducedMotion, wait } from '../../src/lessons/choices/journey-motion.js';
@@ -9,9 +10,10 @@ import { createHikeScene } from '../../src/lessons/choices/journey-hike.js';
 import { watchField } from '../../src/components/stage-field.js';
 import { initSiteNav } from '../../src/components/site-nav.js';
 import { UI, lessonsFor } from '../../src/data/site.js';
-import { createPathsScene } from './map.js';
-import { LINES, createLifePlayer } from './life.js';
-import { ALTS } from './life-map.js';
+import { addsSteps, createPathsScene } from './map.js';
+import { LIFE, LINES, createLifePlayer, useLife } from './life.js';
+import { writtenLife } from './lives/engine.js';
+import { openStore, storeFromURL } from './lives/store.js';
 
 const SITE_URL = 'https://wisdom.knyflores.com';
 const esc = value => String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;');
@@ -21,33 +23,72 @@ const $ = selector => document.querySelector(selector);
 const params = new URLSearchParams(location.search);
 const settings = {
   pace: params.get('pace') === 'quick' ? 'quick' : 'normal',
+  life: params.get('life'),
 };
-function saveSettings() {
+/** Keep the URL in step: `pace`, `life`, and a what-if's `fork`, `alt` and `seed` (null removes one). */
+function saveSettings(extra = {}) {
   const next = new URLSearchParams(location.search);
   next.delete('dark');
   next.set('pace', settings.pace);
+  if (settings.life) next.set('life', settings.life);
+  for (const [key, value] of Object.entries(extra)) {
+    if (value === null) next.delete(key); else next.set(key, value);
+  }
   history.replaceState(null, '', `${location.pathname}?${next}${location.hash}`);
 }
 
+// ——— The lives store: read and checked after the first paint, so the cover never waits for it ———
+let store = null;
+let storeTimes = null;
+const storeReady = new Promise(resolve => {
+  requestAnimationFrame(() => setTimeout(async () => {
+    const opened = await openStore(storeFromURL());
+    store = opened.store;
+    storeTimes = opened.ms;
+    if (opened.errors.length) console.info(`The lives store has ${opened.errors.length} problems: npm run lives:check`);
+    resolve(store);
+  }, 0));
+});
+/** The lives that can play: every written life with a route to draw. */
+const lifeIds = () => [...store.baselines.keys()].filter(id => (writtenLife(store, id)?.steps.length ?? 0) > 1);
+
+// The lives already watched in this browser, so "Watch another life" brings a new one until all have played.
+const SEEN = 'wisdom.opening.lives';
+const readSeen = () => { try { return JSON.parse(localStorage.getItem(SEEN)) ?? []; } catch { return []; } };
+const writeSeen = list => { try { localStorage.setItem(SEEN, JSON.stringify(list)); } catch { /* private window: the lives still cycle in this visit */ } };
+
 // ——— Words ———
-const stepLine = index => t(`lesson.beat.life.${LINES[index].key}`);
-const lifeAlt = () => t('lesson.beat.life.alt');
+const stepLine = index => (LINES[index].close ? t('lesson.beat.life.close') : LINES[index].line);
+const lifeAlt = () => t('lesson.beat.life.alt', { name: LIFE.name, end: LIFE.end });
+const kindOf = kind => (kind === 'lucky' ? 'lucky' : kind === 'setback' ? 'roadblock' : null);
 
 // ——— Structure: the lesson's chapters, with "Many paths" cut to three steps ———
 const chapters = chaptersFor(t);
 const paths = chapters.find(chapter => chapter.id === 'paths');
 const cover = paths.beats.find(beat => beat.id === 'cover');
 const lifeBeat = { id: 'life', kicker: paths.beats[1].kicker, heading: t('lesson.beat.life.heading'), body: [], life: true };
-const addsBeat = { id: 'adds', kicker: paths.beats[1].kicker, heading: t('lesson.beat.adds.heading'), body: [t('lesson.beat.adds.body1')], alt: t('lesson.beat.adds.alt') };
+const addsBeat = { id: 'adds', kicker: paths.beats[1].kicker, heading: t('lesson.beat.adds.heading') };
 Object.defineProperty(lifeBeat, 'alt', { get: lifeAlt });
+// "Choices add up" tells the life that just played: Sam's own words, or words that fit any life.
+Object.defineProperty(addsBeat, 'body', {
+  get: () => [LIFE.id === 'sam' ? t('lesson.beat.adds.body1') : t('opening.adds.body', { name: LIFE.name, pronoun: LIFE.pronoun })],
+});
+Object.defineProperty(addsBeat, 'alt', {
+  get: () => {
+    const [choice, luck, notHis] = addsSteps(LIFE).map(item => LIFE.steps[item.step].label);
+    return choice && luck && notHis
+      ? t('opening.adds.alt', { name: LIFE.name, pronoun: LIFE.pronoun, choice, luck, notHis })
+      : t('opening.adds.altShort', { name: LIFE.name });
+  },
+});
 paths.beats = [cover, lifeBeat, addsBeat];
 const CHAPTERS = chapters;
-// Only the opening plays here: the cover, Sam's life, "Choices add up" and the hike's first step.
+// Only the opening plays here: the cover, one person's life, "Choices add up" and the hike's first step.
 const beats = [
   ...paths.beats.map((beat, beatIndex) => ({ chapter: paths, chapterIndex: 0, beat, beatIndex })),
   { chapter: CHAPTERS[1], chapterIndex: 1, beat: CHAPTERS[1].beats[0], beatIndex: 0 },
 ].map(item => ({ ...item, fragment: `${item.chapter.id}-${item.beat.id}` }));
-const LIFE = beats.findIndex(item => item.beat.id === 'life');
+const LIFE_BEAT = beats.findIndex(item => item.beat.id === 'life');
 const ALIASES = { 'paths-many': 'paths-life', 'paths-travel': 'paths-life', 'paths-outside': 'paths-adds' };
 const beatForHash = hash => {
   const fragment = hash.slice(1);
@@ -133,6 +174,7 @@ export function start(app) {
     <div class="mockup-bar" id="mockup-bar" data-local-keys>
       <strong class="mockup-title">${esc(t('opening.mockup'))}</strong>
       ${segmented('pace', t('opening.pace'), [['normal', t('opening.pace.normal')], ['quick', t('opening.pace.quick')]], settings.pace)}
+      <label class="mockup-group"><span class="mockup-label">${esc(t('opening.life'))}</span><select class="mockup-select" id="life-select" data-local-keys disabled></select></label>
       <button type="button" class="mockup-option mockup-replay" data-replay>${esc(t('opening.replay'))}</button>
     </div>
   </main>
@@ -152,6 +194,7 @@ function run() {
   const scenes = {
     paths: createPathsScene(roots.paths, { edgeFade: 0.24, life: {
       onPick: info => whatIf.onPick(info), onStep: (node, position) => whatIf.onStep(node, position), onDone: run => whatIf.onDone(run),
+      onLeave: () => backToLife(),
     } }),
     hike: createHikeScene(roots.hike),
   };
@@ -257,6 +300,7 @@ function run() {
       : '';
     const steps = list();
     steps?.addEventListener('scroll', () => steps.classList.toggle('is-scrolled', steps.scrollTop > 2), { passive: true });
+    if (steps) fitList(steps);
     if (animate && !prefersReducedMotion()) {
       body.classList.remove('is-changing');
       void body.offsetWidth;
@@ -283,7 +327,7 @@ function run() {
     next.dataset.emphasis = String(index === 0);
   }
 
-  // ——— Sam's story: one player, two sinks ———
+  // ——— The story: one player, two sinks ———
   let narrationPaused = false;
   const list = () => document.getElementById('life-steps');
   const lines = () => [...(list()?.children ?? [])];
@@ -295,15 +339,53 @@ function run() {
     if (narrationPaused) animation.pause();
     return animation;
   };
-  // Beside the stage the list has a fixed height. Lines that haven't arrived
-  // wait in one row each. When the list would overflow, older lines step down
-  // a size, oldest first, then one size more; in a short column (an iPad held
-  // sideways) the rows close up too, and only then do the three lines before
-  // the newest step down. Every line wraps to its whole text, and nothing scrolls.
+  // Beside the stage the list fills the column, from the heading down to the
+  // controls: its words take the largest size at which the whole story fits,
+  // and the room left over goes between the rows. Lines that haven't arrived
+  // keep their place unseen, so nothing moves as they arrive and nothing scrolls.
   const sideColumn = matchMedia('(min-width: 990px)');
+  function fitList(box, { min = 15, max = 24 } = {}) {
+    box.classList.remove('is-tight', 'is-snug');
+    box.style.removeProperty('--fit-size');
+    box.style.removeProperty('--fit-gap');
+    [...box.children].forEach(row => row.classList.remove('is-folded', 'is-folded-more'));
+    if (!sideColumn.matches || !box.clientHeight) return;
+    const fits = size => { box.style.setProperty('--fit-size', `${size}px`); return box.scrollHeight <= box.clientHeight; };
+    if (!fits(min)) {
+      // Too long even at the smallest size (a long life, or an iPad held sideways): older lines fold
+      // as they arrive (below), and the newest stays in view.
+      box.style.removeProperty('--fit-size');
+      box.classList.add('is-tight');
+      const shown = [...box.children].filter(row => !row.classList.contains('is-pending'));
+      if (box.id === 'life-steps' && shown.length) fold(shown.length - 1);
+      if (shown.length) keepInView(shown.at(-1), box);
+      return;
+    }
+    let lo = min; let hi = max;
+    if (fits(hi)) lo = hi;
+    while (hi - lo > 0.25) { const mid = (lo + hi) / 2; if (fits(mid)) lo = mid; else hi = mid; }
+    box.style.setProperty('--fit-size', `${lo.toFixed(2)}px`);
+    const rows = box.children.length;
+    const spare = box.clientHeight - box.scrollHeight - 2;
+    if (rows > 1 && spare > 0) box.style.setProperty('--fit-gap', `${Math.min(lo * 0.9, spare / (rows - 1)).toFixed(2)}px`);
+  }
+  // Fit again when the column changes size (the cover lifting, a window resized).
+  let refit = null;
+  new ResizeObserver(() => {
+    if (refit !== null) return;
+    refit = requestAnimationFrame(() => {
+      refit = null;
+      const box = document.getElementById('whatif-list') ?? list();
+      if (box) fitList(box, box.id === 'whatif-list' ? WHAT_FIT : undefined);
+    });
+  }).observe(document.getElementById('narration-body'));
+  // Only a story too long for its column at the smallest size (is-tight): lines that
+  // haven't arrived wait in one row each, and when the list would overflow, older
+  // lines step down a size, oldest first, then one size more; then the rows close
+  // up, and only then do the three lines before the newest step down.
   const fold = newest => {
     const box = list();
-    if (!box || !sideColumn.matches) return;
+    if (!box || !sideColumn.matches || !box.classList.contains('is-tight')) return;
     const all = lines();
     const over = () => box.scrollHeight > box.clientHeight + 1;
     const shrink = (step, upTo) => { for (let other = 0; other < upTo && over(); other += 1) all[other].classList.add(step); };
@@ -314,8 +396,7 @@ function run() {
     shrink('is-folded-more', newest);
   };
   // If the list still has to scroll in its column, the newest line stays in view.
-  const keepInView = element => {
-    const box = list();
+  const keepInView = (element, box = list()) => {
     if (!box || box.scrollHeight <= box.clientHeight + 1) return;
     const bottom = element.offsetTop + element.offsetHeight - box.offsetTop;
     if (bottom > box.scrollTop + box.clientHeight) box.scrollTo({ top: bottom - box.clientHeight + 4, behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
@@ -371,19 +452,20 @@ function run() {
   player.setPace(settings.pace);
   const onLife = () => beats[index]?.beat.id === 'life';
 
-  // ——— After the story: change one of Sam's choices ———
+  // ——— After the story: change one of the person's choices ———
   const lifeMap = scenes.paths.life;
   const lifeMode = () => lifeMap.mode;
   const announce = message => { $('#announcer').textContent = ''; requestAnimationFrame(() => { $('#announcer').textContent = message; }); };
+  const altEnd = () => `${lifeAlt()} ${t('lesson.beat.life.altEnd', { name: LIFE.name })}`;
   // The story's end shows the end card; playing again hides it.
   function lifeState(state) {
     const mode = lifeMode();
     if (state.complete && (mode === 'story' || mode === 'adds')) {
       scenes.paths.lifeMode('ended');
-      $('#stage-description').textContent = `${lifeAlt()} ${t('lesson.beat.life.altEnd')}`;
+      $('#stage-description').textContent = altEnd();
       const here = document.activeElement;
       if (!here || here === document.body || here === $('#narration')) lifeMap.card.querySelector('h2').focus({ preventScroll: true });
-      announce(t('opening.end.announce'));
+      announce(t('opening.end.announce', { name: LIFE.name }));
     } else if (!state.complete && mode !== 'story') {
       scenes.paths.lifeMode('story');
       $('#stage-description').textContent = lifeAlt();
@@ -391,70 +473,155 @@ function run() {
   }
   /** The story's words, whole, as the story left them (after a picked life, or for picking). */
   // While choosing, a hint under the story; the story's oldest lines fold to make room for it.
-  const addHint = () => { if (!$('.life-hint')) $('#beat-extra').insertAdjacentHTML('beforeend', `<p class="life-hint">${esc(t('opening.choose.hint'))}</p>`); };
+  const addHint = () => { if (!$('.life-hint')) $('#beat-extra').insertAdjacentHTML('beforeend', `<p class="life-hint">${esc(t('opening.choose.hint', { name: LIFE.name }))}</p>`); };
   function showStoryWords({ hint = false } = {}) {
     renderNarration(beats[index], { animate: false });
     $('#life-pause').parentElement.classList.add('is-done');
-    if (hint) addHint();
+    if (hint) { addHint(); fitList(list()); }
     narration.revealAll({ duration: 0 });
   }
+  const forgetWhatIf = () => saveSettings({ fork: null, alt: null, seed: null });
   function startChoosing() {
     scenes.paths.lifeMode('choosing');
-    if (lifeMode() === 'choosing' && !$('.life-hint') && !$('#whatif-list')) { addHint(); fold(lines().length - 1); }
+    if (lifeMode() === 'choosing' && !$('.life-hint') && !$('#whatif-list')) { addHint(); fitList(list()); fold(lines().length - 1); }
     else showStoryWords({ hint: true });
+    forgetWhatIf();
     scenes.paths.restAtEnd();
-    announce(t('opening.choose.announce'));
-    lifeMap.focusFirstPick();
+    announce(t('opening.choose.announce', { count: lifeMap.forks().length, name: LIFE.name }));
+    lifeMap.focusFirstFork();
   }
-  function backToSam() {
+  function backToLife() {
     scenes.paths.lifeMode('ended');
     scenes.paths.restAtEnd();
     showStoryWords();
-    $('#stage-description').textContent = `${lifeAlt()} ${t('lesson.beat.life.altEnd')}`;
-    announce(t('opening.whatif.announceBack'));
+    forgetWhatIf();
+    $('#stage-description').textContent = altEnd();
+    announce(t('opening.whatif.announceBack', { name: LIFE.name }));
     lifeMap.card.querySelector('button').focus({ preventScroll: true });
   }
-  function pickChoice(key) {
+  let focusAfterPick = 'heading';
+  function pickChoice(key, { seed, focus = 'heading' } = {}) {
     if (!onLife() || !player.state.complete) return;
+    focusAfterPick = focus;
     scenes.paths.lifeMode('whatif');
-    lifeMap.pick(key);
+    lifeMap.pick(key, seed ? { seed } : {});
   }
-  // The narration of a picked life: its question, then its events by age, in the explorer's list style.
+  /** "Try again": the same choice, a new life from it. */
+  function tryAgain() {
+    const run = lifeMap.what;
+    if (run) pickChoice(run.item.key, { focus: 'again' });
+  }
+  // The narration of a picked life: its question, then its events by age, in the explorer's list
+  // style. Every row is there from the start, unseen, so the list fits its column once and holds still.
+  const WHAT_FIT = { min: 14, max: 21 };
   let whatAge = 0;
-  whatIf.onPick = ({ alt, age }) => {
+  const whatRow = (node, position) => {
+    const kind = kindOf(node.kind);
+    const age = position === 0 ? whatAge : node.age;
+    return `<li class="is-pending"><div class="timeline-step"><span class="timeline-age">${age}</span><span class="timeline-label">${kind ? `<small class="timeline-kind is-${kind}">${esc(t(`explore.kind.${kind}`))}</small> ` : ''}${esc(node.label)}${node.byFamily ? ` <small>${esc(t('explore.byFamily'))}</small>` : ''}</span></div></li>`;
+  };
+  whatIf.onPick = ({ item, age, nodes, seed, life }) => {
     whatAge = age;
     const body = $('#narration-body');
     body.dataset.beat = 'life';
     body.classList.add('whatif');
-    $('#beat-heading').textContent = t(`opening.whatif.heading.${alt.id}`);
-    $('#beat-text').innerHTML = `<p class="whatif-same">${esc(t('opening.whatif.same', { age }))}</p><ol class="timeline" id="whatif-list"></ol>`;
-    $('#beat-extra').innerHTML = `<p class="whatif-note" hidden>${esc(t('opening.whatif.note'))}</p>
-      <div class="whatif-actions"><button type="button" class="pill-button" data-whatif="again">${esc(t('opening.whatif.again'))}</button>
-      <button type="button" class="pill-button" data-whatif="back">${esc(t('opening.whatif.back'))}</button></div>`;
-    $('#stage-description').textContent = t('opening.whatif.alt');
-    announce(t(`opening.whatif.heading.${alt.id}`));
+    // The heading always names the person ("What if Sam had…?"), never "he".
+    const heading = t('opening.whatif.heading', { whatIf: item.whatIf });
+    $('#beat-heading').textContent = heading;
+    // The note closes the list once the new life has grown, as "Many paths still ahead" closes the story.
+    $('#beat-text').innerHTML = `<p class="whatif-same">${esc(t('opening.whatif.same', { name: LIFE.name, age }))}</p><ol class="timeline" id="whatif-list">${nodes.map(whatRow).join('')}<li class="whatif-note is-pending">${esc(t('opening.whatif.note', { name: LIFE.name }))}</li></ol>`;
+    $('#beat-extra').innerHTML = `<div class="whatif-actions"><button type="button" class="solid-pill" data-whatif="retry">${esc(t('opening.whatif.tryAgain'))}</button>
+      <button type="button" class="pill-button" data-whatif="again">${esc(t('opening.whatif.again'))}</button>
+      <button type="button" class="pill-button" data-whatif="back">${esc(t('opening.whatif.back', { name: LIFE.name }))}</button></div>`;
+    const timeline = $('#whatif-list');
+    timeline.addEventListener('scroll', () => timeline.classList.toggle('is-scrolled', timeline.scrollTop > 2), { passive: true });
+    fitList(timeline, WHAT_FIT);
+    $('#stage-description').textContent = t('opening.whatif.alt', { name: LIFE.name, pronoun: LIFE.pronoun, end: life.end });
+    announce(heading);
+    saveSettings({ fork: String(item.stepIndex), alt: item.id, seed });
     // Focus moves on the next frame, once the new words are laid out, so the pick stays one short task.
-    requestAnimationFrame(() => requestAnimationFrame(() => { if (body.classList.contains('whatif')) $('#beat-heading')?.focus({ preventScroll: true }); }));
+    const target = focusAfterPick;
+    focusAfterPick = 'heading';
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      if (!body.classList.contains('whatif')) return;
+      (target === 'again' ? $('[data-whatif="retry"]') : $('#beat-heading'))?.focus({ preventScroll: true });
+    }));
   };
-  const kindOf = node => (node.kind === 'lucky' || node.kind === 'roadblock' ? node.kind : null);
-  // The picked choice is dated at Sam's own age for that step; the rest at their own ages.
+  // The picked choice is dated at the person's own age for that step; the rest at their own ages.
   whatIf.onStep = (node, position) => {
-    const list = $('#whatif-list');
-    if (!list) return;
-    const kind = kindOf(node);
-    const age = position === 0 ? whatAge : Math.round(node.age);
-    list.insertAdjacentHTML('beforeend', `<li><div class="timeline-step"><span class="timeline-age">${age}</span><span class="timeline-label">${kind ? `<small class="timeline-kind is-${kind}">${esc(t(`explore.kind.${kind}`))}</small> ` : ''}${esc(node.label)}${node.byFamily ? ` <small>${esc(t('explore.byFamily'))}</small>` : ''}</span></div></li>`);
-    list.scrollTop = list.scrollHeight;
-    list.classList.toggle('is-scrolled', list.scrollTop > 0);
+    const row = $('#whatif-list')?.children[position];
+    if (!row) return;
+    row.classList.remove('is-pending');
+    foldWhat(position);
+    keepInView(row, row.parentElement);
+    if (!prefersReducedMotion() && !lifeMap.what?.done) {
+      row.animate([{ opacity: 0, transform: 'translateY(10px)' }, { opacity: 1, transform: 'none' }], { duration: 400, easing: 'cubic-bezier(.2,.7,.2,1)' });
+    }
+    const kind = kindOf(node.kind);
+    const age = position === 0 ? whatAge : node.age;
     announce(kind ? t('explore.announceSurprise', { age, kind: t(`explore.kind.${kind}`), event: node.label })
       : t('explore.announceChoice', { age, choice: node.label }));
   };
   whatIf.onDone = () => {
-    const note = document.querySelector('.whatif-note');
-    if (note) note.hidden = false;
+    const note = $('#whatif-list .whatif-note');
+    if (note) {
+      note.classList.remove('is-pending');
+      foldWhat(note.parentElement.children.length - 1);
+      keepInView(note, note.parentElement);
+    }
     scenes.paths.restAtEnd();
   };
-  lifeMap.onCard(action => { if (action === 'choose') startChoosing(); });
+  // A new life too long for a short column (is-tight): as it grows, its older rows close up, oldest first.
+  function foldWhat(newest) {
+    const box = $('#whatif-list');
+    if (!box?.classList.contains('is-tight')) return;
+    const rows = [...box.children];
+    const over = () => box.scrollHeight > box.clientHeight + 1;
+    for (let other = 0; other < newest - 2 && over(); other += 1) rows[other].classList.add('is-folded');
+    for (let other = Math.max(0, newest - 2); other < newest && over(); other += 1) rows[other].classList.add('is-folded');
+  }
+  /** Another life: one not watched yet in this browser, until every life has played. */
+  function nextLife() {
+    const ids = lifeIds();
+    let seen = readSeen().filter(id => ids.includes(id));
+    if (!seen.includes(LIFE.id)) seen.push(LIFE.id);
+    let fresh = ids.filter(id => !seen.includes(id));
+    if (!fresh.length) { seen = [LIFE.id]; fresh = ids.filter(id => id !== LIFE.id); }
+    writeSeen(seen);
+    return fresh.length ? fresh[Math.floor(Math.random() * fresh.length)] : LIFE.id;
+  }
+  /** Put a written life on the map and in the narration (it plays from `go`). */
+  function useStoredLife(id) {
+    const life = writtenLife(store, id);
+    useLife(life);
+    lifeMap.setLife(life, store);
+    settings.life = id;
+    const seen = readSeen();
+    if (!seen.includes(id)) writeSeen([...seen, id]);
+    const select = $('#life-select');
+    if (select) select.value = id;
+    saveSettings({ fork: null, alt: null, seed: null });
+  }
+  /** The first life: the one the URL names, else Sam (the first visit's life), else the first written. */
+  async function ensureLife() {
+    if (LIFE) return;
+    await storeReady;
+    if (LIFE) return;
+    const ids = lifeIds();
+    useStoredLife(ids.includes(settings.life) ? settings.life : ids.includes('sam') ? 'sam' : ids[0]);
+    const select = $('#life-select');
+    select.innerHTML = `${ids.map(id => `<option value="${esc(id)}">${esc(store.baselines.get(id).name)}</option>`).join('')}<option value="*">${esc(t('opening.life.random'))}</option>`;
+    select.value = LIFE.id;
+    select.disabled = false;
+  }
+  function playLife(id) {
+    useStoredLife(id);
+    go(LIFE_BEAT, { animate: false, autoplay: true, focus: 'next', history: 'push' });
+  }
+  lifeMap.onCard(action => {
+    if (action === 'choose') startChoosing();
+    if (action === 'another') playLife(nextLife());
+  });
   lifeMap.onAlt(key => pickChoice(key));
 
   // ——— Stage ———
@@ -483,7 +650,7 @@ function run() {
 
   /**
    * "Choices add up" → the hike (§4): the field fades (0–320 ms) with the
-   * chips and the old words, Sam's route holds alone (320–700 ms), then the
+   * chips and the old words, the route holds alone (320–700 ms), then the
    * route fades while the hike and its words arrive (700–1220 ms). No zoom.
    */
   async function arriveAtHike(item, run, focus) {
@@ -511,6 +678,8 @@ function run() {
 
   async function go(target, { animate = true, focus = 'none', history = 'replace', autoplay = false } = {}) {
     target = Math.max(0, Math.min(beats.length - 1, target));
+    // The life's steps need the store: on the cover it is read after the first paint, long before it is needed.
+    if (!LIFE && ['life', 'adds'].includes(beats[target].beat.id)) await ensureLife();
     const previous = beats[index];
     const previousIndex = index;
     index = target;
@@ -553,7 +722,7 @@ function run() {
       await switchRoot(rootId);
       if (run.cancelled) return;
     } else if (leavingCover) {
-      // Full width while the paths grow; then the narration arrives, then Sam's story starts.
+      // Full width while the paths grow; then the narration arrives, then the story starts.
       setCover('leaving');
       liftCover();
       player.reset();
@@ -603,8 +772,9 @@ function run() {
   $('#beat-extra').addEventListener('click', event => {
     if (event.target.closest('#life-pause')) player.toggle();
     const action = event.target.closest('[data-whatif]')?.dataset.whatif;
+    if (action === 'retry') tryAgain();
     if (action === 'again') startChoosing();
-    if (action === 'back') backToSam();
+    if (action === 'back') backToLife();
   });
   const growing = () => onLife() && lifeMode() === 'whatif' && lifeMap.what && !lifeMap.what.done;
   // A click or tap on the map or the lines plays the next step (or shows a growing life whole).
@@ -624,7 +794,7 @@ function run() {
     const telling = onLife() && player.state.started && !player.state.complete;
     if (event.key === 'Escape' && onLife() && (lifeMode() === 'whatif' || lifeMode() === 'choosing')) {
       event.preventDefault();
-      backToSam();
+      backToLife();
       return;
     }
     if (event.key === 'ArrowRight' && growing()) { event.preventDefault(); lifeMap.finishWhat(); return; }
@@ -654,7 +824,13 @@ function run() {
     }
     bar.querySelectorAll('[data-pace]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.pace === settings.pace)));
     saveSettings();
-    if (option.dataset.replay !== undefined) go(LIFE, { animate: false, autoplay: true, focus: 'next', history: 'push' });
+    // Replay plays a life not watched yet, as "Watch another life" does.
+    if (option.dataset.replay !== undefined && LIFE) playLife(nextLife());
+  });
+  $('#life-select').addEventListener('change', event => {
+    const ids = lifeIds();
+    const value = event.target.value;
+    playLife(value === '*' ? ids.filter(id => id !== LIFE.id)[Math.floor(Math.random() * (ids.length - 1))] ?? LIFE.id : value);
   });
 
   // ——— Read as text: the opening's words in reading order ———
@@ -670,7 +846,7 @@ function run() {
         <section class="reading-beat"><h3>${esc(lifeBeat.heading)}</h3>
           <ol class="reading-steps">${LINES.map((line, position) => `<li>${line.close ? '' : `<strong>${esc(t('lesson.ui.age', { age: line.age }))}</strong> `}${esc(stepLine(position))}</li>`).join('')}</ol>
           ${picture(lifeAlt())}
-          <p>${esc(t('opening.reading.change'))}</p></section>
+          <p>${esc(t('opening.reading.change', { name: LIFE.name, pronoun: LIFE.pronoun }))}</p></section>
         <section class="reading-beat"><h3>${esc(addsBeat.heading)}</h3>${addsBeat.body.map(text => `<p>${esc(text)}</p>`).join('')}${picture(addsBeat.alt)}</section>
       </section>
       <section class="reading-chapter" aria-labelledby="read-chapter-hike"><h2 id="read-chapter-hike">${esc(plan.chapter.title)}</h2>
@@ -678,7 +854,8 @@ function run() {
       </section>
     </article>`;
   }
-  $('#open-reading').addEventListener('click', () => {
+  $('#open-reading').addEventListener('click', async () => {
+    await ensureLife();
     $('#reading-content').innerHTML = readingMarkup();
     if (onLife() && player.state.playing && player.state.started) player.toggle(); // the story waits behind the text
     dialog.showModal();
@@ -686,9 +863,23 @@ function run() {
   dialog.querySelector('[data-close]').addEventListener('click', () => dialog.close());
 
   // A test hook for the capture scripts.
-  globalThis.opening = { player, go, beats, scenes, pickChoice, startChoosing, backToSam, ALTS, get index() { return index; } };
+  globalThis.opening = {
+    player, go, beats, scenes, pickChoice, startChoosing, backToLife, tryAgain, playLife, nextLife, storeReady,
+    picks: () => lifeMap.picks(),
+    get life() { return LIFE; },
+    get store() { return store; },
+    get storeTimes() { return storeTimes; },
+    get index() { return index; },
+  };
 
   const initial = Math.max(0, beatForHash(location.hash));
   index = initial;
-  go(initial, { animate: false });
+  // A shared what-if (`?life=sam&fork=3&alt=drums&seed=…`) opens on the finished story with that life grown.
+  go(initial, { animate: false }).then(() => {
+    const alt = params.get('alt');
+    if (!alt || !onLife() || !LIFE) return;
+    const picks = lifeMap.picks();
+    const pick = picks.find(item => item.id === alt && item.stepIndex === Number(params.get('fork'))) ?? picks.find(item => item.id === alt);
+    if (pick) pickChoice(pick.key, { seed: params.get('seed') || undefined });
+  });
 }

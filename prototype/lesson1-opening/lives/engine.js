@@ -357,6 +357,19 @@ function historyPath() {
   return { path, take };
 }
 
+/** One or two other things (not luck or setbacks) that could have happened at `age` instead of `node`. */
+function othersAt(store, node, path, age, random) {
+  const pool = (store.byAge[age] ?? []).filter(other => other !== node && !isSurprise(other) && allows(other, path, age));
+  const others = [];
+  const want = random() < 0.5 ? 2 : 1;
+  while (others.length < want && pool.length) {
+    const at = pickWeighted(pool, pool.map(other => other.weight), random);
+    if (at < 0) break;
+    others.push(pool.splice(at, 1)[0]);
+  }
+  return others;
+}
+
 /**
  * A baseline as it is written: its steps with words for the person, heights,
  * echoes, and the alternatives at each choice (each with its "What if" words).
@@ -376,6 +389,11 @@ export function writtenLife(store, id) {
     step.alts = written.alts.map(altId => store.nodes.get(altId)).filter(Boolean).map(alt => ({
       id: alt.id, node: alt, kind: alt.kind, label: say(alt.label, person), whatIf: say(alt.if, person, { capital: false }), byFamily: alt.by === 'family',
     }));
+    // A step with no alternatives still shows what else could have happened there (gray lines, not picked).
+    if (steps.length && !step.alts.length && !isSurprise(node)) {
+      step.others = othersAt(store, node, path, written.age, rng(`${baseline.id}:others:${steps.length}`))
+        .map(other => ({ id: other.id, node: other, kind: other.kind, label: say(other.label, person) }));
+    }
     take(node, written.age);
     steps.push(step);
   }

@@ -1,63 +1,35 @@
-// Sam's life on the map (design 001 v13, the Lesson 1 opening): the steps, the
-// timeline each one plays, and the player that drives the narration and the map
-// from one clock, so the words and the route can never drift apart.
+// One life on the map (design 001 v13, the Lesson 1 opening): the life that
+// plays, the timeline each step plays, and the player that drives the narration
+// and the map from one clock, so the words and the route can never drift apart.
 import { prefersReducedMotion } from '../../src/lessons/choices/journey-motion.js';
 
 /**
- * One step per line of the story, drawn in the Explore chapter's language: each
- * step is a fork on Sam's route, and the gray lives he didn't live leave it.
- * - `key`: its words (`lesson.beat.life.<key>`) and map label (`map.life.<key>`).
- * - `y`: the height of its dot, 0 (top) to 1 (bottom), as in the explorer, with
- *   the Born dot at BORN_Y (the map moves the whole route so Born sits on the
- *   field's Beginning dot). Luck and help lift the path, hard times drop it.
- * - `kind`: 'start', 'choice', 'lucky' (a sun star) or 'roadblock' (a clay diamond).
- * - `step`: the explorer step it stands for, so a life grown from an earlier
- *   fork carries on Sam's chains (guitar → band → radio).
- * - `alts`: the choices he didn't make here. They leave the previous dot, on
- *   the side of the route it never crosses later. Those with an `id` have a
- *   label and can be picked after the story; the rest are unlabelled lines.
- * - `buildsOn`: earlier steps that pulse once when this one lands.
- * - `long`: an event, which holds a little longer before the next line.
+ * The life the story tells, as `writtenLife` (lives/engine.js) gives it: one
+ * step per line, each a fork on the person's route with the gray lives they
+ * didn't live leaving it. A step has its words (`line`, `label`), its age and
+ * height (`y`, 0 top to 1 bottom; luck lifts the path, setbacks drop it), its
+ * `kind` ('start', 'choice', 'lucky', 'setback' or 'event'), the earlier steps
+ * that pulse as it lands (`echoes`) and the choices the reader may try instead
+ * (`alts`). Set it with `useLife` before the player plays.
  */
 export const BORN_Y = 0.5;
-export const LIFE_STEPS = [
-  { key: 'born', age: 0, y: 0.5, kind: 'start' },
-  { key: 'choir', age: 6, y: 0.515, byFamily: true, alts: [
-    { id: 'football', age: 6.5, y: 0.37, step: 'joinSoccer', byFamily: true },
-    { id: 'swimming', age: 5.6, y: 0.64, byFamily: true },
-  ] },
-  { key: 'guitar', age: 10, y: 0.49, step: 'startPiano', buildsOn: [1], alts: [
-    { id: 'drums', age: 10.5, y: 0.4, step: 'startPiano' },
-    { id: 'chess', age: 9.6, y: 0.62, step: 'mathsClub' },
-  ] },
-  { key: 'band', age: 14, y: 0.505, step: 'schoolBand', buildsOn: [2], alts: [
-    { id: 'schoolTeam', age: 13.6, y: 0.62, step: 'tryOutTeam' },
-  ] },
-  { key: 'song', age: 16, y: 0.49, step: 'playGigs', buildsOn: [3], alts: [{ age: 16.4, y: 0.58 }] },
-  { key: 'radio', age: 18, y: 0.4, kind: 'lucky', step: 'songOnRadio', buildsOn: [4], long: true, alts: [{ age: 18.3, y: 0.54 }] },
-  { key: 'record', age: 20, y: 0.29, step: 'recordAlbum', buildsOn: [5, 4], long: true, alts: [{ age: 20.3, y: 0.45, gap: 0.6 }] },
-  { key: 'fame', age: 23, y: 0.33, alts: [
-    { id: 'earlyNights', age: 23.3, y: 0.22 },
-    { id: 'savesMoney', age: 22.8, y: 0.14 },
-  ] },
-  { key: 'splits', age: 25, y: 0.78, kind: 'roadblock', long: true, alts: [{ age: 25.5, y: 0.32, band: [0.29, 0.38] }] },
-  { key: 'help', age: 27, y: 0.67, long: true, alts: [
-    { id: 'movesHome', age: 27.8, y: 0.75 },
-    { id: 'officeJob', age: 27.3, y: 0.86 },
-  ] },
-  { key: 'teaches', age: 30, y: 0.55, step: 'teachMusic', buildsOn: [2], alts: [{ age: 30.4, y: 0.68 }] },
-  { key: 'kids', age: 33, y: 0.45, alts: [{ age: 33.4, y: 0.57 }] },
-  { key: 'school', age: 36, y: 0.36, buildsOn: [10], alts: [{ age: 36.4, y: 0.47 }] },
-  { key: 'stage', age: 41, y: 0.27, buildsOn: [1], alts: [{ age: 41.3, y: 0.38 }] },
-];
+export let LIFE = null;
 /** The story's lines: one per step, then "Many paths still ahead." (no age, no dot). */
-export const LINES = [...LIFE_STEPS.map((step, index) => ({ ...step, index })), { key: 'close', close: true }];
-export const LAST = LINES.length - 1;
-export const END = LIFE_STEPS.length - 1;
+export let LINES = [];
+export let LAST = 0;
+export let END = 0;
+// A line that holds a little longer: something that happened, or two sentences.
+const isLong = step => (step.kind !== 'choice' && step.kind !== 'start') || /[.!?]\s+\S/.test(step.line);
+export function useLife(life) {
+  LIFE = life;
+  LINES = [...life.steps.map((step, index) => ({ ...step, index, long: isLong(step) })), { key: 'close', close: true, index: life.steps.length }];
+  LAST = LINES.length - 1;
+  END = life.steps.length - 1;
+}
 
 /** The steps a step pulses as it lands. */
 export function buildsOn(index) {
-  return LINES[index]?.buildsOn ?? [];
+  return (LINES[index]?.echoes ?? []).slice(0, 2);
 }
 
 // Milliseconds from the moment a step's line starts to arrive.
@@ -138,7 +110,7 @@ function frameFor({ index, elapsed, landing }) {
     frame.sprout = sproutEase(clamp01((elapsed - TIMING.walkFrom) / TIMING.walk));
     frame.resting = elapsed >= settleAt(index);
   } else {
-    const growFor = line.kind === 'lucky' || line.kind === 'roadblock' ? TIMING.markerBloom : TIMING.bloom;
+    const growFor = line.kind === 'lucky' || line.kind === 'setback' ? TIMING.markerBloom : TIMING.bloom;
     frame.bloom = bloomEase(clamp01((elapsed - TIMING.pointAt) / growFor));
     if (index === 0) {
       frame.appear = landEase(clamp01(elapsed / TIMING.appear));
@@ -163,7 +135,7 @@ function frameFor({ index, elapsed, landing }) {
 }
 
 /** Everything placed: the route to its end, every fork, the paths ahead, the traveller resting. */
-export const FINAL_FRAME = { index: LAST, walk: 1, appear: 1, bloom: 1, sprout: 1, tails: 1, label: true, pulses: [], resting: true, landing: null };
+export const finalFrame = () => ({ index: LAST, walk: 1, appear: 1, bloom: 1, sprout: 1, tails: 1, label: true, pulses: [], resting: true, landing: null });
 
 /**
  * The story's player. One clock drives two sinks:
@@ -189,7 +161,7 @@ export function createLifePlayer({ map, narration, onChange = () => {} }) {
   const state = () => ({ index, playing: auto && !complete, complete, started: index >= 0 });
   const emit = () => onChange(state());
 
-  const draw = () => map(complete && !landing ? FINAL_FRAME : frameFor({ index, elapsed, landing }));
+  const draw = () => map(complete && !landing ? finalFrame() : frameFor({ index, elapsed, landing }));
 
   function loop(now) {
     frame = null;

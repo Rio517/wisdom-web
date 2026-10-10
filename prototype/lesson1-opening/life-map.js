@@ -1,31 +1,42 @@
-// Sam's life drawn in the Explore chapter's language (design 001 v13, round 3).
-// The drawing and label code are study copies of src/lessons/choices/journey-explore.js:
-// the same curves (they leave and reach every dot level, so each dot sits where
-// lines split), the same strokes, dots, star and diamond, the same label
-// placement and end card. New here:
-// - the route is Sam's authored life on an age axis from 0 to 45, with the
-//   choices he didn't make leaving every dot in gray;
+// One life from the lives store, drawn in the Explore chapter's language
+// (design 001 v13, round 4). The drawing and label code are study copies of
+// src/lessons/choices/journey-explore.js: the same curves (they leave and reach
+// every dot level, so each dot sits where lines split), the same strokes, dots,
+// star and diamond, the same label placement and end card. New here:
+// - the route is a written life (lives/engine.js `writtenLife`) on an age axis
+//   from 0 to 45, with gray lines leaving every dot: the alternatives the reader
+//   may pick, or other things that could have happened there;
 // - it is played by the story's clock (life.js), one step at a time;
-// - after the story, a gray choice can be picked: his real path from that fork
-//   turns light and stays behind, and a new life grows from the fork with the
-//   explorer's tree (explore-tree.js), seeded by the choice, to age 41.
-// Drawing is split so a frame stays cheap: the gray lines and the dark route are
-// drawn once per step onto two stage-sized canvases, and only the step in
-// motion is redrawn each frame, on a small canvas the size of that step. Labels,
-// the choices to pick, rings and the end card are HTML over the canvases.
+// - after the story, a choice can be changed (a gray label, or a ringed fork's
+//   popover): the real path from that fork turns light and stays behind, and a
+//   new life grows from the fork with the engine's `grow`, from a random seed.
+// Drawing is split so a frame stays cheap: the gray lines and the routes are
+// drawn once per step onto two stage-sized canvases, every dot, star and
+// diamond onto a third above them (so a mark always sits on top of every line,
+// cut clean by a ring of the map's colour), and only the step in motion is
+// redrawn each frame, on a small canvas the size of that step. Labels, the
+// choices to pick, the forks, their popover and the end card are HTML over the
+// canvases.
 import { canvasBitmap } from '../../src/engine/path-presentation.js';
-import { hash, stepLabel } from '../../src/lessons/choices/journey-choices.js';
 import { ease, prefersReducedMotion } from '../../src/lessons/choices/journey-motion.js';
 import { t } from '../../src/i18n/runtime.js';
-import { createLifeTree, isSurprise } from './explore-tree.js';
-import { LIFE_STEPS, BORN_Y, END, walkEase } from './life.js';
+import { gapFor, grow, hash01, heights, newSeed } from './lives/engine.js';
+import { BORN_Y, END, finalFrame } from './life.js';
 
 const FOREST = '#285442';
 const SAGE = '#8daa91';
 const MIST = '#c5cec8';
 const CLAY = '#9a5f3e';
 const SUN = '#e0a93b';
-const HALO = '#f2f5f0';
+const HALO = '#f2f5f0'; // the map's background (paper-deep)
+const rgbOf = hex => [1, 3, 5].map(at => parseInt(hex.slice(at, at + 2), 16));
+/** `a` laid over the map's background at `amount`: a faded colour that is still fully opaque. */
+const mix = (a, amount, b = HALO) => `#${rgbOf(a).map((value, at) => Math.round(value * amount + rgbOf(b)[at] * (1 - amount)).toString(16).padStart(2, '0')).join('')}`;
+const TAIL = mix(MIST, 0.55); // the gray lives carrying on past a gray dot
+const AHEAD = mix(SAGE, 0.9); // the paths still ahead
+const LIGHT = mix(SAGE, 0.7); // a real path behind a new life
+const LIGHT_SUN = mix(SUN, 0.5);
+const LIGHT_CLAY = mix(CLAY, 0.5);
 const FONT = '"Avenir Next", AvenirNext, "Segoe UI", sans-serif';
 const MAX_AGE = 45; // the axis runs 0–45; the paths still ahead run on past it
 const TOP = 24;
@@ -36,80 +47,79 @@ const GRAY_SIZE = 13;
 const OVER_GRAY = 30; // label cost of sitting over a gray choice or a path ahead
 const OVER_TAIL = 14; // and over a fainter gray tail
 const LIVED = 4.4;
-/** The steps whose choice the reader can change: choir (6), guitar (10), the band (14), fame (23), asking for help (27). */
-export const CHANGEABLE = [1, 2, 3, 7, 9];
+const GRAY = 2.3;
+const THIN = 1.8;
+const DOT = 3.8;
+const RING = 2; // the ring of map colour around every mark
 
-/** Every gray choice on Sam's route, in age order. Those with an `id` can be picked. */
-export const ALTS = LIFE_STEPS.flatMap((step, stepIndex) => (step.alts ?? []).map((alt, k) => ({
-  ...alt,
-  stepIndex,
-  key: alt.id ?? `${step.key}-${k}`,
-  side: alt.y < step.y ? -1 : 1,
-  bend: (hash(`sam-${alt.id ?? `${step.key}-${k}`}:bend`) - 0.5) * 0.03,
-})));
-export const PICKS = ALTS.filter(alt => alt.id).sort((a, b) => a.age - b.age);
+// ——— Where the gray lines go (a pure layout in ages and heights) ———
+const clamp = (value, lo, hi) => Math.max(lo, Math.min(hi, value));
+const isSurprise = kind => kind === 'lucky' || kind === 'setback';
 
-// The seed each picked life grows from, checked so that, like any explorer life,
-// each goes up and down, and their ends spread around Sam's: two end higher
-// than his, one a little lower, the rest lower. "Saves money" ends lower than his,
-// and the two other ways forward at 27 climb back from the low point too.
-const SEEDS = {
-  football: 'sam-football-27',
-  drums: 'sam-drums-26',
-  savesMoney: 'sam-savesMoney-13',
-  movesHome: 'sam-movesHome-9',
-  officeJob: 'sam-officeJob-34',
-};
+/** The gray lives a gray dot carries on into: one to three short lines, mostly two. */
+function tailsFor(key, age, y) {
+  const n = hash01(`${key}:n`);
+  const count = n < 0.2 ? 1 : n < 0.85 ? 2 : 3;
+  const spreads = count === 1 ? [(hash01(`${key}:s`) - 0.5) * 0.08] : count === 2 ? [-0.045, 0.05] : [-0.075, 0, 0.07];
+  return spreads.map((spread, j) => ({
+    age: age + gapFor(age) * (0.8 + 0.5 * hash01(`${key}:g${j}`)),
+    y: clamp(y + spread + (hash01(`${key}:y${j}`) - 0.5) * 0.02, 0.03, 0.97),
+    bend: (hash01(`${key}:b${j}`) - 0.5) * 0.03,
+  }));
+}
 
-// A what-if is told about Sam, so its labels never speak to "you": a step takes
-// the opening's third-person words where it has them, and a step or example
-// choice still addressed to the reader is left out of the pool.
-const whatIfLabel = id => (t.has(`opening.whatif.step.${id}`) ? t(`opening.whatif.step.${id}`) : stepLabel(id));
-const personNeutral = words => !/\b(you|your|yours|yourself)\b/i.test(words);
-const trees = new Map();
-function treeFor(alt) {
-  if (!trees.has(alt.key)) {
-    const band = alt.band ? { lo: alt.band[0], hi: alt.band[1] }
-      : alt.side < 0 ? { lo: alt.y - 0.13, hi: alt.y + 0.015 } : { lo: alt.y - 0.015, hi: alt.y + 0.13 };
-    trees.set(alt.key, createLifeTree({
-      seed: SEEDS[alt.key] ?? `sam-${alt.key}`,
-      start: { age: alt.age, y: alt.y, step: alt.step, label: alt.id ? t(`map.life.alt.${alt.id}`) : null, byFamily: alt.byFamily },
-      end: LIFE_STEPS[END].age,
-      taken: LIFE_STEPS.slice(0, alt.stepIndex).map(step => step.step).filter(Boolean),
-      firstBand: band,
-      firstGap: alt.gap ?? 1,
-      spread: 0.26,
-      settle: 0.5,
-      label: whatIfLabel,
-      keep: personNeutral,
-    }));
-  }
-  return trees.get(alt.key);
+/** The paths still ahead of a life's last dot: always a choice of two or three. */
+function aheadFor(key, age, y) {
+  const count = hash01(`${key}:count`) < 0.5 ? 2 : 3;
+  return Array.from({ length: count }, (_, j) => ({
+    age: age + 8.5 * 0.7 * (0.75 + 0.6 * hash01(`${key}:age${j}`)),
+    y: clamp(y - 0.15 + 0.26 * (j / (count - 1)) + (hash01(`${key}:y${j}`) - 0.5) * 0.03, 0.04, 0.96),
+    bend: (hash01(`${key}:b${j}`) - 0.5) * 0.03,
+  }));
 }
-const lives = new Map();
-/** The life a pick plays by itself: the tree's own nodes, from the alternative to 41. */
-export function lifeFor(altKey) {
-  const alt = ALTS.find(item => item.key === altKey);
-  if (!alt?.id) return null;
-  if (!lives.has(altKey)) lives.set(altKey, treeFor(alt).autoPath());
-  return lives.get(altKey);
-}
-// The paths still ahead of a life's last dot: always a choice of two or three, never a single surprise.
-const aheads = new Map();
-function aheadTree(seed, age, y) {
-  const key = `${seed}|${age}|${y}`;
-  if (!aheads.has(key)) aheads.set(key, createLifeTree({ seed, start: { age, y, kind: 'ahead' }, end: 70, firstBand: { lo: y - 0.15, hi: y + 0.11 }, firstGap: 0.7 }));
-  return aheads.get(key);
-}
-// The lives to pick grow while the reader reads the end card, one per idle moment, so a pick only lays one out.
-let warmed = false;
-function warmLives() {
-  if (warmed) return;
-  warmed = true;
-  const idle = globalThis.requestIdleCallback ?? (callback => setTimeout(callback, 60));
-  const keys = PICKS.map(alt => alt.key);
-  const next = () => { const key = keys.shift(); if (!key) return; lifeFor(key); idle(next, { timeout: 2000 }); };
-  idle(next, { timeout: 2000 });
+
+/**
+ * The gray lines leaving the dot before step `k`: the step's alternatives
+ * (which the reader may pick), or else one or two other things that could have
+ * happened there, or, at a lucky break, a setback or an event that moved the
+ * path, one line for the life going on without it. A level path spreads them
+ * above and below; a path about to climb or fall puts them on the other side,
+ * so they never cross the route's next stretch.
+ */
+function grayItems(steps, k, scope) {
+  const step = steps[k];
+  const prev = steps[k - 1];
+  const next = steps[k + 1];
+  const base = `${scope}:${k}`;
+  const moved = isSurprise(step.kind) || Boolean(step.move);
+  const pickable = !step.grown && step.alts.length > 0;
+  let list = pickable ? step.alts : moved ? [] : step.others;
+  if (!list.length) list = [{ id: null, without: true }];
+  const dn = (next ? next.y : step.y) - step.y;
+  const level = Math.abs(dn) < 0.04;
+  const side0 = level ? (hash01(`${base}:side`) < 0.5 ? -1 : 1) : (dn < 0 ? 1 : -1);
+  return list.map((option, i) => {
+    const key = `${k}-${option.id ?? 'without'}`;
+    let y;
+    if (option.without) {
+      const dy = step.y - prev.y;
+      y = prev.y + (Math.abs(dy) > 0.01 ? -Math.sign(dy) : side0) * 0.06;
+    } else {
+      const side = level && i % 2 ? -side0 : side0;
+      const rank = level ? Math.floor(i / 2) : i;
+      const offset = 0.1 + 0.085 * rank + (hash01(`${base}:${option.id}:dy`) - 0.5) * 0.03;
+      y = step.y + side * offset;
+      if (y < 0.05 || y > 0.95) y = step.y - side * offset;
+    }
+    y = clamp(y, 0.04, 0.96);
+    const age = clamp(step.age + (hash01(`${base}:${option.id}:age`) - 0.5) * 0.9, prev.age + 0.7, step.age + 0.5);
+    return {
+      key, stepIndex: k, id: option.id ?? null, label: option.label ?? null, whatIf: option.whatIf ?? null, kind: option.kind ?? null,
+      pickable: pickable && !option.without, age, y,
+      bend: (hash01(`${base}:${option.id}:bend`) - 0.5) * 0.03,
+      tails: tailsFor(`${scope}:${key}`, age, y),
+    };
+  });
 }
 
 // ——— Curves (the explorer's: level out of each dot, level into the next) ———
@@ -117,90 +127,114 @@ function controls(edge) {
   const dx = edge.b.x - edge.a.x;
   return [edge.a, { x: edge.a.x + dx * 0.5, y: edge.a.y + edge.bend }, { x: edge.b.x - dx * 0.5, y: edge.b.y }, edge.b];
 }
-function pointOn(edge, t) {
+function pointOn(edge, at) {
   const [p0, p1, p2, p3] = controls(edge);
-  const u = 1 - t;
+  const u = 1 - at;
   return {
-    x: u * u * u * p0.x + 3 * u * u * t * p1.x + 3 * u * t * t * p2.x + t * t * t * p3.x,
-    y: u * u * u * p0.y + 3 * u * u * t * p1.y + 3 * u * t * t * p2.y + t * t * t * p3.y,
+    x: u * u * u * p0.x + 3 * u * u * at * p1.x + 3 * u * at * at * p2.x + at * at * at * p3.x,
+    y: u * u * u * p0.y + 3 * u * u * at * p1.y + 3 * u * at * at * p2.y + at * at * at * p3.y,
   };
 }
 const edgePoints = (edge, samples = 20) => Array.from({ length: samples + 1 }, (_, i) => pointOn(edge, i / samples));
-/** The curve from its start to `t`, as one Bézier (de Casteljau), so a growing line is one stroke. */
-function trace(context, edge, t = 1) {
+/** The curve from its start to `at`, as one Bézier (de Casteljau), so a growing line is one stroke. */
+function trace(context, edge, at = 1) {
   const [p0, p1, p2, p3] = controls(edge);
   context.moveTo(p0.x, p0.y);
-  if (t >= 1) { context.bezierCurveTo(p1.x, p1.y, p2.x, p2.y, p3.x, p3.y); return; }
-  if (t <= 0) return;
-  const lerp = (a, b) => ({ x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t });
+  if (at >= 1) { context.bezierCurveTo(p1.x, p1.y, p2.x, p2.y, p3.x, p3.y); return; }
+  if (at <= 0) return;
+  const lerp = (a, b) => ({ x: a.x + (b.x - a.x) * at, y: a.y + (b.y - a.y) * at });
   const q0 = lerp(p0, p1); const q1 = lerp(p1, p2); const q2 = lerp(p2, p3);
   const r0 = lerp(q0, q1); const r1 = lerp(q1, q2);
   context.bezierCurveTo(q0.x, q0.y, r0.x, r0.y, lerp(r0, r1).x, lerp(r0, r1).y);
 }
 // Gray and light green lines that run on past the stage fade out at its right edge.
 let fadeFrom = Infinity;
-const FADES = { [MIST]: [197, 206, 200], [SAGE]: [141, 170, 145] };
+const FADING = new Set([MIST, TAIL, SAGE, AHEAD]);
 function strokeStyle(context, color) {
-  const rgb = FADES[color];
-  if (!rgb || !Number.isFinite(fadeFrom)) return color;
+  if (!FADING.has(color) || !Number.isFinite(fadeFrom)) return color;
+  const rgb = rgbOf(color);
   const gradient = context.createLinearGradient(fadeFrom, 0, fadeFrom + 54, 0);
   gradient.addColorStop(0, `rgb(${rgb})`);
   gradient.addColorStop(1, `rgba(${rgb},0)`);
   return gradient;
 }
-function stroke(context, edges, color, width, alpha = 1, t = 1, dash = null) {
-  if (!edges.length || t <= 0 || alpha <= 0) return;
+function stroke(context, edges, color, width, at = 1) {
+  if (!edges.length || at <= 0) return;
   context.save();
-  context.globalAlpha = alpha;
   context.strokeStyle = strokeStyle(context, color);
   context.lineWidth = width;
   context.lineCap = 'round';
   context.lineJoin = 'round';
-  if (dash) context.setLineDash(dash);
   context.beginPath();
-  for (const edge of edges) trace(context, edge, t);
+  for (const edge of edges) trace(context, edge, at);
   context.stroke();
   context.restore();
 }
-function dot(context, point, radius, color, alpha = 1) {
+function disc(context, point, radius, color) {
   if (radius <= 0) return;
-  context.save(); context.globalAlpha = alpha; context.fillStyle = color;
-  context.beginPath(); context.arc(point.x, point.y, radius, 0, Math.PI * 2); context.fill(); context.restore();
+  context.fillStyle = color;
+  context.beginPath(); context.arc(point.x, point.y, radius, 0, Math.PI * 2); context.fill();
 }
 // A small flat marker where a surprise happened: a star for a lucky break, a diamond for a setback.
-function marker(context, point, kind, scale = 1, alpha = 1) {
-  if (scale <= 0) return;
-  context.save();
-  context.globalAlpha = alpha;
-  context.fillStyle = kind === 'lucky' ? SUN : CLAY;
-  context.strokeStyle = HALO;
-  context.lineWidth = 2;
-  context.beginPath();
+function shape(context, point, kind, scale) {
   const spikes = kind === 'lucky' ? 5 : 2;
   const outer = (kind === 'lucky' ? 10 : 8.5) * scale;
   const inner = (kind === 'lucky' ? 4.4 : 8.5) * scale;
+  context.beginPath();
   for (let index = 0; index < spikes * 2; index += 1) {
     const radius = index % 2 ? inner : outer;
     const angle = -Math.PI / 2 + (index * Math.PI) / spikes;
     context.lineTo(point.x + Math.cos(angle) * radius, point.y + Math.sin(angle) * radius);
   }
   context.closePath();
-  context.stroke();
-  context.fill();
+}
+const LAYER = { gray: 0, tail: 0, ahead: 1, light: 2, dark: 3 };
+/**
+ * One mark, over every line: a dot, star or diamond, fully opaque (a faded mark
+ * is a pre-mixed colour, never see-through), inside a ring of the map's colour
+ * that cuts any line passing behind it. A dot's own lines (those that leave or
+ * reach it) are drawn again inside its ring, so they still meet it whole.
+ * `strokes` are the lines drawn so far; `scale` grows a mark as it blooms.
+ */
+function drawMark(context, mark, strokes, scale = 1) {
+  if (scale <= 0) return;
+  const { point, kind, light } = mark;
+  context.save();
+  if (isSurprise(kind)) {
+    shape(context, point, kind, scale);
+    context.strokeStyle = HALO;
+    context.lineWidth = RING * 2;
+    context.lineJoin = 'round';
+    context.stroke();
+    context.fillStyle = kind === 'lucky' ? (light ? LIGHT_SUN : SUN) : (light ? LIGHT_CLAY : CLAY);
+    context.fill();
+    context.restore();
+    return;
+  }
+  const radius = DOT * scale;
+  disc(context, point, radius + RING, HALO);
+  const own = strokes.filter(item => near(item.edge.a, point) || near(item.edge.b, point)).sort((a, b) => LAYER[a.layer] - LAYER[b.layer]);
+  if (own.length) {
+    context.save();
+    context.beginPath(); context.arc(point.x, point.y, radius + RING + 0.5, 0, Math.PI * 2); context.clip();
+    for (const item of own) stroke(context, [item.edge], item.color, item.width, item.at ?? 1);
+    context.restore();
+  }
+  disc(context, point, radius, light ? LIGHT : FOREST);
   context.restore();
 }
-const markerKind = kind => (kind === 'lucky' || kind === 'roadblock' ? kind : null);
-const markerRadius = kind => (kind === 'lucky' ? 10 : 8.5);
+const near = (a, b) => Math.abs(a.x - b.x) < 0.5 && Math.abs(a.y - b.y) < 0.5;
 function boundsOf(points, pad) {
   const xs = points.map(point => point.x); const ys = points.map(point => point.y);
   return { left: Math.min(...xs) - pad, top: Math.min(...ys) - pad, right: Math.max(...xs) + pad, bottom: Math.max(...ys) + pad };
 }
 const edgeBounds = edge => controls(edge);
+const inside = (point, box, pad = 12) => point.x > box.left - pad && point.x < box.right + pad && point.y > box.top - pad && point.y < box.bottom + pad;
 
 // ——— Labels (the explorer's placement) ———
 // Every spot the explorer tries for a chosen label, cheapest first: the first
 // clear one is the one its search would pick. Here a label names the dot its
-// line arrives at (Sam's step at that age), so the spots start nearer the dot.
+// line arrives at (the step at that age), so the spots start nearer the dot.
 const SPOTS = (() => {
   const list = [];
   [14, 13, 15, 12, 16, 11, 17, 10, 18, 9, 19, 8, 7, 6, 5, 4, 3, 2, 1].forEach((index, rank) => {
@@ -219,9 +253,10 @@ const SPOTS = (() => {
 
 /**
  * Places labels clear of each other and of the lines given as `paths` (a
- * label never sits on the dark route or a dot). Sam's labels also try to keep
+ * label never sits on a route or a dot). The route's labels also try to keep
  * off the gray and light green lines (`soft`) first, the nearer ones before the
- * fainter tails, and only sit over them where nothing else is clear.
+ * fainter tails, and only sit over them where nothing else is clear. A label
+ * that finds no clear room is left out, never cut: every label is whole.
  * `measure(text, font)` is a canvas measureText.
  */
 function sampleGrid(edges, points = []) {
@@ -254,7 +289,7 @@ function sampleGrid(edges, points = []) {
 }
 function createPlacer({ width, height, measure, paths = [], dots = [], boxes = [], right = 2, soft = [[], []] }) {
   const onPath = sampleGrid(paths, dots);
-  const near = soft.map(edges => sampleGrid(edges));
+  const nearSoft = soft.map(edges => sampleGrid(edges));
   const taken = [...boxes];
   const outside = box => box.left < 2 || box.right > width - right || box.top < 2 || box.bottom > height - 26;
   const clash = box => taken.some(o => box.left < o.right && box.right > o.left && box.top < o.bottom && box.bottom > o.top);
@@ -264,21 +299,20 @@ function createPlacer({ width, height, measure, paths = [], dots = [], boxes = [
   return {
     onPath,
     reserve(box) { taken.push(box); },
-    /** A chosen-path label along its edge (`points`, 21 of them, ending at its dot), or null when nowhere is clear. */
+    /** A route label along its edge (`points`, 21 of them, ending at its dot), or null when nowhere is clear. */
     chosen(text, points, own = points.at(-1)) {
-      const width = measure(text, `650 ${CHOSEN_SIZE}px ${FONT}`);
-      const home = dots.find(p => Math.abs(p.x - own.x) < 0.5 && Math.abs(p.y - own.y) < 0.5) ?? own;
-      // The explorer's cheapest clear spot, where sitting over a gray line costs extra.
+      const textWidth = measure(text, `650 ${CHOSEN_SIZE}px ${FONT}`);
+      const home = dots.find(p => near(p, own)) ?? own;
       let best = null;
       for (const spot of SPOTS) {
         if (best && spot.cost >= best.cost) break;
         const anchor = spot.dot ? own : points[spot.index];
         const baseline = spot.dot ? own.y + spot.dy : spot.side < 0 ? anchor.y - spot.gap - 4 : anchor.y + spot.gap + CHOSEN_SIZE;
-        const left = spot.dot ? (spot.align === 'left' ? own.x + spot.dx : own.x + spot.dx - width)
-          : spot.align === 'center' ? anchor.x - width / 2 : spot.align === 'left' ? anchor.x - 6 : anchor.x - width + 6;
-        const box = { left: left - 4, right: left + width + 4, top: baseline - CHOSEN_SIZE, bottom: baseline + 4 };
+        const left = spot.dot ? (spot.align === 'left' ? own.x + spot.dx : own.x + spot.dx - textWidth)
+          : spot.align === 'center' ? anchor.x - textWidth / 2 : spot.align === 'left' ? anchor.x - 6 : anchor.x - textWidth + 6;
+        const box = { left: left - 4, right: left + textWidth + 4, top: baseline - CHOSEN_SIZE, bottom: baseline + 4 };
         if (outside(box) || clash(box) || onPath(box) || strayed(box, home)) continue;
-        const cost = spot.cost + (near[0](box, 3) ? OVER_GRAY : 0) + (near[1](box, 3) ? OVER_TAIL : 0);
+        const cost = spot.cost + (nearSoft[0](box, 3) ? OVER_GRAY : 0) + (nearSoft[1](box, 3) ? OVER_TAIL : 0);
         if (!best || cost < best.cost) best = { cost, spot, anchor, box, left, baseline };
       }
       if (!best) return null;
@@ -290,41 +324,28 @@ function createPlacer({ width, height, measure, paths = [], dots = [], boxes = [
       } : null;
       return { text, left, baseline, box, leader, size: CHOSEN_SIZE };
     },
-    /**
-     * A gray choice's label, near the middle of its line, or null where none is
-     * clear (as in the explorer). `force` always finds one: the choices to pick.
-     */
-    gray(text, points, { force = false } = {}) {
-      const width = measure(text, `500 ${GRAY_SIZE}px ${FONT}`);
-      const at = (anchor, dy) => {
-        const baseline = anchor.y + dy;
-        // The button's own box: 6 px padding and a 1.5 px border each side.
-        return { left: anchor.x - width / 2, baseline, box: { left: anchor.x - width / 2 - 8, right: anchor.x + width / 2 + 8, top: baseline - GRAY_SIZE - 2, bottom: baseline + 7 } };
-      };
-      let fallback = null;
-      // Near the middle of its line first (as in the explorer), then on along the life it leads to.
+    /** A gray choice's label, near the middle of its line, or null where none is clear (as in the explorer). */
+    gray(text, points) {
+      const textWidth = measure(text, `500 ${GRAY_SIZE}px ${FONT}`);
       for (const index of [12, 11, 13, 10, 14, 9, 15, 8, 16, 17, 18, 19, 20, 22, 24, 26, 28, 30, 7]) {
         if (!points[index]) continue;
         for (const dy of [-8, 18, -16, 26]) {
-          const spot = at(points[index], dy);
-          if (outside(spot.box) || clash(spot.box)) continue;
-          fallback ??= spot;
-          if (onPath(spot.box)) continue;
-          taken.push(spot.box);
-          return { text, size: GRAY_SIZE, ...spot };
+          const baseline = points[index].y + dy;
+          // The button's own box: 6 px padding and a 1.5 px border each side.
+          const box = { left: points[index].x - textWidth / 2 - 8, right: points[index].x + textWidth / 2 + 8, top: baseline - GRAY_SIZE - 2, bottom: baseline + 7 };
+          if (outside(box) || clash(box) || onPath(box)) continue;
+          taken.push(box);
+          return { text, size: GRAY_SIZE, center: points[index].x, baseline, box };
         }
       }
-      if (!force) return null;
-      const spot = fallback ?? at(points[12], -8);
-      taken.push(spot.box);
-      return { text, size: GRAY_SIZE, forced: true, ...spot };
+      return null;
     },
   };
 }
 
 const escapeHTML = value => String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;');
 
-export function createLifeMap(stack, { origin, before = null, onPick = () => {}, onStep = () => {}, onDone = () => {} } = {}) {
+export function createLifeMap(stack, { origin, before = null, onPick = () => {}, onStep = () => {}, onDone = () => {}, onLeave = () => {} } = {}) {
   const make = (tag, className) => {
     const element = document.createElement(tag);
     element.className = className;
@@ -334,18 +355,21 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
   const axis = make('div', 'life-axis');
   const graysCanvas = make('canvas', 'life-grays');
   const darkCanvas = make('canvas', 'life-dark');
+  const marksCanvas = make('canvas', 'life-marks');
   const liveCanvas = make('canvas', 'life-live');
   const overlay = document.createElement('div');
   overlay.className = 'life-overlay';
   const card = document.createElement('div');
   card.className = 'explore-end life-end';
   card.hidden = true;
-  card.innerHTML = `<h2 tabindex="-1">${escapeHTML(t('opening.end.heading'))}</h2>
-    <p>${escapeHTML(t('opening.end.gray'))}</p>
-    <div class="end-buttons"><button type="button" class="solid-pill" data-life="choose">${escapeHTML(t('opening.end.change'))}</button></div>`;
-  for (const element of [axis, graysCanvas, darkCanvas, liveCanvas, overlay]) stack.insertBefore(element, before);
-  const contexts = [graysCanvas, darkCanvas, liveCanvas].map(canvas => { try { return canvas.getContext('2d'); } catch { return null; } });
-  const [gx, dx, lx] = contexts;
+  const pop = document.createElement('div');
+  pop.className = 'life-pop';
+  pop.hidden = true;
+  pop.setAttribute('role', 'dialog');
+  pop.dataset.localKeys = '';
+  for (const element of [axis, graysCanvas, darkCanvas, marksCanvas, liveCanvas, overlay]) stack.insertBefore(element, before);
+  const contexts = [graysCanvas, darkCanvas, marksCanvas, liveCanvas].map(canvas => { try { return canvas.getContext('2d'); } catch { return null; } });
+  const [gx, dx, mx, lx] = contexts;
   const failed = contexts.some(context => !context);
   const boxOf = element => {
     const box = element.getBoundingClientRect();
@@ -354,11 +378,12 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
   };
   const measure = (text, font) => { dx.save(); dx.font = font; const width = dx.measureText(text).width; dx.restore(); return width; };
 
+  let model = null; // the life on the map and its gray lines (setLife)
   let size = null;
   let geo = null;
   let mode = 'story';
   let frame = null;
-  let baked = -1; // steps drawn whole onto the gray and dark canvases
+  let baked = -1; // steps drawn whole onto the gray, dark and marks canvases
   let aheadBaked = false;
   let lastPos = 0;
   let landFrom = null;
@@ -366,74 +391,83 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
   let liveBox = '';
   let shown = { labels: -1, alts: -1 };
   let visible = true;
+  let strokes = []; // every line on the gray and dark canvases, for the marks above them
+  let marks = []; // every mark on the marks canvas
+  let openFork = null;
 
   const rect = () => {
     if (!size) size = { width: stack.clientWidth, height: stack.clientHeight };
     return size;
   };
 
+  /** The life to draw (`writtenLife`) and the store to grow new lives from. */
+  function setLife(life, store) {
+    stopWhat();
+    closePop();
+    const items = life.steps.flatMap((_, k) => (k ? grayItems(life.steps, k, life.id) : []));
+    model = {
+      life, store, items,
+      picks: items.filter(item => item.pickable).sort((a, b) => a.age - b.age),
+      forks: [...new Set(items.filter(item => item.pickable).map(item => item.stepIndex))].sort((a, b) => a - b),
+      ahead: aheadFor(`${life.id}:ahead`, life.steps.at(-1).age, life.steps.at(-1).y),
+    };
+    geo = null;
+    sizedFor = '';
+    baked = -1; aheadBaked = false; lastPos = 0; landFrom = null;
+    card.innerHTML = `<h2 tabindex="-1">${escapeHTML(t('opening.end.heading'))}</h2>
+      <p>${escapeHTML(t('opening.end.gray', { name: life.name }))}</p>
+      <div class="end-buttons"><button type="button" class="solid-pill" data-life="choose">${escapeHTML(t('opening.end.change', { pronoun: life.pronoun }))}</button>
+      <button type="button" class="pill-button" data-life="another">${escapeHTML(t('opening.end.another'))}</button></div>`;
+  }
+
   // ——— Where everything sits at this stage size ———
   function geometry() {
     const r = rect();
-    const key = `${r.width}x${r.height}`;
+    const key = `${model.life.id}|${r.width}x${r.height}`;
     if (geo?.key === key) return geo;
     const o = origin();
     // A narrow stage keeps a band clear at the top for the end card's bar.
     const span = r.height - TOP - BOTTOM - (r.width < 800 ? 44 : 0);
     fadeFrom = r.width - 64;
-    // Even years: Sam's later life has as many steps as his childhood, so it gets the same room.
+    // Even years: a later life has as many steps as its childhood, so it gets the same room.
     const X = age => o.x + (age / MAX_AGE) * (r.width - o.x - RIGHT);
     const Y = y => o.y + (y - BORN_Y) * span;
     const at = (age, y) => ({ x: X(age), y: Y(y) });
-    const points = LIFE_STEPS.map(step => at(step.age, step.y));
+    const steps = model.life.steps;
+    const points = steps.map(step => at(step.age, step.y));
     const edges = points.map((point, index) => (index ? { a: points[index - 1], b: point, bend: 0 } : null));
-    const alts = ALTS.map(alt => {
-      const node = at(alt.age, alt.y);
-      const edge = { a: points[alt.stepIndex - 1], b: node, bend: alt.bend * span };
-      // Gray lives run on past 41 too: an alternative too late for a fork of its own gets the paths ahead.
-      const own = treeFor(alt).children('r');
-      const next = own.length ? own : aheadTree(`sam-${alt.key}`, alt.age, alt.y).children('r');
-      const tails = next.map(child => ({ a: node, b: at(child.age, child.y ?? child.ay), bend: child.bend * span }));
-      return { alt, node, edge, tails };
+    const alts = model.items.map(item => {
+      const node = at(item.age, item.y);
+      return {
+        item, node,
+        edge: { a: points[item.stepIndex - 1], b: node, bend: item.bend * span },
+        tails: item.tails.map(tail => ({ a: node, b: at(tail.age, tail.y), bend: tail.bend * span })),
+      };
     });
-    const altsOf = LIFE_STEPS.map((_, index) => alts.filter(item => item.alt.stepIndex === index));
-    const ahead = aheadEdges(aheadTree('sam-ahead', LIFE_STEPS[END].age, LIFE_STEPS[END].y), points[END], at, span);
+    const altsOf = steps.map((_, index) => alts.filter(entry => entry.item.stepIndex === index));
+    const ahead = model.ahead.map(item => ({ a: points[END], b: at(item.age, item.y), bend: item.bend * span }));
 
-    // Labels: Sam's in age order (an earlier label never moves when a later one
-    // arrives), then the gray choices, which give way to them.
+    // Labels: the route's in age order (an earlier label never moves when a
+    // later one arrives), then the gray choices, which give way to them.
     const placer = createPlacer({ width: r.width, height: r.height, measure, paths: edges.slice(1), dots: points, right: 46,
-      soft: [[...alts.map(item => item.edge), ...ahead.first], alts.flatMap(item => item.tails)] });
-    const labels = LIFE_STEPS.map((step, index) => placer.chosen(t(`map.life.${step.key}`), index ? edgePoints(edges[index]) : Array(21).fill(points[0]), points[index]));
+      soft: [[...alts.map(entry => entry.edge), ...ahead], alts.flatMap(entry => entry.tails)] });
+    const labels = steps.map((step, index) => placer.chosen(step.label, index ? edgePoints(edges[index]) : Array(21).fill(points[0]), points[index]));
     // The tail nearest its own height carries a gray label on if the line itself is crowded.
-    const altLine = item => {
-      const tail = [...item.tails].sort((a, b) => Math.abs(a.b.y - item.node.y) - Math.abs(b.b.y - item.node.y))[0];
-      return [...edgePoints(item.edge), ...(tail ? edgePoints(tail).slice(1) : [])];
+    const altLine = entry => {
+      const tail = [...entry.tails].sort((a, b) => Math.abs(a.b.y - entry.node.y) - Math.abs(b.b.y - entry.node.y))[0];
+      return [...edgePoints(entry.edge), ...(tail ? edgePoints(tail).slice(1) : [])];
     };
-    const grayLabels = alts.map(item => (item.alt.id ? placer.gray(t(`map.life.alt.${item.alt.id}`), altLine(item)) : null));
-    // Every choice to pick gets a button. One whose label found no clear room
-    // shows only while choosing, and Sam's labels in its way step aside then.
-    const buttons = createPlacer({ width: r.width, height: r.height, measure, paths: edges.slice(1), dots: points, right: 46, boxes: grayLabels.filter(Boolean).map(item => item.box) });
-    const pickLabels = alts.map((item, index) => (item.alt.id ? grayLabels[index] ?? { ...buttons.gray(t(`map.life.alt.${item.alt.id}`), altLine(item), { force: true }), tight: true } : null));
-    const overlaps = (a, b) => a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
-    const yields = labels.map(label => Boolean(label) && pickLabels.some(item => item?.tight && overlaps(label.box, item.box)));
-    geo = { key, span, X, Y, at, points, edges, alts, altsOf, ahead, labels, grayLabels: pickLabels, yields, placer };
+    const grayLabels = alts.map(entry => (entry.item.pickable ? placer.gray(entry.item.label, altLine(entry)) : null));
+    geo = { key, span, X, Y, at, points, edges, alts, altsOf, ahead, labels, grayLabels, placer };
     buildOverlay();
     applyMode();
     return geo;
   }
 
-  function aheadEdges(tree, from, at, span) {
-    const first = tree.children('r');
-    return {
-      first: first.map(child => ({ a: from, b: at(child.age, child.ay), bend: child.bend * span })),
-      second: [],
-    };
-  }
-
-  // ——— HTML over the canvases: labels, the choices to pick, rings, pulses, the end card ———
+  // ——— HTML over the canvases: labels, the choices to pick, forks, pulses, the end card ———
   let labelEls = [];
   let altEls = [];
-  let ringEls = [];
+  let forkEls = [];
   let pulseEls = [];
   let whatEls = [];
   // A label that had to move away keeps a short leader to its line, drawn with
@@ -451,20 +485,23 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
   }
   function buildOverlay() {
     const g = geo;
-    overlay.innerHTML = `${g.labels.map((item, index) => labelHTML(item, g.yields[index] ? 'is-dark is-yielding' : 'is-dark', ` data-step="${index}"`)).join('')}
-      ${CHANGEABLE.map(index => `<i class="life-ring" data-step="${index}" style="left:${g.points[index].x.toFixed(1)}px;top:${g.points[index].y.toFixed(1)}px"></i>`).join('')}
-      ${g.alts.map((item, index) => {
+    const steps = model.life.steps;
+    overlay.innerHTML = `${g.labels.map((item, index) => labelHTML(item, 'is-dark', ` data-step="${index}"`)).join('')}
+      ${g.alts.map((entry, index) => {
         const spot = g.grayLabels[index];
         if (!spot) return '';
-        const step = LIFE_STEPS[item.alt.stepIndex];
-        return `<button type="button" class="life-alt${spot.tight ? ' is-tight' : ''}" data-alt="${item.alt.key}" tabindex="-1" style="left:${(spot.left + measureHalf(spot)).toFixed(1)}px;top:${spot.baseline.toFixed(1)}px"
-          aria-label="${escapeHTML(t('opening.alt.label', { choice: spot.text, instead: t(`map.life.${step.key}`), age: step.age }))}"><span>${escapeHTML(spot.text)}</span></button>`;
+        const step = steps[entry.item.stepIndex];
+        return `<button type="button" class="life-alt" data-alt="${escapeHTML(entry.item.key)}" tabindex="-1" style="left:${spot.center.toFixed(1)}px;top:${spot.baseline.toFixed(1)}px"
+          aria-label="${escapeHTML(t('opening.alt.label', { choice: spot.text, instead: step.label, age: step.age }))}"><span>${escapeHTML(spot.text)}</span></button>`;
       }).join('')}
+      ${model.forks.map(index => `<button type="button" class="life-fork" data-step="${index}" data-local-keys tabindex="-1" aria-haspopup="dialog" aria-expanded="false"
+        aria-label="${escapeHTML(t('opening.fork.label', { age: steps[index].age, choice: steps[index].label }))}" style="left:${g.points[index].x.toFixed(1)}px;top:${g.points[index].y.toFixed(1)}px"></button>`).join('')}
       <i class="life-pulse"></i><i class="life-pulse"></i>`;
     overlay.prepend(card);
+    overlay.append(pop);
     labelEls = [...overlay.querySelectorAll('.life-label.is-dark')];
     altEls = [...overlay.querySelectorAll('.life-alt')];
-    ringEls = [...overlay.querySelectorAll('.life-ring')];
+    forkEls = [...overlay.querySelectorAll('.life-fork')];
     pulseEls = [...overlay.querySelectorAll('.life-pulse')];
     whatEls = [];
     shown = { labels: -1, alts: -1 };
@@ -474,7 +511,7 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
       return `<span class="life-tick" style="left:${x.toFixed(1)}px"><b>${age}</b></span>`;
     }).join('')}<span class="life-axis-name">${escapeHTML(t('explore.age'))}</span>`;
   }
-  const measureHalf = spot => measure(spot.text, `500 ${GRAY_SIZE}px ${FONT}`) / 2;
+  const itemFor = key => model.items.find(item => item.key === key);
 
   function showLabels(count, altCount) {
     if (count !== shown.labels) {
@@ -483,10 +520,7 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
     }
     if (altCount !== shown.alts) {
       shown.alts = altCount;
-      altEls.forEach(element => {
-        const alt = ALTS.find(item => item.key === element.dataset.alt);
-        element.classList.toggle('is-shown', alt.stepIndex < altCount);
-      });
+      altEls.forEach(element => element.classList.toggle('is-shown', itemFor(element.dataset.alt).stepIndex < altCount));
     }
   }
 
@@ -497,13 +531,25 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
     context.setTransform(bitmap.scale, 0, 0, bitmap.scale, -box.left * bitmap.scale, -box.top * bitmap.scale);
     context.clearRect(box.left, box.top, box.width, box.height);
   }
-  let sizedFor = ''; // the stage size the gray and dark canvases were last drawn at
+  const whole = () => ({ left: 0, top: 0, width: rect().width, height: rect().height });
+  let sizedFor = ''; // the stage size the base canvases were last drawn at
   function clearBase() {
     const r = rect();
-    sizedFor = `${r.width}x${r.height}`;
-    sizeCanvas(graysCanvas, gx, { left: 0, top: 0, width: r.width, height: r.height });
-    sizeCanvas(darkCanvas, dx, { left: 0, top: 0, width: r.width, height: r.height });
+    sizedFor = `${model.life.id}|${r.width}x${r.height}`;
+    sizeCanvas(graysCanvas, gx, whole());
+    sizeCanvas(darkCanvas, dx, whole());
+    sizeCanvas(marksCanvas, mx, whole());
     baked = -1; aheadBaked = false;
+    strokes = []; marks = [];
+  }
+  /** Draw lines onto a base canvas and remember them for the marks above. */
+  function lay(layer, edges, color, width) {
+    stroke(layer === 'dark' || layer === 'light' ? dx : gx, edges, color, width);
+    for (const edge of edges) strokes.push({ edge, color, width, layer });
+  }
+  function paintMarks() {
+    sizeCanvas(marksCanvas, mx, whole());
+    for (const mark of marks) drawMark(mx, mark, strokes);
   }
   /** Move the live canvas over `box` (stage pixels) and clear it. */
   function useLive(bounds) {
@@ -519,50 +565,57 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
       Object.assign(liveCanvas.style, { left: `${box.left}px`, top: `${box.top}px`, right: 'auto', bottom: 'auto', width: `${box.width}px`, height: `${box.height}px` });
     }
     sizeCanvas(liveCanvas, lx, box);
+    return { left: box.left, top: box.top, right: box.left + box.width, bottom: box.top + box.height };
   }
+  /** The marks under the live canvas, drawn again over the lines in motion (`moving`: those lines and how far they've grown). */
+  function marksOver(box, moving) {
+    const all = [...strokes, ...moving];
+    for (const mark of marks) if (inside(mark.point, box)) drawMark(lx, mark, all);
+  }
+  const markFor = (point, kind, light = false) => ({ point, kind, light });
 
-  // One step of Sam's route, whole: the gray choices he didn't make, then the line to his dot.
+  // One step of the route, whole: the gray lines leaving the dot before it, then the line to its dot.
   function bakeStep(index) {
     const g = geometry();
+    const steps = model.life.steps;
     if (index > 0) {
-      for (const item of g.altsOf[index]) {
-        stroke(gx, [item.edge], MIST, 2.3);
-        stroke(gx, item.tails, MIST, 1.8, 0.55);
+      for (const entry of g.altsOf[index]) {
+        lay('gray', [entry.edge], MIST, GRAY);
+        lay('tail', entry.tails, TAIL, THIN);
       }
-      stroke(dx, [g.edges[index]], FOREST, LIVED);
-      const previous = LIFE_STEPS[index - 1];
-      if (markerKind(previous.kind)) marker(dx, g.points[index - 1], previous.kind);
+      lay('dark', [g.edges[index]], FOREST, LIVED);
     }
-    const step = LIFE_STEPS[index];
-    if (markerKind(step.kind)) marker(dx, g.points[index], step.kind);
-    else dot(dx, g.points[index], 3.8, FOREST);
+    marks.push(markFor(g.points[index], steps[index].kind));
   }
   function bakeAhead() {
     const g = geometry();
-    stroke(gx, g.ahead.first, SAGE, 3, 0.9);
-    stroke(gx, g.ahead.second, SAGE, 2.2, 0.5);
+    lay('ahead', g.ahead, AHEAD, 3);
     aheadBaked = true;
   }
   function bakeTo(count, ahead) {
     const r = rect();
     // The first drawing at a stage size sizes the canvases first.
-    if (sizedFor !== `${r.width}x${r.height}` || count < baked + 1 || (aheadBaked && !ahead)) clearBase();
+    if (sizedFor !== `${model.life.id}|${r.width}x${r.height}` || count < baked + 1 || (aheadBaked && !ahead)) clearBase();
+    const before = baked;
     for (let index = baked + 1; index < count; index += 1) bakeStep(index);
     baked = Math.max(baked, count - 1);
-    if (ahead && !aheadBaked) bakeAhead();
+    const grew = ahead && !aheadBaked;
+    if (grew) bakeAhead();
+    if (baked !== before || grew || !marks.length) paintMarks();
   }
 
   // The traveller: moving, a dot with a soft halo; resting, a slightly larger dot.
   function traveller(context, point, moving, scale = 1) {
-    if (moving) dot(context, point, 13 * scale, 'rgba(40,84,66,.16)');
-    dot(context, point, (moving ? 7 : 7.5) * scale, FOREST);
+    if (moving) disc(context, point, 13 * scale, 'rgba(40,84,66,.16)');
+    disc(context, point, (moving ? 7 : 7.5) * scale, FOREST);
   }
 
-  // ——— Sam's story, one frame at a time ———
+  // ——— The story, one frame at a time ———
   function drawStory() {
     const g = geometry();
     const f = frame;
     if (!f) return;
+    const steps = model.life.steps;
     const index = Math.min(f.index, END + 1);
     if (f.landing !== null) {
       bakeTo(END + 1, true);
@@ -570,7 +623,8 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
       if (landFrom === null) landFrom = lastPos;
       const pos = landFrom + (END - landFrom) * f.landing;
       const at = positionAt(pos);
-      useLive(boundsOf([at, g.points[END]], 16));
+      const box = useLive(boundsOf([at, g.points[END]], 16));
+      marksOver(box, []);
       traveller(lx, at, f.landing < 1);
       lastPos = pos;
       pulses([]);
@@ -585,42 +639,43 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
     const end = g.points[END];
     if (close) {
       if (f.sprout < 1) {
-        useLive(boundsOf([...g.ahead.first.flatMap(edgeBounds), end], 16));
-        stroke(lx, g.ahead.first, SAGE, 3, 0.9, f.sprout);
-        stroke(lx, g.ahead.second, SAGE, 2.2, 0.5, Math.max(0, f.sprout * 2 - 1));
+        const box = useLive(boundsOf([...g.ahead.flatMap(edgeBounds), end], 16));
+        stroke(lx, g.ahead, AHEAD, 3, f.sprout);
+        marksOver(box, g.ahead.map(edge => ({ edge, color: AHEAD, width: 3, layer: 'ahead', at: f.sprout })));
       } else {
-        useLive(boundsOf([end], 16));
+        const box = useLive(boundsOf([end], 16));
+        marksOver(box, []);
       }
       traveller(lx, end, false);
       lastPos = END;
       return;
     }
-    const step = LIFE_STEPS[index];
+    const step = steps[index];
     const here = g.points[index];
     if (index === 0) {
       useLive(boundsOf([here], 16));
-      dot(lx, here, 3.8 * f.bloom, FOREST);
+      drawMark(lx, markFor(here, step.kind), strokes, f.bloom);
       traveller(lx, here, false, f.appear);
       lastPos = 0;
       return;
     }
     const edge = g.edges[index];
     const items = g.altsOf[index];
-    useLive(boundsOf([...edgeBounds(edge), ...items.flatMap(item => [...edgeBounds(item.edge), ...item.tails.flatMap(edgeBounds)])], 16));
-    // The choices he didn't make grow from the dot he leaves, as he leaves it.
-    for (const item of items) {
-      stroke(lx, [item.edge], MIST, 2.3, 1, f.sprout);
-      stroke(lx, item.tails, MIST, 1.8, 0.55, f.tails);
+    const box = useLive(boundsOf([...edgeBounds(edge), ...items.flatMap(entry => [...edgeBounds(entry.edge), ...entry.tails.flatMap(edgeBounds)])], 16));
+    // The gray lines grow from the dot it leaves, as it leaves it.
+    const moving = [];
+    for (const entry of items) {
+      stroke(lx, [entry.edge], MIST, GRAY, f.sprout);
+      stroke(lx, entry.tails, TAIL, THIN, f.tails);
+      moving.push({ edge: entry.edge, color: MIST, width: GRAY, layer: 'gray', at: f.sprout });
     }
-    stroke(lx, [edge], FOREST, LIVED, 1, f.walk);
-    const previous = LIFE_STEPS[index - 1];
-    if (markerKind(previous.kind)) marker(lx, g.points[index - 1], previous.kind);
-    else dot(lx, g.points[index - 1], 3.8, FOREST);
-    if (!markerKind(step.kind)) dot(lx, here, 3.8 * f.bloom, FOREST);
-    const head = pointOn(edge, f.walk);
-    traveller(lx, head, f.walk < 1);
-    // Luck and setbacks over the traveller, so their mark shows while Sam stands there.
-    if (markerKind(step.kind)) marker(lx, here, step.kind, f.bloom);
+    stroke(lx, [edge], FOREST, LIVED, f.walk);
+    moving.push({ edge, color: FOREST, width: LIVED, layer: 'dark', at: f.walk });
+    marksOver(box, moving);
+    // The new dot blooms as the traveller arrives; a star or diamond over the traveller, so it shows while he stands there.
+    if (!isSurprise(step.kind)) drawMark(lx, markFor(here, step.kind), [...strokes, ...moving], f.bloom);
+    traveller(lx, pointOn(edge, f.walk), f.walk < 1);
+    if (isSurprise(step.kind)) drawMark(lx, markFor(here, step.kind), strokes, f.bloom);
     lastPos = index - 1 + f.walk;
   }
   function positionAt(pos) {
@@ -646,14 +701,86 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
   function applyMode() {
     stack.dataset.life = mode;
     const picking = mode === 'ended' || mode === 'choosing' || mode === 'whatif';
-    altEls.forEach(element => { element.tabIndex = mode === 'choosing' ? 0 : -1; element.disabled = !picking; });
-    ringEls.forEach(element => element.classList.toggle('is-shown', mode === 'choosing'));
+    altEls.forEach(element => { element.disabled = !picking; });
+    forkEls.forEach(element => { element.tabIndex = mode === 'choosing' ? 0 : -1; element.disabled = mode !== 'choosing'; });
+    if (mode !== 'choosing') closePop();
   }
   function setMode(next) {
     mode = next;
     applyMode();
-    if (next === 'ended') { showCard(); warmLives(); } else card.hidden = true;
+    if (next === 'ended') showCard(); else card.hidden = true;
   }
+
+  // ——— A fork's popover: its other choices as chips ———
+  function openPop(stepIndex) {
+    const g = geometry();
+    const step = model.life.steps[stepIndex];
+    const fork = forkEls.find(element => Number(element.dataset.step) === stepIndex);
+    if (!fork) return;
+    closePop();
+    openFork = fork;
+    fork.setAttribute('aria-expanded', 'true');
+    const title = t('opening.fork.title', { age: step.age, choice: step.label });
+    pop.setAttribute('aria-label', title);
+    pop.innerHTML = `<p class="life-pop-title">${escapeHTML(title)}</p><div class="life-chips">${model.picks.filter(item => item.stepIndex === stepIndex)
+      .map(item => `<button type="button" class="life-chip" data-alt="${escapeHTML(item.key)}">${escapeHTML(item.label)}</button>`).join('')}</div>`;
+    pop.hidden = false;
+    pop.style.cssText = 'visibility:hidden;left:0;top:0';
+    // Below the fork, or above it when that runs off the stage; always inside it.
+    const r = rect();
+    const width = pop.offsetWidth; const height = pop.offsetHeight;
+    const point = g.points[stepIndex];
+    let top = point.y + 24;
+    if (top + height > r.height - 8) top = point.y - 24 - height;
+    top = clamp(top, 8, Math.max(8, r.height - height - 8));
+    const left = clamp(point.x - 28, 8, Math.max(8, r.width - width - 8));
+    pop.style.cssText = `left:${left.toFixed(1)}px;top:${top.toFixed(1)}px`;
+    pop.querySelector('.life-chip')?.focus({ preventScroll: true });
+  }
+  function closePop({ focusFork = false } = {}) {
+    if (pop.hidden) return;
+    pop.hidden = true;
+    pop.innerHTML = '';
+    const fork = openFork;
+    openFork = null;
+    fork?.setAttribute('aria-expanded', 'false');
+    if (focusFork) fork?.focus({ preventScroll: true });
+  }
+  overlay.addEventListener('click', event => {
+    const fork = event.target.closest('.life-fork');
+    if (fork && !fork.disabled) {
+      if (openFork === fork) closePop({ focusFork: true }); else openPop(Number(fork.dataset.step));
+    }
+  });
+  overlay.addEventListener('keydown', event => {
+    if (event.altKey || event.metaKey || event.ctrlKey) return;
+    const chip = event.target.closest('.life-chip');
+    const fork = event.target.closest('.life-fork');
+    const keys = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 };
+    if (chip && keys[event.key]) {
+      const chips = [...pop.querySelectorAll('.life-chip')];
+      chips[(chips.indexOf(chip) + keys[event.key] + chips.length) % chips.length].focus({ preventScroll: true });
+      event.preventDefault();
+    } else if (chip && event.key === 'Escape') {
+      closePop({ focusFork: true });
+      event.preventDefault();
+    } else if (fork && keys[event.key]) {
+      // The forks in age order.
+      const next = forkEls[forkEls.indexOf(fork) + keys[event.key]];
+      next?.focus({ preventScroll: true });
+      event.preventDefault();
+    } else if (fork && event.key === 'Escape') {
+      event.preventDefault();
+      onLeave();
+    }
+  });
+  // A tab or click away closes the popover.
+  pop.addEventListener('focusout', event => {
+    if (!pop.hidden && !pop.contains(event.relatedTarget) && event.relatedTarget !== openFork) closePop();
+  });
+  document.addEventListener('pointerdown', event => {
+    if (!pop.hidden && !pop.contains(event.target) && !event.target.closest?.('.life-fork')) closePop();
+  });
 
   // The end card: lower right as in the explorer, unless that covers the route
   // or its labels; then the clear corner; on a stage too small for both, a bar.
@@ -664,12 +791,12 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
     card.classList.remove('is-bar');
     card.style.cssText = 'visibility:hidden';
     const width = card.offsetWidth; const height = card.offsetHeight;
-    const near = (box, others) => others.some(other => box.left < other.right + 6 && box.right > other.left - 6 && box.top < other.bottom + 6 && box.bottom > other.top - 6);
+    const close = (box, others) => others.some(other => box.left < other.right + 6 && box.right > other.left - 6 && box.top < other.bottom + 6 && box.bottom > other.top - 6);
     const dark = labelEls.filter(element => element.classList.contains('is-shown')).map(boxOf);
-    const gray = altEls.filter(element => element.classList.contains('is-shown') && !element.classList.contains('is-tight')).map(boxOf);
-    // Never over Sam's route, its dots, its labels or the paths still ahead; gray lines may pass under, as in the explorer.
-    const blocked = (box, strict) => g.placer.onPath(box) || near(box, dark) || (strict && near(box, gray))
-      || [...g.points, ...g.ahead.first.map(edge => edge.b)].some(point => point.x > box.left - 18 && point.x < box.right + 18 && point.y > box.top - 18 && point.y < box.bottom + 18);
+    const gray = altEls.filter(element => element.classList.contains('is-shown')).map(boxOf);
+    // Never over the route, its dots, its labels or the paths still ahead; gray lines may pass under, as in the explorer.
+    const blocked = (box, strict) => g.placer.onPath(box) || close(box, dark) || (strict && close(box, gray))
+      || [...g.points, ...g.ahead.map(edge => edge.b)].some(point => point.x > box.left - 18 && point.x < box.right + 18 && point.y > box.top - 18 && point.y < box.bottom + 18);
     const spots = [
       { right: 22, bottom: 44 }, { right: 22, bottom: 96 }, { left: 16, bottom: 44 }, { left: 16, top: 16 }, { right: 22, top: 16 },
     ].map(spot => ({ ...spot, box: {
@@ -690,37 +817,44 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
     card.style.cssText = `top:${top}px;bottom:auto`;
   }
 
-  // ——— A life Sam could have lived ———
+  // ——— A life the person could have lived ———
   /**
-   * Pick a gray choice: his real path from that fork turns light and stays
-   * behind, and a new life grows from the fork along the choice to 41, at the
-   * explorer's walking speed. `reduced` shows it at once.
+   * Pick an alternative: the real path from that fork turns light and stays
+   * behind, and a new life grows from the fork along the choice to the life's
+   * end, at the explorer's walking speed. A new `seed` grows a different life
+   * each time; `reduced` shows it at once.
    */
-  function pick(altKey, { reduced = prefersReducedMotion(), silent = false } = {}) {
-    const alt = ALTS.find(item => item.key === altKey);
-    if (!alt?.id) return null;
+  function pick(altKey, { reduced = prefersReducedMotion(), silent = false, seed = newSeed() } = {}) {
+    const item = itemFor(altKey);
+    if (!item?.pickable) return null;
     stopWhat();
+    closePop();
     const g = geometry();
-    const life = lifeFor(altKey);
-    const tree = treeFor(alt);
-    const fork = alt.stepIndex - 1;
-    const item = g.alts.find(entry => entry.alt.key === altKey);
-    const nodes = [{ ...life[0], point: item.node }, ...life.slice(1).map(node => ({ ...node, point: g.at(node.age, node.y ?? node.ay) }))];
-    // Each new dot sits only where its own lines split: none lands on Sam's light
-    // path behind it, and the new life's last dot keeps clear of his.
-    const samLine = g.edges.slice(alt.stepIndex).flatMap(edge => edgePoints(edge, 30));
-    const gapTo = point => Math.min(...samLine.map(q => Math.hypot(q.x - point.x, q.y - point.y)));
+    const steps = model.life.steps;
+    const k = item.stepIndex;
+    const life = grow(model.store, { baseline: model.life.id, forkIndex: k, alt: item.id, seed });
+    if (!life) return null;
+    // The new life leaves from where its gray line ended, and goes on from there.
+    life.steps[k].fixedY = item.y;
+    heights(life.steps).forEach((y, index) => { life.steps[index].y = y; });
+    const entry = g.alts.find(other => other.item.key === altKey);
+    const grown = life.steps.slice(k);
+    const nodes = grown.map((step, index) => ({ ...step, point: index ? g.at(step.age, step.y) : entry.node }));
+    // Each new dot sits only where its own lines split: none lands on the real
+    // path behind it, and the new life's last dot keeps clear of it.
+    const realLine = g.edges.slice(k).flatMap(edge => edgePoints(edge, 30));
+    const gapTo = point => Math.min(...realLine.map(q => Math.hypot(q.x - point.x, q.y - point.y)));
+    const r = rect();
     nodes.forEach((node, index) => {
       const clearance = index === nodes.length - 1 ? 30 : 18;
       if (!index || gapTo(node.point) >= clearance) return;
-      const r = rect();
-      // Up or down, away from his path on the side the dot is on; beside a
+      // Up or down, away from the real path on the side the dot is on; beside a
       // steep stretch of it, a little earlier or later instead. Never past a neighbour.
-      const nearest = samLine.reduce((best, q) => (Math.hypot(q.x - node.point.x, q.y - node.point.y) < Math.hypot(best.x - node.point.x, best.y - node.point.y) ? q : best));
+      const nearest = realLine.reduce((best, q) => (Math.hypot(q.x - node.point.x, q.y - node.point.y) < Math.hypot(best.x - node.point.x, best.y - node.point.y) ? q : best));
       const away = node.point.y > nearest.y ? 1 : -1;
       const side = node.point.x > nearest.x ? 1 : -1;
       const lo = nodes[index - 1].point.x + 14;
-      const hi = index < nodes.length - 1 ? nodes[index + 1].point.x - 14 : r.width - RIGHT;
+      const hi = index < nodes.length - 1 ? g.at(nodes[index + 1].age, nodes[index + 1].y).x - 14 : r.width - RIGHT;
       for (let shift = 2; shift <= 90; shift += 2) {
         const moved = [[0, away], [0, -away], [side, 0], [-side, 0]]
           .filter(([sx]) => !sx || shift <= 28)
@@ -729,34 +863,22 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
         if (moved) { node.point = moved; return; }
       }
     });
-    const edges = nodes.map((node, index) => (index ? { a: nodes[index - 1].point, b: node.point, bend: node.bend * g.span } : item.edge));
-    // The other options at each fork of the new life (the first fork's are Sam's own).
-    // Options that were closed to him are left out: here only the open ones show.
-    const siblings = nodes.map((node, index) => {
-      if (!index) return [];
-      const open = tree.children(life[index - 1].id).filter(child => child.id !== node.id && !child.closed).map(child => {
-        const edge = { a: nodes[index - 1].point, b: g.at(child.age, child.y ?? child.ay), bend: child.bend * g.span };
-        return { edge, tails: tree.children(child.id).filter(next => next.y !== null).map(next => ({ a: edge.b, b: g.at(next.age, next.y), bend: next.bend * g.span })) };
-      });
-      if (open.length || !isSurprise(node)) return open;
-      // A surprise has no options, but as on Sam's route a gray line still leaves
-      // the dot before it: the life as it would have gone on without the surprise.
-      const before = life[index - 1];
-      const fromY = before.y ?? before.ay;
-      const y = Math.min(0.94, Math.max(0.06, fromY + (node.kind === 'lucky' ? 0.07 : -0.07)));
-      const edge = { a: nodes[index - 1].point, b: g.at(Math.min(LIFE_STEPS[END].age + 0.3, node.age + 0.4), y), bend: 0 };
-      const tails = aheadTree(`sam-${altKey}-${index}`, node.age + 0.4, y).children('r').map(next => ({ a: edge.b, b: g.at(next.age, next.ay), bend: next.bend * g.span }));
-      return [{ edge, tails }];
-    });
+    const edges = nodes.map((node, index) => (index ? { a: nodes[index - 1].point, b: node.point, bend: 0 } : entry.edge));
+    // The gray lines at each new dot: other things that could have happened there
+    // (the first fork's are the person's own other choices, already on the map).
+    const siblings = nodes.map((node, index) => (index ? grayItems(life.steps, k + index, `${model.life.id}:${seed}`).map(other => {
+      const end = g.at(other.age, other.y);
+      return {
+        edge: { a: nodes[index - 1].point, b: end, bend: other.bend * g.span },
+        tails: other.tails.map(tail => ({ a: end, b: g.at(tail.age, tail.y), bend: tail.bend * g.span })),
+      };
+    }) : []));
     const last = nodes.at(-1);
-    const ahead = aheadEdges(aheadTree(`sam-ahead-${altKey}`, last.age, last.y ?? last.ay), last.point, g.at, g.span);
+    const ahead = aheadFor(`${model.life.id}:${seed}:ahead`, last.age, last.y).map(next => ({ a: last.point, b: g.at(next.age, next.y), bend: next.bend * g.span }));
     // Labels for the new life, clear of what stays on the map.
-    const visibleBoxes = () => [...labelEls.filter(element => Number(element.dataset.step) < alt.stepIndex), ...altEls.filter(element => {
-      const other = ALTS.find(entry => entry.key === element.dataset.alt);
-      return other.stepIndex <= alt.stepIndex && other.key !== altKey;
-    })].map(boxOf);
-    const r = rect();
-    const soft = [[...siblings.flat().map(sibling => sibling.edge), ...ahead.first], siblings.flat().flatMap(sibling => sibling.tails)];
+    const visibleBoxes = () => [...labelEls.filter(element => Number(element.dataset.step) < k),
+      ...altEls.filter(element => { const other = itemFor(element.dataset.alt); return other.stepIndex <= k && other.key !== altKey; })].map(boxOf);
+    const soft = [[...siblings.flat().map(sibling => sibling.edge), ...ahead], siblings.flat().flatMap(sibling => sibling.tails)];
     // The new life's labels are placed in age order, a few each frame while it
     // starts to grow (or at once when it must show whole), so a pick stays one short task.
     const placers = () => {
@@ -765,25 +887,25 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
         createPlacer({ width: r.width, height: r.height, measure, right: 46, boxes, soft,
           paths: [...g.edges.slice(1), ...edges], dots: [...g.points, ...nodes.map(node => node.point)] }),
         createPlacer({ width: r.width, height: r.height, measure, right: 46, boxes,
-          paths: [...g.edges.slice(1, alt.stepIndex), ...edges], dots: [...g.points.slice(0, alt.stepIndex), ...nodes.map(node => node.point)] }),
+          paths: [...g.edges.slice(1, k), ...edges], dots: [...g.points.slice(0, k), ...nodes.map(node => node.point)] }),
       ];
     };
-    what = { alt, fork, nodes, edges, siblings, ahead, labels: [], placers, reached: 0, frame: null, labelFrame: null, drawn: false, done: false, silent };
+    what = { item, k, fork: k - 1, life, seed, nodes, edges, siblings, ahead, labels: [], placers, reached: 0, frame: null, labelFrame: null, drawn: false, done: false, silent };
     setMode('whatif');
     overlay.querySelectorAll('.life-label.is-what').forEach(element => element.remove());
     whatEls = [];
-    // Sam's later labels and choices step aside; his path stays, light, behind the new one.
-    labelEls.forEach(element => element.classList.toggle('is-shown', Number(element.dataset.step) < alt.stepIndex));
+    // The later labels and choices step aside; the real path stays, light, behind the new one.
+    labelEls.forEach(element => element.classList.toggle('is-shown', Number(element.dataset.step) < k));
     altEls.forEach(element => {
-      const other = ALTS.find(entry => entry.key === element.dataset.alt);
-      element.classList.toggle('is-shown', other.stepIndex <= alt.stepIndex && other.key !== altKey);
+      const other = itemFor(element.dataset.alt);
+      element.classList.toggle('is-shown', other.stepIndex <= k && other.key !== altKey);
     });
     shown = { labels: -1, alts: -1 };
     pulses([]);
-    if (!silent) onPick({ alt, age: LIFE_STEPS[alt.stepIndex].age, nodes });
+    if (!silent) onPick({ item, age: steps[k].age, life, nodes, seed });
     if (reduced) { finishWhat(); what.silent = false; return what; }
     // The map behind it changes over the next two frames (the gray lines, then
-    // his path), the new life starts to grow, and its labels follow, one a frame.
+    // the routes), the new life starts to grow, and its labels follow, one a frame.
     const run = what;
     run.frame = requestAnimationFrame(() => {
       if (what !== run) return;
@@ -830,48 +952,45 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
     run.labelFrame = requestAnimationFrame(() => placeSome(run));
   }
 
-  /** The map behind a new life: `grays`, `dark` or both canvases. */
+  /** The map behind a new life: `grays`, `dark` or both canvases (the marks follow the dark one). */
   function redrawWhat(part = 'both') {
     const g = geometry();
-    const r = rect();
-    const k = what.alt.stepIndex;
+    const steps = model.life.steps;
+    const k = what.k;
     baked = -1; aheadBaked = false;
     if (part !== 'dark') {
-      sizeCanvas(graysCanvas, gx, { left: 0, top: 0, width: r.width, height: r.height });
-      // Sam's gray choices up to the fork (the picked one becomes the new life's first line).
+      sizeCanvas(graysCanvas, gx, whole());
+      strokes = strokes.filter(item => item.layer === 'dark' || item.layer === 'light');
+      // The gray lines up to the fork (the picked one becomes the new life's first line).
       for (let index = 1; index <= k; index += 1) {
-        for (const item of g.altsOf[index]) {
-          if (item.alt.key === what.alt.key) continue;
-          stroke(gx, [item.edge], MIST, 2.3);
-          stroke(gx, item.tails, MIST, 1.8, 0.55);
+        for (const entry of g.altsOf[index]) {
+          if (entry.item.key === what.item.key) continue;
+          lay('gray', [entry.edge], MIST, GRAY);
+          lay('tail', entry.tails, TAIL, THIN);
         }
       }
       for (let index = 1; index <= what.reached; index += 1) bakeWhatEdge(index, 'grays');
     }
     if (part === 'grays') return;
-    sizeCanvas(darkCanvas, dx, { left: 0, top: 0, width: r.width, height: r.height });
-    sizedFor = `${r.width}x${r.height}`;
-    // His real path from the fork: light, behind.
-    stroke(dx, g.edges.slice(k), SAGE, LIVED, 0.7);
-    g.points.slice(k).forEach((point, offset) => {
-      const kind = markerKind(LIFE_STEPS[k + offset].kind);
-      if (kind) marker(dx, point, kind, 1, 0.5); else dot(dx, point, 3.8, SAGE, 0.7);
-    });
-    // His path up to the fork, as it was.
-    stroke(dx, g.edges.slice(1, k), FOREST, LIVED);
-    for (let index = 0; index < k; index += 1) {
-      const step = LIFE_STEPS[index];
-      if (markerKind(step.kind)) marker(dx, g.points[index], step.kind); else dot(dx, g.points[index], 3.8, FOREST);
-    }
-    for (let index = 1; index <= what.reached; index += 1) bakeWhatEdge(index, 'dark');
+    sizeCanvas(darkCanvas, dx, whole());
+    sizedFor = `${model.life.id}|${rect().width}x${rect().height}`;
+    strokes = strokes.filter(item => item.layer !== 'dark' && item.layer !== 'light');
+    marks = [];
+    // The real path from the fork: light, behind.
+    lay('light', g.edges.slice(k), LIGHT, LIVED);
+    g.points.slice(k).forEach((point, offset) => marks.push(markFor(point, steps[k + offset].kind, true)));
+    // The path up to the fork, as it was.
+    lay('dark', g.edges.slice(1, k), FOREST, LIVED);
+    for (let index = 0; index < k; index += 1) marks.push(markFor(g.points[index], steps[index].kind));
+    for (let index = 1; index <= what.reached; index += 1) bakeWhatEdge(index, 'dark', false);
+    paintMarks();
   }
   // The new life's edges are what.edges[0] (fork → the choice) to what.edges[n-1].
   function walkWhat(index) {
     if (!what) return;
     const run = what;
     if (index > run.edges.length) { growAhead(run); return; }
-    const edge = run.edges[index - 1];
-    const from = index === 1 ? LIFE_STEPS[what.fork].age : run.nodes[index - 2].age;
+    const from = index === 1 ? model.life.steps[run.fork].age : run.nodes[index - 2].age;
     const years = run.nodes[index - 1].age - from;
     const duration = Math.min(1500, 700 + years * 70);
     const started = performance.now();
@@ -889,18 +1008,18 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
     const edge = what.edges[index - 1];
     const node = what.nodes[index - 1];
     const sibs = what.siblings[index - 1];
-    const from = index === 1 ? geometry().points[what.fork] : what.nodes[index - 2].point;
-    const fromKind = index === 1 ? LIFE_STEPS[what.fork].kind : what.nodes[index - 2].kind;
-    useLive(boundsOf([...edgeBounds(edge), ...sibs.flatMap(sibling => [...edgeBounds(sibling.edge), ...(sibling.tails ?? []).flatMap(edgeBounds)])], 16));
+    const box = useLive(boundsOf([...edgeBounds(edge), ...sibs.flatMap(sibling => [...edgeBounds(sibling.edge), ...sibling.tails.flatMap(edgeBounds)])], 16));
+    const moving = [];
     for (const sibling of sibs) {
-      stroke(lx, [sibling.edge], MIST, 2.3, 1, p);
-      stroke(lx, sibling.tails, MIST, 1.8, 0.55, Math.max(0, p * 2 - 1));
+      stroke(lx, [sibling.edge], MIST, GRAY, p);
+      stroke(lx, sibling.tails, TAIL, THIN, Math.max(0, p * 2 - 1));
+      moving.push({ edge: sibling.edge, color: MIST, width: GRAY, layer: 'gray', at: p });
     }
-    stroke(lx, [edge], FOREST, LIVED, 1, p);
-    if (markerKind(fromKind)) marker(lx, from, fromKind); else dot(lx, from, 3.8, FOREST);
-    const head = pointOn(edge, p);
-    traveller(lx, head, p < 1);
-    if (markerKind(node.kind) && p >= 1) marker(lx, node.point, node.kind);
+    stroke(lx, [edge], FOREST, LIVED, p);
+    moving.push({ edge, color: FOREST, width: LIVED, layer: 'dark', at: p });
+    marksOver(box, moving);
+    traveller(lx, pointOn(edge, p), p < 1);
+    if (p >= 1) drawMark(lx, markFor(node.point, node.kind), [...strokes, ...moving]);
   }
   // Edge `index` (1-based) leads to node `index - 1`; arriving bakes it, shows its label and tells the narration.
   function arrive(run, index) {
@@ -911,20 +1030,18 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
     whatEls.find(element => Number(element.dataset.what) === index - 1)?.classList.add('is-shown');
     if (!run.silent) onStep(run.nodes[index - 1], index - 1);
   }
-  function bakeWhatEdge(index, part = 'both') {
+  function bakeWhatEdge(index, part = 'both', paint = true) {
     const node = what.nodes[index - 1];
     if (part !== 'dark') {
       for (const sibling of what.siblings[index - 1]) {
-        stroke(gx, [sibling.edge], MIST, 2.3);
-        stroke(gx, sibling.tails, MIST, 1.8, 0.55);
+        lay('gray', [sibling.edge], MIST, GRAY);
+        lay('tail', sibling.tails, TAIL, THIN);
       }
     }
     if (part === 'grays') return;
-    stroke(dx, [what.edges[index - 1]], FOREST, LIVED);
-    const from = index === 1 ? geometry().points[what.fork] : what.nodes[index - 2].point;
-    const fromKind = index === 1 ? LIFE_STEPS[what.fork].kind : what.nodes[index - 2].kind;
-    if (markerKind(fromKind)) marker(dx, from, fromKind); else dot(dx, from, 3.8, FOREST);
-    if (markerKind(node.kind)) marker(dx, node.point, node.kind); else dot(dx, node.point, 3.8, FOREST);
+    lay('dark', [what.edges[index - 1]], FOREST, LIVED);
+    marks.push(markFor(node.point, node.kind));
+    if (paint) paintMarks();
   }
   function growAhead(run) {
     const last = run.nodes.at(-1).point;
@@ -932,9 +1049,9 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
     const tick = now => {
       if (what !== run) return;
       const p = Math.min(1, (now - started) / 600);
-      useLive(boundsOf([...run.ahead.first.flatMap(edgeBounds), last], 16));
-      stroke(lx, run.ahead.first, SAGE, 3, 0.9, p);
-      stroke(lx, run.ahead.second, SAGE, 2.2, 0.5, Math.max(0, p * 2 - 1));
+      const box = useLive(boundsOf([...run.ahead.flatMap(edgeBounds), last], 16));
+      stroke(lx, run.ahead, AHEAD, 3, p);
+      marksOver(box, run.ahead.map(edge => ({ edge, color: AHEAD, width: 3, layer: 'ahead', at: p })));
       traveller(lx, last, false);
       if (p < 1) { run.frame = requestAnimationFrame(tick); return; }
       run.frame = null;
@@ -942,16 +1059,15 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
     };
     run.frame = requestAnimationFrame(tick);
   }
-  // The traveller rests on the new life's last dot; a surprise there keeps its mark on top.
+  // The traveller rests on the new life's last dot.
   function restWhat(run) {
-    const last = run.nodes.at(-1);
-    useLive(boundsOf([last.point], 16));
-    traveller(lx, last.point, false);
-    if (markerKind(last.kind)) marker(lx, last.point, last.kind);
+    const box = useLive(boundsOf([run.nodes.at(-1).point], 16));
+    marksOver(box, []);
+    traveller(lx, run.nodes.at(-1).point, false);
   }
   function endWhat(run) {
-    stroke(gx, run.ahead.first, SAGE, 3, 0.9);
-    stroke(gx, run.ahead.second, SAGE, 2.2, 0.5);
+    lay('ahead', run.ahead, AHEAD, 3);
+    paintMarks();
     restWhat(run);
     run.done = true;
     if (!run.silent) onDone(run);
@@ -976,36 +1092,26 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
     whatEls = [];
   }
 
-  /** Back to Sam's life exactly as the story left it. */
+  /** Back to the written life exactly as the story left it. */
   function restore(nextMode = 'ended') {
     stopWhat();
     clearBase();
-    frame = { index: END + 1, walk: 1, appear: 1, bloom: 1, sprout: 1, tails: 1, label: true, pulses: [], resting: true, landing: null };
+    frame = finalFrame();
     shown = { labels: -1, alts: -1 };
     drawStory();
     setMode(nextMode);
-  }
-
-  function redraw() {
-    if (failed || !visible) return;
-    if (what) {
-      redrawWhat();
-      what.drawn = true;
-      if (!what.done) drawWhatEdge(what.reached + 1, 0);
-      else { stroke(gx, what.ahead.first, SAGE, 3, 0.9); stroke(gx, what.ahead.second, SAGE, 2.2, 0.5); restWhat(what); }
-      return;
-    }
-    drawStory();
   }
 
   return {
     failed,
     get mode() { return mode; },
     get what() { return what; },
-    /** The story's sink: one moment of Sam's life. */
+    get life() { return model?.life ?? null; },
+    setLife,
+    /** The story's sink: one moment of the life. */
     setFrame(next) {
       frame = next;
-      if (failed || mode === 'whatif') return;
+      if (failed || !model || mode === 'whatif') return;
       geometry();
       drawStory();
     },
@@ -1018,18 +1124,21 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
     restore,
     /** The stage changed size: everything is placed again. */
     resize() {
+      if (failed || !model) return;
       const placed = geo?.key;
       size = null;
       const r = rect();
+      const key = `${model.life.id}|${r.width}x${r.height}`;
       // A second call for the same size (the observer after a settle) has nothing to redo.
-      if (failed || (placed === `${r.width}x${r.height}` && sizedFor === placed)) return;
+      if (placed === key && sizedFor === key) return;
+      closePop();
       geo = null; liveBox = '';
       geometry();
       if (what) {
         finishWhat();
-        const key = what.alt.key;
+        const { item, seed } = what;
         stopWhat();
-        pick(key, { reduced: true, silent: true });
+        pick(item.key, { reduced: true, silent: true, seed });
         return;
       }
       clearBase();
@@ -1037,16 +1146,21 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
       setMode(mode);
     },
     setVisible(value) { visible = value; },
+    get visible() { return visible; },
     points: () => geometry().points,
     endPoint: () => (what ? what.nodes.at(-1).point : geometry().points[END]),
-    /** What the map's chips must stay clear of: Sam's labels (in "Choices add up" the gray choices' labels step back). */
+    /** What the map's chips must stay clear of: the labels (in "Choices add up" the gray choices' labels step back). */
     occupied: () => [...labelEls, ...(mode === 'adds' ? [] : altEls)].filter(element => element.classList.contains('is-shown')).map(boxOf),
-    layers: { axis, grays: graysCanvas, dark: darkCanvas, live: liveCanvas, overlay },
+    layers: { axis, grays: graysCanvas, dark: darkCanvas, marks: marksCanvas, live: liveCanvas, overlay },
     card,
-    altButtons: () => altEls,
-    focusFirstPick() { altEls.filter(element => !element.disabled && element.classList.contains('is-shown')).sort((a, b) => ALTS.findIndex(x => x.key === a.dataset.alt) - ALTS.findIndex(x => x.key === b.dataset.alt))[0]?.focus({ preventScroll: true }); },
+    /** Every alternative the reader may pick, in age order: `{ key, stepIndex, id, label, whatIf }`. */
+    picks: () => model?.picks ?? [],
+    forks: () => forkEls,
+    openFork: openPop,
+    closeFork: closePop,
+    focusFirstFork() { forkEls.find(element => !element.disabled)?.focus({ preventScroll: true }); },
     onCard(handler) { card.addEventListener('click', event => { const action = event.target.closest('[data-life]')?.dataset.life; if (action) handler(action); }); },
-    onAlt(handler) { overlay.addEventListener('click', event => { const button = event.target.closest('.life-alt'); if (button && !button.disabled) handler(button.dataset.alt); }); },
+    onAlt(handler) { overlay.addEventListener('click', event => { const button = event.target.closest('.life-alt, .life-chip'); if (button && !button.disabled) handler(button.dataset.alt); }); },
     geometry,
   };
 }
