@@ -36,7 +36,7 @@ steps:
     echoes: [nurseTraining]
   - node: midwife
     age: 26
-    alts: [paramedic, joinsMedicalResearch]
+    alts: [careAssistant, joinsMedicalResearch]
     echoes: [nurseMentor]
   - node: hospitalCloses
     age: 30

@@ -36,7 +36,7 @@ steps:
   - node: startsYouthTheatre
     age: 27
     move: 1
-    alts: [directsAPlay, localTheatreGroup]
+    alts: [voiceActing, worksBackstage]
     echoes: [teachesDance, dramaClub]
   - node: becomesParent
     age: 29

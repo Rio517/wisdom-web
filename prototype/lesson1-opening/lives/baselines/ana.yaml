@@ -31,7 +31,7 @@ steps:
   - node: worksInKitchen
     age: 22
     line: "She bakes the bread for a busy restaurant."
-    alts: [cooksSchoolLunches, caters]
+    alts: [cooksSchoolLunches, studiesFoodScience]
     echoes: [trainsAsBaker]
   - node: openBakery
     age: 27
