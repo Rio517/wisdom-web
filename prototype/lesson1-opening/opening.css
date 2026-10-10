@@ -19,7 +19,7 @@
      then one more, and still wrap to their whole text. Snug: the rows close up as well. */
   .life-step.is-folded .life-line { font-size: 15px; line-height: 1.3; color: var(--color-quiet); }
   .life-step.is-folded-more .life-line { font-size: 14px; line-height: 1.25; }
-  .life-steps.is-snug { row-gap: 1px; }
+  .life-steps.is-snug { row-gap: var(--snug-gap, 1px); }
   .life-steps.is-snug .life-step.is-folded-more .life-line { line-height: 1.2; }
   /* Still too long (a long life in a short column): the oldest lines, one at a time, take the age
      into their own row, so their words have the column's whole width, a size smaller again. */

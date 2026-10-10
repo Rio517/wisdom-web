@@ -347,6 +347,7 @@ function run() {
   const lastFit = new Map(); // a list's id and box size → the size it fitted at last time
   function fitList(box, { min = 15, max = 24 } = {}) {
     box.classList.remove('is-tight', 'is-snug');
+    box.style.removeProperty('--snug-gap');
     box.style.removeProperty('--fit-size');
     box.style.removeProperty('--fit-gap');
     [...box.children].forEach(row => row.classList.remove('is-folded', 'is-folded-more', 'is-compact'));
@@ -418,12 +419,19 @@ function run() {
     const all = lines();
     const over = () => box.scrollHeight > box.clientHeight + 1;
     const shrink = (step, upTo) => { for (let other = 0; other < upTo && over(); other += 1) all[other].classList.add(step); };
+    box.style.removeProperty('--snug-gap');
     shrink('is-folded', newest - 3);
     shrink('is-folded-more', newest - 3);
     if (over()) box.classList.add('is-snug');
     shrink('is-folded', newest);
     shrink('is-folded-more', newest);
     shrink('is-compact', newest);
+    // The rows closed up (1 px apart) before the last lines stepped down: what room that leaves
+    // goes back between them, up to their usual 6 px.
+    if (box.classList.contains('is-snug') && !over() && all.length > 1) {
+      const spare = box.getBoundingClientRect().bottom - box.lastElementChild.getBoundingClientRect().bottom - 2;
+      if (spare > 0) box.style.setProperty('--snug-gap', `${Math.min(6, 1 + spare / (all.length - 1)).toFixed(2)}px`);
+    }
   };
   // If the list still has to scroll in its column, the newest line stays in view.
   const keepInView = (element, box = list()) => {
@@ -439,7 +447,7 @@ function run() {
         element.classList.add('is-pending');
         element.classList.remove('is-past', 'is-folded', 'is-folded-more', 'is-compact');
       });
-      if (list()) { list().scrollTop = 0; list().classList.remove('is-snug'); }
+      if (list()) { list().scrollTop = 0; list().classList.remove('is-snug'); list().style.removeProperty('--snug-gap'); }
     },
     reveal(position, { duration, dim }) {
       const all = lines();
