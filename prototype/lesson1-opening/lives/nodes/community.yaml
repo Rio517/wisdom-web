@@ -93,7 +93,7 @@
   if: "{name} had taught others {his} craft"
   kind: choice
   ages: [28, 70]
-  after: [job]
+  after: [qualified, chef, baker, crafts, painting, wood]
   tags: [community, teaching]
 
 - id: runsFoodBank

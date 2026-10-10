@@ -109,7 +109,7 @@
   line: "{name} trains before school, four mornings a week."
   if: "{name} had trained every morning"
   kind: choice
-  ages: [11, 30]
+  ages: [11, 17]
   after: [team, running, swimming, gymnastics, club]
   tags: [sport, training]
 
