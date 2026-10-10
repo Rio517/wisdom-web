@@ -1,6 +1,15 @@
 name: Nightly checks
 
-# Tests and build once a night instead of on every push. Run it by hand from the Actions tab when needed.
+# Tests and build once a night instead of on every push, for each branch below
+# whose newest commit has not passed here yet. Run it by hand from the Actions
+# tab when needed; a manual run always checks every branch.
+#
+# "Passed here" is a marker in the Actions cache named after the commit (and
+# this file's version), saved only after the checks pass. The night compares
+# commits, not clocks: a commit fast-forwarded with an older date, or a night
+# GitHub started late or skipped, is still checked. Anything unclear (a red
+# run, a marker the cache dropped or expired after 7 days, the cache list
+# unreachable) means the night checks again.
 on:
   schedule:
     - cron: '30 2 * * *'
@@ -8,18 +17,54 @@ on:
 
 permissions:
   contents: read
+  actions: read # the pick lists the cache markers
 
 jobs:
+  pick:
+    runs-on: ubuntu-latest
+    outputs:
+      todo: ${{ steps.pick.outputs.todo }}
+    steps:
+      - id: pick
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BRANCHES: main prototype/choices-map
+        run: |
+          wf=$(gh api "repos/$GITHUB_REPOSITORY/contents/.github/workflows/ci.yml?ref=$GITHUB_SHA" --jq '.sha[0:12]') || wf=unknown
+          todo='[]'
+          for branch in $BRANCHES; do
+            sha=$(gh api "repos/$GITHUB_REPOSITORY/commits/$branch" --jq '.sha') || sha=""
+            if [ -z "$sha" ]; then
+              # Unreadable: check the branch by name, as before, and save no marker.
+              todo=$(jq -c --arg b "$branch" '. + [{branch: $b, sha: $b, key: ""}]' <<< "$todo")
+              continue
+            fi
+            key="ci-passed-$sha-$wf"
+            found=0
+            if [ "$GITHUB_EVENT_NAME" = schedule ]; then
+              found=$(gh api "repos/$GITHUB_REPOSITORY/actions/caches?key=$key" --jq '.total_count') || found=0
+            fi
+            echo "$branch $sha: markers found $found"
+            if [ "$found" = 0 ]; then
+              todo=$(jq -c --arg b "$branch" --arg s "$sha" --arg k "$key" '. + [{branch: $b, sha: $s, key: $k}]' <<< "$todo")
+            fi
+          done
+          echo "todo=$todo" >> "$GITHUB_OUTPUT"
+          echo "To check: $todo"
+
   check:
+    needs: pick
+    if: needs.pick.outputs.todo != '[]'
+    name: check (${{ matrix.branch }})
     strategy:
       fail-fast: false
       matrix:
-        ref: [main, prototype/choices-map]
+        include: ${{ fromJSON(needs.pick.outputs.todo) }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
         with:
-          ref: ${{ matrix.ref }}
+          ref: ${{ matrix.sha }}
       - uses: actions/setup-node@v5
         with:
           node-version: 24
@@ -27,3 +72,10 @@ jobs:
       - run: npm ci
       - run: npm test
       - run: npm run build
+      - if: matrix.key != ''
+        run: git rev-parse HEAD > "$RUNNER_TEMP/ci-passed"
+      - if: matrix.key != ''
+        uses: actions/cache/save@v4
+        with:
+          path: ${{ runner.temp }}/ci-passed
+          key: ${{ matrix.key }}
