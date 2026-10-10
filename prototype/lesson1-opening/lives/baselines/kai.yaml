@@ -1,0 +1,57 @@
+# Kai: nature, animals and gardens, a flood at 26, a community garden, and a gentle middle.
+# The schema is in ../README.md.
+
+id: kai
+name: Kai
+pronoun: he
+end: 40
+steps:
+  - { node: born, age: 0 }
+  - node: playsOutside
+    age: 4
+    alts: [familyHelpsNeighbours, singsAtHome]
+  - node: looksAfterPet
+    age: 6
+    alts: [tryGymnastics, puppetShows]
+  - node: growVegetables
+    age: 9
+    alts: [joinsScouts, chessClub]
+    echoes: [playsOutside]
+  - node: animalShelter
+    age: 12
+    alts: [birdWatching, riverCleanup]
+    echoes: [looksAfterPet]
+  - node: worksOnFarm
+    age: 15
+    alts: [partTimeJob, paperRound]
+    echoes: [growVegetables, animalShelter]
+  - node: landscapeGardener
+    age: 19
+    alts: [vetAssistant, studiesEnvironment]
+    echoes: [growVegetables]
+  - node: rentsAllotment
+    age: 23
+    alts: [keepsBees, movesToNewCity]
+    echoes: [worksOnFarm]
+  - node: farmerOffersLand
+    age: 24
+    line: "A neighbour offers him a field to use. Luck!"
+    echoes: [rentsAllotment]
+  - node: floodRuinsHarvest
+    age: 26
+    line: "A flood washes away the whole harvest."
+  - node: rebuildsAsCommunityGarden
+    age: 27
+    move: 2
+    alts: [plantsHardierCrops, farmerNetwork]
+    echoes: [farmerOffersLand]
+  - node: becomesParent
+    age: 31
+  - node: forestSchool
+    age: 34
+    alts: [leadsWalkingGroups, parkRanger]
+    echoes: [rebuildsAsCommunityGarden, playsOutside]
+  - node: keepsBees
+    age: 40
+    alts: [growsAGarden, leadsWalkingGroups]
+    echoes: [growVegetables]

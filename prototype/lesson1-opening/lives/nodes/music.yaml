@@ -10,6 +10,31 @@
   ages: [4, 9]
   tags: [music, sings]
 
+- id: singsAtHome
+  label: Sings at home
+  line: "Music fills the house, and {name} sings along."
+  if: "{his} family had filled the house with music"
+  kind: choice
+  by: family
+  ages: [3, 8]
+  tags: [music, sings]
+
+- id: startPiano
+  label: Starts piano lessons
+  line: "{name} starts piano lessons."
+  if: "{name} had started piano lessons"
+  kind: choice
+  ages: [7, 11]
+  tags: [music, instrument, piano]
+
+- id: startsViolin
+  label: Starts the violin
+  line: "{name} starts the violin. The first squeaks are rough."
+  if: "{name} had started the violin"
+  kind: choice
+  ages: [7, 12]
+  tags: [music, instrument, strings]
+
 - id: guitar
   label: Picks guitar
   line: "{name} picks guitar."
@@ -24,7 +49,44 @@
   if: "{name} had picked drums"
   kind: choice
   ages: [7, 16]
-  tags: [music, instrument]
+  tags: [music, instrument, drumming]
+
+- id: joinsChoir
+  label: Joins the school choir
+  line: "{name} joins the school choir."
+  if: "{name} had joined the school choir"
+  kind: choice
+  ages: [8, 14]
+  tags: [music, sings, ensemble]
+
+- id: schoolBand
+  label: Joins the school band
+  line: "{name} joins the school band."
+  if: "{name} had joined the school band"
+  kind: choice
+  ages: [9, 15]
+  after: [instrument]
+  tags: [music, ensemble]
+
+- id: switchesToDrums
+  label: Switches to drums
+  line: "{name} swaps the piano stool for a drum stool."
+  if: "{name} had switched from piano to drums"
+  kind: choice
+  ages: [10, 15]
+  after: [piano]
+  unless: [drums]
+  tags: [music, instrument, drumming]
+
+- id: jamsWithFriends
+  label: Jams with friends
+  line: "{name} makes music with friends after school."
+  if: "{name} had made music with friends"
+  kind: choice
+  ages: [13, 19]
+  after: [instrument, sings]
+  unless: [band]
+  tags: [music, jamming]
 
 - id: startsBand
   label: Starts a band
@@ -36,6 +98,25 @@
   unless: [band]
   tags: [music, band]
 
+- id: bandInvite
+  label: An older band invites
+  line: "An older band asks {him} to join. Luck!"
+  kind: lucky
+  ages: [12, 22]
+  after: [instrument, sings]
+  unless: [band]
+  tags: [music, band]
+  move: 1
+
+- id: playGigs
+  label: Plays weekend gigs
+  line: "{name} plays gigs at weekends."
+  if: "{name} had played weekend gigs"
+  kind: choice
+  ages: [14, 30]
+  after: [band, jamming, ensemble]
+  tags: [music, gigs]
+
 - id: ownSong
   label: Writes a song
   line: "The band writes its own song."
@@ -43,7 +124,7 @@
   kind: choice
   ages: [13, 25]
   after: [band]
-  tags: [songs]
+  tags: [music, songs]
 
 - id: radioPlay
   label: A DJ plays the song
@@ -51,6 +132,7 @@
   kind: lucky
   ages: [15, 40]
   after: [songs]
+  tags: [music]
   move: 1
 
 - id: recordDeal
@@ -59,9 +141,19 @@
   kind: event
   ages: [17, 40]
   after: [radioPlay]
+  tags: [music, fame, job]
   within: 2
-  tags: [fame]
   move: 1
+
+- id: recordsAlbum
+  label: Records an album
+  line: "{name} records an album in a small studio."
+  if: "{name} had recorded an album"
+  kind: choice
+  ages: [18, 45]
+  after: [fame, radioPlay]
+  unless: [album]
+  tags: [music, album]
 
 - id: partiesEveryNight
   label: Parties every night
@@ -70,7 +162,7 @@
   kind: choice
   ages: [18, 40]
   after: [fame]
-  tags: [hardLiving]
+  tags: [music, hardLiving]
 
 - id: keepsEarlyNights
   label: Keeps early nights
@@ -79,6 +171,7 @@
   kind: choice
   ages: [18, 40]
   after: [fame]
+  tags: [music]
 
 - id: savesTheMoney
   label: Saves the money
@@ -87,7 +180,7 @@
   kind: choice
   ages: [18, 45]
   after: [fame]
-  tags: [savings]
+  tags: [music, savings]
 
 - id: bandSplits
   label: The band splits
@@ -95,8 +188,58 @@
   kind: setback
   ages: [16, 45]
   after: [band]
+  tags: [music]
   drops: [band]
   move: -2
+
+- id: handInjury
+  label: Hurts a hand
+  line: "{name} hurts a hand and cannot play for a year."
+  kind: setback
+  ages: [15, 45]
+  after: [instrument]
+  tags: [music, injury]
+  move: -2
+
+- id: switchesInstrument
+  label: Tries a new instrument
+  line: "{name} learns a different instrument while the hand heals."
+  if: "{name} had tried a new instrument"
+  kind: choice
+  ages: [15, 50]
+  after: [handInjury]
+  tags: [music, instrument]
+  within: 2
+
+- id: writesForOthers
+  label: Writes for others
+  line: "{name} writes songs for other people to sing."
+  if: "{name} had written songs for other people"
+  kind: choice
+  ages: [16, 60]
+  after: [handInjury, bandSplits, radioPlay]
+  tags: [music, songs, job]
+  within: 2
+
+- id: teachesMusic
+  label: Teaches music
+  line: "{name} starts teaching music to children."
+  if: "{name} had started teaching music"
+  kind: choice
+  ages: [18, 65]
+  after: [handInjury, bandSplits]
+  tags: [music, teaching, job]
+  within: 2
+
+- id: goesSolo
+  label: Plays solo gigs
+  line: "{name} plays alone now, with a stool and one microphone."
+  if: "{name} had gone solo"
+  kind: choice
+  ages: [16, 45]
+  after: [bandSplits]
+  tags: [music, gigs, job]
+  within: 2
 
 - id: givesMusicLessons
   label: Gives music lessons
@@ -105,7 +248,7 @@
   kind: choice
   ages: [16, 70]
   after: [instrument]
-  tags: [music, teaching]
+  tags: [music, teaching, job]
 
 - id: teachesSchoolMusic
   label: Teaches at a school
@@ -115,7 +258,7 @@
   ages: [22, 65]
   after: [teaching]
   needs: [music]
-  tags: [teacher]
+  tags: [music, teacher, job]
 
 - id: watchesChildPerform
   label: Watches child perform
@@ -124,4 +267,32 @@
   ages: [30, 70]
   after: [parent]
   needs: [music]
+  tags: [music]
   move: 1
+
+- id: studiesMusic
+  label: Studies music
+  line: "{name} goes to college to study music."
+  if: "{name} had studied music"
+  kind: choice
+  ages: [17, 26]
+  after: [instrument, sings]
+  tags: [music, study]
+
+- id: joinsAdultChoir
+  label: Joins a local choir
+  line: "{name} joins a local choir that meets on Tuesdays."
+  if: "{name} had joined a local choir"
+  kind: choice
+  ages: [25, 80]
+  tags: [music, sings, ensemble]
+
+- id: writesMusicForShows
+  label: Writes show music
+  line: "{name} writes music for stage shows and films."
+  if: "{name} had written music for shows"
+  kind: choice
+  ages: [18, 60]
+  after: [theatre, film]
+  needs: [music]
+  tags: [music, songs, job]

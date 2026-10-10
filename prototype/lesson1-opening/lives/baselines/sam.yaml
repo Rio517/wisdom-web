@@ -19,6 +19,7 @@ steps:
     alts: [schoolTeam]
   - node: ownSong
     age: 16
+    alts: [playGigs, partTimeJob]
   - node: radioPlay
     age: 18
     line: "A radio DJ plays it. Luck!"
@@ -42,6 +43,7 @@ steps:
   - node: givesMusicLessons
     age: 30
     label: Teaches guitar
+    alts: [writesForOthers, deliveryWork]
     line: "He teaches guitar. New songs."
     move: 1
     echoes: [guitar]
@@ -52,6 +54,7 @@ steps:
     move: 1
   - node: teachesSchoolMusic
     age: 36
+    alts: [runsYouthClub, joinsAdultChoir]
     move: 1
     echoes: [givesMusicLessons]
   - node: watchesChildPerform

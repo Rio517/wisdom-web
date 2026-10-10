@@ -8,7 +8,7 @@
   kind: choice
   by: family
   ages: [4, 9]
-  tags: [sport, football, team]
+  tags: [sport, football, team, club]
 
 - id: learnsToSwim
   label: Learns to swim
@@ -19,6 +19,47 @@
   ages: [3, 8]
   tags: [sport, swimming]
 
+- id: tryGymnastics
+  label: Tries gymnastics
+  line: "{name} tries gymnastics. Cartwheels fill the hall."
+  if: "{name} had tried gymnastics"
+  kind: choice
+  ages: [5, 11]
+  tags: [sport, gymnastics, club]
+
+- id: learnsToSkateboard
+  label: Learns to skateboard
+  line: "{name} learns to skateboard and falls off a lot."
+  if: "{name} had learned to skateboard"
+  kind: choice
+  ages: [7, 14]
+  tags: [sport, skating]
+
+- id: takesUpRunning
+  label: Takes up running
+  line: "{name} takes up running, one lap at a time."
+  if: "{name} had taken up running"
+  kind: choice
+  ages: [9, 16]
+  tags: [sport, running]
+
+- id: triesClimbing
+  label: Tries climbing
+  line: "{name} tries the climbing wall and loves the view."
+  if: "{name} had tried climbing"
+  kind: choice
+  ages: [8, 15]
+  tags: [sport, climbing, club]
+
+- id: joinsSwimClub
+  label: Joins the swim club
+  line: "{name} joins the swimming club."
+  if: "{name} had joined the swimming club"
+  kind: choice
+  ages: [8, 14]
+  after: [swimming]
+  tags: [sport, club, team]
+
 - id: schoolTeam
   label: Joins the school team
   line: "{name} joins the school team."
@@ -26,3 +67,230 @@
   kind: choice
   ages: [9, 16]
   tags: [sport, team]
+
+- id: triesOutForTeam
+  label: Tries out for the team
+  line: "{name} tries out for a team and waits for the list."
+  if: "{name} had tried out for a team"
+  kind: choice
+  ages: [9, 15]
+  after: [football, swimming, running, gymnastics]
+  tags: [sport, tryout]
+
+- id: scoutWatches
+  label: A scout watches
+  line: "A scout comes to a match and notices {him}. Luck!"
+  kind: lucky
+  ages: [12, 18]
+  after: [tryout, team]
+  tags: [sport]
+  move: 2
+
+- id: youthAcademy
+  label: Joins a youth academy
+  line: "{name} joins a youth academy."
+  if: "{name} had joined a youth academy"
+  kind: choice
+  ages: [13, 19]
+  after: [scoutWatches]
+  tags: [sport, academy]
+
+- id: playsPro
+  label: Plays for a big club
+  line: "{name} plays for a big club."
+  if: "{name} had played for a big club"
+  kind: choice
+  ages: [17, 30]
+  after: [academy]
+  tags: [sport, pro, job]
+
+- id: trainsHard
+  label: Trains every morning
+  line: "{name} trains before school, four mornings a week."
+  if: "{name} had trained every morning"
+  kind: choice
+  ages: [11, 17]
+  after: [team, running, swimming, gymnastics, club]
+  tags: [sport, training]
+
+- id: winsRegionalMedal
+  label: Wins a regional medal
+  line: "After months of training, {name} wins a medal at the regional games."
+  kind: event
+  ages: [12, 35]
+  after: [training]
+  tags: [sport]
+  move: 1
+
+- id: captainsTheTeam
+  label: Captains the team
+  line: "{name} becomes captain of the team."
+  if: "{name} had become captain of the team"
+  kind: choice
+  ages: [14, 20]
+  after: [team]
+  tags: [sport]
+
+- id: teamWinsLeague
+  label: Team wins the league
+  line: "{his} team wins the league on the last day. Luck helps!"
+  kind: lucky
+  ages: [10, 24]
+  after: [team]
+  tags: [sport]
+  move: 1
+
+- id: kitPaidByShop
+  label: A shop pays for kit
+  line: "A local shop pays for the whole team's new kit."
+  kind: lucky
+  ages: [8, 20]
+  after: [team, club]
+  tags: [sport]
+  move: 1
+
+- id: leftOutOfSquad
+  label: Left out of the squad
+  line: "{name} is left out of the squad this season."
+  kind: setback
+  ages: [11, 25]
+  after: [team, tryout]
+  tags: [sport]
+  move: -1
+
+- id: asksCoachWhy
+  label: Asks what to work on
+  line: "{name} asks the coach what to work on."
+  if: "{name} had asked the coach what to work on"
+  kind: choice
+  ages: [11, 30]
+  after: [leftOutOfSquad]
+  tags: [sport, helped]
+  within: 2
+
+- id: trainsWithFriend
+  label: Trains with a friend
+  line: "{name} trains with a friend on weekends."
+  if: "{name} had trained with a friend"
+  kind: choice
+  ages: [11, 30]
+  after: [leftOutOfSquad]
+  tags: [sport, training]
+  within: 2
+
+- id: kneeInjury
+  label: A bad knee injury
+  line: "A bad knee injury stops {him} for months."
+  kind: setback
+  ages: [13, 32]
+  after: [tryout, academy, pro, team]
+  tags: [sport, injury]
+  move: -3
+
+- id: restsAndRebuilds
+  label: Rebuilds slowly
+  line: "{name} rests, then rebuilds strength one small exercise at a time."
+  if: "{name} had rebuilt slowly"
+  kind: choice
+  ages: [13, 40]
+  after: [kneeInjury]
+  tags: [sport, rebuilt]
+  within: 2
+
+- id: switchesSport
+  label: Tries a gentler sport
+  line: "{name} tries swimming, a sport kinder to the joints."
+  if: "{name} had tried a gentler sport"
+  kind: choice
+  ages: [11, 40]
+  after: [kneeInjury, leftOutOfSquad]
+  tags: [sport, swimming]
+  within: 2
+
+- id: takesBreakFromSport
+  label: Takes a break
+  line: "{name} takes a break and sees what else is out there."
+  if: "{name} had taken a break from sport"
+  kind: choice
+  ages: [14, 35]
+  after: [team, club, training]
+  tags: [sport]
+
+- id: coachKids
+  label: "Coaches a kids' team"
+  line: "{name} coaches a team of young children."
+  if: "{name} had coached a kids' team"
+  kind: choice
+  ages: [15, 65]
+  after: [kneeInjury, tryout, pro, team]
+  tags: [sport, coaching]
+
+- id: coachingCourse
+  label: Does a coaching course
+  line: "{name} takes a coaching course at weekends."
+  if: "{name} had taken a coaching course"
+  kind: choice
+  ages: [18, 45]
+  after: [coachKids, kneeInjury, rebuilt]
+  tags: [sport, coaching, study]
+
+- id: coachesAClub
+  label: Coaches a club side
+  line: "{name} is asked to coach a club's senior side."
+  if: "{name} had coached a club's senior side"
+  kind: choice
+  ages: [24, 60]
+  after: [coachingCourse]
+  tags: [sport, coaching, job]
+
+- id: refereesMatches
+  label: Learns to referee
+  line: "{name} learns the rules well enough to referee."
+  if: "{name} had learned to referee"
+  kind: choice
+  ages: [14, 50]
+  after: [team, football, club]
+  tags: [sport]
+
+- id: joinsWeekendLeague
+  label: Joins a weekend league
+  line: "{name} joins a friendly weekend league."
+  if: "{name} had joined a weekend league"
+  kind: choice
+  ages: [20, 50]
+  tags: [sport, team]
+
+- id: trainsForMarathon
+  label: Trains for a marathon
+  line: "{name} trains for a marathon, a little further each week."
+  if: "{name} had trained for a marathon"
+  kind: choice
+  ages: [22, 50]
+  tags: [sport, running, training]
+
+- id: becomesPersonalTrainer
+  label: Works as a trainer
+  line: "{name} helps other people get fit for a living."
+  if: "{name} had become a fitness trainer"
+  kind: choice
+  ages: [20, 55]
+  after: [sport]
+  needs: [training]
+  tags: [sport, job]
+
+- id: swimsEveryMorning
+  label: Swims every morning
+  line: "{name} swims before work every morning."
+  if: "{name} had swum every morning"
+  kind: choice
+  ages: [25, 70]
+  tags: [sport, swimming]
+
+- id: teamPhysio
+  label: Helps as team physio
+  line: "{name} treats players' strains for a club."
+  if: "{name} had treated players' strains for a club"
+  kind: choice
+  ages: [20, 60]
+  after: [physio]
+  tags: [sport, job]

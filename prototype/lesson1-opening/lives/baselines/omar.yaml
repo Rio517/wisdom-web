@@ -1,0 +1,60 @@
+# Omar: making, an apprenticeship instead of university, a business that rises and fails, and a middle path training apprentices.
+# The schema is in ../README.md.
+
+id: omar
+name: Omar
+pronoun: he
+end: 43
+steps:
+  - { node: born, age: 0 }
+  - node: familyFixesThings
+    age: 5
+    alts: [buildsDens, timeWithGrandparents]
+  - node: fixesABike
+    age: 11
+    alts: [roboticsClub, woodwork]
+    echoes: [familyFixesThings]
+  - node: tradeCourse
+    age: 16
+    alts: [studiesHardForExams, partTimeJob]
+    echoes: [fixesABike]
+  - node: startsApprenticeship
+    age: 17
+    alts: [goesToUniversity, startsWorking]
+    echoes: [tradeCourse]
+  - node: electrician
+    age: 20
+    alts: [plumber, mechanic]
+    echoes: [startsApprenticeship]
+  - node: mentorAppears
+    age: 21
+    line: "An older electrician takes him under a wing. Luck!"
+  - node: lostTools
+    age: 23
+  - node: ownBusiness
+    age: 26
+    alts: [replacesTools, borrowsTools]
+    echoes: [electrician]
+  - node: bigCustomer
+    age: 30
+    line: "A big company becomes his customer. Luck!"
+    move: 2
+    echoes: [ownBusiness]
+  - node: becomesParent
+    age: 31
+  - node: businessFails
+    age: 34
+    line: "The business runs out of money and closes."
+  - node: asksForHelp
+    age: 35
+    line: "He asks an old customer for help."
+    move: 1
+    alts: [movesHome, officeJob]
+  - node: trainsApprentices
+    age: 40
+    move: 1
+    alts: [teachesTradeSkills, mentorsSomeone]
+    echoes: [electrician, mentorAppears]
+  - node: worksFewerHours
+    age: 43
+    alts: [startsNewHobby, learnsSomethingNew]

@@ -1,0 +1,292 @@
+# Community: teaching, volunteering, clubs, helping a town.
+# The schema and the rules are in ../README.md.
+
+- id: familyVolunteers
+  label: Helps at the fair
+  line: "{his} family helps at the town fair, and {name} hands out cakes."
+  if: "{his} family had helped at the town fair"
+  kind: choice
+  by: family
+  ages: [4, 8]
+  tags: [community, volunteer]
+
+- id: helpsAtTownFair
+  label: Helps at town events
+  line: "{name} helps set up chairs at town events."
+  if: "{name} had helped at town events"
+  kind: choice
+  ages: [8, 14]
+  tags: [community, volunteer]
+
+- id: readsToYounger
+  label: Reads to little ones
+  line: "{name} reads to younger children at the library."
+  if: "{name} had read to younger children"
+  kind: choice
+  ages: [10, 15]
+  tags: [community, helper, volunteer]
+
+- id: startsSchoolClub
+  label: Starts a school club
+  line: "{name} starts a club at school and finds twelve members."
+  if: "{name} had started a club at school"
+  kind: choice
+  ages: [11, 17]
+  tags: [community, club, leader]
+
+- id: joinsYouthCouncil
+  label: Joins youth council
+  line: "{name} joins the youth council and speaks up for the school."
+  if: "{name} had joined the youth council"
+  kind: choice
+  ages: [11, 16]
+  tags: [community, civic]
+
+- id: peerHelper
+  label: Becomes a peer helper
+  line: "{name} helps younger pupils settle in."
+  if: "{name} had become a peer helper"
+  kind: choice
+  ages: [13, 19]
+  after: [helper, club, volunteer]
+  tags: [community, helper, mentoring]
+
+- id: trainsToTeach
+  label: Trains to teach
+  line: "{name} trains to be a teacher."
+  if: "{name} had trained to teach"
+  kind: choice
+  ages: [21, 30]
+  after: [peerHelper, helper, study]
+  tags: [community, teaching, study]
+
+- id: teachesAtSchool
+  label: Becomes a teacher
+  line: "{name} teaches at a school."
+  if: "{name} had taught at a school"
+  kind: choice
+  ages: [22, 65]
+  after: [trainsToTeach, teaching]
+  tags: [community, teaching, job]
+
+- id: volunteersLocally
+  label: Volunteers locally
+  line: "{name} volunteers in the neighbourhood every week."
+  if: "{name} had volunteered locally"
+  kind: choice
+  ages: [20, 70]
+  tags: [community, volunteer]
+  weight: 0.8
+
+- id: mentorsSomeone
+  label: Mentors someone
+  line: "{name} mentors someone just starting out."
+  if: "{name} had mentored someone younger"
+  kind: choice
+  ages: [24, 65]
+  after: [job]
+  tags: [community, mentoring]
+
+- id: teachesYourCraft
+  label: Teaches own craft
+  line: "{name} teaches others a craft learned over many years."
+  if: "{name} had taught others {his} craft"
+  kind: choice
+  ages: [28, 70]
+  after: [qualified, chef, baker, crafts, painting, wood]
+  tags: [community, teaching]
+
+- id: runsFoodBank
+  label: Helps run a food bank
+  line: "{name} helps run a food bank in the church hall."
+  if: "{name} had helped run a food bank"
+  kind: choice
+  ages: [22, 65]
+  tags: [community, volunteer]
+  weight: 0.8
+
+- id: campaignsForLibrary
+  label: Saves the library
+  line: "{name} starts a campaign to save the town library."
+  if: "{name} had campaigned to save the library"
+  kind: choice
+  ages: [25, 65]
+  after: [volunteer, civic, library]
+  tags: [community, campaign]
+  weight: 2
+
+- id: councilSaysNo
+  label: The council says no
+  line: "The council turns the plan down."
+  kind: setback
+  ages: [25, 65]
+  after: [campaign]
+  tags: [community]
+  move: -1
+
+- id: triesAgain
+  label: Tries again together
+  line: "{name} knocks on doors and tries again with neighbours."
+  if: "{name} had tried again with the neighbours"
+  kind: choice
+  ages: [25, 65]
+  after: [councilSaysNo]
+  tags: [community]
+  within: 2
+
+- id: findsAnotherWay
+  label: Finds another way
+  line: "{name} finds another way to keep the books on the shelves."
+  if: "{name} had found another way to help"
+  kind: choice
+  ages: [25, 65]
+  after: [councilSaysNo]
+  tags: [community]
+  within: 2
+
+- id: townBacksCampaign
+  label: Neighbours join in
+  line: "Hundreds of neighbours sign the petition. Luck helps!"
+  kind: lucky
+  ages: [25, 65]
+  after: [campaign]
+  tags: [community]
+  move: 2
+
+- id: runsYouthClub
+  label: Runs a youth club
+  line: "{name} runs a youth club on Friday nights."
+  if: "{name} had run a youth club"
+  kind: choice
+  ages: [22, 65]
+  after: [volunteer, teaching, leader]
+  tags: [community, youthClub, volunteer]
+  weight: 2
+
+- id: fundingEnds
+  label: The money runs out
+  line: "The grant runs out, and the club loses its room."
+  kind: setback
+  ages: [24, 65]
+  after: [youthClub]
+  tags: [community]
+  move: -2
+
+- id: asksShopsForHelp
+  label: Asks local shops
+  line: "{name} asks local shops to chip in."
+  if: "{name} had asked local shops for help"
+  kind: choice
+  ages: [24, 65]
+  after: [fundingEnds]
+  tags: [community, helped]
+  within: 2
+
+- id: movesToSchoolHall
+  label: Moves to the hall
+  line: "{name} moves the club to the school hall."
+  if: "{name} had moved the club to the school hall"
+  kind: choice
+  ages: [24, 65]
+  after: [fundingEnds]
+  tags: [community]
+  within: 2
+
+- id: roomOffered
+  label: A free room appears
+  line: "A shop owner offers a free room for the club. Luck!"
+  kind: lucky
+  ages: [22, 65]
+  after: [youthClub, volunteer]
+  tags: [community]
+  move: 1
+
+- id: joinsTownCouncil
+  label: Joins the town council
+  line: "{name} joins the town council."
+  if: "{name} had joined the town council"
+  kind: choice
+  ages: [28, 65]
+  after: [campaign, volunteer, civic]
+  tags: [community, civic]
+
+- id: welcomesNeighbours
+  label: Welcomes neighbours
+  line: "{name} welcomes new neighbours with a plate of food."
+  if: "{name} had welcomed new neighbours"
+  kind: choice
+  ages: [20, 70]
+  tags: [community, volunteer]
+  weight: 0.7
+
+- id: helpsNewcomersSettle
+  label: Helps a family settle
+  line: "{name} helps a newly arrived family find school and work."
+  if: "{name} had helped a new family settle in"
+  kind: choice
+  ages: [22, 65]
+  after: [volunteer, languages]
+  tags: [community, volunteer]
+
+- id: leadsScoutGroup
+  label: Leads a scout group
+  line: "{name} leads a scout group on Thursday evenings."
+  if: "{name} had led a scout group"
+  kind: choice
+  ages: [20, 60]
+  after: [outdoors]
+  tags: [community, volunteer, teaching]
+
+- id: coachesTownTeam
+  label: Coaches a town team
+  line: "{name} coaches a town team that plays on Sunday mornings."
+  if: "{name} had coached a town team"
+  kind: choice
+  ages: [20, 65]
+  after: [coaching]
+  tags: [community, volunteer, teaching]
+
+- id: teachesTradeSkills
+  label: Teaches trade skills
+  line: "{name} teaches trade skills at the local college."
+  if: "{name} had taught trade skills"
+  kind: choice
+  ages: [28, 65]
+  after: [qualified]
+  tags: [community, teaching, job]
+
+- id: visitsLonelyNeighbours
+  label: Visits neighbours
+  line: "{name} visits older neighbours who live alone."
+  if: "{name} had visited older neighbours"
+  kind: choice
+  ages: [20, 70]
+  after: [carer]
+  tags: [community, volunteer]
+
+- id: runsDramaWorkshops
+  label: Runs drama workshops
+  line: "{name} runs drama workshops in the town hall."
+  if: "{name} had run drama workshops"
+  kind: choice
+  ages: [20, 65]
+  after: [drama, theatre]
+  tags: [community, teaching, volunteer]
+
+- id: cooksForFoodBank
+  label: Cooks for food bank
+  line: "{name} cooks hot meals for the food bank."
+  if: "{name} had cooked for the food bank"
+  kind: choice
+  ages: [20, 65]
+  after: [cooking]
+  tags: [community, volunteer]
+
+- id: teachesDigitalSkills
+  label: Teaches computing
+  line: "{name} shows older neighbours how to use a computer."
+  if: "{name} had taught neighbours to use computers"
+  kind: choice
+  ages: [22, 65]
+  after: [code, computers]
+  tags: [community, teaching, volunteer]
