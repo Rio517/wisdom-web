@@ -1,7 +1,7 @@
 // The lives engine (design 001 v13, round 4): reads the lives store (README.md
 // in this folder), checks it, and grows a new life from any fork of a written
 // one. Pure: no DOM. Used by the opening, the tree page and `npm run lives:check`.
-import { parse } from 'yaml';
+import { load } from 'js-yaml';
 
 export const TOKENS = ['name', 'his', 'him', 'himself'];
 export const KINDS = ['start', 'choice', 'lucky', 'setback', 'event'];
@@ -57,7 +57,8 @@ const fileName = path => path.split('/').pop();
 const isBaselinePath = path => /(^|\/)baselines\//.test(path);
 
 function lineOf(error) {
-  return error?.linePos?.[0]?.line ?? null;
+  const line = error?.mark?.line;
+  return Number.isInteger(line) ? line + 1 : null;
 }
 
 function normalNode(raw, file, index) {
@@ -135,9 +136,10 @@ export function loadStore(files) {
     store.files.push(entry);
     let data;
     try {
-      data = parse(String(text ?? ''), { prettyErrors: true });
+      data = load(String(text ?? ''));
     } catch (error) {
-      entry.error = error.message.split('\n')[0];
+      const line = lineOf(error);
+      entry.error = `${error.reason ?? error.message.split('\n')[0]}${line ? ` (line ${line})` : ''}`;
       store.parseErrors.push({ file, line: lineOf(error), message: entry.error });
       continue;
     }
