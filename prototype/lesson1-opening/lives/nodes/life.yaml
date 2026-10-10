@@ -349,6 +349,8 @@
   line: "A relative lends {him} money for a fresh start."
   kind: lucky
   ages: [18, 50]
+  after: [setback]
+  within: 2
   move: 1
   weight: 0.3
 
@@ -368,7 +370,7 @@
   kind: choice
   ages: [7, 62]
   after: [illForMonths, breaksAnArm]
-  within: 2
+  within: 1
 
 - id: jobEnds
   label: The job ends
@@ -469,7 +471,7 @@
   ages: [7, 60]
   after: [illForMonths, breaksAnArm]
   tags: [helped]
-  within: 2
+  within: 1
 
 - id: findsCheaperPlace
   label: Finds a cheaper place

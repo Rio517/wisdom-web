@@ -87,6 +87,7 @@
   if: "{name} had learned to code on an evening course"
   kind: choice
   ages: [22, 50]
+  unless: [code]
   tags: [tech, code, study]
   weight: 0.8
 

@@ -154,7 +154,7 @@
   line: "A local shop pays for the whole team's new kit."
   kind: lucky
   ages: [8, 20]
-  after: [team, club]
+  after: [team]
   tags: [sport]
   move: 1
 

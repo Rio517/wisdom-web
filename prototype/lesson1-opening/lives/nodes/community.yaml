@@ -47,7 +47,7 @@
   line: "{name} helps younger pupils settle in."
   if: "{name} had helped new pupils settle in"
   kind: choice
-  ages: [13, 19]
+  ages: [12, 18]
   after: [helper, club, volunteer]
   tags: [community, helper, mentoring]
 
