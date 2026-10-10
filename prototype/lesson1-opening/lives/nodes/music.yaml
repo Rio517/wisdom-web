@@ -51,7 +51,7 @@
   kind: lucky
   ages: [15, 40]
   after: [songs]
-  move: 2
+  move: 1
 
 - id: recordDeal
   label: Signs a record deal

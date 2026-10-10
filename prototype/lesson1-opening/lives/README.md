@@ -56,6 +56,11 @@ asks for an instrument or singing.
 life that took the `guitar` node or any node that gives the `instrument` tag. A
 tag may not have the same name as a node unless it is that node's own id.
 
+**Heights.** A life starts at the middle. Each step moves it by `move` × 0.1
+(up is better), except that a `move` of 3 or -3 is a big jump of 0.42. Choices
+wobble a little but don't move it. A grown life also drifts a tenth of the way
+back to the middle at each step, so no life gets stuck at the top or bottom.
+
 **Kinds and how they draw.** A `choice` is a plain dot where lines split, and
 never moves the path up or down by itself: choices are not ranked. A `lucky`
 break is a sun star and lifts the path (`move` 1 to 3). A `setback` is a clay
@@ -93,6 +98,7 @@ steps:
     line: "A radio DJ plays it. Luck!"   # optional: this life's own words for the step
     label: …                             # optional: this life's own map label
     move: …                              # optional: this life's own rise or fall at the step
+    y: …                                 # optional: the exact height, 0 (top) to 1 (bottom), to fine-tune a shape
     echoes: [choir]                      # optional: earlier steps that pulse when this one lands
 ```
 
