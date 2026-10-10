@@ -1,0 +1,247 @@
+# Tech: computers, coding, games, websites.
+# The schema and the rules are in ../README.md.
+
+- id: oldComputerAtHome
+  label: A computer at home
+  line: "{his} parents set up an old computer in the hall."
+  if: "{his} parents had set up an old computer at home"
+  kind: choice
+  by: family
+  ages: [4, 9]
+  tags: [tech, computers]
+
+- id: learnsToCode
+  label: Learns to code
+  line: "{name} learns to code with a friend."
+  if: "{name} had learned to code with a friend"
+  kind: choice
+  ages: [8, 14]
+  tags: [tech, code, computers]
+
+- id: makesAGame
+  label: Makes a simple game
+  line: "{name} makes a simple game for friends to play."
+  if: "{name} had made a simple game"
+  kind: choice
+  ages: [11, 18]
+  after: [code]
+  tags: [tech, games]
+
+- id: buildsWebsite
+  label: Builds a website
+  line: "{name} builds a website about a favourite hobby."
+  if: "{name} had built a website"
+  kind: choice
+  ages: [11, 17]
+  tags: [tech, websites, computers]
+
+- id: fixesOldComputer
+  label: Fixes an old computer
+  line: "{name} fixes an old computer from the school cupboard."
+  if: "{name} had fixed an old computer"
+  kind: choice
+  ages: [9, 15]
+  tags: [tech, computers, fixing]
+
+- id: codeTeacherSpots
+  label: A teacher spots it
+  line: "A teacher spots {his} project and lends a better computer. Luck!"
+  kind: lucky
+  ages: [10, 17]
+  after: [code, websites, computers]
+  tags: [tech]
+  move: 1
+
+- id: gameGoesFar
+  label: The game goes far
+  line: "Friends share the game with their friends. Luck!"
+  kind: lucky
+  ages: [14, 30]
+  after: [games]
+  tags: [tech]
+  move: 2
+
+- id: entersGameJam
+  label: Enters a game jam
+  line: "{name} makes a game in one weekend at a game jam."
+  if: "{name} had entered a game jam"
+  kind: choice
+  ages: [15, 35]
+  after: [games]
+  tags: [tech, contest]
+
+- id: studiesComputing
+  label: Studies computing
+  line: "{name} studies computing at university."
+  if: "{name} had studied computing"
+  kind: choice
+  ages: [17, 24]
+  after: [code, websites, computers]
+  tags: [tech, study, university]
+
+- id: codingCourse
+  label: Does a coding course
+  line: "{name} learns to code on an evening course."
+  if: "{name} had learned to code on an evening course"
+  kind: choice
+  ages: [22, 50]
+  tags: [tech, code, study]
+  weight: 0.8
+
+- id: devJob
+  label: Gets a coding job
+  line: "{name} gets a job writing software."
+  if: "{name} had got a coding job"
+  kind: choice
+  ages: [20, 60]
+  after: [code, studiesComputing]
+  tags: [tech, job, developer]
+
+- id: joinsGameStudio
+  label: Joins a game studio
+  line: "{name} joins a studio that makes games."
+  if: "{name} had joined a game studio"
+  kind: choice
+  ages: [18, 45]
+  after: [games, studiesComputing]
+  tags: [tech, job, developer, studio]
+
+- id: studioCloses
+  label: The studio closes
+  line: "The studio closes, and the team is let go."
+  kind: setback
+  ages: [22, 50]
+  after: [studio]
+  tags: [tech]
+  move: -2
+
+- id: freelancesCode
+  label: Takes freelance work
+  line: "{name} takes freelance jobs, one client at a time."
+  if: "{name} had taken freelance work"
+  kind: choice
+  ages: [22, 60]
+  after: [studioCloses]
+  tags: [tech, job]
+  within: 2
+
+- id: startsIndieGame
+  label: Makes a game alone
+  line: "{name} makes a game of {his} own, slowly and carefully."
+  if: "{name} had made a game of {his} own"
+  kind: choice
+  ages: [22, 55]
+  after: [studioCloses, games]
+  tags: [tech, owner, business]
+
+- id: launchDayBug
+  label: A bug on launch day
+  line: "A bug brings the website down on launch day."
+  kind: setback
+  ages: [20, 60]
+  after: [developer, websites]
+  tags: [tech]
+  move: -1
+
+- id: fixesTheBug
+  label: Fixes the bug
+  line: "{name} stays late and fixes the bug."
+  if: "{name} had fixed the bug"
+  kind: choice
+  ages: [20, 60]
+  after: [launchDayBug]
+  tags: [tech]
+  within: 2
+
+- id: asksForReview
+  label: Asks for a second look
+  line: "{name} asks a colleague to look at the code too."
+  if: "{name} had asked a colleague to look"
+  kind: choice
+  ages: [20, 60]
+  after: [launchDayBug]
+  tags: [tech, helped]
+  within: 2
+
+- id: seniorReviews
+  label: A senior coder helps
+  line: "A senior developer reads {his} code and teaches {him}. Luck!"
+  kind: lucky
+  ages: [20, 50]
+  after: [developer]
+  tags: [tech, mentor]
+  move: 1
+
+- id: teachesCoding
+  label: Teaches coding
+  line: "{name} teaches coding to children."
+  if: "{name} had taught coding to children"
+  kind: choice
+  ages: [22, 65]
+  after: [code, developer]
+  tags: [tech, teaching, job]
+
+- id: appForClub
+  label: Builds a club app
+  line: "{name} builds an app for a local club."
+  if: "{name} had built an app for a club"
+  kind: choice
+  ages: [16, 60]
+  after: [code]
+  tags: [tech, community]
+
+- id: websiteForShop
+  label: Builds a shop website
+  line: "{name} builds a website for a corner shop."
+  if: "{name} had built a website for a shop"
+  kind: choice
+  ages: [16, 60]
+  after: [websites]
+  tags: [tech, job]
+
+- id: fixesComputers
+  label: Fixes computers
+  line: "{name} fixes computers for neighbours and small firms."
+  if: "{name} had fixed computers for others"
+  kind: choice
+  ages: [14, 60]
+  after: [computers]
+  tags: [tech, job]
+
+- id: makesMusicOnComputer
+  label: Makes laptop music
+  line: "{name} makes music on a laptop in {his} bedroom."
+  if: "{name} had made music on a laptop"
+  kind: choice
+  ages: [14, 50]
+  after: [computers, instrument]
+  tags: [tech, music]
+
+- id: animatesCartoons
+  label: Animates cartoons
+  line: "{name} makes drawings move on a screen."
+  if: "{name} had made drawings move on a screen"
+  kind: choice
+  ages: [16, 50]
+  after: [drawing, code]
+  tags: [tech, animation, job]
+
+- id: worksFromHome
+  label: Works from home
+  line: "{name} works from home, with a cat on the keyboard."
+  if: "{name} had started working from home"
+  kind: choice
+  ages: [24, 60]
+  after: [job]
+  tags: [tech]
+  weight: 0.5
+
+- id: takesSteadyJob
+  label: Takes a steady job
+  line: "{name} takes a steady job at a company that is hiring."
+  if: "{name} had taken a steady job elsewhere"
+  kind: choice
+  ages: [22, 55]
+  after: [studioCloses]
+  tags: [tech, job, developer]
+  within: 2

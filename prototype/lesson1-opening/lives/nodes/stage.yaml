@@ -1,0 +1,254 @@
+# Stage: dance, drama, theatre, film.
+# The schema and the rules are in ../README.md.
+
+- id: aDanceClass
+  label: A dance class
+  line: "{his} parents take {him} to a dance class."
+  if: "{his} parents had picked a dance class"
+  kind: choice
+  by: family
+  ages: [3, 8]
+  tags: [stage, dance]
+
+- id: joinsDanceClass
+  label: Joins a dance class
+  line: "{name} joins a dance class and loves the music."
+  if: "{name} had joined a dance class"
+  kind: choice
+  ages: [7, 12]
+  tags: [stage, dance]
+
+- id: schoolPlay
+  label: Acts in a school play
+  line: "{name} plays a tree in the school play."
+  if: "{name} had acted in a school play"
+  kind: choice
+  ages: [7, 13]
+  tags: [stage, drama]
+
+- id: puppetShows
+  label: Puts on puppet shows
+  line: "{name} puts on puppet shows for the family."
+  if: "{name} had put on puppet shows"
+  kind: choice
+  ages: [5, 10]
+  tags: [stage, drama]
+
+- id: dramaClub
+  label: Joins drama club
+  line: "{name} joins the drama club."
+  if: "{name} had joined the drama club"
+  kind: choice
+  ages: [10, 15]
+  tags: [stage, drama, club]
+
+- id: filmsOnPhone
+  label: Films with a phone
+  line: "{name} films tiny movies with friends on a phone."
+  if: "{name} had filmed movies with friends"
+  kind: choice
+  ages: [10, 16]
+  tags: [stage, film]
+
+- id: partInAShow
+  label: A part in a show
+  line: "A theatre offers {him} a part in a show. Luck!"
+  kind: lucky
+  ages: [12, 30]
+  after: [dance, drama]
+  tags: [stage, theatre]
+  move: 2
+
+- id: joinsTouringShow
+  label: Joins a touring show
+  line: "{name} joins a show that travels from town to town."
+  if: "{name} had joined a touring show"
+  kind: choice
+  ages: [17, 35]
+  after: [theatre]
+  tags: [stage, job, theatre]
+
+- id: dramaSchool
+  label: Goes to drama school
+  line: "{name} goes to drama school."
+  if: "{name} had gone to drama school"
+  kind: choice
+  ages: [17, 24]
+  after: [drama, dance]
+  tags: [stage, study]
+
+- id: ankleInjury
+  label: An ankle injury
+  line: "{name} hurts an ankle and cannot dance for months."
+  kind: setback
+  ages: [13, 40]
+  after: [dance]
+  tags: [stage, injury]
+  move: -2
+
+- id: teachesDance
+  label: Teaches dance
+  line: "{name} teaches dance to children."
+  if: "{name} had taught dance to children"
+  kind: choice
+  ages: [18, 65]
+  after: [dance, theatre]
+  tags: [stage, teaching, job]
+
+- id: gentleDanceClass
+  label: Leads a gentle class
+  line: "{name} leads a gentle dance class while the ankle heals."
+  if: "{name} had led a gentle dance class"
+  kind: choice
+  ages: [18, 65]
+  after: [ankleInjury]
+  tags: [stage, teaching]
+  within: 2
+
+- id: choreographs
+  label: Makes dances
+  line: "{name} makes up dances for other people to perform."
+  if: "{name} had made up dances for others"
+  kind: choice
+  ages: [18, 65]
+  after: [ankleInjury]
+  tags: [stage, theatre]
+  within: 2
+
+- id: switchesToActing
+  label: Switches to acting
+  line: "{name} switches from dancing to acting."
+  if: "{name} had switched to acting"
+  kind: choice
+  ages: [16, 50]
+  after: [ankleInjury]
+  tags: [stage, drama]
+  within: 2
+
+- id: showCloses
+  label: The show closes early
+  line: "The show closes early, and the cast goes home."
+  kind: setback
+  ages: [18, 45]
+  after: [theatre]
+  tags: [stage]
+  move: -2
+
+- id: auditionsAgain
+  label: Goes to more auditions
+  line: "{name} goes to audition after audition."
+  if: "{name} had gone to more auditions"
+  kind: choice
+  ages: [18, 45]
+  after: [showCloses]
+  tags: [stage]
+  within: 2
+
+- id: worksBackstage
+  label: Works backstage
+  line: "{name} works backstage with lights, props and curtains."
+  if: "{name} had worked backstage"
+  kind: choice
+  ages: [16, 60]
+  after: [drama, showCloses, theatre]
+  tags: [stage, theatre, job]
+
+- id: startsYouthTheatre
+  label: Starts a youth theatre
+  line: "{name} starts a youth theatre for the town's children."
+  if: "{name} had started a youth theatre"
+  kind: choice
+  ages: [24, 60]
+  after: [teachesDance, drama, theatre]
+  tags: [stage, community, teaching]
+
+- id: directsAPlay
+  label: Directs a play
+  line: "{name} directs a play and watches it come alive."
+  if: "{name} had directed a play"
+  kind: choice
+  ages: [20, 60]
+  after: [drama, worksBackstage]
+  tags: [stage, theatre]
+
+- id: makesShortFilm
+  label: Makes a short film
+  line: "{name} makes a short film with friends."
+  if: "{name} had made a short film"
+  kind: choice
+  ages: [14, 35]
+  after: [film]
+  tags: [stage, film]
+
+- id: filmFestival
+  label: A festival shows it
+  line: "A small festival shows {his} film. Luck!"
+  kind: lucky
+  ages: [16, 40]
+  after: [film]
+  tags: [stage]
+  move: 2
+
+- id: studiesFilm
+  label: Studies film
+  line: "{name} studies how films are made."
+  if: "{name} had studied film"
+  kind: choice
+  ages: [17, 26]
+  after: [film, drama]
+  tags: [stage, study]
+
+- id: editsVideos
+  label: Edits videos
+  line: "{name} edits videos for shops, bands and schools."
+  if: "{name} had edited videos for a living"
+  kind: choice
+  ages: [18, 60]
+  after: [film]
+  tags: [stage, job, videos]
+
+- id: localTheatreGroup
+  label: Joins a theatre group
+  line: "{name} joins a local theatre group."
+  if: "{name} had joined a local theatre group"
+  kind: choice
+  ages: [20, 70]
+  tags: [stage, drama]
+  weight: 0.7
+
+- id: dancesSocially
+  label: Takes up salsa
+  line: "{name} takes up salsa dancing on Friday nights."
+  if: "{name} had taken up salsa"
+  kind: choice
+  ages: [20, 70]
+  tags: [stage, dance]
+  weight: 0.6
+
+- id: playsInShowBand
+  label: Plays in a show band
+  line: "{name} plays in the band for a stage show."
+  if: "{name} had played in a show band"
+  kind: choice
+  ages: [14, 60]
+  after: [instrument]
+  tags: [stage, theatre, music]
+
+- id: voiceActing
+  label: Records cartoon voices
+  line: "{name} records voices for cartoons."
+  if: "{name} had recorded cartoon voices"
+  kind: choice
+  ages: [20, 60]
+  after: [drama, film]
+  tags: [stage, job]
+
+- id: joinsLocalProduction
+  label: Joins a local show
+  line: "{name} joins a small local production that needs a cast."
+  if: "{name} had joined a local production"
+  kind: choice
+  ages: [18, 45]
+  after: [showCloses]
+  tags: [stage, theatre]
+  within: 2

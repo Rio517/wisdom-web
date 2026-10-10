@@ -233,3 +233,13 @@
   after: [workRuined, artSchoolSaysNo]
   tags: [art, helped]
   within: 2
+
+- id: keepsMakingArt
+  label: Keeps making art
+  line: "{name} keeps making art at the kitchen table anyway."
+  if: "{name} had kept making art anyway"
+  kind: choice
+  ages: [17, 30]
+  after: [artSchoolSaysNo]
+  tags: [art, drawing]
+  within: 2

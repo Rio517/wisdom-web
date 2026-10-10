@@ -231,7 +231,7 @@
   if: "{name} had taught science at a school"
   kind: choice
   ages: [22, 60]
-  after: [leavesResearch, studyScience, pauseStudies]
+  after: [leavesResearch, studyScience, pausesStudies]
   tags: [science, teaching]
 
 - id: worksWithData

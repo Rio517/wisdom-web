@@ -451,3 +451,32 @@
   ages: [8, 16]
   after: [club, team]
   weight: 0.5
+
+- id: keepsInTouch
+  label: Keeps in touch
+  line: "{name} writes to the faraway friend every week."
+  if: "{name} had kept in touch with a faraway friend"
+  kind: choice
+  ages: [7, 30]
+  after: [bestFriendMoves]
+  within: 2
+
+- id: catchesUp
+  label: Catches up with help
+  line: "Friends help {him} catch up on everything missed."
+  if: "{name} had caught up with help from friends"
+  kind: choice
+  ages: [10, 60]
+  after: [illForMonths]
+  tags: [helped]
+  within: 2
+
+- id: findsCheaperPlace
+  label: Finds a cheaper place
+  line: "{name} finds a smaller, cheaper place to live."
+  if: "{name} had found a cheaper place to live"
+  kind: choice
+  ages: [18, 60]
+  after: [flatSold, moneyGetsTight]
+  tags: [home]
+  within: 2
