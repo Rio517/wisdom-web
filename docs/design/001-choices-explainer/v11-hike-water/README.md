@@ -158,6 +158,36 @@ Each is a 2x crop of the falls at 1920x1080, the Halfway step, drawn in the real
 
 **Pick: E.** It keeps B's reading, a cliff standing round the back of its pool, while the raised ground stays level on both sides and keeps hiding the rocks' lower third. The rock meets the water along the whole back and round both ends, so there are no corners to hide and no extra objects.
 
+### What changed (round 5)
+
+In `src/lessons/choices/journey-hike-geometry.js`, `journey-hike.js` and `journey-hike-water.js`:
+
+- **One outline.** The pool is a loop of 96 points (`POOL_SHORE`), about 110 x 25 map units, inside the rock's lower width. The WebGL pond mesh, the still drawing's bank and body, the clip of its foam and the trees' keep-clear all use it, so both renderers draw the same pool.
+- **The back.** It lies 2.4 units above the raised ground's level edge, over the rock's foot, and curves down 9 units to the pool's two ends. The raised ground stays level at about y 526 on both sides; only within 14 units of the pool's ends does its edge come down to meet them, so the rock meets the water along the whole back and round both ends.
+- **The bank.** Each outline point carries the bank's share (`POOL_BANK`): none along the rock, the full bank band round the front and sides.
+- **The fall.** Shortened by 31 units: it now ends 8.5 units below the pool's back edge, in its back third. It is still drawn in front of the rock and the pool's back. The foam sits where it lands, and the rings spread from there across the pool.
+- **The side stream.** It leaves the pool's front-left lip, 10 units wide, and joins its old course at x 928. Only its first three keys and the width table's first row changed. Where it leaves (`POOL_MOUTH`), the pool's bank opens and the stream's middle is no deeper than its edges, so the two waters run into each other with no line between them. The still drawing already joined them this way, because it draws every bank before every body.
+- **The lookout.** The alternative plan's trail now ends at (989, 530) instead of (1002, 530), 13 units to the left, so the pair stands on the ground beside the pool and no longer in front of the rock's left flank.
+
+### Checks (round 5)
+
+- **Every step.** All eight steps were played forward with the arrow key and back with Back at 1920x1080, 1440x900, 1280x800, 744x1133 and 1133x744, with WebGL (SwiftShader), with reduced motion and without WebGL. There were no console errors, the water was drawn at every step, and the pair was visible at every step.
+- **The meeting line.** At pixel ratio 4, no ground or pale line shows between the rock and the water at either end or under the fall, with or without WebGL. The side stream's joint has no line across it in either renderer.
+- **Tests and build.** `npm test` (243 tests) and `npm run build` pass. The built water module is 6.3 KB gzipped (6.2 KB before), and the build has no Three.js.
+- **Performance.** This was measured in a cloud Linux container on the production builds of the base commit and this round, with the CPU throttled 4x, two runs each. The container is several times slower than the M4 the budget's numbers come from, so only the comparison means anything.
+  - With WebGL, the longest task on entering the hike was 133–136 ms against 149–166 ms for the base. Most of it is SwiftShader compiling shaders on the CPU. Per step, the range was 30–45 ms against 27–45 ms.
+  - Without WebGL, entering took 91–97 ms against 82–83 ms for the base, and the per-step range was 11–49 ms against 17–50 ms. Both are within this container's run-to-run noise.
+- **Memory.** Over 5 visits to the hike, the heap after garbage collection went from 4,284 to 4,347 KB with WebGL, against 4,280 to 4,340 KB for the base. Nodes stayed at 1,653 and event listeners at 74.
+
+### Images (round 5, v03)
+
+Halfway step unless noted. Compare each with its v02:
+
+- [The falls](site-hike-falls-v03.png), 1440x900 at pixel ratio 2: the pool at the rock's foot (v02: [the pool on the hilltop](site-hike-falls-v02.png)).
+- [1920x1080](site-hike-1920-v03.png) (v02: [1920](site-hike-1920-v02.png)), [1440x900](site-hike-1440-v03.png) (v02: [1440](site-hike-1440-v02.png)), [744x1133](site-hike-744-v03.png) (v02: [744](site-hike-744-v02.png)).
+- [Without WebGL](site-hike-nowebgl-1440-v03.png), 1440x900 (v02: [without WebGL](site-hike-nowebgl-1440-v02.png)).
+- [The pair at the lookout](site-hike-walkers-v03.png), the alternative plan's step at 1440x900, pixel ratio 3 (v02: [the pair at the crest and the lake](site-hike-walkers-v02.png)).
+
 ## One geography for every version
 
 The water's shapes live in one module (`geometry.js`), so A, B and C differ only in how the water looks.

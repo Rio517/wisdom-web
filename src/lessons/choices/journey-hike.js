@@ -32,7 +32,7 @@ const MAIN = 'M110 660 C 180 650, 230 612, 300 596 S 410 566, 452 548 S 560 520,
   + ` C 880 368, 1196 486, ${FAR_KEYS[0].join(' ')}${through(FAR_KEYS)}`;
 const MAIN_LENGTH = pathTrack(MAIN).length;
 // The Waterfall Trail leaves the bridge eastwards, above the side stream, to a lookout beside the falls.
-const ALT = 'M628 505 C 668 498, 712 497, 756 503 S 880 522, 930 525 S 984 528, 1002 530';
+const ALT = 'M628 505 C 668 498, 712 497, 756 503 S 880 522, 930 525 S 974 528, 989 530';
 // Where the pair stands at the trailhead (map units along the trail): clear of the cabin. The walked
 // line still starts at the trail's start, and the practice walks start and end where they stand.
 const HOME = 22;
