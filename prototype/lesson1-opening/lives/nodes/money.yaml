@@ -1,0 +1,236 @@
+# Money: first jobs, saving, shops, starting a business.
+# The schema and the rules are in ../README.md.
+
+- id: pocketMoneyChores
+  label: Pocket money
+  line: "{his} parents give {him} pocket money for small chores."
+  if: "{his} parents had given {him} pocket money for chores"
+  kind: choice
+  by: family
+  ages: [5, 9]
+  tags: [money, savings]
+
+- id: savesInJar
+  label: Saves in a jar
+  line: "{name} saves coins in a jar for something special."
+  if: "{name} had saved coins in a jar"
+  kind: choice
+  ages: [6, 12]
+  tags: [money, savings]
+
+- id: sellsOldToys
+  label: Sells old toys
+  line: "{name} sells old toys and books to other children."
+  if: "{name} had sold old toys"
+  kind: choice
+  ages: [8, 14]
+  tags: [money, stall]
+
+- id: paperRound
+  label: Delivers papers
+  line: "{name} delivers newspapers before school."
+  if: "{name} had delivered newspapers"
+  kind: choice
+  ages: [12, 16]
+  tags: [money, job]
+
+- id: helpsInFamilyShop
+  label: Helps in a shop
+  line: "{name} helps in a shop after school."
+  if: "{name} had helped in a shop after school"
+  kind: choice
+  ages: [10, 17]
+  tags: [money, job, shop]
+
+- id: partTimeJob
+  label: Gets a part-time job
+  line: "{name} gets a part-time job."
+  if: "{name} had got a part-time job"
+  kind: choice
+  ages: [14, 19]
+  tags: [money, job]
+
+- id: savesForSomethingBig
+  label: Saves for a big goal
+  line: "{name} saves for something big, a little each month."
+  if: "{name} had saved for something big"
+  kind: choice
+  ages: [14, 30]
+  after: [savings, job]
+  tags: [money, savings]
+
+- id: learnsToBudget
+  label: Learns to budget
+  line: "{name} learns to plan where every pound goes."
+  if: "{name} had learned to budget"
+  kind: choice
+  ages: [16, 60]
+  tags: [money, savings]
+  weight: 0.7
+
+- id: shopAssistant
+  label: Works in a shop
+  line: "{name} works in a shop and learns what people need."
+  if: "{name} had worked in a shop"
+  kind: choice
+  ages: [16, 60]
+  after: [shop, job, stall]
+  tags: [money, job, shop]
+
+- id: shopManager
+  label: Becomes a shop manager
+  line: "{name} becomes the manager of the shop."
+  if: "{name} had become a shop manager"
+  kind: choice
+  ages: [22, 60]
+  after: [shopAssistant]
+  tags: [money, job]
+
+- id: startsABusiness
+  label: Starts a business
+  line: "{name} starts a small business."
+  if: "{name} had started a small business"
+  kind: choice
+  ages: [18, 55]
+  after: [savings, stall, qualified, crafts]
+  tags: [money, owner, business]
+
+- id: opensASmallShop
+  label: Opens a small shop
+  line: "{name} opens a small shop on the high street."
+  if: "{name} had opened a small shop"
+  kind: choice
+  ages: [22, 55]
+  after: [shopAssistant, savings]
+  tags: [money, owner, business, shop]
+
+- id: sellsOnline
+  label: Sells things online
+  line: "{name} sells things online to people far away."
+  if: "{name} had sold things online"
+  kind: choice
+  ages: [18, 55]
+  tags: [money, business, online]
+  weight: 0.8
+
+- id: buysASmallHouse
+  label: Buys a small house
+  line: "{name} buys a small house after years of saving."
+  if: "{name} had bought a small house"
+  kind: choice
+  ages: [26, 60]
+  after: [savings, job]
+  tags: [money, home]
+
+- id: happyCustomer
+  label: Customers spread word
+  line: "A happy customer tells everybody about the place. Luck!"
+  kind: lucky
+  ages: [18, 55]
+  after: [owner]
+  tags: [money]
+  move: 2
+
+- id: localPrize
+  label: A small business prize
+  line: "{name} wins a small business prize with some money. Luck!"
+  kind: lucky
+  ages: [20, 55]
+  after: [owner, business]
+  tags: [money]
+  move: 1
+
+- id: customersDryUp
+  label: A very quiet year
+  line: "It is a quiet year, and far fewer customers come in."
+  kind: setback
+  ages: [22, 60]
+  after: [owner, shop]
+  tags: [money]
+  move: -2
+
+- id: customerNeverPays
+  label: A customer never pays
+  line: "A big customer never pays the bill."
+  kind: setback
+  ages: [22, 60]
+  after: [owner, business]
+  tags: [money]
+  move: -1
+
+- id: offersSomethingNew
+  label: Offers something new
+  line: "{name} offers something new to bring customers back."
+  if: "{name} had offered something new"
+  kind: choice
+  ages: [22, 60]
+  after: [customersDryUp]
+  tags: [money]
+  within: 2
+
+- id: cutsCosts
+  label: Cuts costs carefully
+  line: "{name} cuts costs carefully until things settle."
+  if: "{name} had cut costs carefully"
+  kind: choice
+  ages: [22, 60]
+  after: [customersDryUp, customerNeverPays]
+  tags: [money]
+  within: 2
+
+- id: asksAccountant
+  label: Asks for expert advice
+  line: "{name} asks an accountant to look at the books."
+  if: "{name} had asked an accountant for advice"
+  kind: choice
+  ages: [22, 60]
+  after: [customersDryUp, customerNeverPays]
+  tags: [money, helped]
+  within: 2
+
+- id: paymentsUpFront
+  label: Asks for payment first
+  line: "{name} asks customers to pay before the work starts."
+  if: "{name} had asked customers to pay first"
+  kind: choice
+  ages: [22, 60]
+  after: [customerNeverPays]
+  tags: [money]
+  within: 2
+
+- id: earnsToHelpAtHome
+  label: Earns to help at home
+  line: "{name} takes small jobs to help the family through."
+  if: "{name} had taken small jobs to help the family"
+  kind: choice
+  ages: [12, 60]
+  after: [moneyGetsTight]
+  tags: [money, job]
+  within: 2
+
+- id: takesSecondJob
+  label: Takes a second job
+  line: "{name} takes a second job in the evenings."
+  if: "{name} had taken a second job"
+  kind: choice
+  ages: [20, 60]
+  after: [job]
+  tags: [money, job]
+  weight: 0.6
+
+- id: deliveryWork
+  label: Does delivery work
+  line: "{name} delivers parcels and meals on a bike."
+  if: "{name} had done delivery work"
+  kind: choice
+  ages: [18, 60]
+  tags: [money, job]
+
+- id: opensSportsShop
+  label: Opens a sports shop
+  line: "{name} opens a shop selling shoes and kit."
+  if: "{name} had opened a sports shop"
+  kind: choice
+  ages: [24, 55]
+  after: [sport, savings]
+  tags: [money, owner, business, shop]
