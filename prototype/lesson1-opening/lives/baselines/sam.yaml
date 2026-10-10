@@ -16,7 +16,7 @@ steps:
     echoes: [choir]
   - node: startsBand
     age: 14
-    alts: [schoolTeam]
+    alts: [schoolTeam, learnsToCode]
   - node: ownSong
     age: 16
     alts: [playGigs, partTimeJob]
@@ -54,7 +54,6 @@ steps:
     move: 1
   - node: teachesSchoolMusic
     age: 36
-    alts: [runsYouthClub, joinsAdultChoir]
     move: 1
     echoes: [givesMusicLessons]
   - node: watchesChildPerform

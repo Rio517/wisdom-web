@@ -160,7 +160,7 @@
   kind: choice
   ages: [24, 60]
   after: [teachesDance, drama, theatre]
-  tags: [stage, community, teaching]
+  tags: [stage, community, teaching, youthGroup]
 
 - id: directsAPlay
   label: Directs a play

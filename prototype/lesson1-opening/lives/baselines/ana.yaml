@@ -1,4 +1,5 @@
-# Ana: food, slow and steady, a place of her own, the rent doubling, and a way back sideways with a partner.
+# Ana: food, slow and steady, a bakery of her own, the rent doubling, and a way
+# back sideways with a business partner.
 # The schema is in ../README.md.
 
 id: ana
@@ -20,7 +21,8 @@ steps:
     echoes: [bakeSale]
   - node: chefOffer
     age: 17
-    line: "A baker offers to train her. Luck!"
+    label: A baker takes her on
+    line: "A baker sees her work and offers to train her. Luck!"
     echoes: [cafeJob]
   - node: trainsAsBaker
     age: 18
@@ -28,7 +30,9 @@ steps:
     echoes: [chefOffer]
   - node: worksInKitchen
     age: 22
+    line: "She bakes the bread for a busy restaurant."
     alts: [cooksSchoolLunches, caters]
+    echoes: [trainsAsBaker]
   - node: openBakery
     age: 27
     label: Opens her own bakery
@@ -37,29 +41,21 @@ steps:
     echoes: [trainsAsBaker, worksInKitchen]
   - node: happyCustomer
     age: 31
-    line: "Word spreads, and the queue grows."
+    line: "Word spreads, and the queue grows. Luck!"
     move: 1
   - node: rentDoubles
-    age: 35
-    line: "The rent doubles, and the sums stop adding up."
+    age: 34
   - node: teamsUpWithPartner
-    age: 36
-    line: "She teams up with a partner to share the costs."
+    age: 35
     move: 1
     alts: [marketStall, smallerShop]
   - node: caters
     age: 38
-    label: Cooks for events
-    line: "She cooks for parties and weddings, with her partner."
-    alts: [startsFoodTruck, cooksSchoolLunches]
+    label: Cooks for weddings
+    line: "She and her partner bake for weddings and parties too."
     echoes: [openBakery]
   - node: teachesCooking
-    age: 40
-    move: 1
-    alts: [cooksForFoodBank, runsFoodBank]
-    echoes: [trainsAsBaker]
-  - node: writesRecipeBook
     age: 41
+    line: "She teaches children to bake, flour and all."
     move: 1
-    alts: [startsNewHobby, learnsSomethingNew]
-    echoes: [helpBake, teachesCooking]
+    echoes: [helpBake]

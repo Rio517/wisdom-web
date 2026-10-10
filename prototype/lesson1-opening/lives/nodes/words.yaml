@@ -170,7 +170,7 @@
   tags: [words, book]
   within: 2
 
-- id: publishesItHimself
+- id: selfPublishes
   label: Publishes it alone
   line: "{name} prints the book {himself} and sells it locally."
   if: "{name} had published the book {himself}"
@@ -180,12 +180,21 @@
   tags: [words, book]
   within: 2
 
+- id: joinsWritingGroup
+  label: Joins a writing group
+  line: "{name} joins a writing group, and they read each other's work."
+  if: "{name} had joined a writing group"
+  kind: choice
+  ages: [16, 70]
+  after: [writing, book]
+  tags: [words, writing, helped]
+
 - id: bookDeal
   label: A publisher says yes
   line: "A publisher wants the book at last. Luck and patience!"
   kind: lucky
   ages: [20, 66]
-  after: [keepsWriting, rewritesTheBook, publishesItHimself]
+  after: [keepsWriting, rewritesTheBook, selfPublishes]
   tags: [words, published]
   move: 3
 

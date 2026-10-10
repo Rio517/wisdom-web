@@ -160,15 +160,15 @@
   kind: choice
   ages: [22, 65]
   after: [volunteer, teaching, leader]
-  tags: [community, youthClub, volunteer]
+  tags: [community, youthGroup, volunteer]
   weight: 2
 
 - id: fundingEnds
   label: The money runs out
-  line: "The grant runs out, and the club loses its room."
+  line: "The money runs out, and the group loses its room."
   kind: setback
   ages: [24, 65]
-  after: [youthClub]
+  after: [youthGroup]
   tags: [community]
   move: -2
 
@@ -184,8 +184,8 @@
 
 - id: movesToSchoolHall
   label: Moves to the hall
-  line: "{name} moves the club to the school hall."
-  if: "{name} had moved the club to the school hall"
+  line: "{name} moves the group to the school hall, rent-free."
+  if: "{name} had moved the group to the school hall"
   kind: choice
   ages: [24, 65]
   after: [fundingEnds]
@@ -194,10 +194,10 @@
 
 - id: roomOffered
   label: A free room appears
-  line: "A shop owner offers a free room for the club. Luck!"
+  line: "A shop owner offers the group a free room. Luck!"
   kind: lucky
   ages: [22, 65]
-  after: [youthClub, volunteer]
+  after: [youthGroup]
   tags: [community]
   move: 1
 

@@ -1,4 +1,5 @@
-# Theo: caring, a parent's long illness at 10, nurse training, a mentor, a hospital that closes, and a move for work.
+# Theo: caring, a parent's long illness at 10, nurse training, a mentor, a
+# hospital that closes, and a move for work: a life that starts hard.
 # The schema is in ../README.md.
 
 id: theo
@@ -12,7 +13,6 @@ steps:
     alts: [singsAtHome, oldComputerAtHome]
   - node: parentIll
     age: 10
-    line: "A parent becomes very ill for a long time."
   - node: helpsAtHome
     age: 11
     alts: [asksTeacherForHelp, looksAfterYounger]
@@ -33,15 +33,13 @@ steps:
     echoes: [volunteerClinic, helpsAtHome]
   - node: nurseMentor
     age: 22
-    line: "A senior nurse takes him under a wing. Luck!"
     echoes: [nurseTraining]
   - node: midwife
     age: 26
-    alts: [teachesFirstAid, paramedic]
+    alts: [paramedic, joinsMedicalResearch]
     echoes: [nurseMentor]
   - node: hospitalCloses
     age: 30
-    line: "The hospital closes, and his ward goes with it."
     move: -2
   - node: moveForWork
     age: 31
@@ -52,10 +50,9 @@ steps:
     age: 34
     move: 1
   - node: careForAParent
-    age: 38
+    age: 36
     alts: [worksFewerHours, takesJobNearFamily]
     echoes: [parentIll, helpsAtHome]
   - node: teachesFirstAid
     age: 42
-    alts: [mentorsSomeone, visitsLonelyNeighbours]
     echoes: [firstAid]
