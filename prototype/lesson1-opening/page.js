@@ -346,7 +346,7 @@ function run() {
   const sideColumn = matchMedia('(min-width: 990px)');
   const lastFit = new Map(); // a list's id and box size → the size it fitted at last time
   function fitList(box, { min = 15, max = 24 } = {}) {
-    box.classList.remove('is-tight', 'is-snug');
+    box.classList.remove('is-tight', 'is-snug', 'is-compact');
     box.style.removeProperty('--fit-size');
     box.style.removeProperty('--fit-gap');
     [...box.children].forEach(row => row.classList.remove('is-folded', 'is-folded-more'));
@@ -422,6 +422,7 @@ function run() {
     if (over()) box.classList.add('is-snug');
     shrink('is-folded', newest);
     shrink('is-folded-more', newest);
+    if (over()) box.classList.add('is-compact');
   };
   // If the list still has to scroll in its column, the newest line stays in view.
   const keepInView = (element, box = list()) => {
@@ -437,7 +438,7 @@ function run() {
         element.classList.add('is-pending');
         element.classList.remove('is-past', 'is-folded', 'is-folded-more');
       });
-      if (list()) { list().scrollTop = 0; list().classList.remove('is-snug'); }
+      if (list()) { list().scrollTop = 0; list().classList.remove('is-snug', 'is-compact'); }
     },
     reveal(position, { duration, dim }) {
       const all = lines();

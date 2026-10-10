@@ -713,7 +713,7 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
   function setMode(next) {
     mode = next;
     applyMode();
-    if (next === 'ended') showCard(); else card.hidden = true;
+    if (next === 'ended') showCard(); else { card.hidden = true; altEls.forEach(element => element.classList.remove('is-under-card')); }
   }
 
   // ——— A fork's popover: its other choices as chips ———
@@ -780,6 +780,9 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
     }
   });
   // A tab or click away closes the popover.
+  // A press inside the popover keeps the focus where it is: Safari doesn't focus a pressed button, so
+  // the chip would lose focus, the popover would close (below) and the click would land on the map.
+  pop.addEventListener('mousedown', event => event.preventDefault());
   pop.addEventListener('focusout', event => {
     if (!pop.hidden && !pop.contains(event.relatedTarget) && event.relatedTarget !== openFork) closePop();
   });
@@ -787,8 +790,6 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
     if (!pop.hidden && !pop.contains(event.target) && !event.target.closest?.('.life-fork')) closePop();
   });
 
-  // The end card: lower right as in the explorer, unless that covers the route
-  // or its labels; then the clear corner; on a stage too small for both, a bar.
   // While the end card shows, grow one life no one sees, so the engine is warm and the first
   // pick costs what later ones do.
   let warmFor = null;
@@ -799,6 +800,8 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
     const run = () => { if (model?.life.id === warmFor) grow(model.store, { baseline: model.life.id, forkIndex: first.stepIndex, alt: first.id, seed: 'warm-up' }); };
     if (typeof requestIdleCallback === 'function') requestIdleCallback(run, { timeout: 2000 }); else setTimeout(run, 300);
   }
+  // The end card: lower right as in the explorer, unless that covers the route
+  // or its labels; then the clear corner; on a stage too small for both, a bar.
   function showCard() {
     warmUp();
     const g = geometry();
@@ -819,9 +822,13 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
       left: spot.left ?? r.width - spot.right - width, top: spot.top ?? r.height - spot.bottom - height,
       right: (spot.left ?? r.width - spot.right - width) + width, bottom: (spot.top ?? r.height - spot.bottom - height) + height,
     } }));
+    // A gray label the card has to cover steps out of sight (its ring and popover still offer it), as
+    // gray labels step aside for dark ones.
+    const coverGray = box => altEls.forEach(element => element.classList.toggle('is-under-card', element.classList.contains('is-shown') && close(box, [boxOf(element)])));
     const spot = spots.find(item => !blocked(item.box, true)) ?? spots.find(item => !blocked(item.box, false));
     if (spot) {
       card.style.cssText = `left:${spot.box.left}px;top:${spot.box.top}px;right:auto;bottom:auto`;
+      coverGray(spot.box);
       return;
     }
     // A stage too small for a card gets a bar across the map's empty top, or else its foot.
@@ -831,6 +838,7 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
     const bar = top => ({ left: 12, right: r.width - 12, top, bottom: top + barHeight });
     const top = [12, r.height - 30 - barHeight].find(y => !blocked(bar(y), false)) ?? r.height - 30 - barHeight;
     card.style.cssText = `top:${top}px;bottom:auto`;
+    coverGray(bar(top));
   }
 
   // ——— A life the person could have lived ———

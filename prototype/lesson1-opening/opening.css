@@ -21,6 +21,11 @@
   .life-step.is-folded-more .life-line { font-size: 14px; line-height: 1.25; }
   .life-steps.is-snug { row-gap: 1px; }
   .life-steps.is-snug .life-step.is-folded-more .life-line { line-height: 1.2; }
+  /* Still too long (a long life on an iPad held sideways): the oldest lines take the age into their
+     own row, so their words have the column's whole width, a size smaller again. */
+  .life-steps.is-compact .life-step.is-folded-more { display: block; padding-left: 24px; text-indent: -24px; font: 13px/1.15 var(--font-field); }
+  .life-steps.is-compact .life-step.is-folded-more .life-age { display: inline; margin-right: 5px; font-size: 12px; }
+  .life-steps.is-compact .life-step.is-folded-more .life-line { display: inline; font-size: 13px; line-height: 1.15; }
   .life-step.is-folded .life-age, .life-steps.is-tight .life-step.is-pending .life-age { font-size: 13px; }
   /* There, lines still to come wait unseen in one row each, so the list doesn't jump as they arrive. */
   .life-steps.is-tight .life-step.is-pending .life-line { white-space: nowrap; overflow: hidden; font-size: 15px; line-height: 1.3; }
@@ -95,6 +100,7 @@
 }
 .life-alt::after { content: ""; position: absolute; inset: -9px -4px; }
 .life-alt:disabled, .life-alt:not(.is-shown) { pointer-events: none; cursor: default; }
+.life-alt.is-under-card { visibility: hidden; }
 .map-stack[data-life="choosing"] .life-alt { border-color: var(--color-sage); background: white; color: var(--color-ink); text-shadow: none; }
 .life-alt:not(:disabled):hover, .life-alt:not(:disabled):focus-visible { border-color: #376f9a; color: #2c5d82; background: #f3f8fb; text-shadow: none; transform: translate(-50%, var(--lift)) scale(1.05); }
 .life-alt:focus-visible { outline: 2px solid #376f9a; outline-offset: 2px; }
