@@ -46,7 +46,7 @@ asks for an instrument or singing.
   unless: [band]              # NONE of these may be on the path
   tags: [music, band]         # what this gives the life (a node's own id always counts too)
   drops: []                   # tags this takes away (a band that splits drops `band`)
-  within: 0                   # if set, one `after` match must be among the last N steps (help right after a setback)
+  within: 0                   # if set, one `after` match must be among the last N steps and at most 4 years before (help soon after a setback)
   move: 0                     # events only: how this changes how things are going, -3 … +3 (up is better)
   by: family                  # optional: someone else chose it (children under about 8)
   weight: 1                   # optional: how often it comes up when a life grows (default 1)
@@ -104,7 +104,8 @@ steps:
 
 Every step must be possible where it stands: its node's rules hold for the
 steps before it, and its age is inside the node's `ages`. The same goes for
-each alternative. Only `choice` steps have alternatives. When a step names no
+each alternative. Only `choice` steps have alternatives, and only at least six
+years before `end`, so a different life has room to grow. When a step names no
 `echoes`, the steps that satisfied its `after` pulse.
 
 ## What a written life needs
@@ -128,11 +129,19 @@ each alternative. Only `choice` steps have alternatives. When a step names no
 
 When the reader picks an alternative, the life keeps every step before the
 fork, takes the alternative, and then grows to the person's `end` age: at each
-fork the engine lists the nodes whose rules hold at that age, prefers ones that
-build on the last few steps, now and then brings a lucky break or a setback
-(they take turns), and picks at random. The same pick grows a different life
-each time. The gray lines at each new dot are other nodes that were possible
-there.
+fork the engine lists the nodes whose rules hold at that age and picks at
+random, weighted by `weight`. The same pick grows a different life each time.
+The gray lines at each new dot are other nodes that were possible there.
+
+- **Lives build.** When some node builds on one of the last two steps (its
+  `after` matches one of them), one of those is taken about two times in
+  three.
+- **Surprises.** From age 8 until four years before `end`, about one fork in
+  three is a lucky break or a setback (they mostly take turns). The last four
+  years have none, so no life ends on one.
+- **Answers come soon.** After a lucky break or a setback the next step comes
+  sooner (about half the usual gap), and a `within` match must be at most four
+  years back.
 
 A node happens at most once in a life. A step comes at least a year after the
 one before it.
@@ -154,7 +163,8 @@ without `if`; a label over 22 characters; a line over 12 words; an unknown
 `{token}`; a line that starts with `{name}'s`; words that say "you"; a
 baseline step or alternative that isn't possible where it stands (the message
 says which rule fails); alternatives on a step that isn't a choice, or an
-alternative that isn't one; ages that don't go up; `end` outside 38 to 45; a
+alternative that isn't one; alternatives less than six years before `end`;
+ages that don't go up; `end` outside 38 to 45; a
 written life with fewer than 12 or more than 15 steps, or one that doesn't
 start with `born` at 0 and finish at `end`.
 
@@ -170,6 +180,9 @@ those lives after the fork (0 nothing shared, 1 the same; lower is more
 varied), and the mean end height (`end`, above the middle is +) against the
 fork's other options (`others`: the step as written, grown again, and the
 other alternatives). A pick whose lives end more than 0.12 apart from its
-fork's others is flagged: no choice may reliably end higher. Then, across
+fork's others is flagged: no choice may reliably end higher. `luck` is the
+share of grown forks from 8 to `end` − 4 that were a lucky break or a setback
+(aim: about a third), `build` the share of steps that built on one of the last
+two. Then, across
 5,000 random lives (`--random`), how many nodes of each file are ever used,
 and which are not.
