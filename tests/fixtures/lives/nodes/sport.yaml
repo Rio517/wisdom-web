@@ -1,0 +1,113 @@
+# Test fixture for the lives engine (not the real store): sport and the outdoors.
+
+- id: footballClub
+  label: Joins a football club
+  line: "{his} parents sign {him} up for a football club."
+  if: "{his} parents had picked football club"
+  kind: choice
+  by: family
+  ages: [4, 9]
+  tags: [sport, football, team]
+
+- id: learnsToSwim
+  label: Learns to swim
+  line: "{his} parents take {him} to swimming lessons."
+  if: "{his} parents had picked swimming lessons"
+  kind: choice
+  by: family
+  ages: [3, 8]
+  tags: [sport, swimming]
+
+- id: scouts
+  label: Joins the scouts
+  line: "{his} parents sign {him} up for the scouts."
+  if: "{his} parents had picked the scouts"
+  kind: choice
+  by: family
+  ages: [5, 9]
+  tags: [outdoors]
+
+- id: schoolTeam
+  label: Joins the school team
+  line: "{name} joins the school team."
+  if: "{name} had joined the school team"
+  kind: choice
+  ages: [9, 16]
+  tags: [sport, team]
+
+- id: trainsHard
+  label: Trains every morning
+  line: "{name} trains every morning before school."
+  if: "{name} had trained every morning"
+  kind: choice
+  ages: [10, 20]
+  after: [sport]
+  tags: [training]
+
+- id: scoutWatches
+  label: A scout watches
+  line: "A scout watches {him} play and calls {his} coach."
+  kind: lucky
+  ages: [13, 22]
+  after: [training, team]
+  move: 2
+
+- id: kneeInjury
+  label: Hurts a knee
+  line: "{name} hurts {his} knee. Months on crutches."
+  kind: setback
+  ages: [13, 40]
+  after: [sport]
+  move: -2
+
+- id: coachesKids
+  label: Coaches a kids' team
+  line: "{name} coaches a kids' team on Sundays."
+  if: "{name} had coached a kids' team"
+  kind: choice
+  ages: [18, 60]
+  after: [sport]
+  tags: [teaching, coach]
+
+- id: runsMarathon
+  label: Runs a marathon
+  line: "{name} runs a marathon, slowly but all the way."
+  if: "{name} had run a marathon"
+  kind: choice
+  ages: [20, 60]
+  tags: [running, sport]
+
+- id: lifeguard
+  label: Works as a lifeguard
+  line: "{name} works as a lifeguard at the lake."
+  if: "{name} had worked as a lifeguard"
+  kind: choice
+  ages: [16, 30]
+  after: [swimming]
+  tags: [job]
+
+- id: parkRanger
+  label: Becomes a park ranger
+  line: "{name} becomes a park ranger."
+  if: "{name} had become a park ranger"
+  kind: choice
+  ages: [20, 45]
+  after: [outdoors]
+  unless: [job]
+  tags: [job, outdoors]
+
+- id: stormFloods
+  label: A storm floods home
+  line: "A storm floods {his} home. Everything is wet."
+  kind: setback
+  ages: [20, 60]
+  move: -2
+  weight: 0.5
+
+- id: plantsGarden
+  label: Plants a garden
+  line: "{name} plants a vegetable garden."
+  if: "{name} had planted a garden"
+  kind: choice
+  ages: [8, 70]
+  tags: [garden, outdoors]

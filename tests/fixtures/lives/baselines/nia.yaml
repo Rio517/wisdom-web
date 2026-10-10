@@ -1,0 +1,48 @@
+# Test fixture for the lives engine (not the real store): a second written life.
+# Nia: a hard start in a new town, code, a lab, a lost job, a business of her own.
+
+id: nia
+name: Nia
+pronoun: she
+end: 43
+steps:
+  - { node: born, age: 0 }
+  - node: scouts
+    age: 5
+    alts: [drawingClass, learnsToSwim]
+  - node: newTown
+    age: 8
+  - node: codingClub
+    age: 10
+    alts: [chessClub, scienceFair]
+  - node: teacherNotices
+    age: 12
+  - node: buildsApp
+    age: 15
+    alts: [schoolTeam, writesStories]
+  - node: illForMonths
+    age: 17
+  - node: studiesScience
+    age: 18
+    alts: [movesCity, officeJob]
+  - node: labJob
+    age: 22
+    alts: [startsBusiness, parkRanger]
+  - node: discovery
+    age: 27
+  - node: losesJob
+    age: 31
+    line: "The lab loses its money. Nia loses her job."
+  - node: startsBusiness
+    age: 33
+    alts: [findsNewJob, movesHome]
+    echoes: [buildsApp]
+  - node: becomesParent
+    age: 36
+    move: 1
+  - node: bigCustomer
+    age: 39
+  - node: teachesCoding
+    age: 43
+    alts: [volunteers, runsMarathon]
+    echoes: [codingClub]

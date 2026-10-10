@@ -134,15 +134,42 @@ build on the last few steps, now and then brings a lucky break or a setback
 each time. The gray lines at each new dot are other nodes that were possible
 there.
 
+A node happens at most once in a life. A step comes at least a year after the
+one before it.
+
 ## Check it
 
 ```sh
-npm run lives:check
+npm run lives:check                       # the whole store; exit 1 on any error
+npm run lives:check -- --samples 10       # and ten random grown lives as text
+npm run lives:check -- --quiet            # errors and the report, warnings counted only
+npm run lives:check -- --store tests/fixtures/lives --lives 20 --random 1000
 ```
 
-It lists errors (unknown names, broken rules, steps that aren't possible where
-they stand, words too long, missing `if`), warnings (nodes no life can reach,
-nodes that leave a life stuck before its end) and a variety report: for every
-alternative of every baseline, 50 grown lives, how often they reach the end,
-how different they are from each other, and whether any pick reliably ends
-higher than the others (it must not).
+**Errors** (fix them all): a file that doesn't parse; duplicate ids; an id
+that isn't camelCase; an unknown name in `after`, `needs`, `unless`, `drops` or
+`echoes`; a tag named like another node; bad `ages`; a kind's `move` out of its
+range (choice 0, lucky 1 to 3, setback -1 to -3, event -3 to 3); a choice
+without `if`; a label over 22 characters; a line over 12 words; an unknown
+`{token}`; a line that starts with `{name}'s`; words that say "you"; a
+baseline step or alternative that isn't possible where it stands (the message
+says which rule fails); alternatives on a step that isn't a choice, or an
+alternative that isn't one; ages that don't go up; `end` outside 38 to 45; a
+written life with fewer than 12 or more than 15 steps, or one that doesn't
+start with `born` at 0 and finish at `end`.
+
+**Warnings:** nodes no life can reach (nothing they need can come before them
+in time), duplicate labels, nodes where every grown life through them stops
+more than three years before its end, and a written life without a lucky
+break, a setback, a family choice before 8 or six of the person's own choices.
+
+**The variety report:** for every alternative of every baseline, 50 grown
+lives (`--lives`): how many reach `end` − 3 (`reach`), the mean number of
+steps, the distinct nodes used after the fork, the mean overlap of any two of
+those lives after the fork (0 nothing shared, 1 the same; lower is more
+varied), and the mean end height (`end`, above the middle is +) against the
+fork's other options (`others`: the step as written, grown again, and the
+other alternatives). A pick whose lives end more than 0.12 apart from its
+fork's others is flagged: no choice may reliably end higher. Then, across
+5,000 random lives (`--random`), how many nodes of each file are ever used,
+and which are not.
