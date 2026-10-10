@@ -280,7 +280,11 @@ h1, h2, h3, h4 { font-family: var(--font-field); font-weight: 500; }
 .scene-hike canvas.hike-water { pointer-events: none; transition: opacity 300ms ease; }
 /* The water fades in once it has drawn, rather than popping in after the map. */
 .scene-hike canvas.hike-water[data-ready="false"] { opacity: 0; }
-.scene-hike svg.hike-map { --path: #dfcfae; --path-edge: #a99572; --path-ink: #6f5d40; }
+.scene-hike svg.hike-map, .scene-hike svg.hike-bg { --path: #dfcfae; --path-edge: #a99572; --path-ink: #6f5d40; }
+/* The trail's far stretch and Mirror Lake's clearing: the same sand, a little lighter for distance
+   (mixed with the mountain band they lie on), flat. */
+.hike-bg .far-trail, .hike-bg .far-yard { fill: color-mix(in srgb, var(--path) 78%, #f4f6f1); }
+.hike-bg .far-trail-edge, .hike-bg .far-yard-edge { fill: color-mix(in srgb, var(--path-edge) 55%, #d2ddd3); }
 .hike-bg .lake-shore { fill: var(--color-paper-deep); stroke: var(--color-paper-deep); stroke-width: 5; stroke-linejoin: round; }
 /* Trail: a tan footpath with a darker edge and a dashed centre line, drawn as bands that narrow
    with distance. It opens into the yard at the trailhead in the same colours. Never blue. */

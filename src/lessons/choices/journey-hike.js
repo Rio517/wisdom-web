@@ -6,19 +6,40 @@ import { LEARNED } from './journey-story.js';
 import { t } from '../../i18n/runtime.js';
 import { ICONS, alfredo, dad } from './journey-icons.js';
 import { tween, ease, wait } from './journey-motion.js';
-import { FAR_RIDGE, HILL, GROUND, FALL, FALLS_DROP, LAKE_SHORE, MAIN as STREAM, fallEdges, groundY, keepClear, outline, pathTrack } from './journey-hike-geometry.js';
+import { FAR_RIDGE, HILL, GROUND, FALL, FALLS_DROP, LAKE_SHORE, MAIN as STREAM, fallEdges, groundY, hillCrestY, keepClear, outline, pathTrack } from './journey-hike-geometry.js';
+
+// Everything above the green hill's crest: where the trail's far stretch shows.
+const ABOVE_HILL = `M-400 -400 L1600 -400 L1600 440 L${Array.from({ length: 121 }, (_, i) => 1200 - i * 10).map(x => `${x} ${hillCrestY(x).toFixed(1)}`).join(' L')} L-400 480 Z`;
 
 const tx = key => String(t(key)).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;');
 const n1 = value => value.toFixed(1);
 
-// The trail from the trailhead, over the bridge (628, 505), to Mirror Lake's near shore.
-const MAIN = 'M110 660 C 180 650, 230 612, 300 596 S 410 566, 452 548 S 560 520, 628 505 C 690 492, 716 452, 748 420 S 800 360, 846 332 S 884 316, 905 309';
+// Cubic segments (` C ...`) through `points` (Catmull-Rom), carrying on from the first point.
+const through = points => points.slice(0, -1).map((p, i) => {
+  const [a, b, c] = [points[Math.max(0, i - 1)], points[i + 1], points[Math.min(points.length - 1, i + 2)]];
+  const c1 = [p[0] + (b[0] - a[0]) / 6, p[1] + (b[1] - a[1]) / 6];
+  const c2 = [b[0] - (c[0] - p[0]) / 6, b[1] - (c[1] - p[1]) / 6];
+  return ` C ${[c1, c2, b].map(([x, y]) => `${n1(x)} ${n1(y)}`).join(', ')}`;
+}).join('');
+// The trail from the trailhead, over the bridge (628, 505), up to the green hill's crest. It goes over
+// the hill and on behind it (never drawn), comes back into view on the far right, beside the falls'
+// rock, and climbs in two switchbacks to a small clearing on Mirror Lake's right-hand shore.
+const FAR_KEYS = [
+  [1182, 448], [1173, 422], [1146, 395], [1128, 378], [1125, 370], [1133, 364], [1160, 349], [1170, 342],
+  [1172, 334], [1163, 327], [1142, 312], [1132, 302],
+];
+const MAIN = 'M110 660 C 180 650, 230 612, 300 596 S 410 566, 452 548 S 560 520, 628 505 C 690 492, 735 476, 772 452 S 830 406, 854 386'
+  + ` C 880 368, 1196 486, ${FAR_KEYS[0].join(' ')}${through(FAR_KEYS)}`;
+const MAIN_LENGTH = pathTrack(MAIN).length;
 // The Waterfall Trail leaves the bridge eastwards, above the side stream, to a lookout beside the falls.
 const ALT = 'M628 505 C 668 498, 712 497, 756 503 S 880 522, 930 525 S 984 528, 1002 530';
 // Where the pair stands at the trailhead (map units along the trail): clear of the cabin. The walked
 // line still starts at the trail's start, and the practice walks start and end where they stand.
 const HOME = 22;
-const TURN = 0.4;
+// Halfway, as a fraction of the trail, and where the second walk stops short of the bridge
+// (map units): both kept where they were before the trail went over the hill.
+const TURN = 355.4 / MAIN_LENGTH;
+const BRIDGE_GAP = 10.7;
 // Practice walks: out along a short path to a loop and back.
 const LOOP_SPOTS = [[190, 735], [340, 738], [490, 735]];
 const LOOP_RX = 58;
@@ -244,14 +265,30 @@ function fallsMarkup() {
   </g>`;
 }
 
-// Layer 1: the flat hills, the lake's shore band and the falls' rocks. No water.
+// Mirror Lake's clearing, where the far stretch ends: the trailhead yard's bare ground, far
+// away (about 6:1, a gently uneven edge), with a tiny picnic table and a few small trees.
+const LAKE_YARD = { cx: 1140, cy: 299, rx: 29, ry: 5 };
+const lakeYard = grow => {
+  const { cx, cy, rx, ry } = LAKE_YARD;
+  return `M${Array.from({ length: 48 }, (_, i) => {
+    const a = (i / 48) * Math.PI * 2;
+    const edge = 1 + 0.05 * Math.sin(3 * a + 0.6) + 0.03 * Math.sin(5 * a + 2.1);
+    return `${n1(cx + Math.cos(a) * (rx * edge + grow))} ${n1(cy + Math.sin(a) * (ry * edge + grow * 0.6))}`;
+  }).join(' L')} Z`;
+};
+const LAKE_YARD_TREES = [[1131, 296, 0.38], [1160, 296, 0.46], [1171, 299, 0.36]];
+
+// Layer 1: the flat hills, the trail's far stretch (behind the green hill), the lake's shore band
+// and clearing, and the falls' rocks. No water.
 function backgroundSVG() {
   return `<svg class="hike-bg" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false">
   <path d="${FAR_RIDGE}" fill="#e2e9e2"/>
   <path d="M-400 420 L0 400 L120 330 L230 380 L340 300 L460 380 L600 290 L720 360 L850 290 L915 240 L1100 238 L1150 270 L1200 290 L1600 330 V1200 H-400 Z" fill="#d2ddd3"/>
+  <g id="trail-far"></g>
   <path d="${HILL}" fill="#e5ece3"/>
   <path d="${GROUND}" fill="#edf2ea"/>
   <path class="lake-shore" d="M${LAKE_SHORE.map(([x, y]) => `${n1(x)} ${n1(y)}`).join(' L')} Z"/>
+  <path class="far-yard-edge" d="${lakeYard(0.9)}"/><path class="far-yard" d="${lakeYard(0)}"/>
   ${fallsMarkup()}
 </svg>`;
 }
@@ -269,12 +306,23 @@ function foregroundSVG() {
   </g>
   <path class="lake-far-bank" d="${FAR_BANK.land}"/><path class="lake-waterline" d="${FAR_BANK.waterline}"/>
   <g class="shore-trees">${SHORE_TREES.map(shoreTree).join('')}</g>
+  <g id="lake-yard">
+    ${LAKE_YARD_TREES.filter(([, y]) => y < LAKE_YARD.cy).map(shoreTree).join('')}
+    <g transform="translate(1146 301) scale(0.23)">
+      <path class="table-leg" d="M-3 -11.5 L-11 0 M3 -11.5 L11 0 M-14 -6.8 H14"/>
+      <rect class="table-wood" x="-10" y="-14" width="20" height="3"/>
+      <rect class="table-wood" x="-18" y="-8.2" width="8" height="2.6"/><rect class="table-wood" x="10" y="-8.2" width="8" height="2.6"/>
+    </g>
+    ${LAKE_YARD_TREES.filter(([, y]) => y >= LAKE_YARD.cy).map(shoreTree).join('')}
+  </g>
   <defs>
+    <clipPath id="hike-near" clipPathUnits="userSpaceOnUse"><path d="${HILL}"/></clipPath>
+    <clipPath id="hike-far" clipPathUnits="userSpaceOnUse"><path d="${ABOVE_HILL}"/></clipPath>
     <mask id="hike-dry" maskUnits="userSpaceOnUse" x="-400" y="-400" width="2000" height="1600"><rect x="-400" y="-400" width="2000" height="1600" fill="white"/><path class="mask-cut" fill="black"/></mask>
     <mask id="hike-trail" maskUnits="userSpaceOnUse" x="-400" y="-400" width="2000" height="1600"><g class="mask-trail" fill="white"></g><path class="mask-cut" fill="black"/></mask>
   </defs>
   <g mask="url(#hike-dry)">
-    <g id="trail-main"></g>
+    <g id="trail-main" clip-path="url(#hike-near)"></g>
     <g class="trail-alt-plan" id="alt-plan"></g>
   </g>
   <g id="loops">${LOOP_SPOTS.map((_, i) => `<path class="loop" id="loopc-${i}"/><path class="loop" id="loop-${i}"/>`).join('')}</g>
@@ -345,6 +393,18 @@ export function createHikeScene(root) {
   const pointOn = (path, fraction) => tracks.get(path).point(fraction);
   const home = HOME / mainLength;
   const homePoint = pointOn(main, home);
+  // Where the trail goes over the green hill's crest, and where it comes back into view on the far
+  // side (map units along it). Between the two it is behind the hill.
+  let crestS = mainLength;
+  let emergeS = mainLength;
+  for (let s = 0; s <= mainLength; s += 0.5) {
+    const p = pointOn(main, s / mainLength);
+    const behind = p.y > hillCrestY(p.x);
+    if (crestS === mainLength && p.x > 700 && !behind) crestS = s;
+    if (crestS < mainLength && behind) emergeS = s;
+  }
+  const hiddenAt = s => s > crestS - 6 && s < emergeS + 4;
+  const isFar = s => s >= emergeS;
 
   // The trail as tapered ribbons (edge, path, centre dashes) opening into the yard at the
   // trailhead, plus the masks that taper the walked lines and leave the water clear under
@@ -363,9 +423,9 @@ export function createHikeScene(root) {
       return { pts, length, step: length / count };
     };
     const side = (p, h, sign) => `${n1(p.x + p.nx * h * sign)} ${n1(p.y + p.ny * h * sign)}`;
-    // A filled band of half-width `width(k)`, with round ends.
-    const band = ({ pts }, width) => {
-      const half = p => width(taper(p.y));
+    // A filled band of half-width `width(k)`, with round ends; `k` is the depth at each point.
+    const band = ({ pts }, width, depth = p => taper(p.y)) => {
+      const half = p => width(depth(p));
       const edges = [...pts.map(p => side(p, half(p), 1)), ...pts.slice().reverse().map(p => side(p, half(p), -1))];
       const ends = [pts[0], pts[pts.length - 1]].map(p => `<circle cx="${n1(p.x)}" cy="${n1(p.y)}" r="${n1(half(p))}"/>`).join('');
       return `<path d="M${edges.join(' L')} Z"/>${ends}`;
@@ -394,10 +454,20 @@ export function createHikeScene(root) {
       + dashes(line, yard ? line.pts.find(p => yard.outside(p) > TRAIL_HALF + YARD.blend / 2).s : 4);
     const mainLine = sample(main, mainLength);
     const altLine = sample(altPath, altLength);
+    // The near stretch runs a little past the crest, which cuts it; the far stretch starts a little
+    // below the crest, which hides its start. Nothing in between is drawn.
+    const near = { ...mainLine, pts: mainLine.pts.filter(p => p.s <= crestS + 10), length: crestS };
+    const far = { ...mainLine, pts: mainLine.pts.filter(p => p.s >= emergeS - 10) };
     const yard = yardShapes(mainLine.pts.filter((p, i) => p.s <= 140 && i % 4 === 0));
-    $('#trail-main').innerHTML = trail(mainLine, yard);
+    $('#trail-main').innerHTML = trail(near, yard);
     $('#alt-plan').innerHTML = trail(altLine);
-    $('.mask-trail').innerHTML = [mainLine, altLine].map(line => band(line, k => 2.5 * k + 0.3)).join('');
+    // The far stretch, behind the hill: about 30% of the trailhead's width, lighter, no centre line.
+    const farDepth = p => 0.27 + 0.06 * Math.min(1, Math.max(0, (p.y - 300) / 140));
+    root.querySelector('#trail-far').innerHTML = `<g class="far-trail-edge">${band(far, k => (TRAIL_HALF + TRAIL_EDGE * 0.5) * k, farDepth)}</g>`
+      + `<g class="far-trail">${band(far, k => TRAIL_HALF * k, farDepth)}</g>`;
+    const walkedBand = k => 2.5 * k + 0.3;
+    $('.mask-trail').innerHTML = `<g clip-path="url(#hike-near)">${band(near, walkedBand)}</g>${band(altLine, walkedBand)}`
+      + `<g clip-path="url(#hike-far)">${band(far, walkedBand, farDepth)}</g>`;
     const crossing = outline({ samples: STREAM.samples.filter(p => p.y > 430 && p.y < 590) }, -0.4);
     const cut = `M${crossing.map(([x, y]) => `${n1(x)} ${n1(y)}`).join(' L')} Z`;
     root.querySelectorAll('.mask-cut').forEach(node => node.setAttribute('d', cut));
@@ -421,6 +491,9 @@ export function createHikeScene(root) {
   const flagTextX = n1(30 - flagShift[0]);
   $('#turn-flag').setAttribute('transform', `translate(${n1(flagPoint.x)} ${n1(flagPoint.y - 8)})`);
   $('#turn-flag-text').setAttribute('y', n1(54 - flagShift[1]));
+  // The closed sign stands on the closed stretch, between the bridge and the crest.
+  const signPoint = pointOn(main, (bridge * mainLength + crestS) / 2 / mainLength);
+  $('#closed-sign').setAttribute('transform', `translate(${n1(signPoint.x)} ${n1(signPoint.y)})`);
 
   const setTrace = (element, length, from, to) => {
     const visible = Math.max(0, (to - from) * length);
@@ -431,9 +504,13 @@ export function createHikeScene(root) {
     // The dot marks where the walked line starts, once there is one.
     if (element === main) startDot.style.visibility = element.style.visibility;
   };
+  // On the main trail the pair goes out of sight over the crest, and on the far stretch, near the
+  // lake, they are drawn at 40% of their size.
   const place = (path, fraction, facing = 1) => {
     const point = pointOn(path, fraction);
-    walkers.setAttribute('transform', `translate(${point.x.toFixed(1)} ${point.y.toFixed(1)})`);
+    const s = path === main ? fraction * mainLength : 0;
+    walkers.setAttribute('transform', `translate(${point.x.toFixed(1)} ${point.y.toFixed(1)})${isFar(s) ? ' scale(0.4)' : ''}`);
+    walkers.style.visibility = hiddenAt(s) ? 'hidden' : '';
     flip.setAttribute('transform', `scale(${facing} 1)`);
   };
   // The flag text wraps to two balanced lines so it never runs across the map.
@@ -488,8 +565,8 @@ export function createHikeScene(root) {
       const length = tracks.get(path).length;
       return Array.from({ length: Math.ceil(length / 12) + 1 }, (_, i) => {
         const point = pointOn(path, (i * 12) / length);
-        return [point.x, point.y, 16];
-      });
+        return path === main && hiddenAt(i * 12) ? null : [point.x, point.y, 16];
+      }).filter(Boolean);
     }).concat(keepClear(12));
     root.querySelectorAll('.tree').forEach(node => {
       const x = Number(node.dataset.x), y = Number(node.dataset.y), s = Number(node.dataset.s);
@@ -578,8 +655,9 @@ export function createHikeScene(root) {
     closed: { learned: ['water', 'map', 'landmarks', 'rest'], shown: ['#turn-flag', '#storm', '#closed-sign', '#ranger', '#ranger-label'], closed: true, loops: 0 },
     respond: { learned: ['water', 'map', 'landmarks', 'rest'], shown: ['#turn-flag', '#closed-sign', '#picnic'], closed: true, alt: 1, loops: 0 },
   };
-  STATE.retry.at = ['main', bridge - 0.012, 1];
-  STATE.retry.second = [0, bridge - 0.012];
+  const shortOfBridge = bridge - BRIDGE_GAP / mainLength;
+  STATE.retry.at = ['main', shortOfBridge, 1];
+  STATE.retry.second = [0, shortOfBridge];
   STATE.closed = { ...STATE.retry, ...STATE.closed };
   STATE.respond = { ...STATE.retry, ...STATE.respond, at: ['alt', 1, 1], bottles: [4, 0.5] };
   STATE.sort = STATE.respond;
@@ -675,7 +753,7 @@ export function createHikeScene(root) {
       applyState('practice');
       setLoops(0);
       show('#loop-labels', false);
-      if (!(await walk({ path: main, length: mainLength, from: home, to: bridge - 0.012, duration: 4200, token, trace: $('#walked-second'), bottles: { count: 4, from: 1, to: 0.72 } }))) return;
+      if (!(await walk({ path: main, length: mainLength, from: home, to: shortOfBridge, duration: 4200, token, trace: $('#walked-second'), bottles: { count: 4, from: 1, to: 0.72 } }))) return;
       setFlagText('hike.turnedBack');
       return;
     }
@@ -720,5 +798,7 @@ export function createHikeScene(root) {
 
   renderLearned([]);
   applyState('plan');
+  // For checks and screenshots: stand the pair at a distance (map units) along the main trail.
+  root.hikeCheck = { crestS, emergeS, length: mainLength, place: s => place(main, s / mainLength, 1) };
   return { show: showBeat, choose, hide() {}, current: () => current, sortBoard: $('#sort-board') };
 }
