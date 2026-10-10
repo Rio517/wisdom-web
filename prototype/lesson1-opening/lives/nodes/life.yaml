@@ -1,0 +1,45 @@
+# Life: being born, family, home, friends, health, work changes, help, and the
+# luck and hard times that can come to anyone, whatever they do.
+# The schema and the rules are in ../README.md.
+
+- id: born
+  label: Born
+  line: "{name} is born."
+  kind: start
+  ages: [0, 0]
+
+- id: asksForHelp
+  label: Asks for help
+  line: "{name} asks a friend for help."
+  if: "{name} had asked for help"
+  kind: choice
+  ages: [12, 70]
+  after: [setback]
+  within: 2
+  tags: [helped]
+
+- id: movesHome
+  label: Moves back home
+  line: "{name} moves back in with {his} family."
+  if: "{name} had moved back home"
+  kind: choice
+  ages: [18, 45]
+  after: [setback]
+  within: 2
+  tags: [home]
+
+- id: officeJob
+  label: Takes an office job
+  line: "{name} takes a job in an office."
+  if: "{name} had taken an office job"
+  kind: choice
+  ages: [18, 60]
+  tags: [job, office]
+
+- id: becomesParent
+  label: Becomes a parent
+  line: "{name} becomes a parent."
+  kind: event
+  ages: [21, 44]
+  unless: [parent]
+  tags: [parent]

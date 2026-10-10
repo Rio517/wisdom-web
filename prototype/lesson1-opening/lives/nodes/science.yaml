@@ -1,0 +1,10 @@
+# Science and maths: puzzles, chess, clubs, experiments, study, research, data.
+# The schema and the rules are in ../README.md.
+
+- id: chessClub
+  label: Joins the chess club
+  line: "{name} joins the chess club."
+  if: "{name} had joined the chess club"
+  kind: choice
+  ages: [7, 13]
+  tags: [chess, thinking]

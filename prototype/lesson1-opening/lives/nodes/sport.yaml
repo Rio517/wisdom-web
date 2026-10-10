@@ -1,0 +1,28 @@
+# Sport: clubs, teams, training, competing, coaching, injuries.
+# The schema and the rules are in ../README.md.
+
+- id: footballClub
+  label: Joins a football club
+  line: "{his} parents sign {him} up for a football club."
+  if: "{his} parents had picked football club"
+  kind: choice
+  by: family
+  ages: [4, 9]
+  tags: [sport, football, team]
+
+- id: learnsToSwim
+  label: Learns to swim
+  line: "{his} parents take {him} to swimming lessons."
+  if: "{his} parents had picked swimming lessons"
+  kind: choice
+  by: family
+  ages: [3, 8]
+  tags: [sport, swimming]
+
+- id: schoolTeam
+  label: Joins the school team
+  line: "{name} joins the school team."
+  if: "{name} had joined the school team"
+  kind: choice
+  ages: [9, 16]
+  tags: [sport, team]

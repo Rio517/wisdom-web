@@ -1,0 +1,61 @@
+# Sam: music, fame, a hard fall, help, and a life that keeps growing.
+# The approved story of round 3 (wording A). The schema is in ../README.md.
+
+id: sam
+name: Sam
+pronoun: he
+end: 41
+steps:
+  - { node: born, age: 0 }
+  - node: choir
+    age: 6
+    alts: [footballClub, learnsToSwim]
+  - node: guitar
+    age: 10
+    alts: [drums, chessClub]
+    echoes: [choir]
+  - node: startsBand
+    age: 14
+    alts: [schoolTeam]
+  - node: ownSong
+    age: 16
+  - node: radioPlay
+    age: 18
+    line: "A radio DJ plays it. Luck!"
+  - node: recordDeal
+    age: 20
+    line: "A record label signs the band."
+    echoes: [radioPlay, ownSong]
+  - node: partiesEveryNight
+    age: 23
+    move: -1
+    alts: [keepsEarlyNights, savesTheMoney]
+  - node: bandSplits
+    age: 25
+    line: "The band splits. He loses his flat."
+    move: -3
+  - node: asksForHelp
+    age: 27
+    line: "A friend takes him in. He asks for help."
+    move: 1
+    alts: [movesHome, officeJob]
+  - node: givesMusicLessons
+    age: 30
+    label: Teaches guitar
+    line: "He teaches guitar. New songs."
+    move: 1
+    echoes: [guitar]
+  - node: becomesParent
+    age: 33
+    label: Has two kids
+    line: "He has two great kids."
+    move: 1
+  - node: teachesSchoolMusic
+    age: 36
+    move: 1
+    echoes: [givesMusicLessons]
+  - node: watchesChildPerform
+    age: 41
+    label: Watches daughter sing
+    line: "He watches his daughter sing on stage."
+    echoes: [choir]
