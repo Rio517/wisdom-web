@@ -51,6 +51,7 @@ const GRAY = 2.3;
 const THIN = 1.8;
 const DOT = 3.8;
 const RING = 2; // the ring of map colour around every mark
+const BAR = 100; // on a narrow stage the end card is a bar across the top: this much stays clear for it
 
 // ——— Where the gray lines go (a pure layout in ages and heights) ———
 const clamp = (value, lo, hi) => Math.max(lo, Math.min(hi, value));
@@ -426,8 +427,11 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
     const key = `${model.life.id}|${r.width}x${r.height}`;
     if (geo?.key === key) return geo;
     const o = origin();
-    // A narrow stage keeps a band clear at the top for the end card's bar.
-    const span = r.height - TOP - BOTTOM - (r.width < 800 ? 44 : 0);
+    // A narrow stage keeps a band clear at the top for the end card's bar: the
+    // route stays below it (its highest point is about 0.45 of the span above
+    // Born) and no label goes in it.
+    const bar = r.width < 800 ? BAR : 0;
+    const span = Math.min(r.height - TOP - BOTTOM, bar ? (o.y - bar - 8) / 0.45 : Infinity);
     fadeFrom = r.width - 64;
     // Even years: a later life has as many steps as its childhood, so it gets the same room.
     const X = age => o.x + (age / MAX_AGE) * (r.width - o.x - RIGHT);
@@ -449,7 +453,8 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
 
     // Labels: the route's in age order (an earlier label never moves when a
     // later one arrives), then the gray choices, which give way to them.
-    const placer = createPlacer({ width: r.width, height: r.height, measure, paths: edges.slice(1), dots: points, right: 46,
+    const band = bar ? [{ left: 0, right: r.width, top: 0, bottom: bar }] : [];
+    const placer = createPlacer({ width: r.width, height: r.height, measure, paths: edges.slice(1), dots: points, right: 46, boxes: band,
       soft: [[...alts.map(entry => entry.edge), ...ahead], alts.flatMap(entry => entry.tails)] });
     const labels = steps.map((step, index) => placer.chosen(step.label, index ? edgePoints(edges[index]) : Array(21).fill(points[0]), points[index]));
     // The tail nearest its own height carries a gray label on if the line itself is crowded.
@@ -458,7 +463,7 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
       return [...edgePoints(entry.edge), ...(tail ? edgePoints(tail).slice(1) : [])];
     };
     const grayLabels = alts.map(entry => (entry.item.pickable ? placer.gray(entry.item.label, altLine(entry)) : null));
-    geo = { key, span, X, Y, at, points, edges, alts, altsOf, ahead, labels, grayLabels, placer };
+    geo = { key, span, X, Y, at, points, edges, alts, altsOf, ahead, labels, grayLabels, placer, band };
     buildOverlay();
     applyMode();
     return geo;
@@ -876,8 +881,8 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
     const last = nodes.at(-1);
     const ahead = aheadFor(`${model.life.id}:${seed}:ahead`, last.age, last.y).map(next => ({ a: last.point, b: g.at(next.age, next.y), bend: next.bend * g.span }));
     // Labels for the new life, clear of what stays on the map.
-    const visibleBoxes = () => [...labelEls.filter(element => Number(element.dataset.step) < k),
-      ...altEls.filter(element => { const other = itemFor(element.dataset.alt); return other.stepIndex <= k && other.key !== altKey; })].map(boxOf);
+    const visibleBoxes = () => [...g.band, ...[...labelEls.filter(element => Number(element.dataset.step) < k),
+      ...altEls.filter(element => { const other = itemFor(element.dataset.alt); return other.stepIndex <= k && other.key !== altKey; })].map(boxOf)];
     const soft = [[...siblings.flat().map(sibling => sibling.edge), ...ahead], siblings.flat().flatMap(sibling => sibling.tails)];
     // The new life's labels are placed in age order, a few each frame while it
     // starts to grow (or at once when it must show whole), so a pick stays one short task.
