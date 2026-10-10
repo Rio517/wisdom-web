@@ -1,0 +1,292 @@
+# Making things: building, fixing, robots, trades, engineering.
+# The schema and the rules are in ../README.md.
+
+- id: familyFixesThings
+  label: Fixing things at home
+  line: "{his} family fixes things at home, and {name} holds the screwdriver."
+  if: "{his} family had fixed things together at home"
+  kind: choice
+  by: family
+  ages: [3, 8]
+  tags: [making, fixing]
+
+- id: buildsDens
+  label: Builds dens and forts
+  line: "{name} builds dens and forts out of cushions and boxes."
+  if: "{name} had built dens and forts"
+  kind: choice
+  ages: [4, 9]
+  tags: [making, building]
+
+- id: takesThingsApart
+  label: Takes toys apart
+  line: "{name} takes an old radio apart to see inside."
+  if: "{name} had taken things apart to see inside"
+  kind: choice
+  ages: [7, 13]
+  tags: [making, fixing]
+
+- id: roboticsClub
+  label: Joins the robot club
+  line: "{name} joins the robotics club."
+  if: "{name} had joined the robotics club"
+  kind: choice
+  ages: [9, 15]
+  tags: [making, robots, club]
+
+- id: woodwork
+  label: Does woodwork
+  line: "{name} makes a stool in woodwork class."
+  if: "{name} had done woodwork"
+  kind: choice
+  ages: [10, 16]
+  tags: [making, building, wood]
+
+- id: fixesABike
+  label: Fixes a bike
+  line: "{name} fixes a bike with a borrowed spanner."
+  if: "{name} had fixed a bike"
+  kind: choice
+  ages: [9, 15]
+  tags: [making, fixing]
+
+- id: tradeCourse
+  label: Takes a trade course
+  line: "{name} takes a trade course."
+  if: "{name} had taken a trade course"
+  kind: choice
+  ages: [15, 19]
+  tags: [making, trade, study]
+
+- id: robotContest
+  label: Enters a robot contest
+  line: "{name} enters a robot contest."
+  if: "{name} had entered a robot contest"
+  kind: choice
+  ages: [11, 17]
+  after: [robots]
+  tags: [making, contest]
+
+- id: robotBreaks
+  label: The robot breaks
+  line: "The robot breaks down on the big day."
+  kind: setback
+  ages: [11, 18]
+  after: [contest]
+  tags: [making]
+  move: -1
+
+- id: rebuildsRobot
+  label: Rebuilds the robot
+  line: "{name} rebuilds the robot and finds the real problem."
+  if: "{name} had rebuilt the robot"
+  kind: choice
+  ages: [11, 18]
+  after: [robotBreaks]
+  tags: [making]
+  within: 2
+
+- id: asksMentorForHelp
+  label: Asks for a mentor
+  line: "{name} asks an engineer from the town to help."
+  if: "{name} had asked an engineer for help"
+  kind: choice
+  ages: [11, 18]
+  after: [robotBreaks, lostTools]
+  tags: [making, helped]
+  within: 2
+
+- id: robotPrize
+  label: The robot wins a prize
+  line: "The robot wins a prize. Luck and tinkering!"
+  kind: lucky
+  ages: [11, 18]
+  after: [contest]
+  unless: [robotBreaks]
+  tags: [making]
+  move: 2
+
+- id: studyEngineering
+  label: Studies engineering
+  line: "{name} studies engineering."
+  if: "{name} had studied engineering"
+  kind: choice
+  ages: [16, 23]
+  after: [robotPrize, contest, sciences]
+  tags: [making, engineer, study, university]
+
+- id: startsApprenticeship
+  label: Becomes an apprentice
+  line: "{name} starts an apprenticeship and learns on the job."
+  if: "{name} had started an apprenticeship"
+  kind: choice
+  ages: [16, 26]
+  after: [trade, fixing, building]
+  tags: [making, apprentice, job, study]
+
+- id: electrician
+  label: Becomes an electrician
+  line: "{name} trains as an electrician."
+  if: "{name} had trained as an electrician"
+  kind: choice
+  ages: [16, 40]
+  after: [contest, robots, apprentice]
+  tags: [making, qualified, trade, job]
+
+- id: carpenter
+  label: Trains as a carpenter
+  line: "{name} trains as a carpenter."
+  if: "{name} had trained as a carpenter"
+  kind: choice
+  ages: [16, 40]
+  after: [wood, apprentice]
+  tags: [making, qualified, trade, job]
+
+- id: plumber
+  label: Trains as a plumber
+  line: "{name} trains as a plumber."
+  if: "{name} had trained as a plumber"
+  kind: choice
+  ages: [16, 40]
+  after: [fixing, apprentice]
+  tags: [making, qualified, trade, job]
+
+- id: mechanic
+  label: Trains as a mechanic
+  line: "{name} trains as a mechanic."
+  if: "{name} had trained as a mechanic"
+  kind: choice
+  ages: [16, 40]
+  after: [fixing, apprentice]
+  tags: [making, qualified, trade, job]
+
+- id: ownBusiness
+  label: Starts own business
+  line: "{name} starts a business of {his} own."
+  if: "{name} had started a business"
+  kind: choice
+  ages: [21, 50]
+  after: [engineer, qualified, chef]
+  tags: [making, owner, business]
+
+- id: bigCustomer
+  label: A big customer
+  line: "A big company becomes a customer. Luck!"
+  kind: lucky
+  ages: [22, 55]
+  after: [owner]
+  tags: [making]
+  move: 3
+
+- id: businessFails
+  label: The business fails
+  line: "The business runs out of money and closes."
+  kind: setback
+  ages: [22, 55]
+  after: [owner]
+  tags: [making]
+  move: -3
+
+- id: newIdea
+  label: Tries a new idea
+  line: "{name} tries again with a new idea."
+  if: "{name} had tried again with a new idea"
+  kind: choice
+  ages: [22, 58]
+  after: [businessFails]
+  tags: [making]
+  within: 2
+
+- id: saveUp
+  label: Takes a job and saves
+  line: "{name} takes a steady job and saves up."
+  if: "{name} had taken a steady job and saved up"
+  kind: choice
+  ages: [22, 58]
+  after: [businessFails]
+  tags: [making, job, savings]
+  within: 2
+
+- id: joinsBiggerFirm
+  label: Joins a bigger firm
+  line: "{name} joins a bigger firm that needs {his} skills."
+  if: "{name} had joined a bigger firm"
+  kind: choice
+  ages: [22, 58]
+  after: [businessFails]
+  tags: [making, job]
+  within: 2
+
+- id: lostTools
+  label: The tools are stolen
+  line: "Someone breaks into the van and takes all the tools."
+  kind: setback
+  ages: [20, 60]
+  after: [qualified, owner]
+  tags: [making]
+  move: -1
+
+- id: replacesTools
+  label: Replaces tools slowly
+  line: "{name} replaces the tools one by one."
+  if: "{name} had replaced the tools slowly"
+  kind: choice
+  ages: [20, 60]
+  after: [lostTools]
+  tags: [making]
+  within: 2
+
+- id: borrowsTools
+  label: Borrows tools
+  line: "Friends in the trade lend {him} tools until the new ones come."
+  if: "{name} had borrowed tools from friends in the trade"
+  kind: choice
+  ages: [20, 60]
+  after: [lostTools]
+  tags: [making, helped]
+  within: 2
+
+- id: trainsApprentices
+  label: Trains apprentices
+  line: "{name} trains young apprentices."
+  if: "{name} had trained apprentices"
+  kind: choice
+  ages: [28, 65]
+  after: [qualified, owner, engineer]
+  tags: [making, teaching, job]
+
+- id: designsMachines
+  label: Designs machines
+  line: "{name} designs machines for a factory."
+  if: "{name} had designed machines"
+  kind: choice
+  ages: [24, 60]
+  after: [engineer]
+  tags: [making, job]
+
+- id: worksOnBridge
+  label: Works on a bridge
+  line: "{name} works on a new bridge and walks across it first."
+  if: "{name} had worked on a new bridge"
+  kind: choice
+  ages: [24, 60]
+  after: [engineer]
+  tags: [making, job]
+
+- id: restoresFurniture
+  label: Restores old furniture
+  line: "{name} brings old chairs and tables back to life."
+  if: "{name} had restored old furniture"
+  kind: choice
+  ages: [20, 70]
+  after: [wood, carpenter]
+  tags: [making, building]
+
+- id: joinsMakerspace
+  label: "Joins a makers' space"
+  line: "{name} joins a workshop where neighbours share tools."
+  if: "{name} had joined a makers' space"
+  kind: choice
+  ages: [20, 60]
+  tags: [making, building, community]
+  weight: 0.7
