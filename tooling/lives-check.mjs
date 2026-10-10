@@ -38,6 +38,7 @@ const { errors, warnings } = check(store, { lives: 20 });
 const out = [];
 const pad = (value, width) => String(value).padEnd(width);
 const padStart = (value, width) => String(value).padStart(width);
+const percent = value => (value === null ? '—' : `${Math.round(value * 100)}%`);
 const signed = value => `${value >= 0 ? '+' : '−'}${Math.abs(value).toFixed(2)}`;
 const where = item => [item.file, item.baseline ? `${item.baseline}${item.step !== undefined ? ` step ${item.step + 1}` : ''}` : '', item.node && !item.baseline ? item.node : ''].filter(Boolean).join('  ');
 
@@ -54,12 +55,12 @@ if (livesPer > 0 && store.baselines.size) {
   const rows = variety(store, { lives: livesPer });
   out.push('');
   out.push(`Variety: ${livesPer} grown lives from each of ${rows.length} alternatives`);
-  out.push(`  ${pad('life', 8)}${pad('fork', 6)}${pad('alternative', 22)}${padStart('reach', 6)}${padStart('steps', 7)}${padStart('distinct', 10)}${padStart('overlap', 9)}${padStart('end', 7)}${padStart('others', 8)}`);
+  out.push(`  ${pad('life', 8)}${pad('fork', 6)}${pad('alternative', 22)}${padStart('reach', 6)}${padStart('steps', 7)}${padStart('distinct', 10)}${padStart('overlap', 9)}${padStart('end', 7)}${padStart('others', 8)}${padStart('luck', 6)}${padStart('build', 7)}`);
   for (const row of rows) {
-    out.push(`  ${pad(row.baseline, 8)}${pad(row.age, 6)}${pad(row.alt, 22)}${padStart(`${Math.round(row.reach * 100)}%`, 6)}${padStart(row.steps.toFixed(1), 7)}${padStart(row.distinct, 10)}${padStart(row.overlap === null ? '—' : row.overlap.toFixed(2), 9)}${padStart(signed(row.rise), 7)}${padStart(signed(row.othersRise), 8)}${row.flagged ? '  ← ends apart from its fork' : ''}`);
+    out.push(`  ${pad(row.baseline, 8)}${pad(row.age, 6)}${pad(row.alt, 22)}${padStart(`${Math.round(row.reach * 100)}%`, 6)}${padStart(row.steps.toFixed(1), 7)}${padStart(row.distinct, 10)}${padStart(row.overlap === null ? '—' : row.overlap.toFixed(2), 9)}${padStart(signed(row.rise), 7)}${padStart(signed(row.othersRise), 8)}${padStart(percent(row.surprise), 6)}${padStart(percent(row.build), 7)}${row.flagged ? '  ← ends apart from its fork' : ''}`);
   }
   const mean = key => { const values = rows.map(row => row[key]).filter(value => value !== null); return values.reduce((sum, value) => sum + value, 0) / (values.length || 1); };
-  out.push(`  mean: reach ${Math.round(mean('reach') * 100)}%, steps ${mean('steps').toFixed(1)}, distinct ${mean('distinct').toFixed(1)}, overlap ${mean('overlap').toFixed(2)}; ${rows.filter(row => row.flagged).length} flagged (end more than 0.12 from the fork's other options)`);
+  out.push(`  mean: reach ${Math.round(mean('reach') * 100)}%, steps ${mean('steps').toFixed(1)}, distinct ${mean('distinct').toFixed(1)}, overlap ${mean('overlap').toFixed(2)}, luck or setback at ${percent(mean('surprise'))} of the forks from 8 to end − 4 (aim: about 33%), building on the last two steps ${percent(mean('build'))}; ${rows.filter(row => row.flagged).length} flagged (end more than 0.12 from the fork's other options)`);
 }
 
 if (randomLives > 0 && store.baselines.size) {

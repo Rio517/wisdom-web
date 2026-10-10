@@ -80,7 +80,7 @@ test('needs: every name; unless: none of them', () => {
   assert.equal(blocked(store.nodes.get('d'), pathOf(store, ['born', 'b']), 10).rule, 'unless');
 });
 
-test('within: the match must be among the last N steps', () => {
+test('within: the match must be among the last N steps, at most four years before', () => {
   const store = mini(`${BORN}
 - id: fall
   label: Fall
@@ -93,6 +93,11 @@ ${choice('a')}${choice('b')}${choice('help', '  after: [setback]\n  within: 2')}
   assert.equal(blocked(help, pathOf(store, ['born', 'fall']), 10), null);
   assert.equal(blocked(help, pathOf(store, ['born', 'fall', 'a']), 10), null);
   assert.equal(blocked(help, pathOf(store, ['born', 'fall', 'a', 'b']), 10).rule, 'within');
+  const dated = newPath();
+  takeStep(dated, store.nodes.get('born'), 0);
+  takeStep(dated, store.nodes.get('fall'), 20);
+  assert.equal(blocked(help, dated, 24), null);
+  assert.equal(blocked(help, dated, 25).rule, 'within');
 });
 
 test('drops: a dropped name no longer counts; a node happens once', () => {
@@ -164,28 +169,70 @@ test('a grown life keeps the steps before the fork and takes the alternative at 
   assert.ok(life.steps.slice(4).every(step => step.grown));
 });
 
-test('lucky breaks and setbacks come up in grown lives, and take turns', () => {
-  let surprises = 0; let steps = 0; let twiceRunning = 0;
-  for (let i = 0; i < 200; i += 1) {
-    const life = grow(fixture, { baseline: 'sam', forkIndex: 1, alt: 'footballClub', seed: `t${i}` });
-    const grown = life.steps.slice(2).filter(step => step.age >= 8);
-    steps += grown.length;
-    const kinds = grown.map(step => step.kind).filter(kind => kind === 'lucky' || kind === 'setback');
-    surprises += kinds.length;
-    kinds.forEach((kind, index) => { if (index && kind === kinds[index - 1]) twiceRunning += 1; });
+test('lucky breaks and setbacks: about one fork in three from 8, taking turns, none in the last four years', () => {
+  let surprises = 0; let window = 0; let twiceRunning = 0;
+  for (const fork of forksOf(fixture)) {
+    for (let i = 0; i < 40; i += 1) {
+      const life = grow(fixture, { ...fork, seed: `t${i}` });
+      const grown = life.steps.slice(fork.forkIndex + 1);
+      for (const step of grown) {
+        const surprise = step.kind === 'lucky' || step.kind === 'setback';
+        assert.ok(!(surprise && step.age > life.end - 4), `${fork.baseline} ${fork.alt} seed ${i}: ${step.id} at ${step.age}, end ${life.end}`);
+        if (step.age >= 8 && step.age <= life.end - 4) { window += 1; if (surprise) surprises += 1; }
+      }
+      const last = life.steps.at(-1);
+      assert.ok(last.kind !== 'lucky' && last.kind !== 'setback', `ends on ${last.id}`);
+      const kinds = grown.map(step => step.kind).filter(kind => kind === 'lucky' || kind === 'setback');
+      kinds.forEach((kind, index) => { if (index && kind === kinds[index - 1]) twiceRunning += 1; });
+    }
   }
-  const share = surprises / steps;
-  assert.ok(share > 0.2 && share < 0.45, `surprises ${share.toFixed(2)} of grown forks`);
-  assert.ok(twiceRunning / surprises < 0.2, `${twiceRunning} of ${surprises} surprises repeat the last one's kind`);
+  const share = surprises / window;
+  assert.ok(share > 0.26 && share < 0.42, `surprises at ${share.toFixed(2)} of the forks from 8 to end − 4`);
+  assert.ok(twiceRunning / surprises < 0.25, `${twiceRunning} of ${surprises} surprises repeat the last one's kind`);
+});
+
+test('a grown life builds on itself: where it can build on the last two steps, it mostly does', () => {
+  let could = 0; let building = 0; let grownSteps = 0; let built = 0;
+  for (const fork of forksOf(fixture)) {
+    for (let i = 0; i < 30; i += 1) {
+      const life = grow(fixture, { ...fork, seed: `b${i}` });
+      for (const step of life.steps.slice(fork.forkIndex + 1)) {
+        grownSteps += 1;
+        if (step.builds) built += 1;
+        if (!step.couldBuild) continue;
+        could += 1;
+        if (step.builds) building += 1;
+      }
+    }
+  }
+  assert.ok(building / could > 0.65, `${building} of ${could} steps that could build on the last two did`);
+  assert.ok(built / grownSteps > 0.3, `${built} of ${grownSteps} grown steps build on the last two`);
+});
+
+test('after a lucky break or a setback the next step comes sooner', () => {
+  const gaps = { after: [], other: [] };
+  for (let i = 0; i < 300; i += 1) {
+    const life = grow(fixture, { baseline: 'sam', forkIndex: 2, alt: 'chessClub', seed: `g${i}` });
+    life.steps.slice(3).forEach((step, index) => {
+      const before = life.steps[index + 2];
+      if (before.age < 12 || before.age > 30) return;
+      (before.kind === 'lucky' || before.kind === 'setback' ? gaps.after : gaps.other).push(step.age - before.age);
+    });
+  }
+  const mean = list => list.reduce((sum, value) => sum + value, 0) / list.length;
+  assert.ok(mean(gaps.after) < mean(gaps.other) * 0.75, `after a surprise ${mean(gaps.after).toFixed(1)} years, otherwise ${mean(gaps.other).toFixed(1)}`);
 });
 
 test("heights: Sam's written life lands within 0.07 of round 3's", () => {
   const round3 = [0.5, 0.515, 0.49, 0.505, 0.49, 0.4, 0.29, 0.33, 0.78, 0.67, 0.55, 0.45, 0.36, 0.27];
-  const life = writtenLife(fixture, 'sam');
-  life.steps.forEach((step, index) => assert.ok(Math.abs(step.y - round3[index]) <= 0.07 + 1e-9, `${step.id}: ${step.y.toFixed(3)} vs ${round3[index]}`));
+  const sam = writtenLife(fixture, 'sam');
+  sam.steps.forEach((step, index) => assert.ok(Math.abs(step.y - round3[index]) <= 0.07 + 1e-9, `${step.id}: ${step.y.toFixed(3)} vs ${round3[index]}`));
   // A big jump is 0.42; a written y wins.
   assert.deepEqual(heights([{ id: 'a', kind: 'start' }, { id: 'b', kind: 'setback', move: -3 }]).map(y => +y.toFixed(3)), [0.5, 0.92]);
-  assert.equal(heights([{ id: 'a', kind: 'start' }, { id: 'b', kind: 'choice', move: 0, y: 0.3 }])[1], 0.3);
+  assert.equal(heights([{ id: 'a', kind: 'start' }, { id: 'b', kind: 'choice', move: 0, fixedY: 0.3 }])[1], 0.3);
+  // Heights already worked out are not overrides: the same steps give the same heights again.
+  const life = grow(fixture, { baseline: 'sam', forkIndex: 2, alt: 'drums', seed: 'h' });
+  assert.deepEqual(heights(life.steps), life.steps.map(step => step.y));
 });
 
 test('words: names, pronouns and He/She after the first line', () => {
@@ -283,6 +330,18 @@ steps:
     /Unknown alternative "ghost"/,
     /The last step is at 9, not at end \(50\)/,
   ]) assert.match(text, expected);
+});
+
+test('the checker: alternatives need six years to grow, and within holds in written lives too', () => {
+  const files = readStore(FIXTURE);
+  files['baselines/nia.yaml'] = files['baselines/nia.yaml']
+    .replace('age: 43\n    echoes: [codingClub]', 'age: 43\n    alts: [volunteers]\n    echoes: [codingClub]')
+    .replace('age: 33\n    alts: [findsNewJob, movesHome]', 'age: 36\n    alts: [findsNewJob, movesHome]')
+    .replace('age: 36\n    move: 1', 'age: 37\n    move: 1');
+  const text = messages(check(loadStore(files)));
+  assert.match(text, /Alternatives at 43, less than 6 years before end \(43\)/);
+  // Nia's job ends at 31; finding a new one at 36 is five years on.
+  assert.match(text, /Alternative findsNewJob at 36 isn't possible here: .* at most 4 years before \(within\)/);
 });
 
 test('the variety report and coverage run on the fixture', () => {

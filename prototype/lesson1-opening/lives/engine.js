@@ -186,13 +186,16 @@ function index(store) {
 }
 
 // ——— A path through the nodes ———
-/** An empty path: the names it holds (each with the steps that gave it) and the nodes it took. */
+/** `within` also asks that the matching step came at most this many years before. */
+export const WITHIN_YEARS = 4;
+/** An empty path: the names it holds (each with the steps that gave it), the nodes it took and their ages. */
 export function newPath() {
-  return { held: new Map(), taken: new Set(), count: 0 };
+  return { held: new Map(), taken: new Set(), count: 0, ages: [] };
 }
-/** Add `node` as the next step: it drops its `drops`, then gives its names. */
-export function takeStep(path, node) {
+/** Add `node` as the next step, at `age`: it drops its `drops`, then gives its names. */
+export function takeStep(path, node, age) {
   const index = path.count;
+  path.ages.push(age);
   for (const name of node.drops) path.held.delete(name);
   for (const name of node.gives) {
     const givers = path.held.get(name);
@@ -203,6 +206,9 @@ export function takeStep(path, node) {
   return index;
 }
 
+// A `within` match: among the last N steps, and at most WITHIN_YEARS before (when the ages are known).
+const recent = (node, path, giver, age) => giver >= path.count - node.within
+  && (path.ages[giver] === undefined || age === undefined || age - path.ages[giver] <= WITHIN_YEARS);
 /**
  * Why `node` can't be the next step of `path` at `age`, or null when it can.
  * A node happens at most once in a life.
@@ -218,10 +224,10 @@ export function blocked(node, path, age) {
       const givers = path.held.get(name);
       if (!givers) continue;
       any = true;
-      if (!node.within || givers[givers.length - 1] >= path.count - node.within) return null;
+      if (!node.within || recent(node, path, givers[givers.length - 1], age)) return null;
     }
     return any
-      ? { rule: 'within', text: `none of [${node.after.join(', ')}] is among the last ${node.within} step${node.within === 1 ? '' : 's'} (within)` }
+      ? { rule: 'within', text: `none of [${node.after.join(', ')}] is among the last ${node.within} step${node.within === 1 ? '' : 's'} and at most ${WITHIN_YEARS} years before (within)` }
       : { rule: 'after', text: `none of [${node.after.join(', ')}] is on the path (after)` };
   }
   return null;
@@ -234,7 +240,7 @@ const allows = (node, path, age) => {
   if (!node.after.length) return true;
   for (let i = 0; i < node.after.length; i += 1) {
     const givers = path.held.get(node.after[i]);
-    if (givers && (!node.within || givers[givers.length - 1] >= path.count - node.within)) return true;
+    if (givers && (!node.within || recent(node, path, givers[givers.length - 1], age))) return true;
   }
   return false;
 };
@@ -297,7 +303,8 @@ export const shiftFor = move => -(Math.abs(move) >= 3 ? 0.42 * Math.sign(move) :
  * Heights for a life's steps, 0 (top) to 1 (bottom). A life starts at the
  * middle; each step moves it by its `move`; level choices wobble ±0.02 (by
  * id) without moving it; a grown step also drifts a tenth of the way back to
- * the middle; a written `y` sets the height exactly and the life goes on from there.
+ * the middle; a written `y` (`fixedY`) sets the height exactly and the life
+ * goes on from there.
  */
 export function heights(steps) {
   let level = 0.5;
@@ -308,7 +315,7 @@ export function heights(steps) {
     level = clamp(level, 0.07, 0.93);
     let y = level;
     if (!move && step.kind === 'choice') y += (hash01(`wobble:${step.id}`) - 0.5) * 0.04;
-    if (Number.isFinite(step.y)) { y = step.y; level = step.y; }
+    if (Number.isFinite(step.fixedY)) { y = step.fixedY; level = step.fixedY; }
     return y;
   });
 }
@@ -323,7 +330,8 @@ function stepOf(node, age, person, { lead, written = null, grown = false, picked
     label: say(written?.label ?? node.label, person),
     line: say(written?.line ?? node.line, person, { lead }),
     move: Number.isFinite(written?.move) ? written.move : node.move,
-    y: Number.isFinite(written?.y) ? written.y : undefined,
+    fixedY: Number.isFinite(written?.y) ? written.y : undefined,
+    y: 0.5,
     byFamily: node.by === 'family',
     grown,
     picked,
@@ -336,8 +344,8 @@ function stepOf(node, age, person, { lead, written = null, grown = false, picked
 function historyPath() {
   const path = newPath();
   path.historic = new Map();
-  const take = node => {
-    const index = takeStep(path, node);
+  const take = (node, age) => {
+    const index = takeStep(path, node, age);
     for (const name of node.gives) {
       if (!path.historic.has(name)) path.historic.set(name, []);
       path.historic.get(name).push(index);
@@ -366,7 +374,7 @@ export function writtenLife(store, id) {
     step.alts = written.alts.map(altId => store.nodes.get(altId)).filter(Boolean).map(alt => ({
       id: alt.id, node: alt, kind: alt.kind, label: say(alt.label, person), whatIf: say(alt.if, person, { capital: false }), byFamily: alt.by === 'family',
     }));
-    take(node);
+    take(node, written.age);
     steps.push(step);
   }
   heights(steps).forEach((y, index) => { steps[index].y = y; });
@@ -386,16 +394,28 @@ function pickWeighted(pool, weights, random) {
   return pool.length - 1;
 }
 
+/** How a life grows (see `grow`). */
+export const GROW = {
+  build: 0.65, // when something builds on the last two steps, one of those is taken this often
+  surprise: 1 / 3, // about one fork in three is a lucky break or a setback…
+  surpriseFrom: 8, // …from this age…
+  quietYears: 4, // …and never in the last four years before the end
+  answer: [0.4, 0.6], // after a surprise, the next step comes sooner: the gap × 0.4–0.6
+};
+
 /**
  * Grow a life: the baseline's steps before `forkIndex`, then `alt` at the
  * fork's age, then new steps to the baseline's `end`. Each step after the
- * fork comes a gap of years later (the explorer's gaps × 0.75–1.35); its
- * candidates are the nodes whose rules hold at that age, weighted ×4 when they
- * build on one of the last two steps, ×2 on an older one; from age 8 about one
- * fork in three is a lucky break or a setback, taking turns (×3 when it builds
- * on the path). No candidate: a year later; still none: the life ends early.
- * Every grown step carries 1–2 other candidates (`others`) for the gray lines.
- * The same `seed` grows the same life.
+ * fork comes a gap of years later (the explorer's gaps × 0.75–1.35, and
+ * × 0.4–0.6 right after a lucky break or a setback). Its candidates are the
+ * nodes whose rules hold at that age. From age 8 to four years before the end,
+ * about one fork in three is a lucky break or a setback, taking turns (×3 when
+ * it builds on the path). Otherwise, when some candidates build on one of the
+ * last two steps, one of those is taken about two times in three; the rest of
+ * the time any candidate, weighted ×4 when it builds on the last two steps, ×2
+ * on an older one. No candidate: a year later; still none: the life ends
+ * early. Every grown step carries 1–2 other candidates (`others`) for the gray
+ * lines. The same `seed` grows the same life.
  */
 export function grow(store, { baseline, forkIndex, alt, seed = '' }) {
   const base = typeof baseline === 'string' ? store.baselines.get(baseline) : baseline;
@@ -411,7 +431,8 @@ export function grow(store, { baseline, forkIndex, alt, seed = '' }) {
   const add = (node, age, options) => {
     const step = stepOf(node, age, person, { lead: steps.length > 0, ...options });
     step.echoes = echoesOf(node, path, options.written?.echoes ?? null);
-    take(node);
+    step.builds = node.after.length > 0 && chainFrom(node, path) >= path.count - 2;
+    take(node, age);
     steps.push(step);
     if (node.kind === 'lucky') balance += 1;
     if (node.kind === 'setback') balance -= 1;
@@ -425,13 +446,16 @@ export function grow(store, { baseline, forkIndex, alt, seed = '' }) {
   add(altNode, forkStep.age, { picked: true, grown: true });
 
   const end = base.end;
+  const builds = node => node.after.length > 0 && chainFrom(node, path) >= path.count - 2;
   const choose = age => {
-    const all = [];
+    const quiet = age > end - GROW.quietYears;
+    let all = [];
     const pool = store.byAge[age] ?? [];
-    for (let i = 0; i < pool.length; i += 1) if (allows(pool[i], path, age)) all.push(pool[i]);
+    for (let i = 0; i < pool.length; i += 1) if (allows(pool[i], path, age) && !(quiet && isSurprise(pool[i]))) all.push(pool[i]);
     if (!all.length) return null;
     let chosen = null;
-    if (age >= 8 && random() < 1 / 3) {
+    let couldBuild = false;
+    if (!quiet && age >= GROW.surpriseFrom && random() < GROW.surprise) {
       const wanted = balance > 0 ? 'setback' : balance < 0 ? 'lucky' : random() < 0.5 ? 'lucky' : 'setback';
       let surprises = all.filter(node => node.kind === wanted);
       if (!surprises.length) surprises = all.filter(isSurprise);
@@ -443,13 +467,17 @@ export function grow(store, { baseline, forkIndex, alt, seed = '' }) {
     if (!chosen) {
       let plain = all.filter(node => !isSurprise(node));
       if (!plain.length) plain = all;
-      const weights = plain.map(node => {
-        if (!node.after.length) return node.weight;
-        return node.weight * (chainFrom(node, path) >= path.count - 2 ? 4 : 2);
-      });
-      const at = pickWeighted(plain, weights, random);
-      if (at < 0) return null;
-      chosen = plain[at];
+      const building = plain.filter(builds);
+      couldBuild = building.length > 0;
+      let at;
+      if (building.length && random() < GROW.build) {
+        at = pickWeighted(building, building.map(node => node.weight), random);
+        chosen = building[at];
+      } else {
+        at = pickWeighted(plain, plain.map(node => (!node.after.length ? node.weight : node.weight * (builds(node) ? 4 : chainFrom(node, path) >= 0 ? 2 : 1))), random);
+        chosen = plain[at];
+      }
+      if (!chosen) return null;
     }
     // The gray lines at this dot: one or two other things that could have happened here.
     const rest = all.filter(node => node !== chosen && !isSurprise(node));
@@ -461,13 +489,15 @@ export function grow(store, { baseline, forkIndex, alt, seed = '' }) {
       if (at < 0) break;
       others.push(pool2.splice(at, 1)[0]);
     }
-    return { node: chosen, others };
+    return { node: chosen, others, couldBuild };
   };
 
   let age = forkStep.age;
   let early = false;
   for (let guard = 0; age < end && guard < 40; guard += 1) {
-    const target = Math.min(end, age + Math.max(1, Math.round(gapFor(age) * (0.75 + 0.6 * random()))));
+    const answer = isSurprise(steps.at(-1).node);
+    const factor = answer ? GROW.answer[0] + (GROW.answer[1] - GROW.answer[0]) * random() : 0.75 + 0.6 * random();
+    const target = Math.min(end, age + Math.max(1, Math.round(gapFor(age) * factor)));
     let at = target;
     let found = choose(at);
     if (!found && target < end) { at = target + 1; found = choose(at); }
@@ -475,6 +505,7 @@ export function grow(store, { baseline, forkIndex, alt, seed = '' }) {
     if (!found) { early = true; break; }
     const step = add(found.node, at, { grown: true });
     step.others = found.others.map(node => ({ id: node.id, node, kind: node.kind, label: say(node.label, person) }));
+    step.couldBuild = found.couldBuild;
     age = at;
   }
   heights(steps).forEach((y, index) => { steps[index].y = y; });
@@ -625,6 +656,7 @@ export function check(store, { lives = 0 } = {}) {
         if (!path.historic.has(name)) error(at, `echoes "${name}", which no earlier step gives.`);
       }
       const KIND_NAMES = { lucky: 'a lucky break', setback: 'a setback', event: 'an event', start: 'the start' };
+      if (step.alts.length && Number.isInteger(baseline.end) && baseline.end - step.age < 6) error(at, `Alternatives at ${step.age}, less than 6 years before end (${baseline.end}): nothing has room to grow.`);
       if (step.alts.length && node.kind !== 'choice') error(at, `Only choices have alternatives; ${node.id} is ${KIND_NAMES[node.kind] ?? node.kind}.`);
       const seen = new Set();
       for (const altId of step.alts) {
@@ -641,7 +673,7 @@ export function check(store, { lives = 0 } = {}) {
       if (node.kind === 'setback') setbacks += 1;
       if (node.kind === 'choice' && node.by === 'family' && step.age < 8) family += 1;
       if (node.kind === 'choice' && node.by !== 'family') own += 1;
-      take(node);
+      take(node, step.age);
     });
     if (!lucky) warn(where, 'No lucky break: a written life has at least one.');
     if (!setbacks) warn(where, 'No setback: a written life has at least one.');
@@ -733,7 +765,9 @@ const mean = values => (values.length ? values.reduce((sum, value) => sum + valu
  * For every alternative of every baseline, `lives` grown lives: how many reach
  * end−3, mean steps, distinct nodes used after the fork, mean pairwise overlap
  * (Jaccard) of the grown parts, and the mean end height against the fork's
- * other options (the step taken, regrown, and the other alternatives).
+ * other options (the step taken, regrown, and the other alternatives), the
+ * share of lucky breaks and setbacks where one may come (`surprise`) and of
+ * grown steps that build on one of the last two (`build`).
  * Heights are "rise": above the middle is positive.
  */
 export function variety(store, { lives = 50, seed = 'variety' } = {}) {
@@ -760,6 +794,8 @@ export function variety(store, { lives = 50, seed = 'variety' } = {}) {
       .filter(other => store.nodes.has(other))
       .map(other => sample(baseline, forkIndex, other).rise);
     const othersRise = mean(others);
+    const after = grown.flatMap(life => life.steps.slice(forkIndex + 1));
+    const window = after.filter(item => item.age >= GROW.surpriseFrom && item.age <= end - GROW.quietYears);
     rows.push({
       baseline, forkIndex, age: step.age, step: step.node, alt,
       reach: grown.filter(life => life.lastAge >= end - 3).length / grown.length,
@@ -768,6 +804,9 @@ export function variety(store, { lives = 50, seed = 'variety' } = {}) {
       overlap: pairs && distinct.size ? overlap / pairs : null, // null: nothing grows after a fork at the end
       rise,
       othersRise,
+      // Measured: lucky breaks and setbacks among the grown forks where one may come, and steps that build on the last two.
+      surprise: window.length ? window.filter(item => isSurprise(item.node)).length / window.length : null,
+      build: after.length ? after.filter(item => item.builds).length / after.length : null,
       flagged: others.length > 0 && Math.abs(rise - othersRise) > 0.12,
     });
   }

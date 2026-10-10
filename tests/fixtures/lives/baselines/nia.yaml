@@ -44,5 +44,4 @@ steps:
     age: 39
   - node: teachesCoding
     age: 43
-    alts: [volunteers, runsMarathon]
     echoes: [codingClub]
