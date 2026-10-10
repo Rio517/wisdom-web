@@ -224,7 +224,7 @@
   if: "{name} had written a recipe book"
   kind: choice
   ages: [28, 70]
-  after: [chef, baker, owner]
+  after: [chef, baker]
   tags: [food, book]
 
 - id: studiesFoodScience

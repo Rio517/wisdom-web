@@ -101,7 +101,7 @@
   label: Fails a big exam
   line: "{name} fails a big exam. It hurts."
   kind: setback
-  ages: [15, 25]
+  ages: [15, 22]
   tags: [exams]
   move: -2
   weight: 0.7
@@ -363,7 +363,7 @@
 
 - id: slowReturn
   label: Takes it slowly
-  line: "{name} takes it slowly, then goes back."
+  line: "{name} takes it slowly, then gets back to normal."
   if: "{name} had taken it slowly"
   kind: choice
   ages: [10, 62]

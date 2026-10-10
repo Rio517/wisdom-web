@@ -135,7 +135,7 @@
   label: Team wins the league
   line: "{his} team wins the league on the last day. Luck helps!"
   kind: lucky
-  ages: [10, 35]
+  ages: [10, 24]
   after: [team]
   tags: [sport]
   move: 1

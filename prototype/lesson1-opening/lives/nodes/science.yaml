@@ -149,7 +149,7 @@
   if: "{name} had joined a research lab"
   kind: choice
   ages: [21, 30]
-  after: [studyScience, studiesPartTime]
+  after: [studyScience, studiesPartTime, studiesStatistics]
   tags: [science, lab, research, job]
   weight: 2
 
@@ -217,7 +217,7 @@
   line: "{his} team discovers something new. Luck and hard work!"
   kind: lucky
   ages: [24, 50]
-  after: [research, newSupervisor]
+  after: [research, newSupervisor, lab]
   tags: [science]
   move: 3
   weight: 3

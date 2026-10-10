@@ -190,6 +190,7 @@
   ages: [22, 55]
   after: [owner]
   tags: [making]
+  drops: [owner, business]
   move: -3
 
 - id: newIdea

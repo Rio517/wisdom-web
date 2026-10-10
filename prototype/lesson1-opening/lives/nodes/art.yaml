@@ -207,7 +207,7 @@
 
 - id: workRuined
   label: Work is ruined
-  line: "Rain leaks into the studio and spoils a year of work."
+  line: "Rain leaks in and spoils a year of {his} work."
   kind: setback
   ages: [18, 60]
   after: [drawing, painting, crafts, photography]

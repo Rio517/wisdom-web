@@ -101,7 +101,7 @@
   if: "{name} had opened a small shop"
   kind: choice
   ages: [22, 55]
-  after: [shopAssistant, savings]
+  after: [shopAssistant, shop]
   tags: [money, owner, business, shop]
 
 - id: sellsOnline
@@ -145,7 +145,7 @@
   line: "It is a quiet year, and far fewer customers come in."
   kind: setback
   ages: [22, 60]
-  after: [owner, shop]
+  after: [owner]
   tags: [money]
   move: -2
   weight: 2
@@ -233,7 +233,7 @@
   if: "{name} had opened a sports shop"
   kind: choice
   ages: [24, 55]
-  after: [sport, savings]
+  after: [sport]
   tags: [money, owner, business, shop]
 
 - id: raisesMoney

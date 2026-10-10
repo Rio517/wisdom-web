@@ -235,7 +235,7 @@
   if: "{name} had started working from home"
   kind: choice
   ages: [24, 60]
-  after: [job]
+  after: [developer, data, writing, illustration, websites]
   tags: [tech]
   weight: 0.5
 
