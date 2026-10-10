@@ -1,6 +1,6 @@
 # v11 — Hike water
 
-Created: 2026-10-09. Updated: 2026-10-09 (in the lesson). Status: C is the lesson's hike, rebuilt on plain WebGL, with A's still drawing as its no-WebGL fallback; B is retired. The integration is on a branch for the owner's review; not published.
+Created: 2026-10-09. Updated: 2026-10-10 (round 4). Status: C is the lesson's hike, rebuilt on plain WebGL, with A's still drawing as its no-WebGL fallback; B is retired. The integration is on a branch for the owner's review; not published.
 
 **Question: which water does the hike keep?**
 
@@ -101,6 +101,47 @@ What changed:
 - **Colours.** The six water mixes are tokens in `src/styles/tokens.css`: `--color-water-bank`, `--color-water-body`, `--color-water-deep`, `--color-water-light`, `--color-water-fall` and `--color-water-ring`. They are declared `@theme static`, because the water reads them at runtime rather than through a class. The lake's waterline uses `water-bank`.
 - **Played and opened steps agree.** Playing into a step now ends on the same picture as opening it directly: the second walk's line ends at the pair's feet by the bridge, and the ranger leaves as they set off on the Waterfall Trail.
 
+## Round 4 (owner's notes on the integrated hike)
+
+The owner found the integrated hike much better. The notes:
+
+- the trail from the bridge ran straight up the hill and into the mountain to Mirror Lake, which looked strange. It should go over the hill: the near stretch ends at the hill's top, and the trail comes back into view on the far right and climbs to the lake;
+- at the lake, a small brown clearing like the trailhead's yard, sized for the distance: a very small picnic table and a couple of trees;
+- the pool at the foot of the waterfall still looked as if it floated. The hill in front should rise to cover more of the rock, so the pool lies on flat ground on top of the hill with the rock behind it.
+
+What changed (in `src/lessons/choices/journey-hike.js`, the water untouched):
+
+- **The near stretch.** From the bridge the trail climbs the green hill and reaches its crest at about (850, 394) map units, about x 1060 px at 1920x1080, clear of the trees. The crest line cuts it, so it seems to carry on behind the hill. It keeps its taper and centre dashes up to the crest.
+- **Behind the hill.** The trail's path carries on behind the hill but nothing of it is drawn there: the trail, the walked lines and every other line on it are masked to the near stretch below the crest and to the far stretch above it.
+- **The far stretch.** It comes out from behind the hill at x about 1170, between the falls' rock and the right edge, and climbs in two switchbacks to the lake's right-hand shore. It is drawn in the background, behind the hill and the rock, at about 30% of the trailhead's width, in the trail's sand mixed lighter, with a faint edge and no centre dashes.
+- **The lake's clearing.** A flat patch of the yard's sand, lighter for distance, about 6:1 (58 x 10 map units, about 71 x 12 px at 1920), with a softly uneven edge. Its left tip meets the water. On it stand a picnic table in the trailhead table's shape, about 10 px wide at 1920, and three small trees the size of the far shore's.
+- **Everything on the trail.** The walked lines, the closed stretch and the Keep going line follow the new route. The Halfway flag, its label and the second walk's stop short of the bridge keep their old distances along the trail. The Trail closed sign now stands on the near stretch, halfway between the bridge and the crest.
+- **The pair.** No step walks them past the bridge, so the eight steps look as before. If they are placed further along the trail, they go out of sight within 6 map units of the crest and stay hidden until the far stretch. There they are drawn at 40% of their size. A check hook (`#scene-hike`'s `hikeCheck.place(distance)`) stands them anywhere on the trail for screenshots.
+- **The pool on the hilltop.** The near ground rises in front of the falls in the ground's own colour. Its edge runs level at about 526 map units round the pool and slopes down to the left into the ground's edge near x 820. It hides the bottom 31% of the fall rock and the second rock's foot. The pool lies wholly on this flat ground, with the rock behind its edge. The fall and the side stream are drawn on the water layer above it, so the fall still lands in the pool and the stream still runs from the pool's front lip down the hill. This holds with WebGL and in the still fallback.
+
+### Checks (round 4)
+
+- **Every step.** All eight steps were played forward with Next (the arrow key) and back with Back at 1920x1080, 1440x900, 1280x800, 744x1133 and 1133x744, in German at 744x1133, with reduced motion, and without WebGL. There were no console errors, and the pair was visible at every step.
+- **Tests and build.** `npm test` (243 tests) and `npm run build` pass. The water module is unchanged at 14.7 KB (6.2 KB gzipped), and the build has no Three.js.
+- **Performance.** This was measured in a cloud Linux container on the production builds of the base commit and this round, with the CPU throttled 4x. The container is several times slower than the M4 the earlier numbers came from, so the absolute numbers do not compare with them.
+  - With WebGL, the first entry to the hike takes about 2.3 s in both builds, because SwiftShader compiles the shaders on the CPU. That number says nothing about the page.
+  - With WebGL stubbed out, the longest task on entering the hike was 95–102 ms here against 96–134 ms for the base. The longest task per step ranged 31–130 ms against 20–139 ms for the base, overlapping in every step.
+  - The far stretch adds 43 SVG nodes.
+- **Memory.** Over 5 visits to the hike, the heap after garbage collection went from 4,133 to 4,188 KB, the same +55 KB drift as the base (4,104 to 4,157 KB). Nodes stayed at 1,653 and event listeners at 73.
+- **Headless rendering.** With SwiftShader GL, choosing Keep going showed tile-shifted ghost copies of the map. The base commit does the same, and Chromium with `--disable-gpu` draws it correctly, so the shots were taken that way.
+
+### Images (round 4, v02)
+
+Halfway step unless noted. Each v02 sits beside its v01 in the [In the lesson](#in-the-lesson-site-hike-v01) list:
+
+- English: [1920x1080](site-hike-1920-v02.png) (v01: [1920](site-hike-1920-v01.png)), [1440x900](site-hike-1440-v02.png) (v01: [1440](site-hike-1440-v01.png)), [744x1133](site-hike-744-v02.png) (v01: [744](site-hike-744-v01.png)).
+- German: [744x1133](site-hike-de-744-v02.png) (v01: [744](site-hike-de-744-v01.png)).
+- Close-ups at 1440x900, pixel ratio 2:
+  - [Mirror Lake and its clearing](site-hike-lake-v02.png), with the far stretch's switchbacks;
+  - [the falls](site-hike-falls-v02.png): the pool on the hilltop, beside v01's [floating pool](site-hike-falls-v01.png).
+- [The pair at the crest and at the lake](site-hike-walkers-v02.png), at pixel ratio 3, placed with the check hook: at the crest, just before they go out of sight, and at 40% in the clearing. v01: [the pair at Halfway](site-hike-walkers-v01.png).
+- [Without WebGL](site-hike-nowebgl-1440-v02.png): A's still drawing with the raised ground (v01: [without WebGL](site-hike-nowebgl-1440-v01.png)).
+
 ## One geography for every version
 
 The water's shapes live in one module (`geometry.js`), so A, B and C differ only in how the water looks.
@@ -109,12 +150,13 @@ The water's shapes live in one module (`geometry.js`), so A, B and C differ only
 - **Waterfall.** The fall pours from a notch at the top of its tall rock on the right, as in the before picture, into a small pool at its foot. A smaller second rock stands behind it to the right.
 - **Side stream.** It is narrower than the main stream and runs from the pool leftwards in slow meanders. It joins the main stream below the bridge in a clean Y.
 - **Width and motion follow depth.** Width and the flow pattern both follow depth: the water is narrow and slow far away and wider and faster close up, and both streams share the same scale.
-- **Mirror Lake.** It sits in the land below the dip in the skyline: an uneven shore about 5:1 wide, a thin shore band, the hillside over its far edge. The trail ends at its near shore.
+- **Mirror Lake.** It sits in the land below the dip in the skyline: an uneven shore about 5:1 wide, a thin shore band, the hillside over its far edge. Since round 4 the trail goes over the green hill and reaches the lake at a small clearing on its right-hand shore.
 - **What moved.** The trail, the trailhead, the big rock, Alfredo and the labels stay where the lesson has them, with these exceptions:
   - The Waterfall Trail used to run up the stream's west bank to v10's waterfall in the middle of the map. It now leaves the bridge eastwards, above the side stream, to a lookout beside the falls.
   - The picnic spot moved to that lookout.
   - In fix round 1, Mirror Lake moved down into the land, and the trail's last stretch now ends at the lake's near shore. The trailhead became a cabin with a picnic table, and its label moved to sit over the cabin.
   - In round 3, the stream's source moved down from the far ridges to the green hill's crest, the cabin moved down onto the clearing, and the Halfway flag moved up the trail.
+  - In round 4, the trail went over the green hill to a clearing on the lake's right-hand shore, and the ground in front of the falls rose so the pool lies on it.
   - Trees keep clear of all the water.
 
 ## The three versions
@@ -275,7 +317,8 @@ How to read the frame numbers:
 - **The first WebGL context.** Entering the hike for the first time costs a task of about 13–20 ms at 4x, against 11–15 ms before, because the browser creates the page's first WebGL context then. It happens once, as the hike's scene fades in.
 - **The far bank's colour.** The strip of hillside over the lake's far edge uses the second hill band's own colour (#d2ddd3), so it has to change with that band.
 - **The study copy.** `prototype/hike-water/scene.js` stays as this round's record. The lesson's scene (`src/lessons/choices/journey-hike.js`) now carries everything in it, plus the moved falls and the trailhead's one shape, so the two have drifted apart on purpose.
-- **No fresh-context design review.** The design reviewer has not looked at round 3 or the lesson's version yet.
+- **No fresh-context design review.** The design reviewer has not looked at round 3, the lesson's version or round 4 yet.
+- **The pair never reaches the lake.** No step walks them past the bridge, so the crest and far-stretch rules for the pair are seen only through the check hook.
 
 ## Images
 
