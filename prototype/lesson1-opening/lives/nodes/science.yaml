@@ -159,7 +159,7 @@
   move: -2
 
 - id: leavesResearch
-  label: Leaves the research
+  label: Leaves the lab
   line: "{name} decides to leave the research job."
   if: "{name} had left the research job"
   kind: choice
