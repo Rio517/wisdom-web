@@ -77,7 +77,7 @@
   tags: [science, tournament]
 
 - id: teacherSpotsTalent
-  label: A teacher notices
+  label: A teacher spots talent
   line: "A teacher spots {his} work and offers extra books. Luck!"
   kind: lucky
   ages: [10, 17]
@@ -93,6 +93,7 @@
   ages: [14, 18]
   after: [teacherSpotsTalent, tournament, experiments, maths]
   tags: [science, sciences]
+  weight: 2
 
 - id: scholarship
   label: Wins a scholarship
@@ -102,6 +103,7 @@
   after: [sciences]
   tags: [science]
   move: 3
+  weight: 3
 
 - id: studyScience
   label: Studies science
@@ -111,6 +113,7 @@
   ages: [17, 23]
   after: [scholarship, sciences]
   tags: [science, university, study]
+  weight: 2
 
 - id: studiesStatistics
   label: Studies statistics
@@ -148,6 +151,7 @@
   ages: [21, 30]
   after: [studyScience, studiesPartTime]
   tags: [science, lab, research, job]
+  weight: 2
 
 - id: unkindSupervisor
   label: A harsh supervisor
@@ -157,6 +161,7 @@
   after: [research]
   tags: [science]
   move: -2
+  weight: 2
 
 - id: leavesResearch
   label: Leaves the lab
@@ -215,6 +220,7 @@
   after: [research, newSupervisor]
   tags: [science]
   move: 3
+  weight: 3
 
 - id: writesAPaper
   label: Writes up the results

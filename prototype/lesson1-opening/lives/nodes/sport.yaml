@@ -133,7 +133,7 @@
 
 - id: teamWinsLeague
   label: Team wins the league
-  line: "{name}'s team wins the league on the last day. Luck helps!"
+  line: "{his} team wins the league on the last day. Luck helps!"
   kind: lucky
   ages: [10, 35]
   after: [team]

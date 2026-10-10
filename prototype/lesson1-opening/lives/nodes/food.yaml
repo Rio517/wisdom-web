@@ -234,7 +234,6 @@
   kind: choice
   ages: [18, 40]
   after: [cooking, baking]
-  needs: [sciences]
   tags: [food, study]
 
 - id: opensAShopCafe
@@ -253,6 +252,5 @@
   if: "{name} had cooked with home-grown vegetables"
   kind: choice
   ages: [14, 70]
-  after: [garden]
-  needs: [cooking]
+  after: [garden, cooking]
   tags: [food]

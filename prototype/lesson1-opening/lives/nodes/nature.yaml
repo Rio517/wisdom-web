@@ -277,8 +277,7 @@
   if: "{name} had built a greenhouse"
   kind: choice
   ages: [18, 70]
-  after: [garden]
-  needs: [building]
+  after: [garden, building]
   tags: [nature, garden]
 
 - id: growsForRestaurants
@@ -287,6 +286,5 @@
   if: "{name} had grown food for restaurants"
   kind: choice
   ages: [22, 60]
-  after: [garden, farm]
-  needs: [cooking]
+  after: [garden, farm, cooking]
   tags: [nature, job]

@@ -197,6 +197,7 @@
   ages: [18, 60]
   after: [journalism]
   tags: [words, job, journalism]
+  weight: 2
 
 - id: paperCloses
   label: The local paper closes

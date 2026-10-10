@@ -26,6 +26,7 @@
   ages: [11, 18]
   after: [code]
   tags: [tech, games]
+  weight: 2
 
 - id: buildsWebsite
   label: Builds a website
@@ -60,6 +61,7 @@
   after: [games]
   tags: [tech]
   move: 2
+  weight: 2
 
 - id: entersGameJam
   label: Enters a game jam
@@ -105,6 +107,7 @@
   ages: [18, 45]
   after: [games, studiesComputing]
   tags: [tech, job, developer, studio]
+  weight: 2
 
 - id: studioCloses
   label: The studio closes
@@ -270,8 +273,7 @@
   if: "{name} had programmed factory robots"
   kind: choice
   ages: [22, 60]
-  after: [robots]
-  needs: [code]
+  after: [robots, code]
   tags: [tech, job, developer]
 
 - id: makesGameTrailers
@@ -280,6 +282,5 @@
   if: "{name} had cut trailers for games"
   kind: choice
   ages: [18, 50]
-  after: [videos]
-  needs: [games]
+  after: [videos, games]
   tags: [tech, job]

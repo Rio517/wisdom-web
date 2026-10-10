@@ -61,7 +61,7 @@
   tags: [community, teaching, study]
 
 - id: teachesAtSchool
-  label: Teaches at a school
+  label: Becomes a teacher
   line: "{name} teaches at a school."
   if: "{name} had taught at a school"
   kind: choice
@@ -113,6 +113,7 @@
   ages: [25, 65]
   after: [volunteer, civic, library]
   tags: [community, campaign]
+  weight: 2
 
 - id: councilSaysNo
   label: The council says no
@@ -160,6 +161,7 @@
   ages: [22, 65]
   after: [volunteer, teaching, leader]
   tags: [community, youthClub, volunteer]
+  weight: 2
 
 - id: fundingEnds
   label: The money runs out

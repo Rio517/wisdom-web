@@ -148,6 +148,7 @@
   after: [owner, shop]
   tags: [money]
   move: -2
+  weight: 2
 
 - id: customerNeverPays
   label: A customer never pays

@@ -33,6 +33,7 @@
   kind: choice
   ages: [9, 15]
   tags: [making, robots, club]
+  weight: 2
 
 - id: woodwork
   label: Does woodwork
@@ -66,6 +67,7 @@
   ages: [11, 17]
   after: [robots]
   tags: [making, contest]
+  weight: 2
 
 - id: robotBreaks
   label: The robot breaks
@@ -75,6 +77,7 @@
   after: [contest]
   tags: [making]
   move: -1
+  weight: 2
 
 - id: rebuildsRobot
   label: Rebuilds the robot
@@ -105,6 +108,7 @@
   unless: [robotBreaks]
   tags: [making]
   move: 2
+  weight: 2
 
 - id: studyEngineering
   label: Studies engineering
@@ -114,6 +118,7 @@
   ages: [16, 23]
   after: [robotPrize, contest, sciences]
   tags: [making, engineer, study, university]
+  weight: 2
 
 - id: startsApprenticeship
   label: Becomes an apprentice
