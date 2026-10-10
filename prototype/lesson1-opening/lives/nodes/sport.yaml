@@ -102,7 +102,7 @@
   kind: choice
   ages: [17, 30]
   after: [academy]
-  tags: [sport, pro]
+  tags: [sport, pro, job]
 
 - id: trainsHard
   label: Trains every morning
@@ -241,7 +241,7 @@
   kind: choice
   ages: [24, 60]
   after: [coachingCourse]
-  tags: [sport, coaching]
+  tags: [sport, coaching, job]
 
 - id: refereesMatches
   label: Learns to referee
@@ -285,3 +285,12 @@
   kind: choice
   ages: [25, 70]
   tags: [sport, swimming]
+
+- id: teamPhysio
+  label: Helps as team physio
+  line: "{name} treats players' strains for a club."
+  if: "{name} had treated players' strains for a club"
+  kind: choice
+  ages: [20, 60]
+  after: [physio]
+  tags: [sport, job]

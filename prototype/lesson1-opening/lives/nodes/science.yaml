@@ -147,7 +147,7 @@
   kind: choice
   ages: [21, 30]
   after: [studyScience, studiesPartTime]
-  tags: [science, lab, research]
+  tags: [science, lab, research, job]
 
 - id: unkindSupervisor
   label: A harsh supervisor
@@ -232,7 +232,7 @@
   kind: choice
   ages: [22, 60]
   after: [leavesResearch, studyScience, pausesStudies]
-  tags: [science, teaching]
+  tags: [science, teaching, job]
 
 - id: worksWithData
   label: Works with data
@@ -240,7 +240,7 @@
   if: "{name} had found work with data"
   kind: choice
   ages: [22, 60]
-  after: [leavesResearch, studyScience, studiesStatistics, failsAnExam]
+  after: [leavesResearch, studyScience, studiesStatistics, failsAnExam, code]
   tags: [science, data, job]
 
 - id: supervisesStudents
@@ -250,7 +250,7 @@
   kind: choice
   ages: [28, 60]
   after: [research, teaching, lab]
-  tags: [science, teaching]
+  tags: [science, teaching, job]
 
 - id: measuresRiverWater
   label: Tests river water
@@ -286,3 +286,12 @@
   kind: choice
   ages: [20, 70]
   tags: [science, thinking]
+
+- id: joinsMedicalResearch
+  label: Joins medical research
+  line: "{name} joins a team studying how to help patients."
+  if: "{name} had joined a medical research team"
+  kind: choice
+  ages: [26, 60]
+  after: [nurse, doctor]
+  tags: [science, research, lab]

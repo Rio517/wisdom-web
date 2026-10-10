@@ -226,3 +226,33 @@
   ages: [28, 70]
   after: [chef, baker, owner]
   tags: [food, book]
+
+- id: studiesFoodScience
+  label: Studies food science
+  line: "{name} studies why bread rises and milk turns."
+  if: "{name} had studied food science"
+  kind: choice
+  ages: [18, 40]
+  after: [cooking, baking]
+  needs: [sciences]
+  tags: [food, study]
+
+- id: opensAShopCafe
+  label: Opens a shop café
+  line: "{name} opens a small café inside a shop."
+  if: "{name} had opened a shop café"
+  kind: choice
+  ages: [24, 55]
+  after: [shop]
+  needs: [cooking]
+  tags: [food, owner, business]
+
+- id: cooksWithGardenVeg
+  label: Cooks with the garden
+  line: "{name} cooks with vegetables grown in the garden."
+  if: "{name} had cooked with home-grown vegetables"
+  kind: choice
+  ages: [14, 70]
+  after: [garden]
+  needs: [cooking]
+  tags: [food]

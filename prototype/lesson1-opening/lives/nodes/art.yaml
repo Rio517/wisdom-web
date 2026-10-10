@@ -243,3 +243,62 @@
   after: [artSchoolSaysNo]
   tags: [art, drawing]
   within: 2
+
+- id: sportsPhotographer
+  label: Photographs sport
+  line: "{name} photographs matches for the local paper."
+  if: "{name} had photographed matches"
+  kind: choice
+  ages: [18, 60]
+  after: [photography]
+  needs: [sport]
+  tags: [art, job]
+
+- id: paintsLandscapes
+  label: Paints the countryside
+  line: "{name} paints the hills and fields near home."
+  if: "{name} had painted the countryside"
+  kind: choice
+  ages: [16, 80]
+  after: [outdoors]
+  tags: [art, painting]
+
+- id: opensGalleryShop
+  label: Opens a gallery shop
+  line: "{name} opens a small shop selling local art."
+  if: "{name} had opened a gallery shop"
+  kind: choice
+  ages: [25, 60]
+  after: [savings]
+  needs: [drawing]
+  tags: [art, owner, business, shop]
+
+- id: paintsStageSets
+  label: Paints stage sets
+  line: "{name} paints the scenery for stage shows."
+  if: "{name} had painted stage scenery"
+  kind: choice
+  ages: [18, 60]
+  after: [theatre]
+  needs: [drawing]
+  tags: [art, job]
+
+- id: designsCostumes
+  label: Designs costumes
+  line: "{name} designs and sews costumes for the stage."
+  if: "{name} had designed costumes"
+  kind: choice
+  ages: [16, 60]
+  after: [sewing]
+  needs: [theatre]
+  tags: [art, job]
+
+- id: designsWebsites
+  label: Designs websites
+  line: "{name} designs websites that are easy to read."
+  if: "{name} had designed websites"
+  kind: choice
+  ages: [18, 60]
+  after: [websites]
+  needs: [design]
+  tags: [art, job]

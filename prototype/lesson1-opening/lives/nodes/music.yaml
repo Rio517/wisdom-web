@@ -141,7 +141,7 @@
   kind: event
   ages: [17, 40]
   after: [radioPlay]
-  tags: [music, fame]
+  tags: [music, fame, job]
   within: 2
   move: 1
 
@@ -218,7 +218,7 @@
   kind: choice
   ages: [16, 60]
   after: [handInjury, bandSplits, radioPlay]
-  tags: [music, songs]
+  tags: [music, songs, job]
   within: 2
 
 - id: teachesMusic
@@ -228,7 +228,7 @@
   kind: choice
   ages: [18, 65]
   after: [handInjury, bandSplits]
-  tags: [music, teaching]
+  tags: [music, teaching, job]
   within: 2
 
 - id: goesSolo
@@ -238,7 +238,7 @@
   kind: choice
   ages: [16, 45]
   after: [bandSplits]
-  tags: [music, gigs]
+  tags: [music, gigs, job]
   within: 2
 
 - id: givesMusicLessons
@@ -248,7 +248,7 @@
   kind: choice
   ages: [16, 70]
   after: [instrument]
-  tags: [music, teaching]
+  tags: [music, teaching, job]
 
 - id: teachesSchoolMusic
   label: Teaches at a school
@@ -258,7 +258,7 @@
   ages: [22, 65]
   after: [teaching]
   needs: [music]
-  tags: [music, teacher]
+  tags: [music, teacher, job]
 
 - id: watchesChildPerform
   label: Watches child perform
@@ -286,3 +286,13 @@
   kind: choice
   ages: [25, 80]
   tags: [music, sings, ensemble]
+
+- id: writesMusicForShows
+  label: Writes show music
+  line: "{name} writes music for stage shows and films."
+  if: "{name} had written music for shows"
+  kind: choice
+  ages: [18, 60]
+  after: [theatre, film]
+  needs: [music]
+  tags: [music, songs, job]

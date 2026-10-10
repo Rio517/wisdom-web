@@ -234,3 +234,12 @@
   ages: [24, 55]
   after: [sport, savings]
   tags: [money, owner, business, shop]
+
+- id: raisesMoney
+  label: Raises money
+  line: "{name} organises a fun run to raise money for a cause."
+  if: "{name} had raised money for a cause"
+  kind: choice
+  ages: [20, 65]
+  after: [volunteer]
+  tags: [money, savings, community]

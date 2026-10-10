@@ -290,3 +290,13 @@
   ages: [20, 60]
   tags: [making, building, community]
   weight: 0.7
+
+- id: buildsRaisedBeds
+  label: Builds raised beds
+  line: "{name} builds raised garden beds for the neighbourhood."
+  if: "{name} had built raised garden beds"
+  kind: choice
+  ages: [14, 70]
+  after: [garden]
+  needs: [building]
+  tags: [making, building, community]

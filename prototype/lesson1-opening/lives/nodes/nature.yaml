@@ -270,3 +270,23 @@
   ages: [20, 70]
   after: [environment, garden, outdoors]
   tags: [nature, environment, community]
+
+- id: buildsAGreenhouse
+  label: Builds a greenhouse
+  line: "{name} builds a greenhouse from old windows."
+  if: "{name} had built a greenhouse"
+  kind: choice
+  ages: [18, 70]
+  after: [garden]
+  needs: [building]
+  tags: [nature, garden]
+
+- id: growsForRestaurants
+  label: Grows for restaurants
+  line: "{name} grows herbs and salad leaves for local restaurants."
+  if: "{name} had grown food for restaurants"
+  kind: choice
+  ages: [22, 60]
+  after: [garden, farm]
+  needs: [cooking]
+  tags: [nature, job]

@@ -281,3 +281,30 @@
   ages: [28, 80]
   tags: [words, writing]
   weight: 0.6
+
+- id: writesPictureBooks
+  label: Writes picture books
+  line: "{name} writes picture books for young children."
+  if: "{name} had written picture books"
+  kind: choice
+  ages: [22, 60]
+  after: [illustration]
+  tags: [words, book, writing]
+
+- id: writesHealthLeaflets
+  label: Writes health leaflets
+  line: "{name} writes clear leaflets that help patients understand."
+  if: "{name} had written health leaflets"
+  kind: choice
+  ages: [22, 60]
+  after: [nurse, doctor]
+  tags: [words, job, writing]
+
+- id: writesSpeeches
+  label: Writes speeches
+  line: "{name} writes speeches for the town council."
+  if: "{name} had written speeches for the council"
+  kind: choice
+  ages: [24, 65]
+  after: [civic]
+  tags: [words, job, writing]

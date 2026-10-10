@@ -252,3 +252,23 @@
   after: [showCloses]
   tags: [stage, theatre]
   within: 2
+
+- id: writesAScript
+  label: Writes a script
+  line: "{name} writes a script for a play or a film."
+  if: "{name} had written a script"
+  kind: choice
+  ages: [16, 60]
+  after: [writing]
+  needs: [drama]
+  tags: [stage, script]
+
+- id: directsTownPageant
+  label: Directs a pageant
+  line: "{name} directs the whole town in a pageant."
+  if: "{name} had directed a town pageant"
+  kind: choice
+  ages: [22, 65]
+  after: [civic, volunteer]
+  needs: [drama]
+  tags: [stage, theatre, community]

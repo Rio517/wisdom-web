@@ -234,3 +234,57 @@
   ages: [20, 60]
   after: [outdoors]
   tags: [community, volunteer, teaching]
+
+- id: coachesTownTeam
+  label: Coaches a town team
+  line: "{name} coaches a town team that plays on Sunday mornings."
+  if: "{name} had coached a town team"
+  kind: choice
+  ages: [20, 65]
+  after: [coaching]
+  tags: [community, volunteer, teaching]
+
+- id: teachesTradeSkills
+  label: Teaches trade skills
+  line: "{name} teaches trade skills at the local college."
+  if: "{name} had taught trade skills"
+  kind: choice
+  ages: [28, 65]
+  after: [qualified]
+  tags: [community, teaching, job]
+
+- id: visitsLonelyNeighbours
+  label: Visits neighbours
+  line: "{name} visits older neighbours who live alone."
+  if: "{name} had visited older neighbours"
+  kind: choice
+  ages: [20, 70]
+  after: [carer]
+  tags: [community, volunteer]
+
+- id: runsDramaWorkshops
+  label: Runs drama workshops
+  line: "{name} runs drama workshops in the town hall."
+  if: "{name} had run drama workshops"
+  kind: choice
+  ages: [20, 65]
+  after: [drama, theatre]
+  tags: [community, teaching, volunteer]
+
+- id: cooksForFoodBank
+  label: Cooks for food bank
+  line: "{name} cooks hot meals for the food bank."
+  if: "{name} had cooked for the food bank"
+  kind: choice
+  ages: [20, 65]
+  after: [cooking]
+  tags: [community, volunteer]
+
+- id: teachesDigitalSkills
+  label: Teaches computing
+  line: "{name} shows older neighbours how to use a computer."
+  if: "{name} had taught neighbours to use computers"
+  kind: choice
+  ages: [22, 65]
+  after: [code, computers]
+  tags: [community, teaching, volunteer]

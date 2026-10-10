@@ -245,3 +245,41 @@
   after: [studioCloses]
   tags: [tech, job, developer]
   within: 2
+
+- id: startsABlog
+  label: Starts a blog
+  line: "{name} starts a blog and writes about what interests {him}."
+  if: "{name} had started a blog"
+  kind: choice
+  ages: [14, 60]
+  after: [writing]
+  tags: [tech, websites]
+
+- id: buildsOnlineShop
+  label: Builds an online shop
+  line: "{name} builds an online shop for a small business."
+  if: "{name} had built an online shop"
+  kind: choice
+  ages: [18, 55]
+  after: [online, websites]
+  tags: [tech, job]
+
+- id: programsRobots
+  label: Programs robots
+  line: "{name} programs robots that work in a factory."
+  if: "{name} had programmed factory robots"
+  kind: choice
+  ages: [22, 60]
+  after: [robots]
+  needs: [code]
+  tags: [tech, job, developer]
+
+- id: makesGameTrailers
+  label: Makes game trailers
+  line: "{name} cuts exciting trailers for new games."
+  if: "{name} had cut trailers for games"
+  kind: choice
+  ages: [18, 50]
+  after: [videos]
+  needs: [games]
+  tags: [tech, job]
