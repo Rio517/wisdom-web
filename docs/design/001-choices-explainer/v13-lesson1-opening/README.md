@@ -204,21 +204,21 @@ Headless Chromium and WebKit (Chrome's and Safari's engines), on this branch:
 
 The store and the engine (`npm run lives:check`, 50 grown lives for every alternative of every written life, then 5,000 random lives):
 
-| | This branch's store | The writer's audited store (`agents/lives-content` at d0d9dae) |
-| --- | --- | --- |
-| Errors | 18: 17 alternatives less than six years before the end (a rule added this round), and one of Sam's alternatives (`writesForOthers` at 30) that the four-year `within` rule rules out | 1: Sam's `writesForOthers` at 30 |
-| Warnings | 0 | 0 |
-| Grown lives reaching end − 3 | 100% | 100% |
-| Mean overlap of two lives after the same fork (0 none shared) | 0.08 | 0.08 |
-| Distinct nodes after a fork (50 lives) | 92 | 111 |
-| Lucky breaks and setbacks among forks from 8 to end − 4 | 33% | 32% |
-| Steps that build on one of the last two | 60% | 60% |
-| Forks whose lives end more than 0.12 above or below their others | 0 | 0 |
-| Lives that end on a lucky break or a setback | 0% | 0% |
-| Surprises that follow the life's own story | 61% | 57% |
-| Setbacks answered within four years | 84% | 85% |
-| Nodes used in 5,000 lives | 453 of 459 | 470 of 471 (not `freelancesCode`) |
-| Time | 1.8 s | 1.8 s |
+| | The store on this branch: the writer's audited store, merged |
+| --- | --- |
+| Errors | 0 (one of Sam's alternatives, `writesForOthers` at 30, broke the four-year `within` rule; it is now `joinsAdultChoir`) |
+| Warnings | 0 |
+| Grown lives reaching end − 3 | 100% |
+| Mean overlap of two lives after the same fork (0 none shared) | 0.08 |
+| Distinct nodes after a fork (50 lives) | 111 |
+| Lucky breaks and setbacks among forks from 8 to end − 4 | 32% |
+| Steps that build on one of the last two | 60% |
+| Forks whose lives end more than 0.12 above or below their others | 0 |
+| Lives that end on a lucky break or a setback | 0% |
+| Surprises that follow the life's own story | 57% |
+| Setbacks answered within four years | 85% |
+| Nodes used in 5,000 lives | 470 of 471 (not `freelancesCode`) |
+| Time | 1.7 s |
 
 Before this round's growth rules (the writer's store at 3031dfa), 17.8% of lives ended on a lucky break or a setback, 38% of surprises followed the life's own story, and 49% of setbacks were answered within four years.
 
