@@ -1181,6 +1181,17 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
     endPoint: () => (what ? what.nodes.at(-1).point : geometry().points[END]),
     /** What the map's chips must stay clear of: the labels (in "Choices add up" the gray choices' labels step back). */
     occupied: () => [...labelEls, ...(mode === 'adds' ? [] : altEls)].filter(element => element.classList.contains('is-shown')).map(boxOf),
+    /**
+     * The dark labels showing, with their step and their box as laid out (not as drawn, which a
+     * transition may be moving), for "Choices add up", which may step some back.
+     */
+    darkLabels: () => {
+      const g = geometry();
+      return labelEls.filter(element => element.classList.contains('is-shown')).map(element => {
+        const step = Number(element.dataset.step);
+        return { element, step, box: g.labels[step]?.box ?? boxOf(element) };
+      });
+    },
     layers: { axis, grays: graysCanvas, dark: darkCanvas, marks: marksCanvas, live: liveCanvas, overlay },
     card,
     /** Every alternative the reader may pick, in age order: `{ key, stepIndex, id, label, whatIf }`. */

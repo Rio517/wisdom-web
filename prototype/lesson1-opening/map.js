@@ -25,9 +25,9 @@ export function addsSteps(life) {
   const steps = life.steps;
   const own = steps.findIndex(step => step.kind === 'choice' && !step.byFamily && step.age >= 8 && step.echoes.length);
   const found = [
-    { step: own >= 0 ? own : steps.findIndex(step => step.kind === 'choice' && !step.byFamily && step.age >= 8), key: 'map.life.choice', tone: 'taken', tries: [{ dy: -30 }, { dy: 54 }, { dy: -52 }, { dy: 76 }] },
-    { step: steps.findIndex(step => step.kind === 'lucky'), key: 'map.life.luck', tone: 'possible', tries: [{ dy: -30 }, { dy: 54 }, { dy: -52 }, { dy: 76 }] },
-    { step: steps.findIndex(step => step.kind === 'setback'), key: 'map.life.notHis', tone: 'closed', tries: [{ dy: 54 }, { dy: 76 }, { dy: -30 }, { dy: -52 }] },
+    { step: own >= 0 ? own : steps.findIndex(step => step.kind === 'choice' && !step.byFamily && step.age >= 8), key: 'map.life.choice', tone: 'taken', tries: [{ dy: -30 }, { dy: 54 }, { dy: -52 }, { dy: 76 }, { dy: -74 }, { dy: 98 }] },
+    { step: steps.findIndex(step => step.kind === 'lucky'), key: 'map.life.luck', tone: 'possible', tries: [{ dy: -30 }, { dy: 54 }, { dy: -52 }, { dy: 76 }, { dy: -74 }, { dy: 98 }] },
+    { step: steps.findIndex(step => step.kind === 'setback'), key: 'map.life.notHis', tone: 'closed', tries: [{ dy: 54 }, { dy: 76 }, { dy: -30 }, { dy: -52 }, { dy: 98 }, { dy: -74 }] },
   ];
   return found.filter(item => item.step > 0);
 }
@@ -118,7 +118,13 @@ export function createPathsScene(root, { edgeFade = null, life = {} } = {}) {
   }
 
   // ——— Chips (the lesson's chip(), with its collision avoidance) ———
-  function chip(text, point, tone, index, placed, { dx = 0, dy = -14 } = {}) {
+  const hits = (box, other) => box.left < other.right + 8 && box.right > other.left - 8 && box.top < other.bottom + 6 && box.bottom > other.top - 6;
+  const crosses = (box, other) => box.left < other.right && box.right > other.left && box.top < other.bottom && box.bottom > other.top;
+  // A chip at the first of `tries` (running right from the dot, then left, then centred) that is
+  // inside the map and clear of `placed`, its pin too if any try allows. With `labels` ({ box,
+  // element } of other steps' labels it may cover), when no try is clear, the try that covers the
+  // fewest of them: those step back.
+  function chip(text, point, tone, index, placed, tries, labels = []) {
     const element = document.createElement('div');
     element.className = 'map-chip';
     element.dataset.tone = tone;
@@ -129,11 +135,38 @@ export function createPathsScene(root, { edgeFade = null, life = {} } = {}) {
     callouts.append(element);
     const width = label.offsetWidth;
     const height = label.offsetHeight;
-    const box = { left: point.x + dx - 14, top: point.y + dy - height - 4, right: point.x + dx - 14 + width, bottom: point.y + dy - 4 };
     const r = rect();
-    const fits = box.left >= 4 && box.right <= r.width - 4 && box.top >= 4 && box.bottom <= r.height - 40
-      && !placed.some(other => box.left < other.right + 8 && box.right > other.left - 8 && box.top < other.bottom + 6 && box.bottom > other.top - 6);
-    if (!fits) { element.remove(); return false; }
+    // Each try with the chip running right from the dot, then running left, then centred on it.
+    const offsets = ['start', 'end', 'middle'].flatMap(align => tries.map(offset => ({ ...offset, align })));
+    const boxAt = ({ dx = 0, dy = -14, align = 'start' }) => {
+      const left = point.x + dx + (align === 'end' ? 14 - width : align === 'middle' ? -width / 2 : -14);
+      return { left, top: point.y + dy - height - 4, right: left + width, bottom: point.y + dy - 4 };
+    };
+    const inside = box => box.left >= 4 && box.right <= r.width - 4 && box.top >= 4 && box.bottom <= r.height - 40;
+    // The pin: from the chip's edge to the dot.
+    const pinOf = box => ({ left: point.x - 1, right: point.x + 1, top: Math.min(box.bottom, point.y + 5), bottom: Math.max(box.top, point.y - 5) });
+    const blocks = (box, other) => hits(box, other) || crosses(pinOf(box), other);
+    const clear = test => offsets.find(offset => { const box = boxAt(offset); return inside(box) && !placed.some(other => test(box, other)); });
+    let at = clear(blocks) ?? clear(hits);
+    let covered = [];
+    if (!at && labels.length) {
+      const boxes = new Set(labels.map(item => item.box));
+      let fewest = Infinity;
+      for (const offset of offsets) {
+        const box = boxAt(offset);
+        if (!inside(box) || placed.some(other => !boxes.has(other) && hits(box, other))) continue;
+        const under = labels.filter(item => hits(box, item.box));
+        if (under.length < fewest) { fewest = under.length; at = offset; covered = under; }
+      }
+    }
+    if (!at) { element.remove(); return false; }
+    const { dy = -14 } = at;
+    const box = boxAt(at);
+    for (const item of covered) {
+      item.element.classList.add('is-stepped-back');
+      placed.splice(placed.indexOf(item.box), 1);
+      labels.splice(labels.indexOf(item), 1);
+    }
     placed.push(box);
     element.style.visibility = '';
     element.style.left = `${box.left}px`;
@@ -149,13 +182,20 @@ export function createPathsScene(root, { edgeFade = null, life = {} } = {}) {
 
   function renderCallouts(mode) {
     callouts.replaceChildren();
-    if (failed || mode !== 'adds' || !lifeMap.life) return;
+    if (!lifeMap.life) return;
+    lifeMap.darkLabels().forEach(item => item.element.classList.remove('is-stepped-back'));
+    if (failed || mode !== 'adds') return;
     const points = lifeMap.points();
-    const placed = lifeMap.occupied();
-    addsSteps(lifeMap.life).forEach((item, index) => {
-      for (const offset of item.tries) {
-        if (chip(t(item.key, { pronoun: lifeMap.life.pronoun }), points[item.step], item.tone, index, placed, offset)) break;
-      }
+    // The chips stay clear of the steps' labels (the gray choices' labels step back here). Where
+    // a life's labels leave no clear room by a named step, the labels of other steps in the chip's
+    // way step back too (their dots and lines stay); the three named steps keep theirs.
+    const labels = lifeMap.darkLabels();
+    const placed = labels.map(item => item.box);
+    const items = addsSteps(lifeMap.life);
+    const named = new Set(items.map(item => item.step));
+    const others = labels.filter(item => !named.has(item.step));
+    items.forEach((item, index) => {
+      chip(t(item.key, { pronoun: lifeMap.life.pronoun }), points[item.step], item.tone, index, placed, item.tries, others);
     });
   }
 

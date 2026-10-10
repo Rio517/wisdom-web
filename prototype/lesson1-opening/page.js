@@ -346,10 +346,10 @@ function run() {
   const sideColumn = matchMedia('(min-width: 990px)');
   const lastFit = new Map(); // a list's id and box size → the size it fitted at last time
   function fitList(box, { min = 15, max = 24 } = {}) {
-    box.classList.remove('is-tight', 'is-snug', 'is-compact');
+    box.classList.remove('is-tight', 'is-snug');
     box.style.removeProperty('--fit-size');
     box.style.removeProperty('--fit-gap');
-    [...box.children].forEach(row => row.classList.remove('is-folded', 'is-folded-more'));
+    [...box.children].forEach(row => row.classList.remove('is-folded', 'is-folded-more', 'is-compact'));
     if (!sideColumn.matches || !box.clientHeight) { box.fitKey = 'unfitted'; return; } // under the map: no fit
     // The largest size, to half a pixel, at which every row shows. Each try is a layout, so few
     // tries: the size this list fitted at last time (else the middle), then a guess in proportion
@@ -410,7 +410,8 @@ function run() {
   // Only a story too long for its column at the smallest size (is-tight): lines that
   // haven't arrived wait in one row each, and when the list would overflow, older
   // lines step down a size, oldest first, then one size more; then the rows close
-  // up, and only then do the three lines before the newest step down.
+  // up, and only then do the three lines before the newest step down; then, oldest
+  // first, lines take their age into their own row (is-compact).
   const fold = newest => {
     const box = list();
     if (!box || !sideColumn.matches || !box.classList.contains('is-tight')) return;
@@ -422,7 +423,7 @@ function run() {
     if (over()) box.classList.add('is-snug');
     shrink('is-folded', newest);
     shrink('is-folded-more', newest);
-    if (over()) box.classList.add('is-compact');
+    shrink('is-compact', newest);
   };
   // If the list still has to scroll in its column, the newest line stays in view.
   const keepInView = (element, box = list()) => {
@@ -436,9 +437,9 @@ function run() {
       lines().forEach(element => {
         element.getAnimations().forEach(animation => animation.cancel());
         element.classList.add('is-pending');
-        element.classList.remove('is-past', 'is-folded', 'is-folded-more');
+        element.classList.remove('is-past', 'is-folded', 'is-folded-more', 'is-compact');
       });
-      if (list()) { list().scrollTop = 0; list().classList.remove('is-snug', 'is-compact'); }
+      if (list()) { list().scrollTop = 0; list().classList.remove('is-snug'); }
     },
     reveal(position, { duration, dim }) {
       const all = lines();
