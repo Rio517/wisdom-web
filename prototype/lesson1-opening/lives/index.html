@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#fbfbf8">
+  <title>Lives tree · Lesson 1 opening · Wisdom</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./tree.css">
+  <script type="module" src="./tree.js"></script>
+</head>
+<body>
+  <!-- The explorer's marks: a plain dot for a choice, a ring for an event, a sun star for a lucky break, a clay diamond for a setback. -->
+  <svg class="sprite" width="0" height="0" aria-hidden="true" focusable="false">
+    <symbol id="g-start" viewBox="-11 -11 22 22"><circle r="6.2" style="fill: var(--forest)"/></symbol>
+    <symbol id="g-choice" viewBox="-11 -11 22 22"><circle r="4.6" style="fill: var(--forest)"/></symbol>
+    <symbol id="g-event" viewBox="-11 -11 22 22"><circle r="4.2" style="fill: var(--paper); stroke: var(--forest); stroke-width: 2"/></symbol>
+    <symbol id="g-lucky" viewBox="-11 -11 22 22"><polygon points="0,-10 2.59,-3.56 9.51,-3.09 4.18,1.36 5.88,8.09 0,4.4 -5.88,8.09 -4.18,1.36 -9.51,-3.09 -2.59,-3.56" style="fill: var(--sun); stroke: var(--paper-deep); stroke-width: 2; paint-order: stroke"/></symbol>
+    <symbol id="g-setback" viewBox="-11 -11 22 22"><polygon points="0,-8.5 8.5,0 0,8.5 -8.5,0" style="fill: var(--clay); stroke: var(--paper-deep); stroke-width: 2; paint-order: stroke"/></symbol>
+  </svg>
+
+  <header class="page-head">
+    <div class="head-title">
+      <p class="kicker">Lesson 1 opening · the lives store</p>
+      <h1>The lives tree</h1>
+      <p class="stats" id="stats">Reading the store…</p>
+    </div>
+    <div class="head-side">
+      <p class="counts" id="head-counts"></p>
+      <nav class="store-switch" aria-label="Which store">
+        <a href="./" id="use-real">Real store</a>
+        <a href="./?store=fixture" id="use-fixture">Test fixture</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="panes">
+    <section class="pane tree-pane" aria-labelledby="tree-title">
+      <div class="toolbar">
+        <h2 id="tree-title" class="visually-hidden">Nodes as a tree</h2>
+        <div class="tools">
+          <label class="search">
+            <span class="visually-hidden">Find a node by label or id</span>
+            <input id="search" type="search" placeholder="Find a node (label or id)" autocomplete="off" spellcheck="false">
+          </label>
+          <label class="pick">
+            <span class="visually-hidden">File</span>
+            <select id="file-filter"><option value="">All files</option></select>
+          </label>
+          <label class="pick">
+            <span class="visually-hidden">Kind</span>
+            <select id="kind-filter">
+              <option value="">All kinds</option>
+              <option value="choice">Choices</option>
+              <option value="lucky">Lucky breaks</option>
+              <option value="setback">Setbacks</option>
+              <option value="event">Events</option>
+            </select>
+          </label>
+          <button type="button" class="tool-btn" data-act="clear" id="clear" hidden>Clear</button>
+        </div>
+        <div class="tools-foot">
+          <p class="legend">
+            <span><svg class="glyph" aria-hidden="true"><use href="#g-choice"/></svg>Choice</span>
+            <span><svg class="glyph" aria-hidden="true"><use href="#g-event"/></svg>Event</span>
+            <span><svg class="glyph" aria-hidden="true"><use href="#g-lucky"/></svg>Lucky break</span>
+            <span><svg class="glyph" aria-hidden="true"><use href="#g-setback"/></svg>Setback</span>
+            <span class="legend-link">↪ in full elsewhere</span>
+          </p>
+          <div class="tool-group">
+            <button type="button" class="tool-btn" data-act="expand-all">Expand all</button>
+            <button type="button" class="tool-btn" data-act="collapse-all">Collapse all</button>
+          </div>
+        </div>
+      </div>
+      <p class="status" id="tree-status" aria-live="polite"></p>
+      <div id="tree" class="tree"></div>
+    </section>
+
+    <aside class="pane side-pane" aria-label="Problems and written lives">
+      <section id="checker" class="side-block checker" aria-labelledby="checker-title">
+        <h2 id="checker-title">Checker</h2>
+        <div id="checker-body"></div>
+      </section>
+
+      <section class="side-block how" aria-labelledby="how-title">
+        <h2 id="how-title">How to edit</h2>
+        <ul>
+          <li>Nodes live in <code><span data-root></span>nodes/&lt;area&gt;.yaml</code>, written lives in <code><span data-root></span>baselines/&lt;person&gt;.yaml</code>.</li>
+          <li>To add a node, copy one, give it a new id, change its <code>after</code> and save. This page updates by itself.</li>
+          <li>For the full report, run <code>npm run lives:check</code>. The rules are in <code>lives/README.md</code>.</li>
+        </ul>
+      </section>
+
+      <section class="side-block lives" aria-labelledby="lives-title">
+        <h2 id="lives-title">Written lives</h2>
+        <div id="who" class="who"></div>
+        <div id="life" class="life"></div>
+      </section>
+    </aside>
+  </main>
+</body>
+</html>
