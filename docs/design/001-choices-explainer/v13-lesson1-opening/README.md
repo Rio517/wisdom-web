@@ -1,8 +1,8 @@
 # v13 — Lesson 1 opening
 
-Created: 2026-10-09. Updated: 2026-10-09 (round 3, with two fixes as v04). Status: playable mockup on a branch; owner review pending. Not published.
+Created: 2026-10-09. Updated: 2026-10-10 (round 4: the lives store, as v05). Status: playable mockup on a branch; owner review pending. Not published.
 
-Question: does the opening tell one life clearly? Since round 3, also: does Sam's story read like the Explore chapter, and does changing one of his choices show that every gray line is a life he could have lived?
+Question: does the opening tell one life clearly? Since round 3, also: does Sam's story read like the Explore chapter, and does changing one of his choices show that every gray line is a life he could have lived? Since round 4, also: can a reader play the opening five or six times and meet a really different life each time, where every step makes sense?
 
 The mockup plays the new start of Lesson 1 from beginning to end. First the cover. Then Sam's life grows fork by fork along an age line, from birth to 41, drawn the way the Explore chapter draws a life. At the end the reader can change one of his choices and watch a different life grow from that fork. Then "Choices add up". Then the stage fades into the first beat of Alfredo's hike. It uses the lesson's own header, chapter trail, stage, narration column and styles, the same seed and path engine for the cover, and the Explore chapter's drawing and tree, so it looks like the lesson. Only the opening plays: the chapters after the hike are shown but can't be opened.
 
@@ -14,13 +14,68 @@ Related: [product 013](../../../product/013-choices-guided-journey.md) (the guid
 npm run dev:prototype -- --host 127.0.0.1 --port 4638 --strictPort
 ```
 
-Open <http://127.0.0.1:4638/prototype/lesson1-opening/>.
+Open <http://127.0.0.1:4638/prototype/lesson1-opening/>. The lives store and its tree page: <http://127.0.0.1:4638/prototype/lesson1-opening/lives/> (see [its README](../../../../prototype/lesson1-opening/lives/README.md)).
 
-- Press **Watch the paths grow** on the cover. Then Sam's story plays by itself.
+- Press **Watch the paths grow** on the cover. Then a life plays by itself: Sam's on the first visit, then each **Replay** or **Watch another life** plays one of the ten people not seen yet (remembered in the browser), until all have played.
 - **Space** or **Pause** holds the story. **→**, or a click on the map or the lines, plays the next step (while paused, one step plays and holds). **Next** lands the whole story at once (300 ms), then moves on. **Back** and **←** go back a beat.
-- At the end, the card on the map offers **Change one of his choices**. Then the five forks Sam could have taken differently get a ring, and their gray choices become buttons. A gray choice can also be tapped straight away. **Try another choice** goes back to the five forks; **Back to Sam's life** or **Escape** puts his life back as it was. **Next** goes on to "Choices add up" with his real path.
-- The **Mockup** bar under the stage switches the pace (**Normal**: 900 ms pauses, 1300 ms after events; **Quicker**: 700 and 1000 ms) and replays the story.
-- The address keeps the pace: `?pace=quick`. `#paths-life` opens the finished story, `#paths-adds` the next beat and `#hike-plan` the hike.
+- At the end, the card on the map offers **Change one of his choices** (or hers) and **Watch another life**. Every fork with other choices gets a ring; a ring is a button that opens the choices there, and a gray choice on the map can also be tapped straight away. A picked choice grows a new life from that fork, a different one each time. **Try again** grows another from the same choice, **Try another choice** goes back to the rings, and **Back to Sam's life** or **Escape** puts the life back as it was.
+- The **Mockup** bar under the stage switches the pace (**Normal**: 900 ms pauses, 1300 ms after events; **Quicker**: 700 and 1000 ms) and the **Life** (any of the ten, or Random), and replays the story.
+- The address keeps the pace and the life: `?pace=quick&life=zoe`. After a pick it also holds the fork, the choice and the seed, so the same new life opens again. `?store=fixture` plays the test store (two lives); `#paths-life` opens the finished story, `#paths-adds` the next beat and `#hike-plan` the hike.
+
+## Round 4: the owner's notes on v04 (v05)
+
+The notes, paraphrased:
+
+1. Round 3 is really good.
+2. The stars and diamonds must sit cleanly on top of the lines.
+3. Take the path options out of the code into a store, with a nested tree that can be seen and edited.
+4. Store them as nodes: many starting points lead to the same choices, and choices should build on each other. A life should never sign a record deal without ever having been in a band.
+5. More options and more chance: about ten written lives, so a child can play five or six times and meet really different lives.
+6. A map label showed only "A band", not the whole choice.
+7. The history on the right covers about the top 40% of the column instead of running down to the controls.
+
+Today, measured (v04, before this round):
+
+- **Where Sam's life lived:** his 14 steps and 9 labelled alternatives were code, `LIFE_STEPS` in `life.js`, with their words in `copy.json` (`map.life.*` labels, `lesson.beat.life.*` lines) and fixed heights on the map: 0.5, 0.515, 0.49, 0.505, 0.49, 0.4, 0.29, 0.33, 0.78, 0.67, 0.55, 0.45, 0.36, 0.27.
+- **Markers:** each star, diamond and dot was drawn with its own line, at the line's alpha, so lines drawn later crossed it, and a faded star or diamond on Sam's light path let the lines behind it show through. Its 2 px ring had the same alpha.
+- **"A band":** that was the label's own text (`map.life.band`). Separately, the nine gray choice buttons were all cut by their box (text wider than the button) at 1280, 1440, 1680, 1920 and 2560 px wide.
+- **The history column:** the story list stopped at 548 px. At 1920×1080 it ran from 246 to 793 px with the controls at 923; at 2560×1440 the controls sat at 1283, so the list filled about half its room. A changed life's list stopped at 303 px, and at 1280×800 it scrolled (303 px of rows in a 221 px box).
+
+What changed:
+
+- **The lives store** (`prototype/lesson1-opening/lives/`; its README is the schema). A node is one thing that can happen: a choice, a lucky break, a setback or an event, with the ages it can happen at and what must already be on the path (`after`, `needs`, `unless`, `within`). Nodes live in one YAML file per area of life; a written life (a baseline) is a list of nodes with ages and the alternatives at each choice. On this branch the store has 460 nodes in 14 files and ten written lives; the writer's audited store (its own branch) has 471.
+- **The engine** (`lives/engine.js`, no DOM) reads and checks the store, works out each step's height and grows a new life from any fork. Lives build on their last two steps about two times in three. From 8 until four years before the end, about one fork in three is a lucky break or a setback; the last four years have none, so no life ends on one. A surprise that follows the life's own story comes first. After a setback, seven times in ten something that answers it comes one or two years later. An interest the life left more than twelve years ago counts a quarter as much. Sam's heights land within 0.07 of round 3's.
+- **The checker**, `npm run lives:check`: every error and warning in the store, a variety report for every alternative of every written life (50 grown lives each), and sample lives as plain text for reading.
+- **The tree page** (`/prototype/lesson1-opening/lives/`): Born at the root; under each node the nodes that can follow it; fresh starts grouped by age; a node that follows several others is shown in full once and as a "↪" link elsewhere. Search, file and kind filters, expand and collapse all. On the right: the checker's findings, each linked to its node, the written lives with their alternatives, "Grow 5 more" lives from any alternative, and a short "How to edit". The page updates when a file is saved.
+- **The opening reads the store.** Sam plays first; **Replay** and the end card's new **Watch another life** play someone not seen yet. Every choice with alternatives gets a ring, and each ring is a button that opens a small popover with the alternatives as chips (the arrow keys move between them), so a choice whose label had no room on the map can still be picked. A pick grows a different life each time, with its seed in the address; **Try again** grows another.
+- **Markers on top:** every line is drawn first, then every dot, star and diamond, solid (a faded one is a pre-mixed colour, not see-through), each with a 2 px ring in the map's colour where a line passes behind it.
+- **Whole labels:** labels are phrases ("Starts a band") and are never cut; a label with no room is left out, gray ones first, and its choice stays in the ring's popover.
+- **The history column** now runs from the heading to the controls. The words take the largest size, in half pixels, at which the whole list fits (15 to 24 px for a story, 14 to 21 px for a changed life), and the room left over goes between the rows. A list too long even at the smallest size folds its older rows as in v04, and a changed life's older rows close up.
+- **"Choices add up" for every life:** its three labels mark the person's own choice that builds on an earlier one, the first lucky break and the first setback. With the store's lives the steps' own labels often left them no room (Theo's showed none at 1440×900), so a label now also tries the left of its dot, centred on it and two rows farther, and as a last resort the labels of other steps in its way step back (their dots and lines stay).
+- **Fixes found on the way:** the end card hides any gray label it would cover (at 1280×800 and 1133×744); in Safari a click on a popover's chip now picks it (the popover used to close as the button was pressed); and a long story's oldest lines take the compact layout one at a time, not all at once, which had left up to 81 px empty under the list at 1280×800.
+
+Simplified, and known issues:
+
+- **The tree page is read-only,** as asked for this round: editing is in the YAML files, and the page updates when one is saved. A node whose id appears twice shows only its first copy (the checker reports the duplicate). Neither page is in `npm run build:prototype`'s inputs; they run on the dev server, as the opening did in round 3.
+- **At 1133×744** (an iPad held sideways) the column is too short for the longer lives. While they play, six of the ten lists (Ana, Kai, Noah, Omar, Theo and Zoe) scroll by 8 to 55 px for a few steps to keep the newest line in view, under the top fade; at the end, Ana, Omar and Theo are still 13 to 51 px too long with every older line compact (in WebKit, four more by 5 px). At every other size no list scrolls while a life plays (sampled every 100 ms for all ten lives at 1280×800), and every story fits at its end.
+- **"Choices add up"** shows two of its three labels for Lena and Omar at 744×1133 and Theo at 1133×744: no room even with other labels stepped back. The words beside the map still name all three.
+- **A changed life from a late fork** has few rows, so its list stops at the largest size (21 px) and the room left over stays under it.
+- **The branch's store** is the writer's store as of its first merge. The writer's audited store (on its own branch) fixes 17 of the 18 errors the new rules find here, and renames two people (Ines and Noah become Leo and Nora); it is not merged here.
+
+Review images (v05):
+
+| Moment | Image |
+| --- | --- |
+| Sam's last step, 1440×900 | [14 v05](opening-14-1440-v05.png) |
+| The end card, 1440×900 | [end v05](opening-end-1440-v05.png) |
+| A fork's popover open (chess club at 10), 1440×900 | [popover v05](opening-whatif-pop-1440-v05.png) |
+| The chess club picked: the new life grown, 1440×900 | [what-if v05](opening-whatif-1440-v05.png) |
+| The history column, story and changed life, 1920×1080 | [story v05](opening-history-story-1920x1080-v05.png), [what-if v05](opening-history-whatif-1920x1080-v05.png) |
+| The history column, story and changed life, 2560×1440 | [story v05](opening-history-story-2560x1440-v05.png), [what-if v05](opening-history-whatif-2560x1440-v05.png) |
+| The chess club picked, 744×1133 | [what-if v05](opening-whatif-744-v05.png) |
+| Every marker of both paths, three times zoomed, 1920×1080 | [dots v05](opening-dots-1920-v05.png) |
+| "Choices add up" on Theo's life: the three labels, two other labels stepped back, 1440×900 | [adds v05](opening-adds-1440-v05.png) |
+| The tree page: "Starts a band" found from Sam's life, five lives grown from the football club (the 18 errors are this branch's copy of the store under the round's new rules; see Checks) | [tree v05](lives-tree-1440-v05.png) |
 
 ## Round 3: the owner's notes on v02
 
@@ -130,11 +185,51 @@ Each line has the same rhythm. In the first 420 ms the line rises 14 px and fade
 - Lines older than the last four step back to the quiet colour. Beside the map, when the list would outgrow its column, the oldest step down to 15 px, then 14 px, and always wrap to their whole text; the three before the newest step down last.
 - After the last line the end card appears on the map, clear of the route: lower right where there is room (1920×1080), lower left otherwise (at 1280×800 and 1440×900 a gray label holds the lower right), and as a bar along the top of the map at 744×1133 and 1133×744.
 - **A changed choice:** the traveller goes back to the fork, and each step of the new life takes 700 ms plus 70 ms a year (at most 1500 ms), with a 320 ms pause. Its labels follow the explorer's rules. The list shows each event as it is reached, newest at the bottom. With reduced motion, the new life appears at once.
-- In "Choices add up", three labels mark the guitar (His choice), the radio play (Luck) and the split (Not his choice). The gray choices' labels step back there, so the three have room; their lines stay.
+- In "Choices add up", three labels mark the guitar (His choice), the radio play (Luck) and the split (Not his choice); on another life, its first own choice that builds on an earlier one, its first lucky break and its first setback. The gray choices' labels step back there, so the three have room; their lines stay. Where a life's own labels still leave no room, the labels of other steps in the way step back too.
 - Into the hike: the gray lines, the labels and the age axis fade first (320 ms). Sam's route stays alone. At 700 ms the hike scene and its words come in, as the route fades.
 - With reduced motion, the finished story shows at once, and the beats change without travel.
 
 ## Checks
+
+### Round 4 (v05)
+
+Headless Chromium and WebKit (Chrome's and Safari's engines), on this branch:
+
+- **The journey**, on the test store (`?store=fixture`): cover → Sam's story → end card → a fork's popover → a pick → **Try again** (a different life: the two lives' nodes differ) → **Try another choice** (the rings come back) → **Back to Sam's life** → **Watch another life** (the test store's second person) → "Choices add up" (all three of its labels, at every size) → the hike. 22 runs, all complete: in each engine the six sizes at the quicker pace, the normal pace at 1440×900, reduced motion at 1440×900 and 744×1133, and fast tapping (40 clicks on the map, 40 ms apart, while the story plays) at 1440×900 and at 1133×744 at the normal pace (four of them run again after the last change to the list's fit).
+- **The tree page:** from Born down to an adult node, a "↪" link that moves to the node in full, "Grow 5 more" from a written life's alternative, and a test-store file saved with an unknown name in `after`: the page shows the error within a second, and drops it when the file is put back. Chromium at 1440×900 and WebKit at 1133×744 (and WebKit at 744×1133 without the edit); no console errors.
+- **Keyboard:** the forks in age order with the arrow keys, Enter opens a fork's popover (inside the map at every size), the arrow keys move between its choices, Escape goes back to the fork, Enter picks. Sam at 1440×900 (Chromium, 8 forks), Lena at 744×1133 and Theo at 1133×744 (WebKit, 10 and 9 forks).
+- **Every life of the store at every size** (the ten written lives × the six sizes, the story's end and a changed life from the last fork, both engines): no label, choice button, chip or list row cut by its box; no two visible labels overlapping; none outside the map; none under the end card. At its end, a story's list reaches to within 2 to 4 px of the controls at 1280×800, 1440×900, 1920×1080 and 2560×1440 (Amara at 1280×800 is 1 px over in Chromium); at 744×1133 it runs in two columns under the map, and 1133×744 is in the known issues above. A changed life's list never scrolls.
+- **"Choices add up":** all three labels show for 57 of the 60 lives × sizes, the same in both engines (see the known issues above); on the test store's second person they now show at every size (in round 4's first build, none showed at 744×1133).
+- **Console:** no errors or warnings in any run. `npm test` passes (264 tests).
+
+The store and the engine (`npm run lives:check`, 50 grown lives for every alternative of every written life, then 5,000 random lives):
+
+| | This branch's store | The writer's audited store (`agents/lives-content` at d0d9dae) |
+| --- | --- | --- |
+| Errors | 18: 17 alternatives less than six years before the end (a rule added this round), and one of Sam's alternatives (`writesForOthers` at 30) that the four-year `within` rule rules out | 1: Sam's `writesForOthers` at 30 |
+| Warnings | 0 | 0 |
+| Grown lives reaching end − 3 | 100% | 100% |
+| Mean overlap of two lives after the same fork (0 none shared) | 0.08 | 0.08 |
+| Distinct nodes after a fork (50 lives) | 92 | 111 |
+| Lucky breaks and setbacks among forks from 8 to end − 4 | 33% | 32% |
+| Steps that build on one of the last two | 60% | 60% |
+| Forks whose lives end more than 0.12 above or below their others | 0 | 0 |
+| Lives that end on a lucky break or a setback | 0% | 0% |
+| Surprises that follow the life's own story | 61% | 57% |
+| Setbacks answered within four years | 84% | 85% |
+| Nodes used in 5,000 lives | 453 of 459 | 470 of 471 (not `freelancesCode`) |
+| Time | 1.8 s | 1.8 s |
+
+Before this round's growth rules (the writer's store at 3031dfa), 17.8% of lives ended on a lucky break or a setback, 38% of surprises followed the life's own story, and 49% of setbacks were answered within four years.
+
+Budgets (Chromium, 1440×900, the processor slowed 4× where noted):
+
+- **The store:** read and checked after the first paint. This branch's store (460 nodes) in 14 to 25 ms; the test store copied six times (409 nodes, `?store=fixture&scale=6`) in 10.4 ms (parse 8.0, check 2.4).
+- **A pick at 4× slowdown,** with the 409-node store: growing and laying out a changed life is one task, then the list is fitted in a task of its own. Over ten picks the longest task was 14.7 to 16.4 ms across runs (the first pick, before the code has warmed up, is the slowest). One run of several showed a single 748 ms task on its tenth pick that did not come back in later runs; its cause is not known. Measured in Chromium's new headless mode: the older headless shell composites in software and adds 5 to 16 ms a frame of its own.
+- **Memory:** the JavaScript heap was 9.5 MB after the first pick, 8.7 MB after ten and 9.2 MB after five changes of life; 921, 906 and 944 page elements.
+- **The checker** on the full store, every alternative × 50 lives and 5,000 random lives: 1.7 to 1.8 s.
+
+### Round 3 (v04)
 
 Both browser engines (Chrome's and Safari's) at 1280×800, 1440×900, 1920×1080, 744×1133 and 1133×744:
 
@@ -171,7 +266,7 @@ Frame cost at 1440×900 with the processor slowed 4×, measured from browser tra
 - **The end card** sits lower left at 1280×800 and 1440×900, and is a bar along the top of the map (not under it) at 744×1133 and 1133×744: under the map there is the narration, and at the top the bar covers no step.
 - **Closed choices** (the explorer's crossed-out options) are left out of the changed lives, to keep the five what-ifs readable.
 - **A changed life's dots** move by up to about a year where they would land on Sam's light green path, so every dot stays clear of it.
-- **The narration** is a compact list. Below 990 px wide it runs in two columns under the map, and so does a changed life's list. Beside the map, a changed life's list scrolls to its newest event when the column is short (see Checks), with the top edge faded.
+- **The narration** is a compact list. Below 990 px wide it runs in two columns under the map, and so does a changed life's list. Beside the map, both lists fill the column (round 4); one too long for a short column folds its older rows instead of scrolling.
 - **The Mockup bar** takes about 46 px from the stage's height. It is not part of the lesson.
 - **"Choices add up"** hides the gray choices' labels (not their lines): with them, the map had no clear room for "His choice" and "Not his choice".
 - **Into the hike:** the old words fade out over 300 ms, while the map goes.
@@ -185,11 +280,13 @@ Frame cost at 1440×900 with the processor slowed 4×, measured from browser tra
 
 - `index.html`, `boot.js`: the page, and the English words.
 - `page.js`: the lesson controller for the opening, with the trail, beats, keys, the end card's controls, the what-if narration and the Mockup bar.
-- `life.js`: Sam's steps, the choices he didn't make, the timing and the player.
-- `life-map.js`: Sam's life in the Explore chapter's drawing, with the labels, the end card and the changed lives. A study copy of the drawing and label code in `src/lessons/choices/journey-explore.js`.
-- `explore-tree.js`: a study copy of the explorer's life tree (`createLifeTree` in `src/lessons/choices/journey-explore.js`), which grows a life from one of Sam's forks and can take its step labels from elsewhere and leave some out (the what-if's third-person words).
+- `life.js`: the life that plays (from the store), the timing and the player.
+- `life-map.js`: the life in the Explore chapter's drawing, with the labels, the rings and their popovers, the end card and the changed lives. A study copy of the drawing and label code in `src/lessons/choices/journey-explore.js`.
+- `lives/`: the store (`nodes/*.yaml`, `baselines/*.yaml`), its README (the schema and the growth rules), `engine.js` (read, check, heights, grow), `store.js` (loads the store after first paint, and the test store with `?store=fixture`) and the tree page (`index.html`, `tree.js`, `tree.css`).
 - `map.js`: a study copy of `src/lessons/choices/journey-map.js`, with the cover's field, its fade and the "Choices add up" labels.
 - `opening.css`: the rules added to `src/lessons/choices/journey.css`.
-- `copy.json`: the words, including the what-if's third-person labels (`opening.whatif.step.*`).
+- `copy.json`: the page's own words (headings, buttons, the closing line); the lives' words are in the store.
+
+Elsewhere: `tooling/lives-check.mjs` (`npm run lives:check`), `tests/lives-engine.test.js` and the test store in `tests/fixtures/lives/`. Round 3's `explore-tree.js` (a study copy of the explorer's life tree) is gone: the engine grows the changed lives now.
 
 It imports `src/engine/` (the path network and renderer) and `src/lessons/choices/` (the hike, the life choices, the motion helpers and the styles) without changing them.
