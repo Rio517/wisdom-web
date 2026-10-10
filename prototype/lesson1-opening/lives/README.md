@@ -138,10 +138,21 @@ The gray lines at each new dot are other nodes that were possible there.
   three.
 - **Surprises.** From age 8 until four years before `end`, about one fork in
   three is a lucky break or a setback (they mostly take turns). The last four
-  years have none, so no life ends on one.
-- **Answers come soon.** After a lucky break or a setback the next step comes
-  sooner (about half the usual gap), and a `within` match must be at most four
-  years back.
+  years have none, so no life ends on one. A surprise that follows the life's
+  own story comes first, and comes more often: its `after` matches a step
+  through a narrow name (one that at most 1 node in 20 gives, so not `job`).
+  So give surprises an `after` in their area; the generic ones in `life.yaml`
+  fill in when the story has none waiting.
+- **Answers come soon.** Right after a setback, about seven times in ten, a
+  node that answers it comes 1–2 years later (3–4 at most): a node with
+  `within` whose `after` names that setback or one of its tags (one naming
+  the setback itself is three times as likely as `after: [setback]`).
+  Otherwise the next step still comes sooner (about half the usual gap), and a
+  `within` match is never more than four years back.
+- **Old interests fade.** An `after` match only through steps the life left
+  more than 12 years ago (no later step shares a tag with them or builds on
+  them) counts a quarter as much. A dance class at 4 rarely leads to
+  something at 18 unless dancing carried on in between.
 
 A node happens at most once in a life. A step comes at least a year after the
 one before it.
@@ -183,6 +194,8 @@ other alternatives). A pick whose lives end more than 0.12 apart from its
 fork's others is flagged: no choice may reliably end higher. `luck` is the
 share of grown forks from 8 to `end` − 4 that were a lucky break or a setback
 (aim: about a third), `build` the share of steps that built on one of the last
-two. Then, across
-5,000 random lives (`--random`), how many nodes of each file are ever used,
-and which are not.
+two. Then, across 5,000 random lives (`--random`): how many end on a lucky
+break or a setback (aim: none), how many of the surprises follow the life's
+own story (aim: half or more), how many setbacks are answered within four
+years (aim: 60% or more), and how many nodes of each file are ever used, and
+which are not.

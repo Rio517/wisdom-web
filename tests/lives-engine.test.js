@@ -223,6 +223,56 @@ test('after a lucky break or a setback the next step comes sooner', () => {
   assert.ok(mean(gaps.after) < mean(gaps.other) * 0.75, `after a surprise ${mean(gaps.after).toFixed(1)} years, otherwise ${mean(gaps.other).toFixed(1)}`);
 });
 
+test('setbacks are mostly answered soon, and surprises mostly follow the life’s own story', () => {
+  const { tells, lives } = coverage(fixture, { lives: 2000, seed: 'tells' });
+  assert.equal(tells.endSurprise, 0, `${tells.endSurprise} of ${lives} lives end on a surprise`);
+  assert.ok(tells.answered / tells.setbacks >= 0.6, `${tells.answered} of ${tells.setbacks} setbacks answered within four years`);
+  assert.ok(tells.ownStory / tells.surprises >= 0.5, `${tells.ownStory} of ${tells.surprises} surprises follow the life's own story`);
+  // An answer that comes on the next step comes 1–2 years later, mostly.
+  const gaps = [];
+  for (const fork of forksOf(fixture)) {
+    for (let i = 0; i < 20; i += 1) {
+      const { steps } = grow(fixture, { ...fork, seed: `a${i}` });
+      steps.forEach((step, index) => {
+        const next = steps[index + 1];
+        if (index > fork.forkIndex && step.kind === 'setback' && next?.node.within && next.node.after.some(name => step.node.gives.includes(name))) gaps.push(next.age - step.age);
+      });
+    }
+  }
+  assert.ok(gaps.length > 20 && gaps.filter(gap => gap <= 2).length / gaps.length > 0.8, `answer gaps ${gaps.join(' ')}`);
+});
+
+test('old interests fade: an after match through a step the life left long ago weighs less', () => {
+  const store = mini(`${BORN}${choice('dance', '  tags: [dancing]')}${choice('quiet')}${choice('steps', '  tags: [dancing]').replace('ages: [1, 60]', 'ages: [10, 10]')}
+${choice('show', '  after: [dancing]').replace('ages: [1, 60]', 'ages: [19, 21]')}
+${Array.from({ length: 12 }, (_, i) => choice(`fill${i}`)).join('')}`, {
+    pat: `
+id: pat
+name: Pat
+pronoun: she
+end: 40
+steps:
+  - { node: born, age: 0 }
+  - { node: dance, age: 4 }
+  - node: quiet
+    age: 10
+    alts: [steps]
+  - { node: fill0, age: 20 }
+  - { node: fill1, age: 30 }
+  - { node: fill2, age: 40 }
+`,
+  });
+  const shows = alt => {
+    let count = 0;
+    for (let i = 0; i < 400; i += 1) if (grow(store, { baseline: 'pat', forkIndex: 2, alt, seed: `s${i}` }).steps.some(step => step.id === 'show')) count += 1;
+    return count;
+  };
+  // Dancing at 4 only: 15+ years old by 19. Dancing again at 10: still fresh.
+  const stale = shows('quiet');
+  const fresh = shows('steps');
+  assert.ok(stale * 3 < fresh, `show after dancing at 4 only: ${stale} of 400; after dancing at 10 too: ${fresh}`);
+});
+
 test("heights: Sam's written life lands within 0.07 of round 3's", () => {
   const round3 = [0.5, 0.515, 0.49, 0.505, 0.49, 0.4, 0.29, 0.33, 0.78, 0.67, 0.55, 0.45, 0.36, 0.27];
   const sam = writtenLife(fixture, 'sam');

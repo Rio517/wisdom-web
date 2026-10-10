@@ -67,6 +67,9 @@ if (randomLives > 0 && store.baselines.size) {
   const report = coverage(store, { lives: randomLives });
   out.push('');
   out.push(`Coverage: ${report.lives} random lives, ${report.early} ended more than three years early; nodes used ${report.used}/${report.total}`);
+  const { tells } = report;
+  const share = (part, whole) => (whole ? `${Math.round((100 * part) / whole)}%` : '—');
+  out.push(`  ${share(tells.endSurprise, report.lives)} end on a lucky break or a setback (aim: 0); ${share(tells.ownStory, tells.surprises)} of the surprises follow the life's own story (aim: half or more); ${share(tells.answered, tells.setbacks)} of the setbacks are answered within four years (aim: 60% or more)`);
   for (const file of report.files) {
     out.push(`  ${pad(file.file, 16)}${padStart(`${file.used}/${file.total}`, 8)}${file.unused.length ? `  unused: ${file.unused.slice(0, 12).join(', ')}${file.unused.length > 12 ? ', …' : ''}` : ''}`);
   }
