@@ -2,25 +2,25 @@
 # The schema and the rules are in ../README.md.
 
 - id: storiesAtBedtime
-  label: Bedtime stories
-  line: "A story every night before sleep."
-  if: "{his} family had read bedtime stories every night"
+  label: Hears bedtime stories
+  line: "{his} mum reads {him} a story every night."
+  if: "{his} family had read {him} a story every night"
   kind: choice
   by: family
   ages: [2, 7]
   tags: [words, reading]
 
 - id: libraryVisits
-  label: Weekly library visits
-  line: "{his} family visits the library every week."
-  if: "{his} family had visited the library every week"
+  label: Visits the library
+  line: "{his} grandad takes {him} to the library every week."
+  if: "{his} family had taken {him} to the library every week"
   kind: choice
   by: family
   ages: [3, 8]
   tags: [words, reading, library]
 
 - id: twoLanguagesHome
-  label: Two languages at home
+  label: Hears two languages
   line: "{name} hears two languages at home."
   if: "{his} family had spoken two languages at home"
   kind: choice
@@ -30,7 +30,7 @@
 
 - id: readNightly
   label: Reads every night
-  line: "{name} reads a little every night, even with a torch."
+  line: "{name} reads every night, sometimes under the covers with a torch."
   if: "{name} had read every night"
   kind: choice
   ages: [5, 10]
@@ -88,7 +88,7 @@
   tags: [words, languages]
 
 - id: exchangeTrip
-  label: A free exchange place
+  label: Wins an exchange trip
   line: "{name} wins a free place on an exchange trip. Luck!"
   kind: lucky
   ages: [12, 18]
@@ -171,7 +171,7 @@
   within: 2
 
 - id: selfPublishes
-  label: Publishes it alone
+  label: Publishes it {himself}
   line: "{name} prints the book {himself} and sells it locally."
   if: "{name} had published the book {himself}"
   kind: choice
@@ -233,13 +233,12 @@
   if: "{name} had started a town newsletter"
   kind: choice
   ages: [20, 62]
-  after: [paperCloses]
+  after: [journalism, community]
   tags: [words, journalism, community]
-  within: 2
 
 - id: bookshopJob
   label: Works in a bookshop
-  line: "{name} works in a bookshop among the shelves."
+  line: "{name} works in a bookshop, finding each customer the right book."
   if: "{name} had worked in a bookshop"
   kind: choice
   ages: [16, 60]
@@ -303,7 +302,7 @@
 
 - id: writesHealthLeaflets
   label: Writes health leaflets
-  line: "{name} writes clear leaflets that help patients understand."
+  line: "{name} writes clear leaflets so patients understand their medicine."
   if: "{name} had written health leaflets"
   kind: choice
   ages: [22, 60]

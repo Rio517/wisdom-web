@@ -11,24 +11,24 @@
 - id: nurseryWithFriends
   label: Goes to nursery
   line: "{name} goes to nursery and plays with other children."
-  if: "{his} parents had picked nursery with friends"
+  if: "{his} family had picked nursery"
   kind: choice
   by: family
   ages: [3, 6]
   weight: 0.6
 
 - id: timeWithGrandparents
-  label: Time with grandparents
-  line: "{name} spends long afternoons with {his} grandparents."
-  if: "{his} family had spent lots of time with grandparents"
+  label: Grandparents help out
+  line: "{his} grandparents look after {him} most afternoons."
+  if: "{his} grandparents had looked after {him} most days"
   kind: choice
   by: family
   ages: [3, 8]
   weight: 0.6
 
 - id: newSibling
-  label: A new sibling
-  line: "A baby arrives, and {name} becomes a big sibling."
+  label: A new baby arrives
+  line: "A baby brother or sister arrives for {name}."
   kind: event
   ages: [3, 15]
   unless: [sibling]
@@ -71,7 +71,7 @@
   weight: 0.6
 
 - id: asksTeacherForHelp
-  label: Asks teacher for help
+  label: Gets a teacher's help
   line: "{name} asks a teacher for help."
   if: "{name} had asked a teacher for help"
   kind: choice
@@ -120,8 +120,8 @@
   line: "{name} switches to a different course."
   if: "{name} had changed course"
   kind: choice
-  ages: [16, 45]
-  after: [failsAnExam, jobEnds]
+  ages: [16, 26]
+  after: [failsAnExam]
   tags: [study]
   within: 2
 
@@ -232,7 +232,7 @@
   tags: [study]
 
 - id: takesBigProject
-  label: Takes a big project
+  label: Takes on a big project
   line: "{name} takes on a big project at work."
   if: "{name} had taken on a big project"
   kind: choice
@@ -252,7 +252,7 @@
 
 - id: leadsATeam
   label: Leads a team
-  line: "{name} is asked to lead a team."
+  line: "{name} steps up to lead a team at work."
   if: "{name} had led a team"
   kind: choice
   ages: [26, 60]
@@ -261,7 +261,7 @@
 
 - id: worksFewerHours
   label: Works fewer hours
-  line: "{name} works fewer hours to make more time at home."
+  line: "{name} works fewer hours to spend more time at home."
   if: "{name} had worked fewer hours"
   kind: choice
   ages: [28, 65]
@@ -294,7 +294,7 @@
   weight: 0.5
 
 - id: friendInvites
-  label: A friend invites
+  label: A friend invites {him}
   line: "A friend invites {him} to try something new. Luck!"
   kind: lucky
   ages: [7, 16]
@@ -302,7 +302,7 @@
   weight: 0.7
 
 - id: friendForLife
-  label: A friend for life
+  label: Meets a true friend
   line: "{name} meets a friend for life."
   kind: lucky
   ages: [9, 60]
@@ -310,7 +310,7 @@
   weight: 0.7
 
 - id: teacherNotices
-  label: A teacher notices
+  label: A teacher sees talent
   line: "A teacher notices what {name} is good at."
   kind: lucky
   ages: [8, 18]
@@ -328,7 +328,7 @@
 
 - id: mentorAppears
   label: A mentor appears
-  line: "A kind colleague takes {him} under a wing."
+  line: "A kind colleague takes {him} under his wing."
   kind: lucky
   ages: [20, 55]
   after: [job]
@@ -338,7 +338,7 @@
 
 - id: helpfulNeighbour
   label: A neighbour helps
-  line: "A neighbour offers help just when it is needed."
+  line: "A neighbour helps out just when {name} needs it."
   kind: lucky
   ages: [5, 70]
   move: 1
@@ -353,8 +353,8 @@
   weight: 0.5
 
 - id: illForMonths
-  label: Ill for months
-  line: "{name} is ill for a few months."
+  label: Falls ill for months
+  line: "{name} falls ill and takes months to get better."
   kind: setback
   ages: [10, 60]
   tags: [illness]
@@ -437,7 +437,7 @@
 
 - id: officeJob
   label: Takes an office job
-  line: "{name} takes a job in an office."
+  line: "{name} takes an office job, with a desk by the window."
   if: "{name} had taken an office job"
   kind: choice
   ages: [18, 60]
@@ -445,7 +445,7 @@
 
 - id: quitsAClub
   label: Quits a club
-  line: "{name} quits a club that is not fun anymore."
+  line: "{name} quits a club that is not fun any more."
   if: "{name} had quit a club"
   kind: choice
   ages: [8, 16]
@@ -454,7 +454,7 @@
 
 - id: keepsInTouch
   label: Keeps in touch
-  line: "{name} writes to the faraway friend every week."
+  line: "{name} writes to {his} faraway friend every week."
   if: "{name} had kept in touch with a faraway friend"
   kind: choice
   ages: [7, 30]

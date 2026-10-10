@@ -44,7 +44,7 @@
 
 - id: learnsToSew
   label: Learns to sew
-  line: "{name} learns to sew with an aunt's old machine."
+  line: "{name} learns to sew on {his} aunt's old sewing machine."
   if: "{name} had learned to sew"
   kind: choice
   ages: [8, 14]
@@ -79,7 +79,7 @@
 
 - id: appliesToArtSchool
   label: Applies to art school
-  line: "{name} sends a portfolio to art school."
+  line: "{name} sends {his} best drawings to an art school."
   if: "{name} had applied to art school"
   kind: choice
   ages: [17, 22]
@@ -87,9 +87,9 @@
   tags: [art, portfolio]
 
 - id: getsArtSchoolPlace
-  label: Gets a place
-  line: "The art school offers {him} a place."
-  kind: event
+  label: Gets into art school
+  line: "An art school offers {him} a place. Luck!"
+  kind: lucky
   ages: [17, 23]
   after: [portfolio]
   unless: [artSchoolSaysNo]
@@ -134,7 +134,7 @@
   tags: [art, job, illustration]
 
 - id: childrensBookJob
-  label: "A children's book job"
+  label: Draws a picture book
   line: "A publisher asks {him} to draw a children's book. Luck!"
   kind: lucky
   ages: [22, 60]
@@ -152,9 +152,9 @@
   tags: [art, teaching, job]
 
 - id: sellsAtCraftMarket
-  label: Sells crafts
-  line: "{name} sells crafts at the weekend market."
-  if: "{name} had sold crafts at a market"
+  label: Sells at craft fairs
+  line: "{name} sells handmade things at weekend craft fairs."
+  if: "{name} had sold crafts at fairs"
   kind: choice
   ages: [18, 60]
   after: [crafts]
@@ -206,7 +206,7 @@
   tags: [art, games, job]
 
 - id: workRuined
-  label: Work is ruined
+  label: Rain ruins {his} work
   line: "Rain leaks in and spoils a year of {his} work."
   kind: setback
   ages: [18, 60]
@@ -216,7 +216,7 @@
 
 - id: startsAgain
   label: Starts over
-  line: "{name} starts the pictures again, bolder this time."
+  line: "{name} starts again from scratch, bolder this time."
   if: "{name} had started the work again"
   kind: choice
   ages: [18, 60]

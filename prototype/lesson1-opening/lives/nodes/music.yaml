@@ -4,7 +4,7 @@
 - id: choir
   label: Joins a choir
   line: "{his} parents sign {him} up for choir."
-  if: "{his} parents had picked choir"
+  if: "{his} family had picked choir"
   kind: choice
   by: family
   ages: [4, 9]
@@ -99,7 +99,7 @@
   tags: [music, band]
 
 - id: bandInvite
-  label: An older band invites
+  label: A band invites {him}
   line: "An older band asks {him} to join. Luck!"
   kind: lucky
   ages: [12, 22]
@@ -203,7 +203,7 @@
 
 - id: switchesInstrument
   label: Tries a new instrument
-  line: "{name} learns a different instrument while the hand heals."
+  line: "{name} learns a different instrument while {his} hand heals."
   if: "{name} had tried a new instrument"
   kind: choice
   ages: [15, 50]
@@ -261,7 +261,7 @@
   tags: [music, teacher, job]
 
 - id: watchesChildPerform
-  label: Watches child perform
+  label: Cheers {his} child on
   line: "{name} watches {his} child perform on stage."
   kind: event
   ages: [30, 70]

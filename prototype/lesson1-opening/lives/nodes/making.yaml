@@ -2,8 +2,8 @@
 # The schema and the rules are in ../README.md.
 
 - id: familyFixesThings
-  label: Fixing things at home
-  line: "{his} family fixes things at home, and {name} holds the screwdriver."
+  label: Fixes things at home
+  line: "{his} mum fixes things around the house, and {name} holds the screwdriver."
   if: "{his} family had fixed things together at home"
   kind: choice
   by: family
@@ -19,7 +19,7 @@
   tags: [making, building]
 
 - id: takesThingsApart
-  label: Takes toys apart
+  label: Takes things apart
   line: "{name} takes an old radio apart to see inside."
   if: "{name} had taken things apart to see inside"
   kind: choice
@@ -28,8 +28,8 @@
 
 - id: roboticsClub
   label: Joins the robot club
-  line: "{name} joins the robotics club."
-  if: "{name} had joined the robotics club"
+  line: "{name} joins the robot club after school."
+  if: "{name} had joined the robot club"
   kind: choice
   ages: [9, 15]
   tags: [making, robots, club]
@@ -53,7 +53,7 @@
 
 - id: tradeCourse
   label: Takes a trade course
-  line: "{name} takes a trade course."
+  line: "{name} takes a hands-on course to learn a trade."
   if: "{name} had taken a trade course"
   kind: choice
   ages: [15, 19]
@@ -74,7 +74,7 @@
   line: "The robot breaks down on the big day."
   kind: setback
   ages: [11, 18]
-  after: [contest]
+  after: [robotContest]
   tags: [making]
   move: -1
   weight: 2
@@ -84,18 +84,18 @@
   line: "{name} rebuilds the robot and finds the real problem."
   if: "{name} had rebuilt the robot"
   kind: choice
-  ages: [11, 18]
+  ages: [12, 21]
   after: [robotBreaks]
   tags: [making]
   within: 2
 
 - id: asksMentorForHelp
-  label: Asks for a mentor
+  label: Asks an engineer
   line: "{name} asks an engineer from the town to help."
   if: "{name} had asked an engineer for help"
   kind: choice
-  ages: [11, 18]
-  after: [robotBreaks, lostTools]
+  ages: [12, 21]
+  after: [robotBreaks]
   tags: [making, helped]
   within: 2
 
@@ -104,7 +104,7 @@
   line: "The robot wins a prize. Luck and tinkering!"
   kind: lucky
   ages: [11, 18]
-  after: [contest]
+  after: [robotContest]
   unless: [robotBreaks]
   tags: [making]
   move: 2
@@ -116,7 +116,7 @@
   if: "{name} had studied engineering"
   kind: choice
   ages: [16, 23]
-  after: [robotPrize, contest, sciences]
+  after: [robots, sciences]
   tags: [making, engineer, study, university]
   weight: 2
 
@@ -135,7 +135,7 @@
   if: "{name} had trained as an electrician"
   kind: choice
   ages: [16, 40]
-  after: [contest, robots, apprentice]
+  after: [apprentice, trade, robots]
   tags: [making, qualified, trade, job]
 
 - id: carpenter
@@ -166,7 +166,7 @@
   tags: [making, qualified, trade, job]
 
 - id: ownBusiness
-  label: Starts own business
+  label: Starts {his} own firm
   line: "{name} starts a business of {his} own."
   if: "{name} had started a business"
   kind: choice
@@ -175,7 +175,7 @@
   tags: [making, owner, business]
 
 - id: bigCustomer
-  label: A big customer
+  label: Wins a big customer
   line: "A big company becomes a customer. Luck!"
   kind: lucky
   ages: [22, 55]
@@ -224,8 +224,8 @@
   within: 2
 
 - id: lostTools
-  label: The tools are stolen
-  line: "Someone breaks into the van and takes all the tools."
+  label: "{his} tools are stolen"
+  line: "Someone breaks into {his} van and takes all the tools."
   kind: setback
   ages: [20, 60]
   after: [qualified, owner]
@@ -303,6 +303,5 @@
   if: "{name} had built raised garden beds"
   kind: choice
   ages: [14, 70]
-  after: [garden]
-  needs: [building]
+  after: [garden, building]
   tags: [making, building, community]

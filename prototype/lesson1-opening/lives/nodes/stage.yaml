@@ -2,9 +2,9 @@
 # The schema and the rules are in ../README.md.
 
 - id: aDanceClass
-  label: A dance class
-  line: "{his} parents take {him} to a dance class."
-  if: "{his} parents had picked a dance class"
+  label: Takes a dance class
+  line: "{his} dad takes {him} to a dance class."
+  if: "{his} family had picked a dance class"
   kind: choice
   by: family
   ages: [3, 8]
@@ -35,7 +35,7 @@
   tags: [stage, drama]
 
 - id: dramaClub
-  label: Joins drama club
+  label: Joins the drama club
   line: "{name} joins the drama club."
   if: "{name} had joined the drama club"
   kind: choice
@@ -43,15 +43,15 @@
   tags: [stage, drama, club]
 
 - id: filmsOnPhone
-  label: Films with a phone
-  line: "{name} films tiny movies with friends on a phone."
-  if: "{name} had filmed movies with friends"
+  label: Makes films on a phone
+  line: "{name} makes tiny films with friends on a phone."
+  if: "{name} had made films with friends"
   kind: choice
   ages: [10, 16]
   tags: [stage, film]
 
 - id: partInAShow
-  label: A part in a show
+  label: Gets a part in a show
   line: "A theatre offers {him} a part in a show. Luck!"
   kind: lucky
   ages: [12, 30]
@@ -78,7 +78,7 @@
   tags: [stage, study]
 
 - id: ankleInjury
-  label: An ankle injury
+  label: Hurts an ankle
   line: "{name} hurts an ankle and cannot dance for months."
   kind: setback
   ages: [13, 40]
@@ -97,7 +97,7 @@
 
 - id: gentleDanceClass
   label: Leads a gentle class
-  line: "{name} leads a gentle dance class while the ankle heals."
+  line: "{name} leads a gentle dance class while {his} ankle heals."
   if: "{name} had led a gentle dance class"
   kind: choice
   ages: [18, 65]
@@ -106,7 +106,7 @@
   within: 2
 
 - id: choreographs
-  label: Makes dances
+  label: Makes up dances
   line: "{name} makes up dances for other people to perform."
   if: "{name} had made up dances for others"
   kind: choice
@@ -181,7 +181,7 @@
   tags: [stage, film]
 
 - id: filmFestival
-  label: A festival shows it
+  label: Film festival says yes
   line: "A small festival shows {his} film. Luck!"
   kind: lucky
   ages: [16, 40]
@@ -245,8 +245,8 @@
 
 - id: joinsLocalProduction
   label: Joins a local show
-  line: "{name} joins a small local production that needs a cast."
-  if: "{name} had joined a local production"
+  line: "{name} joins a small local show that needs a cast."
+  if: "{name} had joined a local show"
   kind: choice
   ages: [18, 45]
   after: [showCloses]
@@ -255,7 +255,7 @@
 
 - id: writesAScript
   label: Writes a script
-  line: "{name} writes a script for a play or a film."
+  line: "{name} writes a script, then hears actors read it aloud."
   if: "{name} had written a script"
   kind: choice
   ages: [16, 60]
@@ -264,9 +264,9 @@
   tags: [stage, script]
 
 - id: directsTownPageant
-  label: Directs a pageant
-  line: "{name} directs the whole town in a pageant."
-  if: "{name} had directed a town pageant"
+  label: Directs a town play
+  line: "{name} directs a big outdoor play about the town's history."
+  if: "{name} had directed a play about the town"
   kind: choice
   ages: [22, 65]
   after: [civic, volunteer]

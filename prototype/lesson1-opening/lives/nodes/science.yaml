@@ -2,7 +2,7 @@
 # The schema and the rules are in ../README.md.
 
 - id: puzzlesAndBlocks
-  label: Puzzles and blocks
+  label: Does puzzles at home
   line: "Puzzles and building blocks fill the floor at home."
   if: "{his} family had filled the house with puzzles and blocks"
   kind: choice
@@ -27,7 +27,7 @@
   tags: [science, maths, club]
 
 - id: practisesTimesTables
-  label: Learns times tables
+  label: Practises times tables
   line: "{name} practises times tables on the bus."
   if: "{name} had practised times tables"
   kind: choice
@@ -60,7 +60,7 @@
 
 - id: mathsTournament
   label: Enters a maths contest
-  line: "{name} enters a maths contest."
+  line: "{name} enters a maths contest against other schools."
   if: "{name} had entered a maths contest"
   kind: choice
   ages: [9, 15]
@@ -77,7 +77,7 @@
   tags: [science, tournament]
 
 - id: teacherSpotsTalent
-  label: A teacher spots talent
+  label: A teacher lends books
   line: "A teacher spots {his} work and offers extra books. Luck!"
   kind: lucky
   ages: [10, 17]
@@ -97,7 +97,7 @@
 
 - id: scholarship
   label: Wins a scholarship
-  line: "{name} wins a scholarship."
+  line: "{name} wins a scholarship that pays for {his} studies."
   kind: lucky
   ages: [16, 20]
   after: [sciences]
@@ -126,8 +126,8 @@
 
 - id: studiesPartTime
   label: Studies part-time
-  line: "{name} keeps studying part-time, in the evenings."
-  if: "{name} had kept studying part-time"
+  line: "{name} studies part-time, in the evenings."
+  if: "{name} had studied part-time"
   kind: choice
   ages: [18, 46]
   after: [parentIll, jobEnds, failsAnExam]
@@ -154,37 +154,37 @@
   weight: 2
 
 - id: unkindSupervisor
-  label: A harsh supervisor
-  line: "{his} supervisor is harsh and rarely says well done."
+  label: Works for a harsh boss
+  line: "{his} boss is harsh and rarely says well done."
   kind: setback
-  ages: [22, 33]
-  after: [research]
+  ages: [22, 45]
+  after: [research, lab]
   tags: [science]
   move: -2
   weight: 2
 
 - id: leavesResearch
   label: Leaves the lab
-  line: "{name} decides to leave the research job."
-  if: "{name} had left the research job"
+  line: "{name} decides to leave the lab and try something else."
+  if: "{name} had left the lab"
   kind: choice
-  ages: [22, 34]
+  ages: [22, 46]
   after: [unkindSupervisor]
   tags: [science]
   within: 2
 
 - id: newSupervisor
-  label: Asks for a new boss
-  line: "{name} asks to work with a different supervisor."
-  if: "{name} had asked for a new supervisor"
+  label: Asks to change teams
+  line: "{name} asks to move to a kinder team."
+  if: "{name} had asked to change teams"
   kind: choice
-  ages: [22, 34]
+  ages: [22, 46]
   after: [unkindSupervisor]
   tags: [science, helped]
   within: 2
 
 - id: samplesLost
-  label: A year of samples lost
+  label: A freezer breaks down
   line: "A broken freezer spoils a year of samples."
   kind: setback
   ages: [22, 50]
@@ -213,7 +213,7 @@
   within: 2
 
 - id: discovery
-  label: The team discovers
+  label: Makes a discovery
   line: "{his} team discovers something new. Luck and hard work!"
   kind: lucky
   ages: [24, 50]
@@ -237,7 +237,7 @@
   if: "{name} had taught science at a school"
   kind: choice
   ages: [22, 60]
-  after: [leavesResearch, studyScience, pausesStudies]
+  after: [leavesResearch, studyScience]
   tags: [science, teaching, job]
 
 - id: worksWithData
@@ -246,7 +246,7 @@
   if: "{name} had found work with data"
   kind: choice
   ages: [22, 60]
-  after: [leavesResearch, studyScience, studiesStatistics, failsAnExam, code]
+  after: [leavesResearch, studyScience, studiesStatistics, code]
   tags: [science, data, job]
 
 - id: supervisesStudents
@@ -268,7 +268,7 @@
   tags: [science, environment]
 
 - id: crunchesForCharity
-  label: Counts for a charity
+  label: Does a charity's sums
   line: "{name} helps a charity make sense of its numbers."
   if: "{name} had helped a charity with its numbers"
   kind: choice
