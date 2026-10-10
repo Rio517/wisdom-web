@@ -62,7 +62,7 @@
 
 - id: schoolTeam
   label: Joins the school team
-  line: "{name} joins the school team."
+  line: "{name} joins the school team and never misses a practice."
   if: "{name} had joined the school team"
   kind: choice
   ages: [9, 16]
@@ -132,7 +132,7 @@
   tags: [sport]
 
 - id: teamWinsLeague
-  label: Team wins the league
+  label: Wins the league
   line: "{his} team wins the league on the last day. Luck helps!"
   kind: lucky
   ages: [10, 24]

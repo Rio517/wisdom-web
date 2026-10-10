@@ -2,9 +2,9 @@
 # The schema and the rules are in ../README.md.
 
 - id: pocketMoneyChores
-  label: Pocket money
-  line: "{his} parents give {him} pocket money for small chores."
-  if: "{his} parents had given {him} pocket money for chores"
+  label: Earns pocket money
+  line: "{his} dad pays {him} pocket money for small chores."
+  if: "{his} family had paid {him} pocket money for chores"
   kind: choice
   by: family
   ages: [5, 9]
@@ -36,16 +36,16 @@
 
 - id: helpsInFamilyShop
   label: Helps in a shop
-  line: "{name} helps in a shop after school."
-  if: "{name} had helped in a shop after school"
+  line: "{name} helps in {his} uncle's shop after school."
+  if: "{name} had helped in {his} uncle's shop"
   kind: choice
   ages: [10, 17]
   tags: [money, job, shop]
 
 - id: partTimeJob
-  label: Gets a part-time job
-  line: "{name} gets a part-time job."
-  if: "{name} had got a part-time job"
+  label: Gets a Saturday job
+  line: "{name} gets a Saturday job at the supermarket."
+  if: "{name} had got a Saturday job"
   kind: choice
   ages: [14, 19]
   tags: [money, job]
@@ -70,7 +70,7 @@
 
 - id: shopAssistant
   label: Works in a shop
-  line: "{name} works in a shop and learns what people need."
+  line: "{name} works on the till and gets to know the regulars."
   if: "{name} had worked in a shop"
   kind: choice
   ages: [16, 60]
@@ -79,7 +79,7 @@
 
 - id: shopManager
   label: Becomes a shop manager
-  line: "{name} becomes the manager of the shop."
+  line: "{name} becomes manager and holds the keys to the shop."
   if: "{name} had become a shop manager"
   kind: choice
   ages: [22, 60]
@@ -88,7 +88,7 @@
 
 - id: startsABusiness
   label: Starts a business
-  line: "{name} starts a small business."
+  line: "{name} starts a small business from the spare room."
   if: "{name} had started a small business"
   kind: choice
   ages: [18, 55]
@@ -123,7 +123,7 @@
   tags: [money, home]
 
 - id: happyCustomer
-  label: Customers spread word
+  label: Word gets around
   line: "A happy customer tells everybody about the place. Luck!"
   kind: lucky
   ages: [18, 55]
@@ -132,7 +132,7 @@
   move: 2
 
 - id: localPrize
-  label: A small business prize
+  label: Wins a business prize
   line: "{name} wins a small business prize with some money. Luck!"
   kind: lucky
   ages: [20, 55]
@@ -141,8 +141,8 @@
   move: 1
 
 - id: customersDryUp
-  label: A very quiet year
-  line: "It is a quiet year, and far fewer customers come in."
+  label: Customers stop coming
+  line: "Far fewer customers come in, all year long."
   kind: setback
   ages: [22, 60]
   after: [owner]
@@ -181,7 +181,7 @@
 
 - id: asksAccountant
   label: Asks for expert advice
-  line: "{name} asks an accountant to look at the books."
+  line: "{name} asks an accountant, a money expert, to check the books."
   if: "{name} had asked an accountant for advice"
   kind: choice
   ages: [22, 60]
@@ -243,4 +243,4 @@
   kind: choice
   ages: [20, 65]
   after: [volunteer]
-  tags: [money, savings, community]
+  tags: [money, community]

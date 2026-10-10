@@ -112,7 +112,7 @@
 
 - id: studyEngineering
   label: Studies engineering
-  line: "{name} studies engineering."
+  line: "{name} studies engineering: how to make things that work and last."
   if: "{name} had studied engineering"
   kind: choice
   ages: [16, 23]
@@ -131,7 +131,7 @@
 
 - id: electrician
   label: Becomes an electrician
-  line: "{name} trains as an electrician."
+  line: "{name} trains as an electrician and learns which wire goes where."
   if: "{name} had trained as an electrician"
   kind: choice
   ages: [16, 40]
@@ -140,7 +140,7 @@
 
 - id: carpenter
   label: Trains as a carpenter
-  line: "{name} trains as a carpenter."
+  line: "{name} trains as a carpenter, measuring twice and cutting once."
   if: "{name} had trained as a carpenter"
   kind: choice
   ages: [16, 40]
@@ -149,7 +149,7 @@
 
 - id: plumber
   label: Trains as a plumber
-  line: "{name} trains as a plumber."
+  line: "{name} trains as a plumber and fixes {his} first leak."
   if: "{name} had trained as a plumber"
   kind: choice
   ages: [16, 40]
@@ -158,7 +158,7 @@
 
 - id: mechanic
   label: Trains as a mechanic
-  line: "{name} trains as a mechanic."
+  line: "{name} trains as a mechanic, with oil up to the elbows."
   if: "{name} had trained as a mechanic"
   kind: choice
   ages: [16, 40]
@@ -176,7 +176,7 @@
 
 - id: bigCustomer
   label: Wins a big customer
-  line: "A big company becomes a customer. Luck!"
+  line: "A big company becomes {his} customer. Luck!"
   kind: lucky
   ages: [22, 55]
   after: [owner]
@@ -254,7 +254,7 @@
 
 - id: trainsApprentices
   label: Trains apprentices
-  line: "{name} trains young apprentices."
+  line: "{name} trains young apprentices and answers every question."
   if: "{name} had trained apprentices"
   kind: choice
   ages: [28, 65]

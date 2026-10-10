@@ -3,7 +3,7 @@
 
 - id: familyVolunteers
   label: Helps at the fair
-  line: "{his} family helps at the town fair, and {name} hands out cakes."
+  line: "{his} aunt helps at the town fair, and {name} hands out cakes."
   if: "{his} family had helped at the town fair"
   kind: choice
   by: family
@@ -35,17 +35,17 @@
   tags: [community, club, leader]
 
 - id: joinsYouthCouncil
-  label: Joins youth council
-  line: "{name} joins the youth council and speaks up for the school."
+  label: Joins a youth council
+  line: "{name} joins the town's youth council and speaks up for young people."
   if: "{name} had joined the youth council"
   kind: choice
   ages: [11, 16]
   tags: [community, civic]
 
 - id: peerHelper
-  label: Becomes a peer helper
+  label: Helps new pupils
   line: "{name} helps younger pupils settle in."
-  if: "{name} had become a peer helper"
+  if: "{name} had helped new pupils settle in"
   kind: choice
   ages: [13, 19]
   after: [helper, club, volunteer]
@@ -62,7 +62,7 @@
 
 - id: teachesAtSchool
   label: Becomes a teacher
-  line: "{name} teaches at a school."
+  line: "{name} becomes a teacher and learns thirty new names."
   if: "{name} had taught at a school"
   kind: choice
   ages: [22, 65]
@@ -79,16 +79,16 @@
   weight: 0.8
 
 - id: mentorsSomeone
-  label: Mentors someone
-  line: "{name} mentors someone just starting out."
-  if: "{name} had mentored someone younger"
+  label: Guides a beginner
+  line: "{name} helps someone new at work find their feet."
+  if: "{name} had helped someone new find their feet"
   kind: choice
   ages: [24, 65]
   after: [job]
   tags: [community, mentoring]
 
-- id: teachesYourCraft
-  label: Teaches own craft
+- id: teachesACraft
+  label: Teaches {his} craft
   line: "{name} teaches others a craft learned over many years."
   if: "{name} had taught others {his} craft"
   kind: choice
@@ -106,7 +106,7 @@
   weight: 0.8
 
 - id: campaignsForLibrary
-  label: Saves the library
+  label: Fights for the library
   line: "{name} starts a campaign to save the town library."
   if: "{name} had campaigned to save the library"
   kind: choice
@@ -117,7 +117,7 @@
 
 - id: councilSaysNo
   label: The council says no
-  line: "The council turns the plan down."
+  line: "The council says no to the library campaign."
   kind: setback
   ages: [25, 65]
   after: [campaign]
@@ -146,7 +146,7 @@
 
 - id: townBacksCampaign
   label: Neighbours join in
-  line: "Hundreds of neighbours sign the petition. Luck helps!"
+  line: "Hundreds of neighbours sign {his} petition. Luck helps!"
   kind: lucky
   ages: [25, 65]
   after: [campaign]
@@ -173,7 +173,7 @@
   move: -2
 
 - id: asksShopsForHelp
-  label: Asks local shops
+  label: Asks shops to chip in
   line: "{name} asks local shops to chip in."
   if: "{name} had asked local shops for help"
   kind: choice
@@ -183,7 +183,7 @@
   within: 2
 
 - id: movesToSchoolHall
-  label: Moves to the hall
+  label: Uses the school hall
   line: "{name} moves the group to the school hall, rent-free."
   if: "{name} had moved the group to the school hall"
   kind: choice
@@ -193,7 +193,7 @@
   within: 2
 
 - id: roomOffered
-  label: A free room appears
+  label: Gets a free room
   line: "A shop owner offers the group a free room. Luck!"
   kind: lucky
   ages: [22, 65]
@@ -203,7 +203,7 @@
 
 - id: joinsTownCouncil
   label: Joins the town council
-  line: "{name} joins the town council."
+  line: "{name} wins a seat on the town council."
   if: "{name} had joined the town council"
   kind: choice
   ages: [28, 65]
@@ -274,7 +274,7 @@
   tags: [community, teaching, volunteer]
 
 - id: cooksForFoodBank
-  label: Cooks for food bank
+  label: Cooks for a food bank
   line: "{name} cooks hot meals for the food bank."
   if: "{name} had cooked for the food bank"
   kind: choice

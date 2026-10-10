@@ -143,7 +143,7 @@
 
 - id: publishersSayNo
   label: Publishers say no
-  line: "Publisher after publisher says no to the book."
+  line: "Publisher after publisher says no to {his} book."
   kind: setback
   ages: [18, 60]
   after: [book]
@@ -162,7 +162,7 @@
 
 - id: rewritesTheBook
   label: Rewrites the book
-  line: "{name} rewrites the book from the first page."
+  line: "{name} rewrites {his} book from the first page."
   if: "{name} had rewritten the book"
   kind: choice
   ages: [18, 62]
@@ -172,7 +172,7 @@
 
 - id: selfPublishes
   label: Publishes it {himself}
-  line: "{name} prints the book {himself} and sells it locally."
+  line: "{name} prints {his} book {himself} and sells it locally."
   if: "{name} had published the book {himself}"
   kind: choice
   ages: [18, 62]
@@ -191,7 +191,7 @@
 
 - id: bookDeal
   label: A publisher says yes
-  line: "A publisher wants the book at last. Luck and patience!"
+  line: "A publisher wants {his} book at last. Luck and patience!"
   kind: lucky
   ages: [20, 66]
   after: [keepsWriting, rewritesTheBook, selfPublishes]

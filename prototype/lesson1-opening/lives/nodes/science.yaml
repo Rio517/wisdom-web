@@ -12,7 +12,7 @@
 
 - id: chessClub
   label: Joins the chess club
-  line: "{name} joins the chess club."
+  line: "{name} joins the chess club and loses a lot, at first."
   if: "{name} had joined the chess club"
   kind: choice
   ages: [7, 13]
@@ -20,7 +20,7 @@
 
 - id: mathsClub
   label: Joins the maths club
-  line: "{name} joins the maths club."
+  line: "{name} joins the maths club, where puzzles count as fun."
   if: "{name} had joined the maths club"
   kind: choice
   ages: [7, 12]
@@ -145,7 +145,7 @@
 
 - id: joinsALab
   label: Does research in a lab
-  line: "{name} joins a research lab."
+  line: "{name} joins a research lab and asks questions nobody has answered."
   if: "{name} had joined a research lab"
   kind: choice
   ages: [21, 30]

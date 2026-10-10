@@ -138,8 +138,8 @@
   tags: [tech, owner, business]
 
 - id: launchDayBug
-  label: A bug on launch day
-  line: "A bug brings the website down on launch day."
+  label: Launch day goes wrong
+  line: "A bug crashes {his} website on launch day."
   kind: setback
   ages: [20, 60]
   after: [developer, websites]
@@ -159,7 +159,7 @@
 - id: asksForReview
   label: Asks for a second look
   line: "{name} asks a colleague to look at the code too."
-  if: "{name} had asked a colleague to look"
+  if: "{name} had asked a colleague to check the code"
   kind: choice
   ages: [20, 60]
   after: [launchDayBug]

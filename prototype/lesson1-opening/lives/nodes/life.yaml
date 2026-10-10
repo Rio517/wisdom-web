@@ -381,7 +381,7 @@
 
 - id: retrain
   label: Learns a new trade
-  line: "{name} learns a new trade."
+  line: "{name} learns a new trade, starting from the bottom."
   if: "{name} had learned a new trade"
   kind: choice
   ages: [26, 62]

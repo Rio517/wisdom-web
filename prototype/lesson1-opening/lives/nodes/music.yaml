@@ -243,7 +243,7 @@
 
 - id: givesMusicLessons
   label: Gives music lessons
-  line: "{name} gives music lessons."
+  line: "{name} gives music lessons in {his} front room."
   if: "{name} had given music lessons"
   kind: choice
   ages: [16, 70]

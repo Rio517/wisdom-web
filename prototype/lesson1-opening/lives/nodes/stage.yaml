@@ -36,7 +36,7 @@
 
 - id: dramaClub
   label: Joins the drama club
-  line: "{name} joins the drama club."
+  line: "{name} joins the drama club and finds {his} voice."
   if: "{name} had joined the drama club"
   kind: choice
   ages: [10, 15]
@@ -88,7 +88,7 @@
 
 - id: teachesDance
   label: Teaches dance
-  line: "{name} teaches dance to children."
+  line: "{name} teaches dance to children on Saturday mornings."
   if: "{name} had taught dance to children"
   kind: choice
   ages: [18, 65]

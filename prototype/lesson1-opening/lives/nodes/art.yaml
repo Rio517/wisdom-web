@@ -108,7 +108,7 @@
 
 - id: studiesDesign
   label: Studies design
-  line: "{name} studies graphic design."
+  line: "{name} studies graphic design: posters, signs and book covers."
   if: "{name} had studied design"
   kind: choice
   ages: [17, 30]

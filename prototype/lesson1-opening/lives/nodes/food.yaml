@@ -3,7 +3,7 @@
 
 - id: helpBake
   label: Helps to bake
-  line: "{name} helps to bake, and gets flour on {his} nose."
+  line: "{name} helps {his} dad bake and gets flour on {his} nose."
   if: "{his} family had let {him} help to bake"
   kind: choice
   by: family
@@ -28,7 +28,7 @@
 
 - id: learnsFamilyRecipes
   label: Learns family recipes
-  line: "A grandparent shows {him} the family recipes."
+  line: "{his} grandad teaches {him} the family recipes."
   if: "{name} had learned the family recipes"
   kind: choice
   ages: [9, 15]
@@ -61,7 +61,7 @@
   tags: [food, job, kitchen]
 
 - id: chefOffer
-  label: A chef offers to train
+  label: A chef takes {him} on
   line: "A chef sees {him} work and offers to train {him}. Luck!"
   kind: lucky
   ages: [15, 26]
@@ -71,7 +71,7 @@
 
 - id: trainChef
   label: Trains as a chef
-  line: "{name} trains as a chef."
+  line: "{name} trains as a chef in a hot, noisy kitchen."
   if: "{name} had trained as a chef"
   kind: choice
   ages: [16, 28]
@@ -98,7 +98,7 @@
 
 - id: openBakery
   label: Opens a small bakery
-  line: "{name} opens a small bakery."
+  line: "{name} opens a small bakery with {his} name on the sign."
   if: "{name} had opened a small bakery"
   kind: choice
   ages: [24, 55]
@@ -107,7 +107,7 @@
 
 - id: rentDoubles
   label: The rent doubles
-  line: "The rent doubles, and the numbers stop adding up."
+  line: "The rent doubles, and the sums stop adding up."
   kind: setback
   ages: [25, 60]
   after: [owner]
@@ -126,8 +126,8 @@
 
 - id: teamsUpWithPartner
   label: Teams up with someone
-  line: "{name} teams up with a partner to share the costs."
-  if: "{name} had teamed up with a partner"
+  line: "{name} teams up with a business partner to share the costs."
+  if: "{name} had teamed up with a business partner"
   kind: choice
   ages: [25, 62]
   after: [rentDoubles, ovenBreaks]
@@ -135,7 +135,7 @@
   within: 2
 
 - id: smallerShop
-  label: Downsizes the shop
+  label: Finds a smaller shop
   line: "{name} moves to a smaller shop with a lower rent."
   if: "{name} had moved to a smaller shop"
   kind: choice
@@ -145,9 +145,9 @@
   within: 2
 
 - id: startsFoodTruck
-  label: Starts a food truck
-  line: "{name} starts a food truck and parks it by the market."
-  if: "{name} had started a food truck"
+  label: Starts a food van
+  line: "{name} starts a food van and parks it by the market."
+  if: "{name} had started a food van"
   kind: choice
   ages: [22, 55]
   after: [cooking, chef]
@@ -183,7 +183,7 @@
 
 - id: changesTheMenu
   label: Changes the menu
-  line: "{name} changes the menu to what the small oven can do."
+  line: "{name} changes the menu to dishes that need no big oven."
   if: "{name} had changed the menu"
   kind: choice
   ages: [22, 60]
@@ -192,7 +192,7 @@
   within: 2
 
 - id: caters
-  label: Caters for parties
+  label: Cooks for parties
   line: "{name} cooks for parties and weddings."
   if: "{name} had cooked for parties"
   kind: choice
@@ -247,7 +247,7 @@
   tags: [food, owner, business]
 
 - id: cooksWithGardenVeg
-  label: Cooks with the garden
+  label: Cooks home-grown food
   line: "{name} cooks with vegetables grown in the garden."
   if: "{name} had cooked with home-grown vegetables"
   kind: choice
