@@ -40,7 +40,7 @@ export function rng(seed) {
 /** A short random seed for a new grown life (kept in the URL so it can be shared). */
 export const newSeed = () => Math.floor(Math.random() * 36 ** 6).toString(36).padStart(6, '0');
 
-/** The years between forks, as in the Explore chapter's tree (explore-tree.js). */
+/** The years between forks, as in the Explore chapter's life tree (`gapFor` in src/lessons/choices/journey-explore.js). */
 export function gapFor(age) {
   if (age < 7) return 2.2;
   if (age < 12) return 2.7;
