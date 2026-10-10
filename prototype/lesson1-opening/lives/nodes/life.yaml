@@ -352,7 +352,7 @@
   after: [setback]
   within: 2
   move: 1
-  weight: 0.3
+  weight: 0.12
 
 - id: illForMonths
   label: Falls ill for months
