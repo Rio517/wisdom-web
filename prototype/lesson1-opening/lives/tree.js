@@ -144,10 +144,10 @@ function chain(key) {
   return out;
 }
 function keyLabel(key) {
-  if (key === FRESH) return 'Can start fresh';
+  if (key === FRESH) return 'Fresh starts';
   if (key === LOOSE) return 'Not reachable from Born';
   const band = model.bandByKey.get(key);
-  if (band) return `Can start fresh, ${band.label}`;
+  if (band) return `Fresh starts, ${band.label}`;
   return model.store.nodes.get(key)?.label ?? (key === ROOT ? 'Born' : key);
 }
 function groupCount(key) {
@@ -483,7 +483,7 @@ function renderChecker() {
     + `<span class="count count-warning${warnings.length ? '' : ' none'}">${plural(warnings.length, 'warning')}</span>`;
   $('#head-counts').innerHTML = `<a href="#checker">${counts}</a>`;
   if (!errors.length && !warnings.length) {
-    $('#checker-body').innerHTML = `<p class="counts-line">${counts}</p><p class="all-clear">No problems in ${plural(store.nodes.size, 'node')} and ${plural(model.lives.length, 'written life', 'written lives')}.</p>`;
+    $('#checker-body').innerHTML = `<p class="counts-line">${counts}</p>`;
     return;
   }
   const list = [...errors.map(item => ({ ...item, level: 'error' })), ...warnings.map(item => ({ ...item, level: 'warning' }))];
@@ -519,7 +519,7 @@ function stepHTML(life, raw, index, step) {
     : '';
   return `<li class="step${problems.some(item => item.level === 'error') ? ' has-error' : ''}" data-step="${index}">`
     + `<span class="s-age">${esc(raw.age)}</span><span class="s-mark">${glyph(step.kind)}</span>`
-    + `<div class="s-body"><p class="s-head">${label}${step.byFamily ? '<span class="family">family</span>' : ''}</p>`
+    + `<div class="s-body" data-copy-ok="question pronoun"><p class="s-head">${label}${step.byFamily ? '<span class="family">family</span>' : ''}</p>`
     + `<p class="s-line">${esc(step.line)}</p>${problemList}${alts}</div></li>`;
 }
 
