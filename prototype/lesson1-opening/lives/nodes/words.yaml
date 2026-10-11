@@ -463,3 +463,23 @@
   after: [translatesBooks, interpreter]
   tags: [words]
   weight: 0.8
+
+- id: coversCouncil
+  label: Covers the council
+  line: "{name} reports on the town council's meetings every month."
+  if: "{name} had covered the council"
+  kind: choice
+  ages: [19, 60]
+  after: [reportsForPaper]
+  within: 3
+  tags: [words, journalism]
+
+- id: writesAColumn
+  label: Writes a column
+  line: "{name} writes a weekly column about life in the town."
+  if: "{name} had written a column"
+  kind: choice
+  ages: [20, 62]
+  after: [reportsForPaper]
+  within: 3
+  tags: [words, journalism, writing]

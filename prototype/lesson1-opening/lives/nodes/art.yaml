@@ -112,7 +112,8 @@
   line: "The art school says no. It stings."
   kind: setback
   ages: [17, 26]
-  after: [portfolio]
+  after: [appliesToArtSchool]
+  within: 1
   unless: [getsArtSchoolPlace]
   tags: [art]
   move: -2
@@ -151,6 +152,7 @@
   ages: [22, 60]
   after: [illustration, print]
   tags: [art, job]
+  within: 4
   move: 2
 
 - id: teachesArt

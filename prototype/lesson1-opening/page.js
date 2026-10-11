@@ -412,12 +412,13 @@ function run() {
     // a long life (a written life may have 17 steps since round 6) that still does not fit: the
     // three newest rows stay whole instead of four, so one more row may shorten
     tight: [[15, 14], [14, 14]],
+    tightGap: 3,
     margin: 2, // px kept free under the last row, for rounding
   };
   let storyPlan = null; // { short: rows shortened at each step }
   function fitStory(box) {
     storyPlan = null;
-    box.classList.remove('is-two', 'is-fits');
+    box.classList.remove('is-two', 'is-fits', 'is-packed');
     for (const name of ['--fit-size', '--fit-old', '--fit-age', '--fit-gap']) box.style.removeProperty(name);
     const rows = [...box.children];
     const shortened = rows.filter(row => row.classList.contains('is-short'));
@@ -447,14 +448,14 @@ function run() {
     };
     // The rows that may shorten, oldest first: older rows whose label is shorter than their line.
     // The plan: at each step, how many of them are shortened (never fewer than the step before).
-    const plan = (newest, older, allowShort, keep = 4) => {
+    const plan = (newest, older, allowShort, keep = 4, rowGap = gap) => {
       const full = measure(newest, older).rows;
       const { rows: past, short } = measure(older, older);
       const can = allowShort ? rows.map((_, at) => at).filter(at => at <= last - keep && labels[at] && past[at] - short > 0.5) : [];
       const steps = [];
       let count = 0; let saved = 0; let extra = Infinity;
       for (let step = 0; step <= last; step += 1) {
-        let height = step * gap - saved;
+        let height = step * rowGap - saved;
         for (let at = 0; at <= step; at += 1) height += at <= step - keep ? past[at] : full[at];
         while (height > room) {
           if (count >= can.length || can[count] > step - keep) return null;
@@ -464,7 +465,7 @@ function run() {
         steps.push(new Set(can.slice(0, count)));
         if (step > 0) extra = Math.min(extra, (room - height) / step);
       }
-      return { newest, older, short: steps, extra, keep };
+      return { newest, older, short: steps, extra, keep, tight: rowGap < gap };
     };
     // The largest single size that fits, to half a pixel: a guess from the rows' height, then halving.
     const [top, bottom] = STORY_FIT.one;
@@ -481,7 +482,8 @@ function run() {
       }
     }
     for (const [newest, older] of found ? [] : STORY_FIT.tight) {
-      const result = plan(newest, older, true, 3);
+      // The rows close up to the short screens' 3 px gap (opening.css, .is-packed) as well.
+      const result = plan(newest, older, true, 3, Math.min(gap, STORY_FIT.tightGap));
       if (result && (!found || result.short.at(-1).size < found.short.at(-1).size)) found = result;
     }
     probe.remove();
@@ -499,6 +501,7 @@ function run() {
     box.style.setProperty('--fit-old', `${found.older}px`);
     box.style.setProperty('--fit-age', `${ageFor(found.older)}px`);
     box.classList.toggle('is-two', found.older !== found.newest);
+    box.classList.toggle('is-packed', Boolean(found.tight));
     if (found.extra > 0 && found.extra < Infinity) box.style.setProperty('--fit-gap', `${Math.min(found.newest * 0.9, found.extra).toFixed(2)}px`);
     // Mid-story (the column resized): the rows shown take this plan's state for the newest of them.
     const shown = rows.filter(row => !row.classList.contains('is-pending')).length;

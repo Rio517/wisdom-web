@@ -58,6 +58,7 @@
   ages: [14, 30]
   after: [savings, earns, job]
   tags: [money, savings]
+  weight: 0.5
 
 - id: learnsToBudget
   label: Learns to budget
@@ -107,7 +108,7 @@
 
 - id: sellsOnline
   label: Sells things online
-  line: "{name} sells things online to people far away."
+  line: "{name} sells old books and records online."
   if: "{name} had sold things online"
   kind: choice
   ages: [18, 55]

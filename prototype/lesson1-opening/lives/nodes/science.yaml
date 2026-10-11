@@ -283,7 +283,7 @@
   if: "{name} had solved puzzles for fun"
   kind: choice
   ages: [20, 70]
-  tags: [science, thinking]
+  tags: [thinking, puzzles]
 
 - id: joinsMedicalResearch
   label: Joins medical research

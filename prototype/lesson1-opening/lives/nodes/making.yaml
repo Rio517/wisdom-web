@@ -476,7 +476,7 @@
   ages: [20, 55]
   after: [making]
   tags: [making, money, online]
-  weight: 0.5
+  weight: 0.3
 
 - id: buildsGoKart
   label: Builds a go-kart

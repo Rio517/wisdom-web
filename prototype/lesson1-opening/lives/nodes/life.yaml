@@ -472,9 +472,10 @@
   line: "{name} gives up a club to make time for friends and homework."
   if: "{name} had quit a club"
   kind: choice
-  ages: [8, 16]
+  ages: [10, 16]
   after: [club, team]
-  weight: 0.5
+  drops: [club, team]
+  weight: 0.3
 
 - id: keepsInTouch
   label: Keeps in touch
@@ -515,7 +516,7 @@
   ages: [20, 60]
   tags: [study]
   move: 1
-  weight: 0.3
+  weight: 0.15
 
 - id: breaksAnArm
   label: Breaks an arm

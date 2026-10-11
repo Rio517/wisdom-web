@@ -6,6 +6,7 @@
    --fit-old the older rows' (the same, or a little smaller: never more than two sizes), --fit-age the
    ages' one size, and --fit-gap the room left over, shared between the rows. */
 .life-steps { --size: var(--fit-size, 18px); --age: var(--fit-age, calc(var(--size) * .82)); margin: 0; padding: 0 2px 2px 0; list-style: none; display: grid; align-content: start; row-gap: calc(6px + var(--fit-gap, 0px)); scrollbar-width: thin; }
+.life-steps.is-packed { row-gap: calc(3px + var(--fit-gap, 0px)); } /* a long life in a short column (round 6) */
 .life-step { grid-template-columns: calc(var(--age) * 3.5) minmax(0, 1fr); column-gap: 8px; align-items: baseline; display: grid; }
 .life-age { font: 500 var(--age)/1.2 var(--font-guide); color: var(--color-quiet); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .life-line { font: var(--size)/1.35 var(--font-field); color: var(--color-ink); text-wrap: pretty; transition: color 450ms ease; }

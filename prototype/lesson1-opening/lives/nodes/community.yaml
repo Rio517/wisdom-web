@@ -87,7 +87,8 @@
   ages: [24, 65]
   after: [job]
   tags: [community, mentoring]
-  weight: 0.3
+  weight: 0.15
+
 - id: teachesACraft
   label: Teaches {his} craft
   line: "{name} teaches others a craft learned over many years."
@@ -304,6 +305,7 @@
   unless: [campaign]
   tags: [community, civic, petition]
   inRun: true
+  weight: 0.5
 
 - id: councilNoMoney
   label: Council says no money

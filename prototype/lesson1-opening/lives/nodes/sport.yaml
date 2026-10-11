@@ -92,6 +92,8 @@
   kind: lucky
   ages: [12, 18]
   after: [tryout, team]
+  unless: [quitsAClub]
+  within: 3
   tags: [sport]
   move: 2
 
