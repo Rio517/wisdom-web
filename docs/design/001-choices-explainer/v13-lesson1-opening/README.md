@@ -61,13 +61,19 @@ The options: [1440×900](opening-whatif-old-options-1440-v08.png), [1133×744](o
 
 ### Measured (Chromium)
 
-The full sweep is running; its numbers follow in the next commit.
+- **The sweep** (`sweep.mjs`, Chromium; all ten lives × 1133×744, 1440×900, 1366×657, 1280×800, 1920×1080, 744×1133 and 2560×1440): the story list in 140 runs (both paces), 0 with scroll, overflow or rows out of view; "Choices add up" 3/3 and clear in all 70; **the label check in 210 lives × sizes (the ten written lives and two changed lives per person), 0 with a step missing its label or a label not whole and clear: 3,395 labels, 3 of them at the 13 px last resort** (changed lives: Theo from 11 at 1133×744, Lena from 8 and Leo from 9 at 744×1133); 0 console errors. The story list's sizes are as in round 6 (13 px older rows at 1366×657 only, for Amara, Ana, Nora and Omar).
+- **Before** (round 6, 2f716c6): steps without a map label at 1440×900, 1133×744 and 744×1133 in all 30 lives × sizes, 2 to 6 a life.
+- **Dots**: at 1440×900 every life's dots stay at least 16.3 px apart; no label sits on a dot or another label at any size.
+- **A pick** (Chromium, clicking a gray choice at the story's end, four picks each): no long task for Sam at 1440×900; at 1133×744 one task of 50 to 60 ms in some runs, as on round 6's code (the same flow measured there). Planning a changed life's labels in one task took 30 to 48 ms; spread over frames from the pick it no longer shows as a task.
+- **The end**: no long task within 2 s of the card showing at the end of a played story (Sam at 1440×900, Theo at 1133×744, the quicker pace). The card starts about 310 ms after the paths ahead begin and is whole by about 650 ms.
+- **Story time**: the closing line now ends 300 ms after the paths ahead begin (it held 1.0 s more before), so Sam's story is 32.0 s at Normal pace (33.0 s in round 6) and 28.2 s at the quicker one (29.2 s).
+- `npm test` passes (273); `npm run lives:check`: 0 errors, 0 warnings.
 
 ### Known issues
 
 - **A run's labels in a column.** At 1133×744 and 744×1133 the steps on either side of Sam's run leave no room to widen it, so its four labels stack just below the burst with leaders rather than beside each dot. Busy stretches of other lives at the smaller sizes take long leaders too.
 - **At 1440×900 the end card is often the bar along the top** for longer lives, since every corner now holds a label.
-- **13 px route labels** are the last resort for a label boxed in by others (rare: one changed life of the 210 checked, Ana's at 744×1133).
+- **13 px route labels** are the last resort for a label boxed in by others: 3 of the 3,395 labels checked, all in changed lives at the two iPad sizes. Where level (c)'s muted old labels would leave a new label no room, they step back for that life (level b).
 - **"Choices add up"** may name a later lucky break or setback than the first where a run is too tight for a chip (Kai at 744×1133).
 - **WebKit** frames and the sweep in WebKit are for the lead's Mac (Playwright's WebKit download is blocked here).
 
