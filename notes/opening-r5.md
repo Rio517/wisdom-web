@@ -19,3 +19,10 @@ hello from opening-r5. Branch agents/opening-r5 from 72d8ffe. The relay was not 
 - Layouts per arriving line: 6.4 → 1.3 (Theo, 1133×744). This VM can't judge the 16.7 ms task budget: its timings swing by 10×. Please re-run `sweep.mjs --budget` on the Mac.
 - WebKit was not run (no download access here).
 - Next: deliverable 6, the cover to the story without a redraw.
+
+## Deliverable 6 pushed: the cover to the story
+
+- At 990 px and wider the stage keeps its full-width box from the cover on. The card takes its story shape by an animated clip-path, and the column slides in 40 px over the map's right part (500 ms).
+- The field is never re-fitted or redrawn (`#map-base` bitmap changes 2 → 0), the stage box never changes, and Born moves 0 px. Back to the cover changes no canvas.
+- The landed layout matches 72d8ffe to the pixel (card edge, column position and width) at five sizes. Born is 10–13 px further right because it keeps its cover position.
+- Frame budgets can't be judged on this VM: headless draws at about 15–20 fps even at rest. Please run `sweep.mjs --cover --sizes 1440x900,1920x1080` in Chromium and WebKit on the Mac.

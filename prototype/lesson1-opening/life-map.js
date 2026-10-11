@@ -396,8 +396,10 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
   let marks = []; // every mark on the marks canvas
   let openFork = null;
 
+  // The life is laid out in the map's visible part: beside the narration the stage runs under the
+  // column (opening.css), and the axis spans what is left of it.
   const rect = () => {
-    if (!size) size = { width: stack.clientWidth, height: stack.clientHeight };
+    if (!size) size = { width: axis.clientWidth || stack.clientWidth, height: stack.clientHeight };
     return size;
   };
 

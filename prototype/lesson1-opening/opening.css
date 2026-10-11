@@ -161,6 +161,36 @@
 .whatif-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
 .whatif-actions .solid-pill, .whatif-actions .pill-button { min-height: 44px; }
 
+/* ——— The cover to the story: the stage keeps its box ———
+   Beside the narration, the cover, the story and "Choices add up" keep the stage at full width and
+   lay the column over its right part. The card takes its story shape by a clip, so leaving the
+   cover never re-fits or redraws the field; the life, its labels and the chips sit in the visible
+   part (--cut is what the column covers of the stage). The hike's steps keep the lesson's layout. */
+@media (min-width: 990px) {
+  .journey { --col: clamp(340px, 29vw, 430px); }
+  .journey, .journey[data-cover] { grid-template-columns: minmax(0, 1fr) var(--col); }
+  .journey:is([data-beat="cover"], [data-beat="life"], [data-beat="adds"]) { --cut: calc(var(--col) - 20px); }
+  .journey:is([data-beat="cover"], [data-beat="life"], [data-beat="adds"]) > .stage {
+    grid-column: 1 / -1; margin: 4px 20px 8px; background: transparent;
+    clip-path: inset(0 var(--cut) 0 0 round 22px); transition: clip-path 500ms cubic-bezier(.2, .7, .2, 1);
+  }
+  .journey[data-cover] > .stage { clip-path: inset(0 0 0 0 round 22px); }
+  /* The card's paper fades in under the field as the column arrives. */
+  .journey > .stage::before { content: ""; position: absolute; inset: 0; background: var(--color-paper-deep); pointer-events: none; transition: opacity 500ms cubic-bezier(.2, .7, .2, 1); }
+  .journey[data-cover] > .stage::before { opacity: 0; }
+  /* The column waits, laid out but unseen, on the cover; it slides in 40 px as it fades in. */
+  .journey > .narration { z-index: 1; }
+  .journey[data-cover] > .narration { display: flex; visibility: hidden; opacity: 0; transform: translateX(40px); pointer-events: none; transition: opacity 300ms ease, transform 300ms ease, visibility 0s 300ms; }
+  .narration.is-arriving { animation: column-in 500ms cubic-bezier(.2, .7, .2, 1) both; }
+  .map-stack :is(.life-axis, .life-overlay, .map-callouts) { right: var(--cut, 0px); }
+  .map-stack canvas:is(.life-grays, .life-dark, .life-marks) { width: calc(100% - var(--cut, 0px)); }
+}
+@media (min-width: 990px) and (max-width: 1100px) { .journey { --col: 330px; } }
+@keyframes column-in { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .journey > .stage, .journey > .stage::before, .journey[data-cover] > .narration { transition: none !important; }
+}
+
 /* ——— Mockup controls: a quiet bar under the stage ——— */
 .journey { grid-template-rows: minmax(0, 1fr) auto; }
 .journey > .stage { grid-row: 1; grid-column: 1; margin-bottom: 8px; }

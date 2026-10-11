@@ -21,6 +21,10 @@
 // --budget (Chromium only) measures, for each life and size, the layouts each arriving line forces
 // (stepping through the story while paused) and, with the processor slowed 4x, the longest
 // main-thread task while the story plays, and with --picks the longest task over five picks.
+// --cover measures the step from the cover to the story at each size (Theo, or the first of
+// --lives): from ArrowRight to the first line, the longest frames (from requestAnimationFrame,
+// at 1x and, in Chromium, at 4x slowdown), how often each canvas changed its bitmap size, how far
+// the stage's box changed, and how far Born moved.
 import { chromium, webkit } from 'playwright';
 import { existsSync, writeFileSync } from 'node:fs';
 
@@ -250,6 +254,45 @@ function budgetTask(life, size) {
   };
 }
 
+function coverTask(life, size, rate) {
+  return {
+    size,
+    run: async page => {
+      await page.goto(`${PAGE}?life=${life}&pace=normal`);
+      await ready(page);
+      await page.waitForTimeout(1500);
+      if (rate > 1) await (await page.context().newCDPSession(page)).send('Emulation.setCPUThrottlingRate', { rate });
+      await page.evaluate(() => {
+        const log = globalThis.__cover = { frames: [], resized: {}, stage: [], born: null };
+        const stage = document.getElementById('stage');
+        const box = () => { const r = stage.getBoundingClientRect(); return [Math.round(r.left), Math.round(r.width), Math.round(r.height)]; };
+        log.stage.push(box());
+        new MutationObserver(records => { for (const r of records) { const name = r.target.id || r.target.className; log.resized[name] = (log.resized[name] ?? 0) + 1; } }).observe(stage, { subtree: true, attributes: true, attributeFilter: ['width', 'height'] });
+        let last = performance.now();
+        const tick = now => {
+          log.frames.push(now - last); last = now;
+          const b = box(); if (b.join() !== log.stage.at(-1).join()) log.stage.push(b);
+          const first = document.querySelector('#life-steps .life-step:not(.is-pending)');
+          if (first && !log.lineAt) log.lineAt = now;
+          if (!log.lineAt || now - log.lineAt < 500) requestAnimationFrame(tick);
+        };
+        log.start = performance.now();
+        requestAnimationFrame(tick);
+      });
+      const before = await page.evaluate(() => { const s = document.querySelector('.map-stack').getBoundingClientRect(); return { ox: parseFloat(document.querySelector('.map-stack').style.getPropertyValue('--ox')) + s.left, oy: parseFloat(document.querySelector('.map-stack').style.getPropertyValue('--oy')) + s.top }; });
+      await page.keyboard.press('ArrowRight');
+      await page.waitForFunction(() => globalThis.__cover.lineAt && performance.now() - globalThis.__cover.lineAt > 600, null, { timeout: 30000, polling: 200 });
+      const log = await page.evaluate(() => {
+        const s = document.querySelector('.map-stack').getBoundingClientRect();
+        const born = opening.scenes.paths.lifePoints()[0];
+        return { ...globalThis.__cover, bornAt: { x: born.x + s.left, y: born.y + s.top } };
+      });
+      const frames = log.frames.slice(1);
+      return { life, size, rate, ms: Math.round(log.lineAt - log.start), worst: frames.slice().sort((a, b) => b - a).slice(0, 3).map(ms => Math.round(ms)), over20: frames.filter(ms => ms > 20).length, over33: frames.filter(ms => ms > 33).length, resized: log.resized, stage: log.stage, born: Math.round(Math.hypot(log.bornAt.x - before.ox, log.bornAt.y - before.oy)) };
+    },
+  };
+}
+
 const browser = await launch();
 const label = size => `${size[0]}x${size[1]}`;
 const out = { engine: ENGINE, story: [], adds: [], room: [] };
@@ -261,6 +304,17 @@ if (flag('budget')) {
     if (row.failed) { console.log(`FAILED ${row.failed}`); continue; }
     const lines = row.perLine;
     console.log(`budget  ${label(row.size).padEnd(10)} ${row.life.padEnd(6)} layouts/line max ${Math.max(...lines)} mean ${(lines.reduce((a, b) => a + b, 0) / lines.length).toFixed(1)}  at 4x: arrival task ${row.arrival} ms, longest while a line lands ${row.landing} ms (${row.lines} lines), longest overall ${row.worst.join(', ')} ms  heap ${row.heap ? (row.heap / 1048576).toFixed(1) : '?'} MB`);
+  }
+  process.exit(0);
+}
+
+if (flag('cover')) {
+  const life = LIVES[0] === 'amara' && !opt('lives') ? 'theo' : LIVES[0];
+  const rates = ENGINE === 'chromium' ? [1, 4] : [1];
+  const rows = await pool(browser, SIZES.flatMap(size => rates.map(rate => coverTask(life, size, rate))));
+  for (const row of rows) {
+    if (row.failed) { console.log(`FAILED ${row.failed}`); continue; }
+    console.log(`cover   ${label(row.size).padEnd(10)} ${row.life} ${row.rate}x  first line at ${row.ms} ms; longest frames ${row.worst.join(', ')} ms (${row.over20} over 20, ${row.over33} over 33); canvas bitmap changes ${JSON.stringify(row.resized)}; stage box ${row.stage.map(b => b.join('/')).join(' -> ')}; Born moved ${row.born} px`);
   }
   process.exit(0);
 }

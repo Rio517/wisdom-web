@@ -127,6 +127,30 @@ Every option starts from the same base:
 | "Choices add up", Omar, 744×1133 | [adds omar v06](opening-adds-744-omar-v06.png) | |
 | The five list options | [A](opening-list-option-a-v01.png), [B](opening-list-option-b-v01.png), [C](opening-list-option-c-v01.png), [D](opening-list-option-d-v01.png), [E, the pick](opening-list-option-e-v01.png) | |
 
+### The cover to the story
+
+The note, paraphrased: going from the cover to the story there is a redraw hitch. Every path shifts at once as the narration column arrives. The column should come in over the map instead, so the field never redraws.
+
+Before (72d8ffe, `node sweep.mjs --cover --sizes 1440x900,1920x1080`): as the cover left, the stage narrowed from 1400 to 1002 px at 1440×900 (1880 to 1470 at 1920×1080). The field was re-fitted and painted again (two bitmap changes on `#map-base`), the life map laid out again (two more on each of its canvases), and Born moved 13 px. Back to the cover did the same in reverse.
+
+What changed (opening.css, and the visible-area reads in map.js and life-map.js):
+
+- Beside the narration (990 px and wider), the cover, the story and "Choices add up" keep the stage at full width. The grid keeps its two columns from the cover on, and the narration sits over the stage's right part. The card takes its story shape with `clip-path: inset(0 var(--cut) 0 0 round 22px)`, where `--cut` is the column's width minus 20 px. Its paper is a `::before` layer that fades in. The hike's first step keeps the lesson's own layout.
+- On the cover the column is laid out but unseen (`visibility: hidden`, `opacity: 0`). As the cover leaves, the clip closes in over 500 ms while the column slides in 40 px and fades in, both with `cubic-bezier(.2,.7,.2,1)`. The story starts once it has landed (500 ms, was 380). With reduced motion nothing moves; the column and the card appear at once. Back to the cover reverses it: the column fades and slides out over 300 ms, and the clip opens again.
+- The life map, its labels, rings, popovers and end card, and the chips are laid out in the card's visible part from the start: its layers stop `--cut` short of the stage's right edge, and their width is read from there. Born stays where it was on the cover.
+
+After, in Chromium:
+
+- **No re-fit and no redraw:** from ArrowRight on the cover to the first line, the stage's box never changes and `#map-base` never changes its bitmap (it changed twice before). The life's canvases are sized once, when the life is first drawn (two changes each, from nothing). Born moves 0 px. Back from the story to the cover changes no canvas at all.
+- **The landed state is today's:** the card's visible edge and the column's left edge and width are the same as 72d8ffe to the pixel at 1050×800, 1133×744, 1280×800, 1440×900 and 1920×1080 (for example card 20–1022 px and column 1022 px, 418 px wide, at 1440×900). Born sits 10 to 13 px further right, because it keeps its place from the cover. The route's end is within 1 px.
+- **Frames:** this VM's headless Chromium draws at roughly 15 to 20 frames a second even when nothing moves, so its frame times cannot be judged against the 20 and 33 ms budgets: before and after, most frames read 50 to 67 ms. The redraw's own long frame is gone from the record (the 233 ms frame at 1440×900 and 300 ms at 1920×1080 before; 67 and 133 ms at most after), but that is not a measurement of the budget. `node sweep.mjs --cover --sizes 1440x900,1920x1080` (with `--engine webkit` too) repeats it on a real machine.
+- Everything else that sets or clears the cover still works: the full journey above (all ten lives × seven sizes, the quicker pace; reduced motion at three sizes), Back to the cover, Replay from the cover, and the hike's stage at the lesson's own size (20–1022 px at 1440×900, no clip).
+
+| Moment | Image |
+| --- | --- |
+| The cover, mid-slide (about 200 ms in), landed, the first line, 1440×900 | [cover to story v06](opening-cover-to-story-1440-v06.png) |
+| The landed story, 72d8ffe (left) beside this round (right), 1440×900 | [landed v05/v06](opening-story-landed-1440-v05-v06.png) (the field is mid-fade at a different moment in the two; compare the card and the column) |
+
 ## Round 4: the owner's notes on v04 (v05)
 
 The notes, paraphrased:

@@ -140,7 +140,8 @@ export function createPathsScene(root, { edgeFade = null, life = {} } = {}) {
     callouts.append(element);
     const width = label.offsetWidth;
     const height = label.offsetHeight;
-    const r = rect();
+    // The map's visible part (beside the narration the stage runs on under the column).
+    const r = { width: callouts.clientWidth, height: callouts.clientHeight };
     const all = [...tries, ...FARTHER.filter(far => !tries.some(own => own.dy === far.dy))];
     const offsets = SLIDES.flatMap(dx => ['start', 'end', 'middle'].flatMap(align => all.map(offset => ({ ...offset, dx, align }))));
     const boxAt = ({ dx = 0, dy = -14, align = 'start' }) => {

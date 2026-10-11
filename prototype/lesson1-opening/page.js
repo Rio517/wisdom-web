@@ -859,7 +859,8 @@ function run() {
       await switchRoot(rootId);
       if (run.cancelled) return;
     } else if (leavingCover) {
-      // Full width while the paths grow; then the narration arrives, then the story starts.
+      // Full width while the paths grow; then the narration slides in over the map's right part (the
+      // stage keeps its box beside it, so the field is never re-fitted), then the story starts.
       setCover('leaving');
       liftCover();
       player.reset();
@@ -876,7 +877,8 @@ function run() {
         narrationEl.classList.add('is-arriving');
       }
       if (focus === 'next') narrationEl.focus({ preventScroll: true });
-      if (!(await wait(380, run))) return;
+      // The story starts once the column has landed (opening.css: 500 ms).
+      if (!(await wait(prefersReducedMotion() ? 0 : 500, run))) return;
       scenes.paths.beginStory(prefersReducedMotion() ? 0 : 600);
       player.play();
       return;
