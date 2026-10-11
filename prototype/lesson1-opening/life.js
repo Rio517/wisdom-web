@@ -48,6 +48,7 @@ export const TIMING = {
   pulseGap: 140,
   pulse: 600,
   hold: 600, // after the last line, before the route's end starts to breathe
+  cardAt: 300, // the end card starts to rise in this long after the paths ahead begin to grow (round 7)
   land: 300, // Next lands everything at once
 };
 export const PACES = { normal: { short: 900, long: 1300 }, quick: { short: 700, long: 1000 } };
@@ -92,7 +93,8 @@ export function quietAfter(index) {
 }
 export function stepDuration(index, pace) {
   const line = LINES[index];
-  if (line.close) return settleAt(index) + TIMING.hold;
+  // The closing line ends as the end card starts to rise in: AHEAD_CARD after the paths ahead begin (life-map.js).
+  if (line.close) return TIMING.walkFrom + TIMING.cardAt;
   return settleAt(index) + (line.long ? pace.long : pace.short) * paceOf(index);
 }
 

@@ -125,6 +125,9 @@
 /* The end card: the explorer's, wherever the route leaves room; on a small stage, a bar. */
 .life-end { z-index: 2; pointer-events: auto; width: min(300px, calc(100% - 44px)); padding: 18px 22px; }
 .life-end h2 { font-size: 26px; }
+/* Round 7: the card eases in (life-map.js arrive()), after the paths ahead begin to grow. */
+.life-end.is-arriving { animation: life-end-in 400ms cubic-bezier(.2, .7, .2, 1) both; }
+@keyframes life-end-in { from { opacity: 0; translate: 0 10px; } to { opacity: 1; translate: 0 0; } }
 .life-end.is-bar { left: 12px; right: 12px; bottom: 30px; width: auto; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; column-gap: 16px; padding: 9px 10px 9px 16px; border-radius: 16px; }
 .life-end.is-bar h2 { margin: 0; font-size: 20px; }
 .life-end.is-bar p { margin: 0; font-size: 15px; line-height: 1.35; }
@@ -139,6 +142,7 @@
 @media (prefers-reduced-motion: reduce) {
   .life-fork::before { animation: none; }
   .life-label, .life-alt { transition: none; }
+  .life-end.is-arriving { animation: none; }
 }
 
 /* ——— After the story: a life the person could have lived ——— */

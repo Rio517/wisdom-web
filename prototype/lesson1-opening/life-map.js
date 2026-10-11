@@ -565,6 +565,7 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
     };
     geo = null;
     sizedFor = '';
+    stopAhead();
     baked = -1; aheadBaked = false; lastPos = 0; landFrom = null;
     card.innerHTML = `<h2 tabindex="-1">${escapeHTML(t('opening.end.heading'))}</h2>
       <p>${escapeHTML(t('opening.end.gray', { name: life.name }))}</p>
@@ -778,6 +779,48 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
     lay('ahead', g.ahead, AHEAD, 3);
     aheadBaked = true;
   }
+  // Round 7: the paths still ahead grow out of the last dot on a clock of their own (AHEAD_MS, an
+  // ease-out), never painted in one frame; the end card rises in AHEAD_CARD ms after they begin.
+  // With reduced motion they are there at once.
+  const AHEAD_MS = 900;
+  const AHEAD_CARD = 300;
+  const aheadEase = t => 1 - (1 - t) ** 3;
+  let aheadGrow = null; // { started, raf }
+  function growStoryAhead() {
+    if (aheadBaked || aheadGrow) return;
+    if (prefersReducedMotion()) { bakeTo(END + 1, true); restTraveller(); return; }
+    const run = { started: performance.now(), raf: 0 };
+    aheadGrow = run;
+    const tick = now => {
+      if (aheadGrow !== run) return;
+      const g = geometry();
+      const p = aheadEase(Math.min(1, (now - run.started) / AHEAD_MS));
+      const end = g.points[END];
+      if (p < 1) {
+        const box = useLive(boundsOf([...g.ahead.flatMap(edgeBounds), end], 16));
+        stroke(lx, g.ahead, AHEAD, 3, p);
+        marksOver(box, g.ahead.map(edge => ({ edge, color: AHEAD, width: 3, layer: 'ahead', at: p })));
+        traveller(lx, end, false);
+        run.raf = requestAnimationFrame(tick);
+        return;
+      }
+      aheadGrow = null;
+      bakeTo(END + 1, true);
+      restTraveller();
+    };
+    run.raf = requestAnimationFrame(tick);
+  }
+  function stopAhead() {
+    if (aheadGrow) cancelAnimationFrame(aheadGrow.raf);
+    aheadGrow = null;
+  }
+  function restTraveller() {
+    const g = geometry();
+    const end = g.points[END];
+    const box = useLive(boundsOf([end], 16));
+    marksOver(box, []);
+    traveller(lx, end, false);
+  }
   function bakeTo(count, ahead) {
     const r = rect();
     // The first drawing at a stage size sizes the canvases first.
@@ -804,7 +847,8 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
     const steps = model.life.steps;
     const index = Math.min(f.index, END + 1);
     if (f.landing !== null) {
-      bakeTo(END + 1, true);
+      bakeTo(END + 1, aheadBaked);
+      growStoryAhead();
       showLabels(END + 1, END + 1);
       if (landFrom === null) landFrom = lastPos;
       const pos = landFrom + (END - landFrom) * f.landing;
@@ -818,21 +862,15 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
     }
     landFrom = null;
     const close = f.index > END;
-    bakeTo(close ? END + 1 : index, close && f.sprout >= 1);
+    bakeTo(close ? END + 1 : index, close && aheadBaked);
     showLabels(close ? END + 1 : index + (f.label ? 1 : 0), close ? END + 1 : index + (f.label ? 1 : 0));
     pulses(f.pulses);
     if (f.index < 0) { useLive({ left: 0, top: 0, right: 1, bottom: 1 }); lastPos = 0; return; }
     const end = g.points[END];
     if (close) {
-      if (f.sprout < 1) {
-        const box = useLive(boundsOf([...g.ahead.flatMap(edgeBounds), end], 16));
-        stroke(lx, g.ahead, AHEAD, 3, f.sprout);
-        marksOver(box, g.ahead.map(edge => ({ edge, color: AHEAD, width: 3, layer: 'ahead', at: f.sprout })));
-      } else {
-        const box = useLive(boundsOf([end], 16));
-        marksOver(box, []);
-      }
-      traveller(lx, end, false);
+      // The paths ahead start to grow as the closing line's walk would begin, or at once when the story lands whole.
+      if (f.sprout > 0 || f.resting) growStoryAhead();
+      if (!aheadGrow) restTraveller();
       lastPos = END;
       return;
     }
@@ -1010,6 +1048,7 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
     if (spot) {
       card.style.cssText = `left:${spot.box.left}px;top:${spot.box.top}px;right:auto;bottom:auto`;
       coverGray(spot.box);
+      cardArrive();
       return;
     }
     // A stage too small for a card gets a bar across the map's empty top, or else its foot.
@@ -1020,6 +1059,16 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
     const top = [12, r.height - 30 - barHeight].find(y => !blocked(bar(y), false)) ?? r.height - 30 - barHeight;
     card.style.cssText = `top:${top}px;bottom:auto`;
     coverGray(bar(top));
+    cardArrive();
+  }
+  // The card fades and rises in (opening.css, .is-arriving), AHEAD_CARD ms after the paths ahead begin.
+  function cardArrive() {
+    card.classList.remove('is-arriving');
+    if (prefersReducedMotion()) return;
+    void card.offsetWidth;
+    const delay = aheadGrow ? Math.max(0, aheadGrow.started + AHEAD_CARD - performance.now()) : 0;
+    card.style.animationDelay = `${Math.round(delay)}ms`;
+    card.classList.add('is-arriving');
   }
 
   // ——— A life the person could have lived ———
@@ -1033,6 +1082,7 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
     const item = itemFor(altKey);
     if (!item?.pickable) return null;
     stopWhat();
+    stopAhead();
     closePop();
     const g = geometry();
     const steps = model.life.steps;
