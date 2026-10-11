@@ -159,6 +159,7 @@
   kind: lucky
   ages: [22, 60]
   after: [owner]
+  needs: [food]
   tags: [food]
   move: 2
 

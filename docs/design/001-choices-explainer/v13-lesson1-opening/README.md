@@ -1,6 +1,6 @@
 # v13 — Lesson 1 opening
 
-Created: 2026-10-09. Updated: 2026-10-11 (round 5: the story list and the "Choices add up" labels, as v06). Status: playable mockup on a branch; owner review pending. Not published.
+Created: 2026-10-09. Updated: 2026-10-11 (round 6: stories that make sense step by step, and one run of trying again in every life, as v07). Status: playable mockup on a branch; owner review pending. Not published.
 
 Question: does the opening tell one life clearly? Since round 3, also: does Sam's story read like the Explore chapter, and does changing one of his choices show that every gray line is a life he could have lived? Since round 4, also: can a reader play the opening five or six times and meet a really different life each time, where every step makes sense?
 
@@ -21,6 +21,94 @@ Open <http://127.0.0.1:4638/prototype/lesson1-opening/>. The lives store and its
 - At the end, the card on the map offers **Change one of his choices** (or hers) and **Watch another life**. Every fork with other choices gets a ring; a ring is a button that opens the choices there, and a gray choice on the map can also be tapped straight away. A picked choice grows a new life from that fork, a different one each time. **Try again** grows another from the same choice, **Try another choice** goes back to the rings, and **Back to Sam's life** or **Escape** puts the life back as it was.
 - The **Mockup** bar under the stage switches the pace (**Normal**: 900 ms pauses, 1300 ms after events; **Quicker**: 700 and 1000 ms) and the **Life** (any of the ten, or Random), and replays the story.
 - The address keeps the pace and the life: `?pace=quick&life=zoe`. After a pick it also holds the fork, the choice and the seed, so the same new life opens again. `?store=fixture` plays the test store (two lives); `#paths-life` opens the finished story, `#paths-adds` the next beat and `#hike-plan` the hike.
+
+## Round 6: stories that make sense, and one run of trying again in every life (v07)
+
+The owner's notes, paraphrased: the visuals look good; now the story steps need to be more logical. Partying is not in itself a bad thing, so "Parties every night" should not be what brings Sam down: he becomes a rock star, and substance abuse is what brings him down. Every story should have one moment of persistence, a few small steps close together (a song, the band splits, a new band, a record deal). And check every story's steps for logic.
+
+Question: does every life, written or grown, read as cause and effect, one step at a time, with one quick burst of trying again, and does that burst read as one on the map?
+
+### The rules, as built
+
+1. **Choices are not verdicts.** A choice's label, line and `if` tell what the person does; what goes wrong is a later step with its own cause. The checker errors on a choice with a negative `move` (Sam's old `partiesEveryNight` had `move: -1`; the node is gone) and warns on verdict words in choices (`VERDICT_WORDS` in `engine.js`: bad, waste, too much, gone (not "had gone"), lazy, wrong and a few more).
+2. **Runs.** `lives/runs/*.yaml`, one file per area: 3 to 5 steps over 1 or 2 years, a try, a no (a setback in the middle), a change, another try, and an outcome that is not a setback. Each step is an ordinary node; inside a run two steps may share an age. The checker validates every run (shape, ages that fit, each step able to follow the ones before) and every written life's run (exactly one; its steps together, in order, within the span). The engine starts one run in a grown life with none yet, at a fork chosen with the usual weights, when its first step's rules hold and it fits before `end` − 4 (about half the time at a fork, always when fewer than eight years are left). The tree page lists the runs as chains and marks their steps.
+3. **Drinking and drugs** may be named as a setback, in general words only. The checker errors on a named drug or on how one is used (`NAMED_DRUGS`); a `substance` setback needs its own cause in `after` and a help node with `within` 1–2 that names it (`getsHelpToStop`); a written life must reach help within 2 years; more than one written life with it, or more than two nodes leading to it, is a warning. A grown life always takes help next.
+4. **Sam** (17 steps): born, choir, guitar, starts a band; the run `newBand`, 16–18 (the three bandmates record a first song; both friends quit; he forms a new band; a radio DJ plays one of his songs); the label signs the band at 20; he goes on a world tour at 22 (its alternatives: stays home to write, saves the money); drinking and drugs take over at 24; the label drops the band and he loses his flat at 25; a friend takes him in and he asks for help at **26** (was 27: rule 3's "help within 1–2 years"); then teaching guitar, two kids, school music and his daughter on stage, unchanged. The band splits once. His heights keep round 3's shape: the record deal peaks at 0.29, the fall reaches 0.82, the end is at 0.32.
+5. **The logic check** is the audit below.
+
+**Changed from the brief, and why:**
+
+- **"No run" was a warning while the other nine lives had none** (deliverable 1 asked for 0 errors then); it became an error once every life had its run.
+- **`inRun: true`** (new): a node written only for a run is never taken alone in a grown life, where a run's first step read as a loose one-off ("makes a batch of things to sell", then nothing). A writer found it.
+- **A pick inside a run carries a run on.** A pick at a run's middle step left the run with no outcome (the audit's criterion 8); such a pick must itself be a middle step of some run, which the engine then finishes. A pick at a run's first or last step is allowed as before.
+- **The engine's own logic rules** (from the lead's review of four sample lives and the audit): the two steps after a pick build on it whenever a plain step can (a narrow name weighs ×3; luck or a setback is never forced), and the first comes 1–3 years later when one follows it; the step after a grown run builds on the run; a grown step comes at most 6 years after the one before; an interest untouched for 10 years weighs a tenth. To keep about a third of forks lucky or hard with these plain steps, the base surprise rate is 0.45 (27% measured).
+- **Words in written lives:** two lines in a row may not repeat a content word (a checker warning); the general work steps (`workMove`) need a recent job and come at most once a life.
+
+### The pool
+
+42 runs: art 3, caring 3, community 3, food 3, life 3, making 3, money 3, music 4, nature 2, science 4, sport 3, stage 3, tech 2, words 3. Shapes vary: wins (a retaken exam, a passed driving test, a second art-school try), partial wins (a small press, a market stall, a reserve-team place, a chorus place) and changes of course (a new position, a testing job instead of coding, a classroom job, a stall that becomes a repair service, dance to teaching). Written by seven Sonnet writers, two areas each; the store now has 630 nodes. Every written life has one run:
+
+| Life | Run | Ages | Shape |
+| --- | --- | --- | --- |
+| Amara | bookSmallPress: sends the book out, publishers say no, a writing group, a rewrite, a small press | 28–30 | partial win |
+| Ana | sourdough: tries sourdough, flat loaves, asks an old baker, a café buys loaves | 19–20 | partial win |
+| Kai | earlyFrostSwitch: an early crop, a late frost, hardy greens, a café buys them | 21–22 | change of course |
+| Lena | examNewCourse: an advanced maths course, a failed exam, a tutor, statistics | 17–19 | change of course |
+| Leo | danceToTeaching: tries for a dance company, an ankle injury, a gentle class, teaching | 18–20 | change of course |
+| Nora | backFromInjury: squad trials, a knee injury, rebuilding, a whole game again | 17–19 | win |
+| Omar | tradeTest: sits the trade test, fails, practises with a pro, passes | 19–20 | win |
+| Sam | newBand: a first song, the band splits, a new band, a radio DJ | 16–18 | win |
+| Theo | busyWard: a busy ward, too few staff, asks a senior nurse, moves ward | 21–22 | change of course |
+| Zoe | artSchoolNewRoute: applies to art school, a no, an evening print class, a print shop | 18–20 | change of course |
+
+`npm run lives:check` (50 grown lives for each of 173 alternatives, then 5,000 random lives): 0 errors, 0 warnings; reach 100%; **runs: 100% of the lives grown from the 104 forks at least 10 years before `end` that come before the written run got one (least 96%, Amara at 23)**; all 42 runs grown; 0 forks flagged (no choice reliably ends higher); 27% of forks from 8 to `end` − 4 lucky or hard; 0% of lives end on one; 62% of surprises follow the life's own story; 94% of setbacks answered within four years. `npm test`: 273 pass.
+
+### The audit
+
+A fresh Opus reader read the ten written lives and 40 seeded grown lives (four per person, from four forks, five she-lives) as plain text, five times, against the nine criteria, plus four checks the lead added for grown lives. Written lives failing: 8 → 5 → **0** (from pass 3 on). Grown lives failing on a real stop: 5 (pass 3) → 6 → **1** of 40 (pass 5: an online book seller with an unpaid "big customer"; fixed after pass 5, not re-read). Grown items 100 → 35, of which 34 are editor's notes on thin stretches. Every mechanical problem became an engine or checker rule. The record, with the counts per criterion, what was fixed and what was left: [audit-r6.md](audit-r6.md).
+
+### The map and the pace
+
+**Options** (Sam's run at 1440×900 and 1133×744, 2× crops, [1440](opening-run-options-1440-v07.png), [1133×744](opening-run-options-1133x744-v07.png)):
+
+| Option | Judged |
+| --- | --- |
+| A, even: the run's steps spread evenly over its years | Close together, as asked, but the explorer's curves leave and reach every dot level, so each one-year step with a fall or a rise draws as a vertical S; gray branches at every step crowd it. |
+| B, quiet: A, and no gray branches at the run's middle steps | Calmer; the S curves remain. |
+| C, ages: each step at its own age, a shared age nudged 0.45 years | Uneven gaps; two dots almost on top of each other before the nudge. |
+| **D, direct (built): B, and the run's own strokes lean straight (75%)** | **One quick zigzag on the line: down to the no, up through the try again. Reads as a burst, distinct from the slow curves around it.** |
+
+**What was built** (`life-map.js`, `life.js`): a run's steps sit evenly over its years (`placeAges`); a run's middle steps carry no gray branches; its edges lean straight (`controls`, `edge.direct`); a run dot closer than 16 px to an earlier one moves up or down until clear (`spaceRun`, the drawing only; the life's heights don't change); only the run's first and last steps get map labels, and only where they fit (Sam's "Records a song" has no room; the list tells it). A run's steps play at **0.6×** the usual time (walk, pause, line and pulses; `RUN_PACE`), at both paces and in a changed life. Changed lives use the same layout and pace.
+
+**Measured** (Chromium):
+
+- **Dots:** at 1440×900 every life's dots are at least 16.3 px apart (all ten); at 1920×1080 at least 16.3 px; at 1133×744 at least 13.6 px and at 744×1133 at least 12.5 px, where two ordinary steps a year apart sit one year apart (12.5 px a year at 744 wide), as before this round; every run's dots are 16 px or more apart at every size. Every dot sits on the line.
+- **Labels:** no map label overlaps another label or a dot, for all ten lives at 1440×900, 1920×1080, 1133×744 and 744×1133, and under reduced motion (1440×900 and 744×1133).
+- **Story time at Normal pace:** Sam 30.7 s → **33.0 s** (+2.3 s; 17 steps, was 14); Quicker 27.1 → 29.2 s. The others: 27.8 s (Leo, Zoe) to 32.6 s (Omar).
+- **The story list** (17-step lives): option E still holds; when nothing fits with the four newest rows whole, the three (then two) newest stay whole and the rows close to the short screens' 3 px gap (`is-packed`), and as the very last resort older rows go to 13 px. 13 px is used only at 1366×657 (Amara, Ana, Kai, Nora, Omar, Theo), a laptop window below the project's targets; at 1440×900 the sizes are 15/14 or 14 px.
+- **The sweep** (`sweep.mjs`, all ten lives × 1133×744, 1440×900, 1366×657, 1280×800, 1920×1080, 744×1133 and 2560×1440 × both paces): **140 story runs, 0 with scroll, overflow or rows out of view; "Choices add up" 3/3 and clear in all 70; 0 console errors.**
+- **WebKit** could not be installed here again (Playwright's download host is blocked). On a Mac: `npx playwright install webkit`, then `node sweep.mjs --engine webkit --sizes 1133x744,1440x900,1366x657,1280x800,1920x1080,744x1133,2560x1440`.
+
+### Review images (v07)
+
+| Moment | Image |
+| --- | --- |
+| Sam's whole story: the run at 16–18 and the fall (drinking and drugs, the label drops the band, asking for help), 1440×900 | [sam 1440 v07](opening-run-sam-1440-v07.png) |
+| The same, 1133×744 | [sam 1133×744 v07](opening-run-sam-1133x744-v07.png) |
+| Sam's run and fall, 2× crops | [1440](opening-run-sam-crop-1440-v07.png), [1133×744](opening-run-sam-crop-1133x744-v07.png) |
+| Nora's run (a she-life: squad trials, a knee injury, rebuilding, back at full strength), 1440×900 | [nora v07](opening-run-nora-1440-v07.png) |
+| Omar's run (the trade test, failed, practice with a pro, passed), 1440×900 | [omar v07](opening-run-omar-1440-v07.png) |
+| A grown life with a run: Sam with a football club at 6 (seed `r6b`; a comeback run at 17–19), 1440×900 | [grown v07](opening-run-grown-1440-v07.png) |
+| The four map options | [1440](opening-run-options-1440-v07.png), [1133×744](opening-run-options-1133x744-v07.png) |
+
+### Known issues
+
+- **Grown lives are thinner than written ones.** The audit's 34 editor's notes: some picks have a plain follow-up only some of the time (a drama club, a smaller shop), a few late steps recur ("helps someone new at work find their feet", now weight 0.15), and three general work steps name no job. None is a mistake a reader would stop on; each needs more nodes.
+- **A run's first map label** is often left out where the run sits tight against the step before (Sam's "Records a song"): the list tells it, and the run's last label shows.
+- **At 744×1133 and 1133×744** two ordinary steps a year apart can sit 12.5–13.7 px apart (one year's width there); runs are spaced 16 px.
+- **13 px older rows** at 1366×657 for the six longest lives (last resort).
+- **The story pace** grows with the number of steps: a 17-step life takes up to 33 s at Normal pace.
+- **The test fixture's Sam** follows the real Sam's round-6 shape but not every word (its alternatives are fewer).
 
 ## Round 5: the story list and the "Choices add up" labels (v06)
 

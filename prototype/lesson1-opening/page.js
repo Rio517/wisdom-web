@@ -481,11 +481,11 @@ function run() {
         if (result && (!found || result.short.at(-1).size < found.short.at(-1).size)) found = result;
       }
     }
-    for (const keep of [3, 2]) {
-      for (const [newest, older] of found ? [] : STORY_FIT.tight) {
+    // In order, the first that fits: the larger sizes, then two newest rows whole, then 13 px.
+    for (const [newest, older] of STORY_FIT.tight) {
+      for (const keep of [3, 2]) {
         // The rows close up to the short screens' 3 px gap (opening.css, .is-packed) as well.
-        const result = plan(newest, older, true, keep, Math.min(gap, STORY_FIT.tightGap));
-        if (result && (!found || result.short.at(-1).size < found.short.at(-1).size)) found = result;
+        if (!found) found = plan(newest, older, true, keep, Math.min(gap, STORY_FIT.tightGap));
       }
     }
     probe.remove();
