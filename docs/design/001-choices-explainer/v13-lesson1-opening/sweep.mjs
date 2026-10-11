@@ -227,7 +227,8 @@ const measureLabels = fork => {
     range.selectNodeContents(element.firstChild);
     if (range.getBoundingClientRect().width > element.getBoundingClientRect().width + 1) cut += 1;
   });
-  return { steps: whatif ? fork + expected : expected, labels: labels.length, missing, overlap, onDot, outside, cut, underCard };
+  const small = labels.filter(element => parseFloat(getComputedStyle(element).fontSize) < 14).length;
+  return { steps: whatif ? fork + expected : expected, labels: labels.length, missing, overlap, onDot, outside, cut, underCard, small };
 };
 function labelsTask(item, size) {
   return {
@@ -431,6 +432,8 @@ if (!flag('no-labels')) {
   }
   const bad = out.labels.filter(row => row.failed || row.labels.missing || row.labels.overlap || row.labels.onDot || row.labels.outside || row.labels.cut || row.labels.underCard);
   console.log(`labels: ${out.labels.length} lives × sizes (written and changed), ${bad.length} with a step missing its label or a label not whole and clear`);
+  const small = out.labels.filter(row => row.labels?.small);
+  console.log(`labels: ${out.labels.reduce((sum, row) => sum + (row.labels?.labels ?? 0), 0)} labels checked; at 13 px (the last resort): ${small.reduce((sum, row) => sum + row.labels.small, 0)}${small.length ? ` (${small.map(row => `${row.item.life}${row.item.alt ? ` ${row.item.fork}:${row.item.alt}` : ''} at ${label(row.size)}`).join(', ')})` : ''}`);
 }
 
 const errorCount = [...out.story, ...out.adds, ...out.room, ...out.labels].reduce((sum, row) => sum + (row.errors?.length ?? 0), 0);

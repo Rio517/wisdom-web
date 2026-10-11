@@ -1243,6 +1243,14 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
       run.planFirst = [...(run.planFirst ?? []), ...misses.filter(at => !(run.planFirst ?? []).includes(at))];
       return false;
     }
+    // The new life's labels come first: if the old path's muted labels leave one no room, they step
+    // back (level b for this life) and the plan starts again.
+    const old = labelEls.filter(element => element.classList.contains('is-old'));
+    if (misses.length && old.length) {
+      old.forEach(element => element.classList.remove('is-old', 'is-shown'));
+      run.planBest = null; run.planRound = 0; run.planFirst = [];
+      return false;
+    }
     run.plan = run.planBest;
     return true;
   }
