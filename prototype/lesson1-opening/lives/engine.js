@@ -502,8 +502,8 @@ export const GROW = {
   quietYears: 4, // …and never in the last four years before the end
   answer: [0.4, 0.6], // after a surprise, the next step comes sooner: the gap × 0.4–0.6
   answerFirst: 0.7, // right after a setback, a step that answers it comes 1–2 years later this often (when one can)
-  staleYears: 12, // an `after` match from a step more than this many years back, its area untouched since…
-  stale: 0.25, // …weighs this much
+  staleYears: 10, // an `after` match from a step more than this many years back, its area untouched since…
+  stale: 0.1, // …weighs this much
   run: 0.5, // a life with no run yet starts one at a fork this often, when one fits there…
   runLastChance: 8, // …and always when fewer years than this are left before the quiet years
   followPick: 2, // after a pick, this many steps build on it (or on what built on it) whenever one can
@@ -620,8 +620,8 @@ export function runAfter(store, node, path, age, limit) {
  *   those is taken about two times in three; the rest of the time any
  *   candidate, weighted ×4 when it builds on the last two steps, ×2 on an
  *   older one.
- * - An `after` match only through steps whose area the life left more than 12
- *   years ago (no later step shares a tag or builds on them) weighs ×0.25.
+ * - An `after` match only through steps whose area the life left more than 10
+ *   years ago (no later step shares a tag or builds on them) weighs ×0.1.
  * No candidate: a year later; still none: the life ends early. Every grown
  * step carries 1–2 other candidates (`others`) for the gray lines. The same
  * `seed` grows the same life.

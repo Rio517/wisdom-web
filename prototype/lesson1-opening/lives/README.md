@@ -208,8 +208,8 @@ The gray lines at each new dot are other nodes that were possible there.
   Otherwise the next step still comes sooner (about half the usual gap), and a
   `within` match is never more than four years back.
 - **Old interests fade.** An `after` match only through steps the life left
-  more than 12 years ago (no later step shares a tag with them or builds on
-  them) counts a quarter as much. A dance class at 4 rarely leads to
+  more than 10 years ago (no later step shares a tag with them or builds on
+  them) counts a tenth as much. A dance class at 4 rarely leads to
   something at 18 unless dancing carried on in between.
 
 - **One run.** A grown life with no run yet (none before the fork) starts one
