@@ -585,11 +585,11 @@ ${extra}`;
   assert.match(verdicts, /spends: The choice's line says "gone"/);
 });
 
-test('the checker: a written life with no run is warned', () => {
+test('the checker: a written life with no run is an error', () => {
   const files = readStore(FIXTURE);
   files['baselines/nia.yaml'] = files['baselines/nia.yaml'].replace(/\n    run: appAgain/g, '');
   const result = check(loadStore(files));
-  assert.match(result.warnings.map(item => item.message).join('\n'), /No run: a written life has exactly one/);
+  assert.match(messages(result), /No run: a written life has exactly one/);
   // Without the run, two steps at 15 are no longer allowed.
   assert.match(messages(result), /appCrashes\) at 15 comes after age 15: ages must go up/);
 });
