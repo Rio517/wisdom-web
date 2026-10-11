@@ -40,11 +40,11 @@ steps:
   - node: wardShortStaffed
     age: 21
     run: busyWard
-    line: "Too few staff are on the ward, and shifts run long."
+    line: "Too few staff, and the days run long."
   - node: asksSeniorNurse
     age: 22
     run: busyWard
-    line: "He asks a senior nurse how to get through a hard shift."
+    line: "He asks a senior nurse how to cope when it gets busy."
     move: 1
   - node: movesToOtherWard
     age: 22
@@ -61,10 +61,10 @@ steps:
   - node: moveForWork
     age: 31
     move: 1
-    alts: [joinsHomeCare, asksForHelp]
+    alts: [joinsHomeCare]
     echoes: [nurseTraining]
   - node: careForAParent
-    age: 36
+    age: 35
     alts: [worksFewerHours, takesJobNearFamily]
     echoes: [parentIll, helpsAtHome]
   - node: teachesFirstAid

@@ -101,6 +101,7 @@
   kind: choice
   ages: [20, 70]
   after: [garden, farm]
+  unless: [farmerOffersLand]
   tags: [nature, garden, grower]
 
 - id: floodRuinsHarvest
@@ -342,11 +343,11 @@
 
 - id: plantsEarlyCrop
   label: Sows an early crop
-  line: "{name} sows beans and peas early in the spring."
+  line: "{name} sows beans and peas weeks early, as the days turn mild."
   if: "{name} had sown an early crop"
   kind: choice
   ages: [16, 55]
-  after: [nature]
+  after: [garden, grower, farm]
   tags: [nature, garden, grower]
   inRun: true
 
@@ -372,7 +373,7 @@
 
 - id: cafeBuysGreens
   label: A café buys greens
-  line: "A café cook buys a few bunches of greens each week. Luck!"
+  line: "A café cook starts buying from {him} every week. Luck!"
   kind: lucky
   ages: [16, 56]
   after: [growsHardyGreens]

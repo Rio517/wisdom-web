@@ -102,7 +102,9 @@
   line: "{name} fails a big exam. It hurts."
   kind: setback
   ages: [15, 22]
+  after: [exams, study]
   tags: [exams]
+  within: 2
   move: -2
   weight: 0.7
 
@@ -159,7 +161,8 @@
   if: "{name} had started working"
   kind: choice
   ages: [16, 30]
-  tags: [job]
+  unless: [workMove]
+  tags: [job, workMove]
 
 - id: travelsForAYear
   label: Travels for a year
@@ -203,7 +206,9 @@
   kind: choice
   ages: [24, 55]
   after: [job]
-  tags: [job]
+  unless: [workMove]
+  tags: [job, workMove]
+  within: 3
 
 - id: startsAFamily
   label: Starts a family
@@ -219,7 +224,7 @@
   label: Becomes a parent
   line: "{name} becomes a parent."
   kind: event
-  ages: [21, 44]
+  ages: [22, 44]
   unless: [parent]
   tags: [parent]
 
@@ -230,7 +235,9 @@
   kind: choice
   ages: [25, 60]
   after: [job]
-  tags: [study]
+  unless: [workMove]
+  tags: [study, workMove]
+  within: 3
 
 - id: takesBigProject
   label: Takes on a big project
@@ -239,17 +246,21 @@
   kind: choice
   ages: [24, 55]
   after: [job]
-  within: 2
+  unless: [workMove]
+  tags: [workMove]
+  within: 3
   weight: 0.7
 
 - id: takesJobNearFamily
   label: Takes a job nearby
-  line: "{name} takes a job closer to family."
+  line: "{name} takes a job in the town where {his} family lives."
   if: "{name} had taken a job closer to family"
   kind: choice
   ages: [24, 55]
   after: [job]
-  tags: [home, job]
+  unless: [workMove]
+  tags: [home, job, workMove]
+  within: 3
   weight: 0.6
 
 - id: leadsATeam
@@ -259,16 +270,21 @@
   kind: choice
   ages: [26, 60]
   after: [job]
-  within: 2
+  unless: [workMove]
+  tags: [workMove]
+  within: 3
   weight: 0.7
 
 - id: worksFewerHours
   label: Works fewer hours
-  line: "{name} works fewer hours to spend more time at home."
+  line: "{name} works fewer hours, for more time to rest and enjoy life."
   if: "{name} had worked fewer hours"
   kind: choice
   ages: [28, 65]
   after: [job]
+  unless: [workMove]
+  tags: [workMove]
+  within: 3
   weight: 0.6
 
 - id: learnsSomethingNew
@@ -280,9 +296,9 @@
   weight: 0.7
 
 - id: startsNewHobby
-  label: Starts a new hobby
-  line: "{name} starts a hobby just for fun."
-  if: "{name} had started a new hobby"
+  label: Starts pottery
+  line: "{name} starts making pottery on Sunday afternoons."
+  if: "{name} had started pottery"
   kind: choice
   ages: [20, 70]
   weight: 0.6
@@ -325,7 +341,9 @@
   line: "An old friend offers {him} a job."
   kind: lucky
   ages: [25, 60]
-  tags: [job]
+  after: [job]
+  unless: [workMove]
+  tags: [job, workMove]
   move: 2
   weight: 0.4
 
@@ -345,7 +363,7 @@
   kind: lucky
   ages: [5, 70]
   after: [setback]
-  within: 2
+  within: 1
   move: 1
   weight: 0.3
 
@@ -437,8 +455,8 @@
   line: "{name} moves back in with {his} family."
   if: "{name} had moved back home"
   kind: choice
-  ages: [18, 45]
-  after: [setback]
+  ages: [18, 30]
+  after: [moneyGetsTight, flatSold, jobEnds, labelDropsHim]
   tags: [home]
   within: 2
 

@@ -30,7 +30,7 @@
 
 - id: readNightly
   label: Reads every night
-  line: "{name} reads every night, sometimes under the covers with a torch."
+  line: "{name} sneaks a book under the covers, torch in hand."
   if: "{name} had read every night"
   kind: choice
   ages: [5, 10]
@@ -433,3 +433,12 @@
   after: [takesEditingCourse]
   tags: [words, editing, job]
   within: 1
+
+- id: takesHumanities
+  label: Takes the humanities
+  line: "{name} takes history, geography and languages."
+  if: "{name} had taken history, geography and languages"
+  kind: choice
+  ages: [14, 18]
+  tags: [words, humanities]
+  weight: 0.5

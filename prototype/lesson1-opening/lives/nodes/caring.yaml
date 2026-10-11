@@ -308,7 +308,7 @@
 
 - id: wardShortStaffed
   label: The ward runs short
-  line: "Too few staff are on the ward, and shifts run long."
+  line: "Too few staff, and the days run long."
   kind: setback
   ages: [18, 56]
   after: [startsBusyWard]
@@ -318,7 +318,7 @@
 
 - id: asksSeniorNurse
   label: Asks a senior nurse
-  line: "{name} asks a senior nurse how to get through a hard shift."
+  line: "{name} asks a senior nurse how to cope when it gets busy."
   if: "{name} had asked a senior nurse for advice"
   kind: choice
   ages: [18, 56]

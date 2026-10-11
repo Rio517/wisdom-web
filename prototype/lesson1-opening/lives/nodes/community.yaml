@@ -66,8 +66,9 @@
   if: "{name} had taught at a school"
   kind: choice
   ages: [22, 65]
-  after: [trainsToTeach, teaching]
+  after: [trainsToTeach, helpsInClassroom]
   tags: [community, teaching, job]
+  within: 3
 
 - id: volunteersLocally
   label: Volunteers locally
@@ -107,7 +108,7 @@
 
 - id: campaignsForLibrary
   label: Fights for the library
-  line: "{name} starts a campaign to save the town library."
+  line: "The town plans to close its library, so {name} starts a campaign."
   if: "{name} had campaigned to save the library"
   kind: choice
   ages: [25, 65]
@@ -207,7 +208,7 @@
   if: "{name} had joined the town council"
   kind: choice
   ages: [28, 65]
-  after: [campaign, volunteer, civic]
+  after: [campaign, civic]
   tags: [community, civic]
 
 - id: welcomesNeighbours

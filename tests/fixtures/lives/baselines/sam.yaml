@@ -42,7 +42,7 @@ steps:
     echoes: [radioPlay, ownSong]
   - node: goesOnTour
     age: 22
-    line: "He goes on a world tour. He's a rock star now."
+    line: "He goes on a world tour. Big crowds every night."
     alts: [staysHomeToWrite, savesTheMoney]
   - node: drinkingAndDrugs
     age: 24

@@ -64,7 +64,7 @@
   line: "{name} learns to plan where every pound goes."
   if: "{name} had learned to budget"
   kind: choice
-  ages: [16, 60]
+  ages: [14, 30]
   tags: [money, savings]
   weight: 0.7
 
@@ -73,7 +73,7 @@
   line: "{name} works on the till and gets to know the regulars."
   if: "{name} had worked in a shop"
   kind: choice
-  ages: [16, 60]
+  ages: [16, 30]
   tags: [money, job, shop]
   weight: 0.6
 
@@ -115,11 +115,11 @@
 
 - id: buysASmallHouse
   label: Buys a small house
-  line: "{name} buys a small house after years of saving."
+  line: "{name} buys a small house with money saved over the years."
   if: "{name} had bought a small house"
   kind: choice
   ages: [26, 60]
-  after: [savings, job]
+  after: [savings]
   tags: [money, home]
 
 - id: happyCustomer
@@ -211,12 +211,14 @@
 
 - id: takesSecondJob
   label: Takes a second job
-  line: "{name} takes a second job in the evenings."
+  line: "{name} takes a second job in the evenings, besides the first."
   if: "{name} had taken a second job"
   kind: choice
   ages: [20, 60]
   after: [job]
-  tags: [money, job]
+  unless: [workMove]
+  tags: [money, job, workMove]
+  within: 3
   weight: 0.6
 
 - id: deliveryWork
@@ -235,6 +237,7 @@
   ages: [24, 55]
   after: [sport]
   tags: [money, owner, business, shop]
+  within: 3
 
 - id: raisesMoney
   label: Raises money

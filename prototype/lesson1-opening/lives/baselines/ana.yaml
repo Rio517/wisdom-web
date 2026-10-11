@@ -26,6 +26,7 @@ steps:
     echoes: [cafeJob]
   - node: trainsAsBaker
     age: 18
+    line: "{name} learns the trade and starts work before dawn."
     alts: [trainChef, goesToUniversity]
     echoes: [chefOffer]
   - node: triesSourdough
@@ -67,10 +68,10 @@ steps:
   - node: caters
     age: 38
     label: Cooks for weddings
-    line: "She and her partner bake for weddings and parties too."
+    line: "The two of them bake for weddings and parties too."
     echoes: [openBakery]
   - node: teachesCooking
     age: 41
-    line: "She teaches children to bake, flour and all."
+    line: "She teaches children to knead dough, flour and all."
     move: 1
     echoes: [helpBake]

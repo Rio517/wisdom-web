@@ -165,6 +165,7 @@
   ages: [11, 25]
   after: [team, tryout]
   tags: [sport]
+  within: 3
   move: -1
 
 - id: asksCoachWhy
@@ -193,7 +194,9 @@
   kind: setback
   ages: [13, 32]
   after: [tryout, academy, pro, team]
+  unless: [takesBreakFromSport]
   tags: [sport, injury]
+  within: 3
   move: -3
 
 - id: restsAndRebuilds
@@ -264,10 +267,11 @@
 
 - id: joinsWeekendLeague
   label: Joins a weekend league
-  line: "{name} joins a friendly weekend league."
+  line: "{name} joins a friendly weekend football league."
   if: "{name} had joined a weekend league"
   kind: choice
   ages: [20, 50]
+  after: [team, football]
   tags: [sport, team]
 
 - id: trainsForMarathon

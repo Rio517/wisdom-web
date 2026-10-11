@@ -22,7 +22,7 @@ steps:
     age: 16
     run: newBand
     label: Records a song
-    line: "The band records its first song."
+    line: "The three of them record a first song."
     alts: [playGigs, partTimeJob]
   - node: bandSplits
     age: 16
@@ -44,7 +44,7 @@ steps:
     echoes: [radioPlay, ownSong]
   - node: goesOnTour
     age: 22
-    line: "He goes on a world tour. He's a rock star now."
+    line: "He goes on a world tour. Big crowds every night."
     alts: [staysHomeToWrite, savesTheMoney]
   - node: drinkingAndDrugs
     age: 24
@@ -64,7 +64,7 @@ steps:
     age: 30
     label: Teaches guitar
     alts: [joinsAdultChoir, deliveryWork]
-    line: "He teaches guitar. New songs."
+    line: "He teaches guitar and writes new songs."
     move: 1
     echoes: [guitar]
   - node: becomesParent

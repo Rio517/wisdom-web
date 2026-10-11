@@ -10,6 +10,7 @@ steps:
   - { node: born, age: 0 }
   - node: puzzlesAndBlocks
     age: 4
+    line: "Building blocks and jigsaws fill the floor at home."
     alts: [footballClub, singsAtHome]
   - node: mathsClub
     age: 8
@@ -17,6 +18,7 @@ steps:
     echoes: [puzzlesAndBlocks]
   - node: mathsTournament
     age: 11
+    line: "{name} enters a contest against other schools."
     alts: [roboticsClub, secondLanguage]
     echoes: [mathsClub]
   - node: teacherSpotsTalent
@@ -24,12 +26,12 @@ steps:
     echoes: [mathsTournament]
   - node: scienceSubjects
     age: 15
-    alts: [debateTeam, dramaClub]
+    alts: [takesHumanities, takesArtSubjects]
     echoes: [teacherSpotsTalent]
   - node: takesAdvancedMaths
     age: 17
     run: examNewCourse
-    alts: [startsWorking, learnsToDrive]
+    alts: [studyScience, studiesEnvironment]
     echoes: [scienceSubjects]
   - node: failsAnExam
     age: 18
@@ -37,21 +39,21 @@ steps:
   - node: asksTutorForIdeas
     age: 18
     run: examNewCourse
-    alts: [retakesTheExam, takesAYearOff]
+    alts: [retakesTheExam, worksWithClassmate]
   - node: studiesStatistics
     age: 19
     run: examNewCourse
     label: Switches to statistics
     line: "She switches to statistics, the maths of what is likely."
-    alts: [retakesTheExam, startsWorking]
+    alts: [retakesTheExam, partTimeJob]
     echoes: [mathsClub]
   - node: worksWithData
     age: 23
     move: 1
-    alts: [measuresRiverWater, startsWorking]
+    alts: [measuresRiverWater, labTechnician]
     echoes: [studiesStatistics]
   - node: codingCourse
-    age: 28
+    age: 27
     alts: [mentorsSomeone, changesCareers]
     echoes: [worksWithData]
   - node: becomesParent

@@ -95,6 +95,7 @@
   ages: [17, 24]
   after: [artSubject, drawsEveryDay, artClub]
   tags: [art, portfolio]
+  inRun: true
 
 - id: getsArtSchoolPlace
   label: Gets into art school
@@ -373,3 +374,12 @@
   tags: [art, show]
   within: 1
   move: 1
+
+- id: takesArtSubjects
+  label: Takes art and design
+  line: "{name} takes art and design as school subjects."
+  if: "{name} had taken art and design"
+  kind: choice
+  ages: [14, 18]
+  tags: [art, artSubjects]
+  weight: 0.5

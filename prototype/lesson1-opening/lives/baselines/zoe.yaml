@@ -32,15 +32,16 @@ steps:
   - node: appliesToArtSchool
     age: 18
     run: artSchoolNewRoute
-    alts: [startsWorking, travelsForAYear]
+    alts: [goesToUniversity, travelsForAYear]
     echoes: [focusOnArt]
   - node: artSchoolSaysNo
     age: 19
+    line: "The answer comes back: no. It stings."
     run: artSchoolNewRoute
   - node: eveningPrintClass
     age: 19
     run: artSchoolNewRoute
-    alts: [keepsMakingArt, joinsSharedStudio]
+    alts: [buildsNewPortfolio]
   - node: worksInPrintShop
     age: 20
     run: artSchoolNewRoute

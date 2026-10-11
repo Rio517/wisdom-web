@@ -193,7 +193,7 @@
 
 - id: businessFails
   label: The business fails
-  line: "The business runs out of money and closes."
+  line: "Customers stop coming, and the business closes."
   kind: setback
   ages: [22, 55]
   after: [owner]
@@ -202,9 +202,9 @@
   move: -3
 
 - id: newIdea
-  label: Tries a new idea
-  line: "{name} tries again with a new idea."
-  if: "{name} had tried again with a new idea"
+  label: Starts smaller
+  line: "{name} tries again with a smaller business, built on customer requests."
+  if: "{name} had started a smaller business"
   kind: choice
   ages: [22, 58]
   after: [businessFails]
@@ -321,8 +321,9 @@
   if: "{name} had built a prototype"
   kind: choice
   ages: [12, 45]
-  after: [making]
+  after: [roboticsClub, woodwork, fixing, takesThingsApart, restoresFurniture, joinsMakerspace]
   tags: [making, prototype]
+  within: 3
   inRun: true
 
 - id: prototypeBreaks

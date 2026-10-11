@@ -17,6 +17,7 @@ steps:
     echoes: [footballClub]
   - node: trainsHard
     age: 11
+    line: "{name} trains at dawn, four mornings a week."
     alts: [takesUpRunning, kitchenExperiments]
     echoes: [schoolTeam]
   - node: scoutWatches
@@ -44,11 +45,10 @@ steps:
     run: backFromInjury
     line: "A physio helps her rebuild, one small exercise at a time."
     move: 1
-    alts: [switchesSport, takesBreakFromSport]
   - node: playsWholeGame
     age: 19
     run: backFromInjury
-    line: "She takes part in a whole game again, to the last whistle."
+    line: "She plays a whole game for the squad, to the last whistle."
     echoes: [restsAndRebuilds]
   - node: coachKids
     age: 20
@@ -56,7 +56,7 @@ steps:
     echoes: [footballClub]
   - node: coachingCourse
     age: 23
-    alts: [becomesPersonalTrainer, startsWorking]
+    alts: [becomesPersonalTrainer, shopAssistant]
     echoes: [coachKids]
   - node: coachesAClub
     age: 27
@@ -67,8 +67,8 @@ steps:
     age: 32
   - node: trainsForMarathon
     age: 35
-    line: "She trains for a marathon, knee and all."
-    alts: [swimsEveryMorning, learnsSomethingNew]
+    line: "She trains for a marathon, slowly and carefully."
+    alts: [swimsEveryMorning, startsNewHobby]
     echoes: [restsAndRebuilds]
   - node: mentorsSomeone
     age: 41

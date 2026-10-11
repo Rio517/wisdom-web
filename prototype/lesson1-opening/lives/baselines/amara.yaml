@@ -28,7 +28,7 @@ steps:
     echoes: [schoolPaper]
   - node: studyLanguages
     age: 18
-    alts: [travelsForAYear, startsWorking]
+    alts: [travelsForAYear, bookshopJob]
     echoes: [exchangeTrip]
   - node: interpreter
     age: 23
@@ -53,20 +53,20 @@ steps:
     age: 29
     run: bookSmallPress
     move: 1
-    alts: [keepsWriting, takesAYearOff]
+    alts: [rewritesTheBook]
   - node: rewritesTheBook
     age: 30
     run: bookSmallPress
-    alts: [selfPublishes, startsABlog]
     echoes: [writesABook, joinsWritingGroup]
   - node: smallPressYes
     age: 30
     run: bookSmallPress
+    line: "A small press says yes and prints a few hundred copies."
     echoes: [rewritesTheBook]
   - node: moveAbroad
     age: 33
     line: "She moves to the country she visited at fourteen."
-    alts: [takesJobNearFamily, changesCareers]
+    alts: [staysNearFamily, movesToNewCity]
     echoes: [exchangeTrip]
   - node: bookDeal
     age: 38
@@ -75,5 +75,5 @@ steps:
     echoes: [smallPressYes, writesABook]
   - node: joinsBookGroup
     age: 42
-    line: "She joins a book group and never mentions her own."
+    line: "She joins a reading group and never mentions her own."
     echoes: [readNightly]

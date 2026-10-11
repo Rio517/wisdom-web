@@ -79,11 +79,12 @@
 
 - id: ankleInjury
   label: Hurts an ankle
-  line: "{name} hurts an ankle and cannot dance for months."
+  line: "{name} hurts an ankle and must rest for months."
   kind: setback
   ages: [13, 40]
   after: [dance]
   tags: [stage, injury]
+  within: 3
   move: -2
 
 - id: teachesDance
@@ -97,7 +98,7 @@
 
 - id: gentleDanceClass
   label: Leads a gentle class
-  line: "{name} leads a gentle dance class while {his} ankle heals."
+  line: "{name} leads a gentle dance class while {his} injury heals."
   if: "{name} had led a gentle dance class"
   kind: choice
   ages: [18, 65]
@@ -127,11 +128,12 @@
 
 - id: showCloses
   label: The show closes early
-  line: "The show closes early, and the cast goes home."
+  line: "{his} show closes early, and the cast goes home."
   kind: setback
   ages: [18, 45]
   after: [theatre]
   tags: [stage]
+  within: 2
   move: -2
 
 - id: auditionsAgain
@@ -218,7 +220,7 @@
 
 - id: dancesSocially
   label: Takes up salsa
-  line: "{name} takes up salsa dancing on Friday nights."
+  line: "{name} takes up salsa dancing every week."
   if: "{name} had taken up salsa"
   kind: choice
   ages: [20, 70]

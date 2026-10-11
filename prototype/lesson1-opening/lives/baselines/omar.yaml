@@ -11,6 +11,7 @@ steps:
   - { node: born, age: 0 }
   - node: familyFixesThings
     age: 5
+    line: "{his} mum mends things around the house, and {name} holds the screwdriver."
     alts: [buildsDens, timeWithGrandparents]
   - node: fixesABike
     age: 11
@@ -43,11 +44,12 @@ steps:
     age: 23
   - node: borrowsTools
     age: 24
+    line: "Friends in the trade lend {him} theirs until new ones come."
     move: 1
     alts: [replacesTools]
   - node: ownBusiness
     age: 26
-    alts: [takesJobNearFamily, movesToNewCity]
+    alts: [sellsOnline, movesToNewCity]
     echoes: [passesTradeTest, borrowsTools]
   - node: bigCustomer
     age: 30
@@ -57,6 +59,8 @@ steps:
     age: 31
   - node: businessFails
     age: 34
+    line: "The big orders stop, and the business runs out of money."
+    echoes: [bigCustomer]
   - node: asksForHelp
     age: 35
     line: "He asks an old customer for help finding work."

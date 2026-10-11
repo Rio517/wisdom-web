@@ -3,7 +3,7 @@
 
 - id: helpBake
   label: Helps to bake
-  line: "{name} helps {his} dad bake and gets flour on {his} nose."
+  line: "{name} stirs dough with {his} dad and gets flour on {his} nose."
   if: "{his} family had let {him} help to bake"
   kind: choice
   by: family
@@ -28,10 +28,11 @@
 
 - id: learnsFamilyRecipes
   label: Learns family recipes
-  line: "{his} grandad teaches {him} the family recipes."
+  line: "An older relative teaches {him} the family recipes."
   if: "{name} had learned the family recipes"
   kind: choice
   ages: [9, 15]
+  after: [timeWithGrandparents, cooking, baking]
   tags: [food, cooking, recipes]
 
 - id: lemonadeStall
@@ -164,7 +165,7 @@
 
 - id: ovenBreaks
   label: The oven breaks
-  line: "The big oven breaks the day before a large order."
+  line: "The big oven breaks on a busy morning."
   kind: setback
   ages: [22, 60]
   after: [baker, kitchen]
@@ -257,13 +258,13 @@
 
 # Run: cookOff (a contest, a cake that sinks, practice, a ribbon).
 - id: entersCookOff
-  label: Enters a cook-off
-  line: "{name} enters a cooking contest at the town hall."
-  if: "{name} had entered a cooking contest"
+  label: "Enters a bake-off"
+  line: "{name} enters a baking contest at the town hall."
+  if: "{name} had entered a baking contest"
   kind: choice
   ages: [10, 50]
   after: [food]
-  tags: [food, contest]
+  tags: [food, bakingContest]
   weight: 0.2
   inRun: true
 
@@ -272,7 +273,7 @@
   line: "{his} cake sinks in the oven, and the judges move on."
   kind: setback
   ages: [10, 50]
-  after: [contest]
+  after: [bakingContest]
   tags: [food]
   within: 1
   move: -1
