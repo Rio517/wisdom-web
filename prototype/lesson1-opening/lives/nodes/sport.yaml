@@ -173,7 +173,7 @@
   if: "{name} had asked the coach what to work on"
   kind: choice
   ages: [11, 30]
-  after: [leftOutOfSquad]
+  after: [leftOutOfSquad, notOnTheList]
   tags: [sport, helped]
   within: 2
 
@@ -304,3 +304,104 @@
   ages: [20, 60]
   after: [physio]
   tags: [sport, job]
+
+# Runs: trying again (see ../runs/sport.yaml)
+- id: squadTrials
+  label: Goes to squad trials
+  line: "{name} goes to trials for a place in a bigger squad."
+  if: "{name} had gone to squad trials"
+  kind: choice
+  ages: [13, 30]
+  after: [sport]
+  tags: [sport, tryout]
+  inRun: true
+
+- id: playsWholeGame
+  label: Plays a whole game
+  line: "{name} takes part in a whole game again."
+  kind: event
+  ages: [13, 50]
+  after: [rebuilt]
+  tags: [sport]
+  within: 1
+  move: 1
+
+- id: triesForSide
+  label: Goes to a trial day
+  line: "{name} goes to a club's trial day, hoping for a place."
+  if: "{name} had gone to a club's trial day"
+  kind: choice
+  ages: [12, 45]
+  after: [sport]
+  tags: [sport, tryout, trialDay]
+  inRun: true
+
+- id: notOnTheList
+  label: Not on the list
+  line: "The coach reads the list, and {name} is not on it."
+  kind: setback
+  ages: [12, 50]
+  after: [trialDay]
+  tags: [sport]
+  within: 1
+  move: -1
+
+- id: trainsExtraEvening
+  label: Adds extra training
+  line: "{name} adds an extra evening of training each week."
+  if: "{name} had added an extra evening of training"
+  kind: choice
+  ages: [12, 50]
+  after: [asksCoachWhy]
+  tags: [sport, training]
+  within: 1
+
+- id: reserveSpot
+  label: A reserve-team place
+  line: "A spot opens on the reserve team, and {name} takes it."
+  kind: event
+  ages: [12, 55]
+  after: [trainsExtraEvening]
+  tags: [sport, team]
+  within: 1
+  move: 1
+
+- id: playsOutWide
+  label: Plays out wide
+  line: "{name} plays out wide, running up and down the side."
+  if: "{name} had played out wide"
+  kind: choice
+  ages: [11, 40]
+  after: [team, football]
+  tags: [sport, position]
+  inRun: true
+
+- id: newPlayerArrives
+  label: A new player joins
+  line: "A new player joins, and the coach moves {him} to the bench."
+  kind: setback
+  ages: [11, 45]
+  after: [position]
+  tags: [sport]
+  within: 1
+  move: -1
+
+- id: learnsNewPosition
+  label: Learns a new position
+  line: "{name} asks the coach to teach {him} a different position."
+  if: "{name} had asked to learn a different position"
+  kind: choice
+  ages: [11, 50]
+  after: [newPlayerArrives]
+  tags: [sport, helped, position]
+  within: 1
+
+- id: startsInNewRole
+  label: Starts in a new role
+  line: "The coach starts {him} in the new position."
+  kind: event
+  ages: [11, 50]
+  after: [learnsNewPosition]
+  tags: [sport]
+  within: 1
+  move: 1

@@ -1,0 +1,19 @@
+# Art runs: a short burst of trying again (the README's "Runs").
+
+# Win: art school says no, a new portfolio, a second application, a place.
+- id: artSchoolSecondTry
+  label: Applies to art school again
+  steps: [appliesToArtSchool, artSchoolSaysNo, buildsNewPortfolio, appliesAgain, artPlaceSecondTry]
+  span: 2
+
+# Change of course: art school says no, a printmaking class, a print shop job.
+- id: artSchoolNewRoute
+  label: Finds a new art route
+  steps: [appliesToArtSchool, artSchoolSaysNo, eveningPrintClass, worksInPrintShop]
+  span: 2
+
+# Partial win: rain spoils the work, a fresh start, a small show.
+- id: firstShow
+  label: Rebuilds for a first show
+  steps: [plansFirstShow, workRuined, startsAgain, smallShowOpens]
+  span: 2

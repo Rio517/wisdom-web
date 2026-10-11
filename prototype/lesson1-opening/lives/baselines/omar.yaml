@@ -20,13 +20,25 @@ steps:
     age: 17
     alts: [goesToUniversity, studiesHardForExams]
     echoes: [fixesABike]
-  - node: electrician
-    age: 20
+  - node: sitsTradeTest
+    age: 19
+    run: tradeTest
+    line: "He sits the electrician's test."
     alts: [plumber, mechanic]
     echoes: [startsApprenticeship]
-  - node: mentorAppears
-    age: 21
-    line: "An older electrician takes him under her wing. Luck!"
+  - node: failsTradeTest
+    age: 19
+    run: tradeTest
+    line: "He misses the pass mark by a little."
+  - node: practisesWithPro
+    age: 20
+    run: tradeTest
+    line: "He practises on weekends with an older electrician."
+  - node: passesTradeTest
+    age: 20
+    run: tradeTest
+    line: "He sits the test again and passes."
+    echoes: [practisesWithPro]
   - node: lostTools
     age: 23
   - node: borrowsTools
@@ -36,7 +48,7 @@ steps:
   - node: ownBusiness
     age: 26
     alts: [leadsATeam, movesToNewCity]
-    echoes: [electrician, borrowsTools]
+    echoes: [passesTradeTest, borrowsTools]
   - node: bigCustomer
     age: 30
     move: 2
@@ -53,7 +65,7 @@ steps:
   - node: trainsApprentices
     age: 40
     move: 1
-    echoes: [startsApprenticeship, mentorAppears]
+    echoes: [startsApprenticeship, practisesWithPro]
   - node: worksFewerHours
     age: 43
     line: "He works fewer hours. His child holds the screwdriver now."

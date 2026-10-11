@@ -1,0 +1,17 @@
+# Runs any life can reach (jobs, driving, homes): a general run for lives whose
+# own area has none that fits.
+
+- id: jobSearch
+  label: Looks for work, gets a job
+  steps: [looksForAJob, applicationsTurnedDown, friendReadsApplications, getsTheJob]
+  span: 2
+
+- id: learnsToDriveRun
+  label: Learns to drive, second try
+  steps: [startsDrivingLessons, failsDrivingTest, moreDrivingLessons, passesDrivingTest]
+  span: 2
+
+- id: firstFlat
+  label: A first flat, then a small one
+  steps: [appliesForAFlat, flatFallsThrough, staysWithFriend, findsSmallerPlace]
+  span: 2

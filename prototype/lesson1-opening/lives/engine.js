@@ -100,6 +100,7 @@ function normalNode(raw, file, index) {
     move: Number.isFinite(object.move) ? object.move : 0,
     by: object.by ?? null,
     weight: Number.isFinite(object.weight) ? object.weight : 1,
+    inRun: object.inRun === true, // happens only as a step of a run, never on its own in a grown life
     file,
     index,
     raw,
@@ -420,7 +421,7 @@ function historyPath() {
 
 /** One or two other things (not luck or setbacks) that could have happened at `age` instead of `node`. */
 function othersAt(store, node, path, age, random) {
-  const pool = (store.byAge[age] ?? []).filter(other => other !== node && !isSurprise(other) && allows(other, path, age));
+  const pool = (store.byAge[age] ?? []).filter(other => other !== node && !other.inRun && !isSurprise(other) && allows(other, path, age));
   const others = [];
   const want = random() < 0.5 ? 2 : 1;
   while (others.length < want && pool.length) {
@@ -656,7 +657,7 @@ export function grow(store, { baseline, forkIndex, alt, seed = '' }) {
     const quiet = age > end - GROW.quietYears;
     let all = [];
     const pool = store.byAge[age] ?? [];
-    for (let i = 0; i < pool.length; i += 1) if (allows(pool[i], path, age) && !(quiet && isSurprise(pool[i]))) all.push(pool[i]);
+    for (let i = 0; i < pool.length; i += 1) if (!pool[i].inRun && allows(pool[i], path, age) && !(quiet && isSurprise(pool[i]))) all.push(pool[i]);
     if (!all.length) return null;
     let chosen = null;
     let couldBuild = false;
@@ -853,6 +854,8 @@ export function check(store, { lives = 0 } = {}) {
     if (node.within && !node.after.length) error(where, '"within" needs an "after" list.');
     if (raw.weight !== undefined && !(Number.isFinite(raw.weight) && raw.weight > 0)) error(where, 'weight must be a number above 0.');
     if (node.by && node.by !== 'family') warn(where, `by: "${node.by}" (only "family" is used).`);
+    if (raw.inRun !== undefined && typeof raw.inRun !== 'boolean') error(where, 'inRun must be true or false.');
+    if (node.inRun && !store.runList.some(run => run.steps.includes(node.id))) error(where, 'inRun: true, but no run has this node as a step.');
     for (const field of ['after', 'needs', 'unless', 'drops']) {
       for (const name of node[field]) if (!known(name)) error(where, `Unknown name "${name}" in ${field}.`);
     }
@@ -959,6 +962,7 @@ export function check(store, { lives = 0 } = {}) {
         if (found) error(at, `The ${field} says "${found[0]}": name drinking or drugs only in general words.`);
       }
       if (step.run !== null && !store.runs.has(step.run)) error(at, `Unknown run "${step.run}".`);
+      if (node.inRun && !step.run) error(at, `${node.id} happens only inside a run (inRun): mark the run's steps, or use another node.`);
       if (step.y !== undefined && step.y !== null && !(Number.isFinite(step.y) && step.y >= 0 && step.y <= 1)) error(at, 'y must be from 0 (top) to 1 (bottom).');
       for (const name of step.echoes ?? []) {
         if (!path.historic.has(name)) error(at, `echoes "${name}", which no earlier step gives.`);
@@ -985,7 +989,7 @@ export function check(store, { lives = 0 } = {}) {
     });
     // Its run: exactly one, its steps in order and together, within its span.
     const runIds = [...new Set(baseline.steps.map(step => step.run).filter(Boolean))];
-    if (!runIds.length) warn(where, 'No run: a written life has exactly one (mark its steps with run: <id>).');
+    if (!runIds.length) error(where, 'No run: a written life has exactly one (mark its steps with run: <id>).');
     if (runIds.length > 1) error(where, `${runIds.length} runs (${runIds.join(', ')}): a written life has exactly one.`);
     for (const id of runIds) {
       const run = store.runs.get(id);

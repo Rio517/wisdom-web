@@ -272,3 +272,105 @@
   after: [civic, volunteer]
   needs: [drama]
   tags: [stage, theatre, community]
+
+# Runs: trying again (see ../runs/stage.yaml)
+- id: auditionsForPart
+  label: Auditions for a part
+  line: "{name} auditions for a part in a new show."
+  if: "{name} had auditioned for a part"
+  kind: choice
+  ages: [12, 45]
+  after: [stage]
+  tags: [stage, castingCall]
+  inRun: true
+
+- id: notCast
+  label: Another actor is cast
+  line: "The director gives the part to someone else."
+  kind: setback
+  ages: [12, 50]
+  after: [castingCall]
+  tags: [stage]
+  within: 1
+  move: -1
+
+- id: takesActingClasses
+  label: Takes acting classes
+  line: "{name} signs up for acting classes on Thursday evenings."
+  if: "{name} had signed up for acting classes"
+  kind: choice
+  ages: [12, 55]
+  after: [notCast]
+  tags: [stage, drama, class]
+  within: 1
+
+- id: triesADifferentShow
+  label: Tries a different show
+  line: "{name} goes back to audition for a different show."
+  if: "{name} had auditioned for a different show"
+  kind: choice
+  ages: [12, 55]
+  after: [takesActingClasses]
+  tags: [stage, castingCall]
+  within: 1
+
+- id: chorusPlace
+  label: A place in the chorus
+  line: "A director offers {him} a place in the chorus."
+  kind: event
+  ages: [12, 55]
+  after: [triesADifferentShow]
+  tags: [stage, theatre]
+  within: 1
+  move: 1
+
+- id: joinsTheCast
+  label: Joins a show's cast
+  line: "{name} joins the cast of a new show."
+  if: "{name} had joined a show's cast"
+  kind: choice
+  ages: [12, 50]
+  after: [stage]
+  tags: [stage, theatre, cast]
+  inRun: true
+
+- id: openingNightTrouble
+  label: Opening night trouble
+  line: "On opening night, the lights go out in the first scene."
+  kind: setback
+  ages: [12, 60]
+  after: [cast]
+  tags: [stage]
+  within: 1
+  move: -1
+
+- id: rehearsesAgain
+  label: Rehearses again
+  line: "{name} and the cast rehearse the scene again and again."
+  if: "{name} had rehearsed the scene again"
+  kind: choice
+  ages: [12, 60]
+  after: [openingNightTrouble]
+  tags: [stage, drama]
+  within: 1
+
+- id: showRunsSmoothly
+  label: The show runs smoothly
+  line: "The next night, the whole show runs through, and the hall claps."
+  kind: event
+  ages: [12, 60]
+  after: [rehearsesAgain]
+  tags: [stage]
+  within: 1
+  move: 1
+
+- id: triesForDanceCompany
+  label: Tries a dance company
+  line: "{name} tries for a place in a youth dance company."
+  if: "{name} had tried for a place in a dance company"
+  kind: choice
+  ages: [14, 30]
+  after: [dance]
+  tags: [stage, dance]
+  inRun: true
+

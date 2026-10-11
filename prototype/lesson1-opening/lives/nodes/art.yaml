@@ -226,7 +226,7 @@
 
 - id: startsAgain
   label: Starts over
-  line: "{name} starts again from scratch, bolder this time."
+  line: "{name} starts the work again from scratch."
   if: "{name} had started the work again"
   kind: choice
   ages: [18, 60]
@@ -246,8 +246,8 @@
 
 - id: keepsMakingArt
   label: Keeps making art
-  line: "{name} keeps making art at the kitchen table anyway."
-  if: "{name} had kept making art anyway"
+  line: "{name} keeps making art at the kitchen table."
+  if: "{name} had kept making art"
   kind: choice
   ages: [17, 30]
   after: [artSchoolSaysNo]
@@ -309,3 +309,67 @@
   ages: [18, 60]
   after: [design, websites]
   tags: [art, job]
+
+# Runs: art school a second time, a new route after a no, and a first show.
+# Their steps are listed in ../runs/art.yaml.
+
+- id: buildsNewPortfolio
+  label: Builds a new portfolio
+  line: "{name} joins a class to build a new portfolio with a teacher."
+  if: "{name} had built a new portfolio"
+  kind: choice
+  ages: [17, 27]
+  after: [artSchoolSaysNo]
+  tags: [art, drawing, study, helped]
+  within: 1
+
+- id: appliesAgain
+  label: Applies a second time
+  line: "{name} sends the new drawings to an art school."
+  if: "{name} had applied to art school a second time"
+  kind: choice
+  ages: [18, 28]
+  after: [buildsNewPortfolio]
+  tags: [art]
+  within: 1
+
+- id: artPlaceSecondTry
+  label: Art school says yes
+  line: "An art school offers {him} a place."
+  kind: event
+  ages: [18, 29]
+  after: [appliesAgain]
+  tags: [art, study]
+  within: 1
+  move: 2
+
+- id: eveningPrintClass
+  label: Takes a print class
+  line: "{name} takes an evening class in printmaking."
+  if: "{name} had taken a printmaking class"
+  kind: choice
+  ages: [17, 40]
+  after: [artSchoolSaysNo]
+  tags: [art, printmaking, study]
+  within: 1
+
+- id: plansFirstShow
+  label: Plans a first show
+  line: "{name} plans a first show and frames every piece."
+  if: "{name} had planned a first show"
+  kind: choice
+  ages: [15, 60]
+  after: [drawing, painting, crafts, photography]
+  unless: [workRuined]
+  tags: [art, show]
+  inRun: true
+
+- id: smallShowOpens
+  label: A library hangs a show
+  line: "The town library hangs a small show of the new work."
+  kind: event
+  ages: [15, 62]
+  after: [startsAgain]
+  tags: [art, show]
+  within: 1
+  move: 1

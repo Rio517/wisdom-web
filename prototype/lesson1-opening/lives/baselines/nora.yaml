@@ -31,13 +31,25 @@ steps:
     age: 16
     line: "She wins a medal at the regional games."
     echoes: [trainsHard]
+  - node: squadTrials
+    age: 17
+    run: backFromInjury
+    alts: [captainsTheTeam, takesBreakFromSport]
+    echoes: [winsRegionalMedal, youthAcademy]
   - node: kneeInjury
     age: 17
+    run: backFromInjury
   - node: restsAndRebuilds
     age: 18
+    run: backFromInjury
     line: "A physio helps her rebuild, one small exercise at a time."
     move: 1
     alts: [switchesSport, takesBreakFromSport]
+  - node: playsWholeGame
+    age: 19
+    run: backFromInjury
+    line: "She takes part in a whole game again, to the last whistle."
+    echoes: [restsAndRebuilds]
   - node: coachKids
     age: 20
     alts: [physio, goesToUniversity]

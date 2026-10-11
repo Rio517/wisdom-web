@@ -287,3 +287,95 @@
   ages: [22, 60]
   after: [garden, farm, cooking]
   tags: [nature, job]
+
+# Run steps (see runs/nature.yaml): seeds that fade and are planted again,
+# and an early crop caught by frost.
+- id: sowsSeedlings
+  label: Sows seeds indoors
+  line: "{name} sows tomato seeds in pots on the windowsill."
+  if: "{name} had sown seeds indoors"
+  kind: choice
+  ages: [9, 45]
+  after: [nature]
+  tags: [nature, garden, seedlings]
+  inRun: true
+
+- id: seedlingsFade
+  label: The seedlings flop
+  line: "The windowsill gets little sun, and the seedlings flop over."
+  kind: setback
+  ages: [9, 46]
+  after: [sowsSeedlings]
+  tags: [nature]
+  within: 1
+  move: -1
+
+- id: asksOldGardener
+  label: Asks an old gardener
+  line: "{name} asks an old gardener down the road for advice."
+  if: "{name} had asked an old gardener for advice"
+  kind: choice
+  ages: [9, 47]
+  after: [seedlingsFade]
+  tags: [nature, helped]
+  within: 1
+
+- id: replantsSeedlings
+  label: Plants the seeds again
+  line: "{name} sows fresh seeds in a sunny spot."
+  if: "{name} had sown the seeds again"
+  kind: choice
+  ages: [9, 47]
+  after: [asksOldGardener]
+  tags: [nature, garden]
+  within: 1
+
+- id: strongShoots
+  label: Strong shoots come up
+  line: "Green shoots push up, short and sturdy."
+  kind: event
+  ages: [9, 48]
+  after: [replantsSeedlings]
+  tags: [nature, garden, grower]
+  within: 1
+  move: 1
+
+- id: plantsEarlyCrop
+  label: Sows an early crop
+  line: "{name} sows beans and peas early in the spring."
+  if: "{name} had sown an early crop"
+  kind: choice
+  ages: [16, 55]
+  after: [nature]
+  tags: [nature, garden, grower]
+  inRun: true
+
+- id: lateFrost
+  label: A late frost
+  line: "A hard frost in late spring blackens the young plants."
+  kind: setback
+  ages: [16, 56]
+  after: [plantsEarlyCrop]
+  tags: [nature]
+  within: 1
+  move: -1
+
+- id: growsHardyGreens
+  label: Grows hardy greens
+  line: "{name} switches to leafy greens that cope with cold nights."
+  if: "{name} had switched to hardy greens"
+  kind: choice
+  ages: [16, 56]
+  after: [lateFrost]
+  tags: [nature, garden]
+  within: 1
+
+- id: cafeBuysGreens
+  label: A café buys greens
+  line: "A café cook buys a few bunches of greens each week. Luck!"
+  kind: lucky
+  ages: [16, 56]
+  after: [growsHardyGreens]
+  tags: [nature, earns]
+  within: 1
+  move: 1

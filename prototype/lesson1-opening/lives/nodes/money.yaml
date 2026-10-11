@@ -244,3 +244,142 @@
   ages: [20, 65]
   after: [volunteer]
   tags: [money, community]
+
+# Run: shopToStall (a little shop, road works, a market table, regulars).
+- id: rentsLittleShop
+  label: Rents a little shop
+  line: "{name} rents a little shop and fills the shelves."
+  if: "{name} had rented a little shop"
+  kind: choice
+  ages: [20, 55]
+  after: [money]
+  unless: [owner]
+  tags: [money, owner, business, shop]
+  weight: 0.2
+  inRun: true
+
+- id: shopCloses
+  label: The shop closes
+  line: "Road works block the street for months, and the shop closes."
+  kind: setback
+  ages: [20, 55]
+  after: [rentsLittleShop]
+  tags: [money]
+  drops: [shop, owner]
+  within: 1
+  move: -2
+
+- id: sellsAtMarket
+  label: Takes a market table
+  line: "{name} takes a table at the Saturday market."
+  if: "{name} had taken a market table"
+  kind: choice
+  ages: [20, 60]
+  after: [shopCloses]
+  tags: [money, market]
+  within: 1
+
+- id: marketRegulars
+  label: Regulars come back
+  line: "A few regular customers visit the table every Saturday."
+  kind: event
+  ages: [20, 62]
+  after: [sellsAtMarket]
+  tags: [money, owner]
+  within: 1
+  move: 1
+
+# Run: firstIdea (a first business idea, unsold, a question, a new offer).
+- id: triesFirstIdea
+  label: Tries a first idea
+  line: "{name} makes a batch of things to sell to neighbours."
+  if: "{name} had tried a first business idea"
+  kind: choice
+  ages: [14, 50]
+  after: [money]
+  tags: [money, idea]
+  weight: 0.2
+  inRun: true
+
+- id: batchStaysUnsold
+  label: The batch stays unsold
+  line: "Only a few things sell, and the rest stay on the shelf."
+  kind: setback
+  ages: [14, 50]
+  after: [idea]
+  tags: [money]
+  within: 1
+  move: -1
+
+- id: asksWhatPeopleWant
+  label: Asks what people want
+  line: "{name} asks neighbours what they would really buy."
+  if: "{name} had asked neighbours what they would buy"
+  kind: choice
+  ages: [14, 55]
+  after: [batchStaysUnsold]
+  tags: [money, helped]
+  within: 1
+
+- id: offersWhatTheyAsked
+  label: Offers what they asked
+  line: "{name} offers what the neighbours asked for."
+  if: "{name} had offered what the neighbours asked for"
+  kind: choice
+  ages: [14, 55]
+  after: [asksWhatPeopleWant]
+  tags: [money]
+  within: 1
+
+- id: firstOrders
+  label: First orders arrive
+  line: "Four neighbours place orders, one after another."
+  kind: event
+  ages: [14, 56]
+  after: [offersWhatTheyAsked]
+  tags: [money]
+  within: 1
+  move: 1
+
+# Run: bankLoan (a loan for a business, a no, a smaller plan, a local fund).
+- id: asksForLoan
+  label: Asks for a bank loan
+  line: "{name} asks a bank for a loan to start a business."
+  if: "{name} had asked a bank for a loan"
+  kind: choice
+  ages: [20, 55]
+  after: [money]
+  unless: [owner]
+  tags: [money, loan]
+  weight: 0.2
+  inRun: true
+
+- id: loanRefused
+  label: The bank says no
+  line: "The bank says no, and explains that the sums do not fit."
+  kind: setback
+  ages: [20, 55]
+  after: [loan]
+  tags: [money]
+  within: 1
+  move: -1
+
+- id: makesSmallerPlan
+  label: Makes a smaller plan
+  line: "{name} draws up a smaller plan with a money adviser."
+  if: "{name} had made a smaller plan with an adviser"
+  kind: choice
+  ages: [20, 56]
+  after: [loanRefused]
+  tags: [money, helped]
+  within: 1
+
+- id: fundBacksPlan
+  label: A fund backs the plan
+  line: "A local fund for new businesses backs the smaller plan."
+  kind: event
+  ages: [20, 57]
+  after: [makesSmallerPlan]
+  tags: [money, owner, business]
+  within: 1
+  move: 1

@@ -31,14 +31,21 @@ steps:
     echoes: [drawsEveryDay]
   - node: appliesToArtSchool
     age: 18
+    run: artSchoolNewRoute
     alts: [startsWorking, travelsForAYear]
     echoes: [focusOnArt]
   - node: artSchoolSaysNo
     age: 19
+    run: artSchoolNewRoute
+  - node: eveningPrintClass
+    age: 19
+    run: artSchoolNewRoute
+    alts: [keepsMakingArt, joinsSharedStudio]
   - node: worksInPrintShop
     age: 20
+    run: artSchoolNewRoute
     alts: [studiesDesign, joinsSharedStudio]
-    echoes: [drawsEveryDay]
+    echoes: [eveningPrintClass, drawsEveryDay]
   - node: freelanceIllustrator
     age: 24
     move: 1

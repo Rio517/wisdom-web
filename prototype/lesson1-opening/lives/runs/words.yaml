@@ -1,0 +1,19 @@
+# Words runs: a short burst of trying again (the README's "Runs").
+
+# Partial win: the big publishers say no, a small press says yes.
+- id: bookSmallPress
+  label: Finds a small press
+  steps: [sendsBookOut, publishersSayNo, joinsWritingGroup, rewritesTheBook, smallPressYes]
+  span: 2
+
+# Win: a story misses a contest, then is printed after a rewrite.
+- id: storyContest
+  label: Tries a story contest
+  steps: [entersStoryContest, storyContestMiss, asksForNotes, storyInMagazine]
+  span: 2
+
+# Change of course: the reporter's job goes elsewhere, an editor's job follows.
+- id: editorRoute
+  label: Finds a new kind of job
+  steps: [appliesAtNewspaper, newspaperHiresOther, takesEditingCourse, becomesEditor]
+  span: 2

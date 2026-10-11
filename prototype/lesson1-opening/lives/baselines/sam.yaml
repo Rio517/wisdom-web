@@ -52,7 +52,8 @@ steps:
     move: -1
   - node: labelDropsHim
     age: 25
-    line: "The label drops him. He loses his flat."
+    label: Label drops the band
+    line: "The label drops the band. He loses his flat."
     move: -3
   - node: asksForHelp
     age: 26

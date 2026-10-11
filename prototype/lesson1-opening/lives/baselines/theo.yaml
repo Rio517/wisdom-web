@@ -31,13 +31,30 @@ steps:
     age: 19
     alts: [studiesMedicine, paramedic]
     echoes: [volunteerClinic, helpsAtHome]
-  - node: nurseMentor
-    age: 22
+  - node: startsBusyWard
+    age: 21
+    run: busyWard
+    line: "He starts work on a busy hospital ward."
+    alts: [paramedic, careAssistant]
     echoes: [nurseTraining]
+  - node: wardShortStaffed
+    age: 21
+    run: busyWard
+    line: "Too few staff are on the ward, and shifts run long."
+  - node: asksSeniorNurse
+    age: 22
+    run: busyWard
+    line: "He asks a senior nurse how to get through a hard shift."
+    move: 1
+  - node: movesToOtherWard
+    age: 22
+    run: busyWard
+    line: "He moves to the children's ward, with a smaller team."
+    echoes: [asksSeniorNurse]
   - node: midwife
     age: 26
     alts: [careAssistant, joinsMedicalResearch]
-    echoes: [nurseMentor]
+    echoes: [movesToOtherWard]
   - node: hospitalCloses
     age: 30
     move: -2
@@ -46,9 +63,6 @@ steps:
     move: 1
     alts: [joinsHomeCare, asksForHelp]
     echoes: [nurseTraining]
-  - node: becomesParent
-    age: 34
-    move: 1
   - node: careForAParent
     age: 36
     alts: [worksFewerHours, takesJobNearFamily]

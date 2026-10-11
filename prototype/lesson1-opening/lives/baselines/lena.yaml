@@ -26,13 +26,24 @@ steps:
     age: 15
     alts: [debateTeam, dramaClub]
     echoes: [teacherSpotsTalent]
+  - node: takesAdvancedMaths
+    age: 17
+    run: examNewCourse
+    alts: [startsWorking, learnsToDrive]
+    echoes: [scienceSubjects]
   - node: failsAnExam
     age: 18
+    run: examNewCourse
+  - node: asksTutorForIdeas
+    age: 18
+    run: examNewCourse
+    alts: [retakesTheExam, takesAYearOff]
   - node: studiesStatistics
     age: 19
+    run: examNewCourse
     label: Switches to statistics
     line: "She switches to statistics, the maths of what is likely."
-    alts: [retakesTheExam, asksForHelp]
+    alts: [retakesTheExam, startsWorking]
     echoes: [mathsClub]
   - node: worksWithData
     age: 23
@@ -56,4 +67,4 @@ steps:
   - node: learnsSomethingNew
     age: 42
     label: Learns the cello
-    line: "She starts the cello, badly and happily."
+    line: "She starts the cello, one squeaky note at a time."

@@ -20,7 +20,7 @@
 
 - id: bakesAtHome
   label: Bakes at weekends
-  line: "{name} bakes at the weekend, with mixed results."
+  line: "{name} bakes something new at the weekend."
   if: "{name} had baked at the weekend"
   kind: choice
   ages: [7, 13]
@@ -254,3 +254,129 @@
   ages: [14, 70]
   after: [garden, cooking]
   tags: [food]
+
+# Run: cookOff (a contest, a cake that sinks, practice, a ribbon).
+- id: entersCookOff
+  label: Enters a cook-off
+  line: "{name} enters a cooking contest at the town hall."
+  if: "{name} had entered a cooking contest"
+  kind: choice
+  ages: [10, 50]
+  after: [food]
+  tags: [food, contest]
+  weight: 0.2
+  inRun: true
+
+- id: cakeSinks
+  label: The cake sinks
+  line: "{his} cake sinks in the oven, and the judges move on."
+  kind: setback
+  ages: [10, 50]
+  after: [contest]
+  tags: [food]
+  within: 1
+  move: -1
+
+- id: practisesRecipe
+  label: Practises the recipe
+  line: "{name} bakes the same cake every evening for a month."
+  if: "{name} had practised the recipe"
+  kind: choice
+  ages: [10, 50]
+  after: [cakeSinks]
+  tags: [food, practice]
+  within: 1
+
+- id: winsCookOff
+  label: Wins a blue ribbon
+  line: "At the next contest, the judges give {him} a blue ribbon."
+  kind: event
+  ages: [10, 50]
+  after: [practice]
+  tags: [food]
+  within: 1
+  move: 1
+
+# Run: sourdough (flat loaves, an old baker's advice, a café order).
+- id: triesSourdough
+  label: Tries sourdough bread
+  line: "{name} tries to bake sourdough bread from scratch."
+  if: "{name} had tried sourdough bread"
+  kind: choice
+  ages: [14, 60]
+  after: [food]
+  tags: [food, bread]
+  weight: 0.2
+  inRun: true
+
+- id: loavesStayFlat
+  label: The loaves stay flat
+  line: "The first loaves come out flat and hard as stones."
+  kind: setback
+  ages: [14, 60]
+  after: [bread]
+  tags: [food]
+  within: 1
+  move: -1
+
+- id: asksOldBaker
+  label: Asks an old baker
+  line: "{name} asks an old baker why the dough will not rise."
+  if: "{name} had asked an old baker for help"
+  kind: choice
+  ages: [14, 60]
+  after: [loavesStayFlat]
+  tags: [food, helped]
+  within: 1
+
+- id: cafeBuysLoaves
+  label: A café buys the bread
+  line: "A café owner buys six loaves a week."
+  kind: event
+  ages: [14, 62]
+  after: [asksOldBaker]
+  tags: [food]
+  within: 1
+  move: 1
+
+# Run: popUpDinner (a first menu, an empty room, a friend's advice, a new way to cook).
+- id: hostsPopUp
+  label: Hosts a pop-up dinner
+  line: "{name} cooks a first menu for a one-night pop-up dinner."
+  if: "{name} had hosted a pop-up dinner"
+  kind: choice
+  ages: [18, 55]
+  after: [food]
+  tags: [food, popup]
+  weight: 0.2
+  inRun: true
+
+- id: rainKeepsGuests
+  label: Rain empties the room
+  line: "Heavy rain keeps most guests away, and only three come."
+  kind: setback
+  ages: [18, 55]
+  after: [popup]
+  tags: [food]
+  within: 1
+  move: -1
+
+- id: asksChefFriend
+  label: Asks a chef friend
+  line: "{name} asks a chef friend what to change."
+  if: "{name} had asked a chef friend for advice"
+  kind: choice
+  ages: [18, 60]
+  after: [rainKeepsGuests]
+  tags: [food, helped]
+  within: 1
+
+- id: cooksInHomes
+  label: Becomes a home chef
+  line: "{name} cooks dinners in other people's homes, one table at a time."
+  if: "{name} had started cooking in people's homes"
+  kind: choice
+  ages: [18, 62]
+  after: [asksChefFriend]
+  tags: [food, job]
+  within: 1

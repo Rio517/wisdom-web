@@ -108,7 +108,7 @@
 
 - id: retakesTheExam
   label: Takes the exam again
-  line: "{name} finds a new way to study and takes the exam again."
+  line: "{name} tries a new way to study and sits the exam again."
   if: "{name} had taken the exam again"
   kind: choice
   ages: [16, 30]
@@ -141,6 +141,7 @@
   if: "{name} had learned to drive"
   kind: choice
   ages: [16, 30]
+  unless: [driving]
   tags: [driving]
   weight: 0.6
 
@@ -365,8 +366,8 @@
 
 - id: slowReturn
   label: Takes it slowly
-  line: "{name} takes it slowly, then gets back to normal."
-  if: "{name} had taken it slowly"
+  line: "{name} rests and builds back up a little each day."
+  if: "{name} had rested and built back up slowly"
   kind: choice
   ages: [7, 62]
   after: [illForMonths, breaksAnArm]
@@ -383,7 +384,7 @@
 
 - id: retrain
   label: Learns a new trade
-  line: "{name} learns a new trade, starting from the bottom."
+  line: "{name} learns a new trade as a beginner."
   if: "{name} had learned a new trade"
   kind: choice
   ages: [26, 62]
@@ -447,7 +448,7 @@
 
 - id: quitsAClub
   label: Quits a club
-  line: "{name} quits a club that is not fun any more."
+  line: "{name} leaves a club to make time for something else."
   if: "{name} had quit a club"
   kind: choice
   ages: [8, 16]
@@ -514,7 +515,7 @@
 
 - id: saysSorryFirst
   label: Says sorry first
-  line: "{name} says sorry first, and the friendship mends."
+  line: "{name} says sorry first and asks to start again."
   if: "{name} had said sorry first"
   kind: choice
   ages: [10, 27]
@@ -547,3 +548,126 @@
   after: [driving]
   move: -1
   weight: 0.6
+
+# Runs any life can reach: looking for work, learning to drive, finding a home.
+
+- id: looksForAJob
+  label: Looks for a job
+  line: "{name} starts looking for a job."
+  if: "{name} had started looking for a job"
+  kind: choice
+  ages: [16, 55]
+  tags: [jobSearch]
+  weight: 0.6
+  inRun: true
+
+- id: applicationsTurnedDown
+  label: Hears no, again
+  line: "Several employers write back to say they have found someone else."
+  kind: setback
+  ages: [16, 56]
+  after: [looksForAJob]
+  tags: [rejected]
+  within: 1
+  move: -1
+
+- id: friendReadsApplications
+  label: A friend reads them
+  line: "A friend reads {his} applications and suggests changes."
+  if: "{name} had asked a friend to read the applications"
+  kind: choice
+  ages: [16, 56]
+  after: [applicationsTurnedDown]
+  tags: [helped]
+  within: 1
+
+- id: getsTheJob
+  label: Is offered a job
+  line: "An employer offers {him} a job, and {name} says yes."
+  kind: event
+  ages: [16, 57]
+  after: [friendReadsApplications]
+  tags: [job, hired]
+  within: 1
+  move: 2
+
+- id: startsDrivingLessons
+  label: Starts driving lessons
+  line: "{name} books a first block of driving lessons."
+  if: "{name} had started driving lessons"
+  kind: choice
+  ages: [16, 60]
+  unless: [driving]
+  tags: [lessons]
+  weight: 0.6
+  inRun: true
+
+- id: failsDrivingTest
+  label: Misses the pass mark
+  line: "{name} misses the pass mark on the driving test."
+  kind: setback
+  ages: [16, 61]
+  after: [startsDrivingLessons]
+  tags: [testMissed]
+  within: 1
+  move: -1
+
+- id: moreDrivingLessons
+  label: Books more lessons
+  line: "{name} books more lessons and practises with a relative."
+  if: "{name} had booked more driving lessons"
+  kind: choice
+  ages: [16, 61]
+  after: [failsDrivingTest]
+  tags: [lessons]
+  within: 1
+
+- id: passesDrivingTest
+  label: Passes the test
+  line: "{name} passes the driving test on the second try."
+  kind: event
+  ages: [16, 62]
+  after: [moreDrivingLessons]
+  tags: [driving]
+  within: 1
+  move: 2
+
+- id: appliesForAFlat
+  label: Applies for a flat
+  line: "{name} applies for a flat in a lively street."
+  if: "{name} had applied for a flat"
+  kind: choice
+  ages: [18, 50]
+  tags: [flatSearch]
+  weight: 0.6
+  inRun: true
+
+- id: flatFallsThrough
+  label: The flat is gone
+  line: "The owner gives the flat to someone who asked first."
+  kind: setback
+  ages: [18, 51]
+  after: [appliesForAFlat]
+  tags: [flatLost]
+  within: 1
+  move: -1
+
+- id: staysWithFriend
+  label: Moves in with a friend
+  line: "{name} moves in with a friend for a while."
+  if: "{name} had moved in with a friend"
+  kind: choice
+  ages: [18, 51]
+  after: [flatFallsThrough]
+  tags: [home, helped]
+  within: 1
+
+- id: findsSmallerPlace
+  label: Finds a small place
+  line: "{name} finds a small place of {his} own."
+  if: "{name} had found a small place"
+  kind: choice
+  ages: [18, 52]
+  after: [staysWithFriend]
+  tags: [home]
+  within: 1

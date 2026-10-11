@@ -290,3 +290,127 @@
   ages: [22, 65]
   after: [code, computers]
   tags: [community, teaching, volunteer]
+
+# Run steps (see runs/community.yaml): a petition the council refuses, a club
+# nobody comes to at first, and a study room that closes.
+- id: startsPetition
+  label: Starts a petition
+  line: "{name} starts a petition for a safe crossing outside the school."
+  if: "{name} had started a petition for a safe crossing"
+  kind: choice
+  ages: [14, 65]
+  after: [community]
+  unless: [campaign]
+  tags: [community, civic, petition]
+  inRun: true
+
+- id: councilNoMoney
+  label: Council says no money
+  line: "The council says there is no money for a crossing."
+  kind: setback
+  ages: [14, 66]
+  after: [startsPetition]
+  tags: [community]
+  within: 1
+  move: -1
+
+- id: takesPetitionDoors
+  label: Takes it door to door
+  line: "{name} takes the petition from door to door with a clipboard."
+  if: "{name} had taken the petition door to door"
+  kind: choice
+  ages: [14, 66]
+  after: [councilNoMoney]
+  tags: [community, helped]
+  within: 1
+
+- id: crossingPainted
+  label: A crossing is painted
+  line: "The council paints one crossing, on the busier of two roads."
+  kind: event
+  ages: [14, 67]
+  after: [takesPetitionDoors]
+  tags: [community, civic]
+  within: 1
+  move: 1
+
+- id: opensClub
+  label: Opens a weekly club
+  line: "{name} opens a weekly games club in the village hall."
+  if: "{name} had opened a weekly club"
+  kind: choice
+  ages: [14, 65]
+  after: [community]
+  unless: [startsSchoolClub]
+  tags: [community, club, leader]
+  inRun: true
+
+- id: nobodyComes
+  label: Nobody comes at first
+  line: "Rain falls on the first night, and nobody comes."
+  kind: setback
+  ages: [14, 66]
+  after: [opensClub]
+  tags: [community]
+  within: 1
+  move: -1
+
+- id: movesClubTime
+  label: Moves it to Saturdays
+  line: "{name} moves the club to Saturday mornings at the library."
+  if: "{name} had moved the club to Saturday mornings"
+  kind: choice
+  ages: [14, 66]
+  after: [nobodyComes]
+  tags: [community]
+  within: 1
+
+- id: clubFillsUp
+  label: The club fills up
+  line: "Twelve people come, then a few more each week."
+  kind: event
+  ages: [14, 67]
+  after: [movesClubTime]
+  tags: [community, club]
+  within: 1
+  move: 1
+
+- id: offersHomeworkHelp
+  label: Offers homework help
+  line: "{name} offers free homework help at the library on Wednesdays."
+  if: "{name} had offered homework help"
+  kind: choice
+  ages: [16, 60]
+  after: [community]
+  tags: [community, volunteer]
+  inRun: true
+
+- id: studyRoomCloses
+  label: The study room shuts
+  line: "The library closes its study room for repairs."
+  kind: setback
+  ages: [16, 61]
+  after: [offersHomeworkHelp]
+  tags: [community]
+  within: 1
+  move: -1
+
+- id: takesShortCourse
+  label: Takes a short course
+  line: "{name} signs up for a short course on helping in classrooms."
+  if: "{name} had signed up for a classroom course"
+  kind: choice
+  ages: [16, 62]
+  after: [studyRoomCloses]
+  tags: [community, study]
+  within: 1
+
+- id: helpsInClassroom
+  label: Helps in a classroom
+  line: "{name} starts work helping in a primary school classroom."
+  if: "{name} had started work in a classroom"
+  kind: choice
+  ages: [17, 63]
+  after: [takesShortCourse]
+  tags: [community, teaching, job]
+  within: 1

@@ -12,7 +12,7 @@
 
 - id: chessClub
   label: Joins the chess club
-  line: "{name} joins the chess club and loses a lot, at first."
+  line: "{name} joins the chess club and learns how each piece moves."
   if: "{name} had joined the chess club"
   kind: choice
   ages: [7, 13]
@@ -20,7 +20,7 @@
 
 - id: mathsClub
   label: Joins the maths club
-  line: "{name} joins the maths club, where puzzles count as fun."
+  line: "{name} joins the maths club to solve puzzles together."
   if: "{name} had joined the maths club"
   kind: choice
   ages: [7, 12]
@@ -36,7 +36,7 @@
 
 - id: mathsTutor
   label: Gets a maths tutor
-  line: "{name} gets a maths tutor to untangle the hard bits."
+  line: "{name} gets a maths tutor for the tricky parts."
   if: "{name} had got a maths tutor"
   kind: choice
   ages: [8, 15]
@@ -193,7 +193,7 @@
 
 - id: repeatsTheWork
   label: Starts the work again
-  line: "{name} starts the work again, a bit wiser."
+  line: "{name} starts the work again, step by step."
   if: "{name} had started the work again"
   kind: choice
   ages: [22, 55]
@@ -290,3 +290,138 @@
   ages: [26, 60]
   after: [nurse, doctor]
   tags: [science, research, lab]
+
+# Runs: an exam, retaken with a classmate's help (a win).
+- id: sitsBigExams
+  label: Sits the big exams
+  line: "{name} sits the big school exams in the sciences."
+  if: "{name} had sat the big exams"
+  kind: choice
+  ages: [16, 22]
+  after: [science]
+  tags: [science, study]
+  inRun: true
+
+- id: worksWithClassmate
+  label: Works with a classmate
+  line: "{name} and a classmate go through the hard parts together."
+  if: "{name} had worked through the hard parts with a classmate"
+  kind: choice
+  ages: [15, 25]
+  after: [failsAnExam]
+  tags: [science, helped]
+  within: 1
+
+- id: passesTheExam
+  label: Passes the exam
+  line: "The results come in, and {name} has passed."
+  kind: event
+  ages: [16, 31]
+  after: [retakesTheExam]
+  tags: [science]
+  within: 1
+  move: 1
+
+# Runs: an advanced course, a failed exam, and a new course (a change of course).
+- id: takesAdvancedMaths
+  label: Takes advanced maths
+  line: "{name} signs up for an advanced maths course."
+  if: "{name} had taken advanced maths"
+  kind: choice
+  ages: [16, 24]
+  after: [science]
+  tags: [science, maths, study]
+  inRun: true
+
+- id: asksTutorForIdeas
+  label: Asks a tutor for ideas
+  line: "{name} asks a tutor about other courses to try."
+  if: "{name} had asked a tutor about other courses"
+  kind: choice
+  ages: [15, 30]
+  after: [failsAnExam]
+  tags: [science, helped]
+  within: 1
+
+# Runs: a new experiment, a failed try, a new method, a partial answer.
+- id: triesNewExperiment
+  label: Tests a new idea
+  line: "{name} sets up an experiment to test a new idea."
+  if: "{name} had set up a new experiment"
+  kind: choice
+  ages: [14, 55]
+  after: [science]
+  tags: [science, experiments]
+  inRun: true
+
+- id: experimentFails
+  label: The experiment fails
+  line: "The experiment fails. The results will not repeat."
+  kind: setback
+  ages: [14, 56]
+  after: [experiments]
+  tags: [science]
+  within: 1
+  move: -1
+  weight: 0.6
+
+- id: changesMethod
+  label: Changes the method
+  line: "{name} changes the method and tries a smaller test."
+  if: "{name} had changed the method"
+  kind: choice
+  ages: [14, 56]
+  after: [experimentFails]
+  tags: [science]
+  within: 1
+
+- id: partialAnswer
+  label: A partial answer
+  line: "One part of the answer is clear. The rest stays open."
+  kind: event
+  ages: [14, 60]
+  after: [changesMethod]
+  tags: [science]
+  within: 1
+  move: 1
+
+# Runs: a lab application, a no, advice, and a new position (a change of course).
+- id: appliesToLab
+  label: Applies to a lab
+  line: "{name} applies for a place in a research lab."
+  if: "{name} had applied to a research lab"
+  kind: choice
+  ages: [20, 50]
+  after: [science]
+  unless: [lab, research]
+  tags: [science, labApplication]
+  inRun: true
+
+- id: labSaysNo
+  label: The lab says no
+  line: "The lab writes back: no places this year."
+  kind: setback
+  ages: [20, 52]
+  after: [labApplication]
+  tags: [science]
+  within: 1
+  move: -1
+
+- id: asksScientistAdvice
+  label: Asks a scientist
+  line: "{name} asks a scientist how else to work with science."
+  if: "{name} had asked a scientist for advice"
+  kind: choice
+  ages: [20, 52]
+  after: [labSaysNo]
+  tags: [science, helped]
+  within: 1
+
+- id: takesSchoolLabJob
+  label: Sets up school labs
+  line: "{name} takes a job setting up experiments at a school."
+  if: "{name} had taken a school science job"
+  kind: choice
+  ages: [20, 62]
+  after: [asksScientistAdvice, university, sciences]
+  tags: [science, job]

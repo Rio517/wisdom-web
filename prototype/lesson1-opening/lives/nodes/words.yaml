@@ -160,8 +160,8 @@
   move: -2
 
 - id: keepsWriting
-  label: Keeps writing anyway
-  line: "{name} keeps writing anyway."
+  label: Keeps writing
+  line: "{name} keeps writing, a page at a time."
   if: "{name} had kept writing"
   kind: choice
   ages: [18, 62]
@@ -203,7 +203,7 @@
   line: "A publisher wants {his} book at last. Luck and patience!"
   kind: lucky
   ages: [20, 66]
-  after: [keepsWriting, rewritesTheBook, selfPublishes]
+  after: [keepsWriting, rewritesTheBook, selfPublishes, smallPressYes]
   tags: [words, published]
   move: 3
 
@@ -214,6 +214,7 @@
   kind: choice
   ages: [18, 60]
   after: [journalism]
+  unless: [newspaperHiresOther]
   tags: [words, job, journalism]
   weight: 2
 
@@ -326,3 +327,109 @@
   ages: [24, 65]
   after: [civic]
   tags: [words, job, writing]
+
+# Runs: a book sent out, a story contest, a newspaper job that goes elsewhere.
+# Their steps are listed in ../runs/words.yaml.
+
+- id: sendsBookOut
+  label: Sends the book out
+  line: "{name} posts {his} finished pages in a stack of envelopes."
+  if: "{name} had sent {his} book to publishers"
+  kind: choice
+  ages: [18, 60]
+  after: [book]
+  unless: [publishersSayNo, smallPressYes, bookDeal]
+  tags: [words]
+  inRun: true
+
+- id: smallPressYes
+  label: A small press says yes
+  line: "A small press agrees to print {his} book, a few hundred copies."
+  kind: event
+  ages: [18, 66]
+  after: [rewritesTheBook]
+  tags: [words, smallPress]
+  within: 1
+  move: 1
+
+- id: entersStoryContest
+  label: Enters a story contest
+  line: "{name} sends a story to a writing contest."
+  if: "{name} had entered a story contest"
+  kind: choice
+  ages: [10, 55]
+  after: [writing, reading]
+  unless: [storyContestMiss]
+  tags: [words, writing, writingContest]
+  inRun: true
+
+- id: storyContestMiss
+  label: Another story wins
+  line: "The judges pick another story and send {name} a short note."
+  kind: setback
+  ages: [10, 56]
+  after: [writingContest]
+  tags: [words]
+  within: 1
+  move: -1
+
+- id: asksForNotes
+  label: Asks for feedback
+  line: "{name} asks a trusted reader for honest notes."
+  if: "{name} had asked a reader for notes"
+  kind: choice
+  ages: [10, 58]
+  after: [storyContestMiss]
+  tags: [words, writing, helped]
+  within: 1
+
+- id: storyInMagazine
+  label: Story gets printed
+  line: "After a rewrite, a small magazine prints {his} story."
+  kind: event
+  ages: [10, 60]
+  after: [asksForNotes]
+  tags: [words, printed]
+  within: 1
+  move: 2
+
+- id: appliesAtNewspaper
+  label: Applies at a newspaper
+  line: "{name} applies for a reporter's job at a newspaper."
+  if: "{name} had applied to a newspaper"
+  kind: choice
+  ages: [18, 55]
+  after: [writing, reading]
+  unless: [reportsForPaper, paperCloses, newspaperHiresOther]
+  tags: [words]
+  inRun: true
+
+- id: newspaperHiresOther
+  label: Not chosen for the job
+  line: "The newspaper gives the job to another person."
+  kind: setback
+  ages: [18, 56]
+  after: [appliesAtNewspaper]
+  tags: [words]
+  within: 1
+  move: -1
+
+- id: takesEditingCourse
+  label: Studies editing
+  line: "{name} takes an evening course in editing."
+  if: "{name} had taken an editing course"
+  kind: choice
+  ages: [18, 58]
+  after: [newspaperHiresOther]
+  tags: [words, editing, study]
+  within: 1
+
+- id: becomesEditor
+  label: Becomes an editor
+  line: "{name} starts work as an editor at a small publisher."
+  if: "{name} had started work as an editor"
+  kind: choice
+  ages: [19, 60]
+  after: [takesEditingCourse]
+  tags: [words, editing, job]
+  within: 1

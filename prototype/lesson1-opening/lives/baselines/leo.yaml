@@ -22,19 +22,28 @@ steps:
   - node: partInAShow
     age: 15
     echoes: [aDanceClass, dramaClub]
+  - node: triesForDanceCompany
+    age: 18
+    run: danceToTeaching
+    alts: [dramaSchool, joinsTouringShow]
+    echoes: [aDanceClass, partInAShow]
   - node: ankleInjury
     age: 18
+    run: danceToTeaching
   - node: gentleDanceClass
     age: 19
+    run: danceToTeaching
     move: 1
     alts: [choreographs, switchesToActing]
     echoes: [aDanceClass]
   - node: teachesDance
-    age: 23
-    alts: [joinsTouringShow, dramaSchool]
+    age: 20
+    run: danceToTeaching
+    line: "{name} teaches children to move on Saturday mornings."
+    alts: [runsDramaWorkshops, worksBackstage]
     echoes: [gentleDanceClass]
   - node: startsYouthTheatre
-    age: 27
+    age: 25
     move: 1
     alts: [voiceActing, worksBackstage]
     echoes: [teachesDance, dramaClub]

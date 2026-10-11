@@ -55,6 +55,7 @@ asks for an instrument or singing.
   move: 0                     # events only: how this changes how things are going, -3 … +3 (up is better)
   by: family                  # optional: someone else chose it (children under about 8)
   weight: 1                   # optional: how often it comes up when a life grows (default 1)
+  inRun: true                 # optional: it happens only as a step of a run, never on its own in a grown life
 ```
 
 **Names and tags share one namespace.** `after: [guitar, instrument]` matches a
@@ -115,6 +116,8 @@ course: persistence isn't always winning.
 - Inside a run, two steps in a row may share an age; the whole run takes 1 to
   `span` years. Outside a run a step still comes at least a year after the one
   before it.
+- Mark the nodes written only for a run `inRun: true` (at least its first
+  step), so a grown life never takes one on its own, as a loose one-off.
 - Vary the shapes: some runs end in a win, some in a partial win (a small
   press, a market stall), some in a change of course (a new position, a new
   field). Two or more runs per area, so a grown life nearly always finds one

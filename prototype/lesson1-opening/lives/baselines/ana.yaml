@@ -1,5 +1,5 @@
 # Ana: food, slow and steady, a bakery of her own, the rent doubling, and a way
-# back sideways with a business partner.
+# back sideways with a business partner. Run: sourdough, at 19 to 20.
 # The schema is in ../README.md.
 
 id: ana
@@ -28,9 +28,24 @@ steps:
     age: 18
     alts: [trainChef, goesToUniversity]
     echoes: [chefOffer]
+  - node: triesSourdough
+    age: 19
+    run: sourdough
+    line: "She tries to bake sourdough bread from scratch."
+  - node: loavesStayFlat
+    age: 19
+    run: sourdough
+  - node: asksOldBaker
+    age: 20
+    run: sourdough
+    line: "She asks an old baker why the dough will not rise."
+    move: 1
+  - node: cafeBuysLoaves
+    age: 20
+    run: sourdough
   - node: worksInKitchen
     age: 22
-    line: "She bakes the bread for a busy restaurant."
+    line: "She bakes for a busy restaurant, before the doors open."
     alts: [cooksSchoolLunches, studiesFoodScience]
     echoes: [trainsAsBaker]
   - node: openBakery

@@ -1,5 +1,5 @@
-# Kai: nature, animals and gardens, a flood at 26, neighbours who help him
-# start again, and a gentle middle.
+# Kai: nature, animals and gardens, an early crop caught by frost, a flood at 26,
+# neighbours who help him start again, and a gentle middle.
 # The schema is in ../README.md.
 
 id: kai
@@ -30,21 +30,32 @@ steps:
     age: 19
     alts: [vetAssistant, studiesEnvironment]
     echoes: [growVegetables]
+  - node: plantsEarlyCrop
+    age: 21
+    run: earlyFrostSwitch
+    alts: [rentsAllotment, buildsAGreenhouse]
+    echoes: [landscapeGardener]
+  - node: lateFrost
+    age: 21
+    run: earlyFrostSwitch
+  - node: growsHardyGreens
+    age: 22
+    run: earlyFrostSwitch
+  - node: cafeBuysGreens
+    age: 22
+    run: earlyFrostSwitch
   - node: rentsAllotment
-    age: 23
-    alts: [growsForRestaurants, movesToNewCity]
-    echoes: [worksOnFarm]
-  - node: farmerOffersLand
     age: 24
-    echoes: [rentsAllotment]
+    alts: [growsForRestaurants, movesToNewCity]
+    echoes: [cafeBuysGreens]
   - node: floodRuinsHarvest
     age: 26
   - node: rebuildsAsCommunityGarden
     age: 27
-    line: "Neighbours help him turn the muddy field into a garden for all."
+    line: "Neighbours help him turn the muddy plot into a garden for all."
     move: 2
     alts: [plantsHardierCrops, farmerNetwork]
-    echoes: [farmerOffersLand]
+    echoes: [rentsAllotment]
   - node: becomesParent
     age: 31
   - node: forestSchool

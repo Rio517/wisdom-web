@@ -1,5 +1,5 @@
 # Amara: words, a reader from the start, a lucky trip abroad, publishers saying
-# no, a writing group, and a book at 38: steady, with one big surprise late.
+# no, a writing group, a small press, and a bigger publisher at 38: steady, with one big surprise late.
 # The schema is in ../README.md.
 
 id: amara
@@ -40,17 +40,29 @@ steps:
     line: "She writes a whole book in the evenings."
     alts: [reportsForPaper, translatesBooks]
     echoes: [writesStories]
+  - node: sendsBookOut
+    age: 28
+    run: bookSmallPress
+    alts: [joinsWritingGroup, startsABlog]
+    echoes: [writesABook]
   - node: publishersSayNo
     age: 28
+    run: bookSmallPress
     line: "Ten publishers say no to her book."
   - node: joinsWritingGroup
     age: 29
+    run: bookSmallPress
     move: 1
     alts: [keepsWriting, takesAYearOff]
   - node: rewritesTheBook
-    age: 31
+    age: 30
+    run: bookSmallPress
     alts: [selfPublishes, startsABlog]
     echoes: [writesABook, joinsWritingGroup]
+  - node: smallPressYes
+    age: 30
+    run: bookSmallPress
+    echoes: [rewritesTheBook]
   - node: moveAbroad
     age: 33
     line: "She moves to the country she visited at fourteen."
@@ -58,9 +70,9 @@ steps:
     echoes: [exchangeTrip]
   - node: bookDeal
     age: 38
-    line: "A publisher wants her book at last. Luck and patience!"
+    line: "A bigger publisher spots her small-press book. Luck!"
     move: 2
-    echoes: [rewritesTheBook, writesABook]
+    echoes: [smallPressYes, writesABook]
   - node: joinsBookGroup
     age: 42
     line: "She joins a book group and never mentions her own."

@@ -29,7 +29,7 @@
 
 - id: startsViolin
   label: Starts the violin
-  line: "{name} starts the violin. The first squeaks are rough."
+  line: "{name} starts the violin."
   if: "{name} had started the violin"
   kind: choice
   ages: [7, 12]
@@ -339,6 +339,7 @@
   kind: choice
   ages: [17, 26]
   after: [instrument, sings]
+  unless: [musicCollege]
   tags: [music, study]
 
 - id: joinsAdultChoir
@@ -358,3 +359,117 @@
   after: [theatre, film]
   needs: [music]
   tags: [music, songs, job]
+
+# Runs: a hand that heals and learns again, a college that says not yet, a solo
+# gig that goes wrong and a friend who coaches.
+
+- id: learnsHardPiece
+  label: Learns a hard piece
+  line: "{name} sets out to learn a hard piece by heart."
+  if: "{name} had set out to learn a hard piece"
+  kind: choice
+  ages: [14, 50]
+  after: [instrument]
+  tags: [music, practice]
+  inRun: true
+
+- id: playsDifferently
+  label: Learns a new grip
+  line: "{name} learns a new way to play, with a different grip."
+  if: "{name} had learned a new way to play"
+  kind: choice
+  ages: [15, 50]
+  after: [handInjury]
+  tags: [music, helped]
+  within: 1
+
+- id: playsAgain
+  label: Plays for friends
+  line: "{name} plays one slow song for a few friends."
+  if: "{name} had played for friends again"
+  kind: choice
+  ages: [15, 50]
+  after: [playsDifferently]
+  tags: [music]
+  within: 1
+
+- id: auditionsForCollege
+  label: Auditions for college
+  line: "{name} auditions for a place at a music college."
+  if: "{name} had auditioned for a music college"
+  kind: choice
+  ages: [16, 30]
+  after: [instrument, sings]
+  unless: [study, musicCollege]
+  tags: [music, audition]
+  inRun: true
+
+- id: collegeSaysNotYet
+  label: The college says no
+  line: "The college writes back: not this year."
+  kind: setback
+  ages: [16, 31]
+  after: [auditionsForCollege]
+  tags: [music]
+  within: 1
+  move: -1
+
+- id: practisesWithTeacher
+  label: Practises weekly
+  line: "{name} practises every week with a music teacher."
+  if: "{name} had practised with a music teacher"
+  kind: choice
+  ages: [16, 31]
+  after: [collegeSaysNotYet]
+  tags: [music, practice, helped]
+  within: 1
+
+- id: getsIntoMusicCollege
+  label: Gets a college place
+  line: "At the next audition, the college offers {him} a place."
+  kind: event
+  ages: [17, 32]
+  after: [practisesWithTeacher]
+  tags: [music, study, musicCollege]
+  within: 1
+  move: 2
+
+- id: firstSoloGig
+  label: Plays a solo gig
+  line: "{name} signs up to play alone at a local café."
+  if: "{name} had signed up to play a solo gig"
+  kind: choice
+  ages: [15, 50]
+  after: [guitar, piano, strings, sings]
+  tags: [music, solo]
+  inRun: true
+
+- id: soloGigMishap
+  label: The microphone fails
+  line: "Halfway through the first song, the microphone stops working."
+  kind: setback
+  ages: [14, 50]
+  after: [firstSoloGig]
+  tags: [music]
+  within: 1
+  move: -1
+
+- id: friendCoaches
+  label: A friend coaches {him}
+  line: "A friend who sings in a choir helps {him} practise."
+  if: "{name} had asked a friend to coach"
+  kind: choice
+  ages: [14, 50]
+  after: [soloGigMishap]
+  tags: [music, helped]
+  within: 1
+
+- id: joinsDanceBand
+  label: Joins a dance band
+  line: "{name} joins a small band that plays at weddings and dances."
+  if: "{name} had joined a dance band"
+  kind: choice
+  ages: [14, 50]
+  after: [friendCoaches]
+  tags: [music, ensemble]
+  within: 1
