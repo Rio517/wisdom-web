@@ -281,7 +281,7 @@ function run() {
 
   // ——— Narration ———
   const lifeMarkup = () => `<ol class="life-steps" id="life-steps">${LINES.map((line, position) => `<li class="life-step is-pending${line.close ? ' is-close' : ''}" data-step="${position}">
-    <span class="life-age">${line.close ? '' : esc(t('lesson.ui.age', { age: line.age }))}</span><span class="life-line">${esc(stepLine(position))}</span></li>`).join('')}</ol>`;
+    <span class="life-age">${line.close ? '' : esc(t('lesson.ui.age', { age: line.age }))}</span><span class="life-line"><span class="life-full">${esc(stepLine(position))}</span>${line.label ? `<span class="life-short" aria-hidden="true">${esc(line.label)}</span>` : ''}</span></li>`).join('')}</ol>`;
 
   function renderNarration(item, { animate }) {
     const { beat, chapter, beatIndex } = item;
@@ -300,7 +300,7 @@ function run() {
       : '';
     const steps = list();
     steps?.addEventListener('scroll', () => steps.classList.toggle('is-scrolled', steps.scrollTop > 2), { passive: true });
-    if (steps) { fitList(steps); fitObserver.observe(steps); }
+    if (steps) { fitStory(steps); fitObserver.observe(steps); }
     if (animate && !prefersReducedMotion()) {
       body.classList.remove('is-changing');
       void body.offsetWidth;
@@ -339,10 +339,9 @@ function run() {
     if (narrationPaused) animation.pause();
     return animation;
   };
-  // Beside the stage the list fills the column, from the heading down to the
-  // controls: its words take the largest size at which the whole story fits,
-  // and the room left over goes between the rows. Lines that haven't arrived
-  // keep their place unseen, so nothing moves as they arrive and nothing scrolls.
+  // Beside the stage a list fills the column, from the heading down to the
+  // controls. A changed life's list (fitList) takes the largest size at which
+  // all its rows fit, and the room left over goes between the rows.
   const sideColumn = matchMedia('(min-width: 990px)');
   const lastFit = new Map(); // a list's id and box size → the size it fitted at last time
   function fitList(box, { min = 15, max = 24 } = {}) {
@@ -350,7 +349,7 @@ function run() {
     box.style.removeProperty('--snug-gap');
     box.style.removeProperty('--fit-size');
     box.style.removeProperty('--fit-gap');
-    [...box.children].forEach(row => row.classList.remove('is-folded', 'is-folded-more', 'is-compact'));
+    [...box.children].forEach(row => row.classList.remove('is-folded'));
     if (!sideColumn.matches || !box.clientHeight) { box.fitKey = 'unfitted'; return; } // under the map: no fit
     // The largest size, to half a pixel, at which every row shows. Each try is a layout, so few
     // tries: the size this list fitted at last time (else the middle), then a guess in proportion
@@ -375,13 +374,12 @@ function run() {
     while (over - fit > 0.5) probe(Math.round(fit + over) / 2);
     const lo = fit < min ? null : fit;
     if (lo === null) {
-      // Too long even at the smallest size (a long life, or an iPad held sideways): older lines fold
-      // as they arrive (below), and the newest stays in view.
+      // Too long even at the smallest size (a long life in a short column): older rows close up
+      // as they arrive (foldWhat), and the newest stays in view.
       box.style.removeProperty('--fit-size');
       box.classList.add('is-tight');
       box.fitKey = `${box.clientWidth}x${box.clientHeight}:${box.children.length}`;
       const shown = [...box.children].filter(row => !row.classList.contains('is-pending'));
-      if (box.id === 'life-steps' && shown.length) fold(shown.length - 1);
       if (shown.length) keepInView(shown.at(-1), box);
       return;
     }
@@ -393,6 +391,111 @@ function run() {
     const spare = box.getBoundingClientRect().bottom - box.lastElementChild.getBoundingClientRect().bottom - 4;
     if (rows > 1 && spare > 0) box.style.setProperty('--fit-gap', `${Math.min(lo * 0.9, spare / (rows - 1)).toFixed(2)}px`);
   }
+
+  // The story's list is planned once, before its first line: every row is measured at each size
+  // tried (one layout a size), so the height of the list at every step of the story is known
+  // ahead. It takes the largest single size at which every step fits whole; failing that, the
+  // oldest rows, one at a time and only as many as needed, show their step's map label instead of
+  // their whole line, and older rows (those before the four newest) may be a pixel smaller. A line
+  // arriving then only applies its step's plan: nothing is tried, and the list never scrolls.
+  const STORY_FIT = {
+    one: [24, 15], // one size, the largest at which every step fits whole, down to 15 px
+    // then the oldest rows shortened, older rows at most a pixel smaller: of these the plan that
+    // shortens fewest rows (the larger sizes first among equals), and 14 px only if none fits
+    short: [[[16, 15], [15, 15], [15, 14]], [[14, 14]]],
+    margin: 2, // px kept free under the last row, for rounding
+  };
+  let storyPlan = null; // { short: rows shortened at each step }
+  function fitStory(box) {
+    storyPlan = null;
+    box.classList.remove('is-two', 'is-fits');
+    for (const name of ['--fit-size', '--fit-old', '--fit-age', '--fit-gap']) box.style.removeProperty(name);
+    const rows = [...box.children];
+    const shortened = rows.filter(row => row.classList.contains('is-short'));
+    shortened.forEach(row => row.classList.remove('is-short'));
+    if (!sideColumn.matches || !box.clientHeight || !rows.length) { box.fitKey = 'unfitted'; return; } // under the map: no fit
+    const last = rows.length - 1;
+    const room = box.clientHeight - parseFloat(getComputedStyle(box).paddingBottom) - STORY_FIT.margin;
+    const gap = parseFloat(getComputedStyle(box).rowGap);
+    // A shortened row is one text row: measured on a row like the others, holding the longest label.
+    const labels = rows.map(row => row.querySelector('.life-short')?.textContent ?? '');
+    const probe = document.createElement('li');
+    probe.className = 'life-step is-past is-short';
+    probe.setAttribute('aria-hidden', 'true');
+    probe.innerHTML = `<span class="life-age">${esc(t('lesson.ui.age', { age: 88 }))}</span><span class="life-line"><span class="life-full"></span><span class="life-short">${esc(labels.reduce((a, b) => (b.length > a.length ? b : a), ''))}</span></span>`;
+    box.append(probe);
+    const ageFor = older => Math.max(13, older * 0.82);
+    const measured = new Map();
+    // Every row at `size`, the ages at the size `older` gives them (it sets the age column's width).
+    const measure = (size, older) => {
+      const key = `${size}/${older}`;
+      if (!measured.has(key)) {
+        box.style.setProperty('--fit-size', `${size}px`);
+        box.style.setProperty('--fit-age', `${ageFor(older)}px`);
+        measured.set(key, { rows: rows.map(row => row.getBoundingClientRect().height), short: probe.getBoundingClientRect().height });
+      }
+      return measured.get(key);
+    };
+    // The rows that may shorten, oldest first: older rows whose label is shorter than their line.
+    // The plan: at each step, how many of them are shortened (never fewer than the step before).
+    const plan = (newest, older, allowShort) => {
+      const full = measure(newest, older).rows;
+      const { rows: past, short } = measure(older, older);
+      const can = allowShort ? rows.map((_, at) => at).filter(at => at <= last - 4 && labels[at] && past[at] - short > 0.5) : [];
+      const steps = [];
+      let count = 0; let saved = 0; let extra = Infinity;
+      for (let step = 0; step <= last; step += 1) {
+        let height = step * gap - saved;
+        for (let at = 0; at <= step; at += 1) height += at <= step - 4 ? past[at] : full[at];
+        while (height > room) {
+          if (count >= can.length || can[count] > step - 4) return null;
+          const gain = past[can[count]] - short;
+          height -= gain; saved += gain; count += 1;
+        }
+        steps.push(new Set(can.slice(0, count)));
+        if (step > 0) extra = Math.min(extra, (room - height) / step);
+      }
+      return { newest, older, short: steps, extra };
+    };
+    // The largest single size that fits, to half a pixel: a guess from the rows' height, then halving.
+    const [top, bottom] = STORY_FIT.one;
+    let found = null;
+    let fit = bottom - 0.5; let over = top + 0.5;
+    const tryOne = size => { const result = plan(size, size, false); if (result) { fit = size; found = result; } else over = size; };
+    const firstSize = lastFit.get(`story:${box.clientWidth}x${box.clientHeight}`) ?? 18;
+    tryOne(firstSize);
+    while (over - fit > 0.5) tryOne(Math.round(fit + over) / 2);
+    for (const sizes of STORY_FIT.short) {
+      for (const [newest, older] of found ? [] : sizes) {
+        const result = plan(newest, older, true);
+        if (result && (!found || result.short.at(-1).size < found.short.at(-1).size)) found = result;
+      }
+    }
+    probe.remove();
+    box.fitKey = `${box.clientWidth}x${box.clientHeight}:${box.children.length}`;
+    if (!found) {
+      // A column far too short for this life: the smallest plan, and the newest line kept in view.
+      const [newest, older] = STORY_FIT.short.at(-1).at(-1);
+      found = { newest, older, short: rows.map(() => new Set(rows.map((_, at) => at).filter(at => at <= last - 4 && labels[at]))), extra: 0 };
+    } else {
+      box.classList.add('is-fits');
+      lastFit.set(`story:${box.clientWidth}x${box.clientHeight}`, found.newest);
+    }
+    storyPlan = found;
+    box.style.setProperty('--fit-size', `${found.newest}px`);
+    box.style.setProperty('--fit-old', `${found.older}px`);
+    box.style.setProperty('--fit-age', `${ageFor(found.older)}px`);
+    box.classList.toggle('is-two', found.older !== found.newest);
+    if (found.extra > 0 && found.extra < Infinity) box.style.setProperty('--fit-gap', `${Math.min(found.newest * 0.9, found.extra).toFixed(2)}px`);
+    // Mid-story (the column resized): the rows shown take this plan's state for the newest of them.
+    const shown = rows.filter(row => !row.classList.contains('is-pending')).length;
+    if (shown) shortenFor(shown - 1);
+  }
+  // A step's plan: its oldest rows shortened (only ever older rows, and only as a line arrives).
+  const shortenFor = newest => {
+    const short = storyPlan?.short[newest];
+    lines().forEach((row, at) => row.classList.toggle('is-short', Boolean(short?.has(at))));
+  };
   // Fit again when the column changes size (the cover lifting, a window resized).
   // The list itself is watched too: its room changes when the heading or the controls
   // change height (the web fonts arriving, a longer heading), with the column unchanged.
@@ -404,69 +507,46 @@ function run() {
       const box = document.getElementById('whatif-list') ?? list();
       // Not fitted yet (a what-if, fitted in a task of its own), or unchanged since: nothing to do.
       if (!box?.fitKey || box.fitKey === `${box.clientWidth}x${box.clientHeight}:${box.children.length}`) return;
-      fitList(box, box.id === 'whatif-list' ? WHAT_FIT : undefined);
+      if (box.id === 'whatif-list') fitList(box, WHAT_FIT); else fitStory(box);
     });
   });
   fitObserver.observe(document.getElementById('narration-body'));
-  // Only a story too long for its column at the smallest size (is-tight): lines that
-  // haven't arrived wait in one row each, and when the list would overflow, older
-  // lines step down a size, oldest first, then one size more; then the rows close
-  // up, and only then do the three lines before the newest step down; then, oldest
-  // first, lines take their age into their own row (is-compact).
-  const fold = newest => {
-    const box = list();
-    if (!box || !sideColumn.matches || !box.classList.contains('is-tight')) return;
-    const all = lines();
-    const over = () => box.scrollHeight > box.clientHeight + 1;
-    const shrink = (step, upTo) => { for (let other = 0; other < upTo && over(); other += 1) all[other].classList.add(step); };
-    box.style.removeProperty('--snug-gap');
-    shrink('is-folded', newest - 3);
-    shrink('is-folded-more', newest - 3);
-    if (over()) box.classList.add('is-snug');
-    shrink('is-folded', newest);
-    shrink('is-folded-more', newest);
-    shrink('is-compact', newest);
-    // The rows closed up (1 px apart) before the last lines stepped down: what room that leaves
-    // goes back between them, up to their usual 6 px.
-    if (box.classList.contains('is-snug') && !over() && all.length > 1) {
-      const spare = box.getBoundingClientRect().bottom - box.lastElementChild.getBoundingClientRect().bottom - 2;
-      if (spare > 0) box.style.setProperty('--snug-gap', `${Math.min(6, 1 + spare / (all.length - 1)).toFixed(2)}px`);
-    }
-  };
-  // If the list still has to scroll in its column, the newest line stays in view.
+  // If a list still has to scroll in its column, the newest line stays in view.
   const keepInView = (element, box = list()) => {
     if (!box || box.scrollHeight <= box.clientHeight + 1) return;
     const bottom = element.offsetTop + element.offsetHeight - box.offsetTop;
     if (bottom > box.scrollTop + box.clientHeight) box.scrollTo({ top: bottom - box.clientHeight + 4, behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
   };
+  // The story never needs to scroll unless its column is far too short (no plan fits).
+  const keepStoryInView = element => { if (!list()?.classList.contains('is-fits')) keepInView(element); };
   const narration = {
     reset() {
       narrationPaused = false;
       lines().forEach(element => {
         element.getAnimations().forEach(animation => animation.cancel());
         element.classList.add('is-pending');
-        element.classList.remove('is-past', 'is-folded', 'is-folded-more', 'is-compact');
+        element.classList.remove('is-past', 'is-short');
       });
-      if (list()) { list().scrollTop = 0; list().classList.remove('is-snug'); list().style.removeProperty('--snug-gap'); }
+      if (list()) list().scrollTop = 0;
     },
     reveal(position, { duration, dim }) {
       const all = lines();
       if (!all[position]) return;
-      // Fold before the line starts rising, so its motion isn't measured as height.
+      // Older rows change before the line starts rising, never while it moves.
       all[position].classList.remove('is-pending');
       all.forEach((element, other) => element.classList.toggle('is-past', other <= dim));
-      fold(position);
+      shortenFor(position);
       lineIn(all[position], duration);
-      keepInView(all[position]);
+      keepStoryInView(all[position]);
     },
     revealAll({ duration }) {
       const all = lines();
       const arriving = all.filter(element => element.classList.contains('is-pending'));
       arriving.forEach(element => element.classList.remove('is-pending'));
       all.forEach((element, other) => element.classList.toggle('is-past', other < all.length - 4));
-      fold(all.length - 1);
+      shortenFor(all.length - 1);
       arriving.forEach(element => lineIn(element, duration));
-      if (all.length) keepInView(all.at(-1));
+      if (all.length) keepStoryInView(all.at(-1));
     },
     finishCurrent() { lines().forEach(element => element.getAnimations().forEach(animation => animation.finish())); },
     pause() { narrationPaused = true; lines().forEach(element => element.getAnimations().forEach(animation => animation.pause())); },
@@ -510,18 +590,18 @@ function run() {
     }
   }
   /** The story's words, whole, as the story left them (after a picked life, or for picking). */
-  // While choosing, a hint under the story; the story's oldest lines fold to make room for it.
+  // While choosing, a hint under the story; the story is fitted again to make room for it.
   const addHint = () => { if (!$('.life-hint')) $('#beat-extra').insertAdjacentHTML('beforeend', `<p class="life-hint">${esc(t('opening.choose.hint', { name: LIFE.name }))}</p>`); };
   function showStoryWords({ hint = false } = {}) {
     renderNarration(beats[index], { animate: false });
     $('#life-pause').parentElement.classList.add('is-done');
-    if (hint) { addHint(); fitList(list()); }
+    if (hint) { addHint(); fitStory(list()); }
     narration.revealAll({ duration: 0 });
   }
   const forgetWhatIf = () => saveSettings({ fork: null, alt: null, seed: null });
   function startChoosing() {
     scenes.paths.lifeMode('choosing');
-    if (lifeMode() === 'choosing' && !$('.life-hint') && !$('#whatif-list')) { addHint(); fitList(list()); fold(lines().length - 1); }
+    if (lifeMode() === 'choosing' && !$('.life-hint') && !$('#whatif-list')) { addHint(); fitStory(list()); }
     else showStoryWords({ hint: true });
     forgetWhatIf();
     scenes.paths.restAtEnd();

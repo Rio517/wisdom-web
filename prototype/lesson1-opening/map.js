@@ -120,11 +120,16 @@ export function createPathsScene(root, { edgeFade = null, life = {} } = {}) {
   // ——— Chips (the lesson's chip(), with its collision avoidance) ———
   const hits = (box, other) => box.left < other.right + 8 && box.right > other.left - 8 && box.top < other.bottom + 6 && box.bottom > other.top - 6;
   const crosses = (box, other) => box.left < other.right && box.right > other.left && box.top < other.bottom && box.bottom > other.top;
-  // A chip at the first of `tries` (running right from the dot, then left, then centred) that is
-  // inside the map and clear of `placed`, its pin too if any try allows. With `labels` ({ box,
-  // element } of other steps' labels it may cover), when no try is clear, the try that covers the
-  // fewest of them: those step back.
-  function chip(text, point, tone, index, placed, tries, labels = []) {
+  // The farther tries "Choices add up" may use, after an item's own (out to 140 px from the dot),
+  // and the short slides along the route, after no slide at all.
+  const FARTHER = [{ dy: -96 }, { dy: 120 }, { dy: -118 }, { dy: 140 }, { dy: -140 }];
+  const SLIDES = [0, 20, -20, 40, -40];
+  // A chip near its dot, inside the map, clear of the other chips, of every dot (its pin crosses
+  // none but its own) and of the steps' labels: first also clear of the route, then over it; then,
+  // with `labels` ({ box, element } of other steps' labels it may cover), the try that covers the
+  // fewest of them: those step back. Each try runs right from the dot, then left, then centred on
+  // it, slid along the route as little as it can be, and keeps the dot under the chip for its pin.
+  function chip(text, point, tone, index, { placed, tries, labels = [], dots = [], onPath = () => false, card = null }) {
     const element = document.createElement('div');
     element.className = 'map-chip';
     element.dataset.tone = tone;
@@ -136,30 +141,38 @@ export function createPathsScene(root, { edgeFade = null, life = {} } = {}) {
     const width = label.offsetWidth;
     const height = label.offsetHeight;
     const r = rect();
-    // Each try with the chip running right from the dot, then running left, then centred on it.
-    const offsets = ['start', 'end', 'middle'].flatMap(align => tries.map(offset => ({ ...offset, align })));
+    const all = [...tries, ...FARTHER.filter(far => !tries.some(own => own.dy === far.dy))];
+    const offsets = SLIDES.flatMap(dx => ['start', 'end', 'middle'].flatMap(align => all.map(offset => ({ ...offset, dx, align }))));
     const boxAt = ({ dx = 0, dy = -14, align = 'start' }) => {
       const left = point.x + dx + (align === 'end' ? 14 - width : align === 'middle' ? -width / 2 : -14);
       return { left, top: point.y + dy - height - 4, right: left + width, bottom: point.y + dy - 4 };
     };
-    const inside = box => box.left >= 4 && box.right <= r.width - 4 && box.top >= 4 && box.bottom <= r.height - 40;
+    const inside = box => box.left >= 4 && box.right <= r.width - 4 && box.top >= 4 && box.bottom <= r.height - 40
+      && point.x >= box.left + 10 && point.x <= box.right - 10;
     // The pin: from the chip's edge to the dot.
     const pinOf = box => ({ left: point.x - 1, right: point.x + 1, top: Math.min(box.bottom, point.y + 5), bottom: Math.max(box.top, point.y - 5) });
+    const dotBox = dot => ({ left: dot.x - 7, right: dot.x + 7, top: dot.y - 7, bottom: dot.y + 7 });
+    const others = dots.filter(dot => dot !== point).map(dotBox);
+    const own = dotBox(point);
+    const onDots = box => crosses(box, own) || others.some(dot => crosses(box, dot) || crosses(pinOf(box), dot));
+    const offCard = box => !card || !hits(box, card);
+    const fits = box => inside(box) && offCard(box) && !onDots(box);
     const blocks = (box, other) => hits(box, other) || crosses(pinOf(box), other);
-    const clear = test => offsets.find(offset => { const box = boxAt(offset); return inside(box) && !placed.some(other => test(box, other)); });
-    let at = clear(blocks) ?? clear(hits);
+    const clear = (test, clash = blocks) => offsets.find(offset => { const box = boxAt(offset); return fits(box) && test(box) && !placed.some(other => clash(box, other)); });
+    // Last before stepping labels back: the pin may cross a label or a chip (never a dot).
+    let at = clear(box => !onPath(box)) ?? clear(() => true) ?? clear(() => true, hits);
     let covered = [];
     if (!at && labels.length) {
       const boxes = new Set(labels.map(item => item.box));
       let fewest = Infinity;
       for (const offset of offsets) {
         const box = boxAt(offset);
-        if (!inside(box) || placed.some(other => !boxes.has(other) && hits(box, other))) continue;
+        if (!fits(box) || placed.some(other => !boxes.has(other) && hits(box, other))) continue;
         const under = labels.filter(item => hits(box, item.box));
         if (under.length < fewest) { fewest = under.length; at = offset; covered = under; }
       }
     }
-    if (!at) { element.remove(); return false; }
+    if (!at) { element.remove(); return null; }
     const { dy = -14 } = at;
     const box = boxAt(at);
     for (const item of covered) {
@@ -177,9 +190,13 @@ export function createPathsScene(root, { edgeFade = null, life = {} } = {}) {
     if (dy > 0) { pin.style.top = 'auto'; pin.style.bottom = '100%'; pin.style.height = `${Math.max(3, dy - height - 4)}px`; }
     else pin.style.height = `${Math.max(6, -dy + 4)}px`;
     element.append(pin);
-    return true;
+    return box;
   }
 
+  const boxIn = element => {
+    const outer = stack.getBoundingClientRect(); const inner = element.getBoundingClientRect();
+    return { left: inner.left - outer.left, right: inner.right - outer.left, top: inner.top - outer.top, bottom: inner.bottom - outer.top };
+  };
   function renderCallouts(mode) {
     callouts.replaceChildren();
     if (!lifeMap.life) return;
@@ -194,8 +211,10 @@ export function createPathsScene(root, { edgeFade = null, life = {} } = {}) {
     const items = addsSteps(lifeMap.life);
     const named = new Set(items.map(item => item.step));
     const others = labels.filter(item => !named.has(item.step));
+    const { onPath } = lifeMap.geometry().placer;
+    const card = lifeMap.card.hidden ? null : boxIn(lifeMap.card);
     items.forEach((item, index) => {
-      chip(t(item.key, { pronoun: lifeMap.life.pronoun }), points[item.step], item.tone, index, placed, item.tries, others);
+      chip(t(item.key, { pronoun: lifeMap.life.pronoun }), points[item.step], item.tone, index, { placed, tries: item.tries, labels: others, dots: points, onPath, card });
     });
   }
 

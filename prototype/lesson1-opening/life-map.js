@@ -422,9 +422,12 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
   }
 
   // ——— Where everything sits at this stage size ———
+  // The layout holds for one life, stage size and Born: Born comes from the field's fit, which can
+  // catch up with a stage's new size a moment later (leaving the cover with reduced motion).
+  const layoutKey = () => { const r = rect(); const o = origin(); return `${model.life.id}|${r.width}x${r.height}|${Math.round(o.x)},${Math.round(o.y)}`; };
   function geometry() {
     const r = rect();
-    const key = `${model.life.id}|${r.width}x${r.height}`;
+    const key = layoutKey();
     if (geo?.key === key) return geo;
     const o = origin();
     // A narrow stage keeps a band clear at the top for the end card's bar: the
@@ -540,7 +543,7 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
   let sizedFor = ''; // the stage size the base canvases were last drawn at
   function clearBase() {
     const r = rect();
-    sizedFor = `${model.life.id}|${r.width}x${r.height}`;
+    sizedFor = layoutKey();
     sizeCanvas(graysCanvas, gx, whole());
     sizeCanvas(darkCanvas, dx, whole());
     sizeCanvas(marksCanvas, mx, whole());
@@ -600,7 +603,7 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
   function bakeTo(count, ahead) {
     const r = rect();
     // The first drawing at a stage size sizes the canvases first.
-    if (sizedFor !== `${model.life.id}|${r.width}x${r.height}` || count < baked + 1 || (aheadBaked && !ahead)) clearBase();
+    if (sizedFor !== layoutKey() || count < baked + 1 || (aheadBaked && !ahead)) clearBase();
     const before = baked;
     for (let index = baked + 1; index < count; index += 1) bakeStep(index);
     baked = Math.max(baked, count - 1);
@@ -1003,7 +1006,7 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
     }
     if (part === 'grays') return;
     sizeCanvas(darkCanvas, dx, whole());
-    sizedFor = `${model.life.id}|${rect().width}x${rect().height}`;
+    sizedFor = layoutKey();
     strokes = strokes.filter(item => item.layer !== 'dark' && item.layer !== 'light');
     marks = [];
     // The real path from the fork: light, behind.
@@ -1157,8 +1160,7 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
       if (failed || !model) return;
       const placed = geo?.key;
       size = null;
-      const r = rect();
-      const key = `${model.life.id}|${r.width}x${r.height}`;
+      const key = layoutKey();
       // A second call for the same size (the observer after a settle) has nothing to redo.
       if (placed === key && sizedFor === key) return;
       closePop();

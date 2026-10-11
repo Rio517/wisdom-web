@@ -84,6 +84,49 @@ Every option starts from the same base:
 
 **The pick: E** (A, kept to one size). A child follows the life from birth, every step still in its place, and nothing in the list changes style: a shortened row is the same type and colour as its neighbours, it only says the step in fewer words ("Helps the neighbours" for "His grandma takes soup to a neighbour, and Theo comes along"). A's 16/14 step was the kind of size difference the owner flagged; B drops the start of the story; C does not fit and keeps two looks. E ends up with fewer labels than D where the room allows (it tries a single size down to 15 px before shortening anything).
 
+### What was built
+
+- **The list is planned, not tried.** Before the first line, `fitStory` (page.js) measures every row once at each size it considers (one layout a size, a probe row for a shortened row's height) and works out the list's height at every step of the story. It takes the largest single size at which every step fits whole (24 down to 15 px). Failing that, it shortens the oldest rows to their step's map label, one at a time and only as many as needed, with older rows at most 1 px smaller (16/15, 15/15 or 15/14; of these, the plan that shortens the fewest rows), and 14 px for everything only if none fits. A line arriving only applies its step's plan: before the line rises, the fifth-newest row may step back and the oldest rows may shorten; the four newest never change.
+- **A shortened row** keeps its age and shows the step's map label ("Helps at home") in the same type and colour as its neighbours; the whole line stays in a visually hidden span for screen readers, and the label is `aria-hidden`.
+- **The ages** have one size (82% of the older rows' size, at least 13 px), so the age column keeps one width.
+- **Room on short screens**, as in the options: the kicker, a one-line heading, and the beat dots beside Back and Next. These are story-beat rules in `opening.css`; the dots-beside-buttons rule also holds in a changed life, so the controls don't jump when a choice is picked.
+- **A changed life's list** still uses `fitList` as before; its fold is now only `foldWhat`.
+- **"Choices add up"** (`chip()` in map.js): tries go out to 140 px above and below the dot, each running right, left or centred, then slid 20 or 40 px along the route. A chip is placed in tiers: clear of the other chips, the labels that stay, every dot (and its pin crosses no dot but its own) and the route; then the route may run under it; then its pin may cross a label or a chip; then other steps' labels step back. The three named steps keep their labels, and a slide never puts a chip over another dot.
+- **Found on the way:** with reduced motion at 744×1133, leaving the cover drew the life for the cover's taller stage (Born 10 px below the map's foot, the route mostly off the stage), and "Choices add up" then showed one or two labels. The life map kept a layout keyed only on the stage size, while Born's place came from a size cached on the cover. The layout is now keyed on Born's place too (`layoutKey` in life-map.js). It was the same at 72d8ffe.
+
+### Measured after (Chromium)
+
+- **The sweep, all ten lives × 1133×744, 1366×657 and 1440×900 × both paces:** 0 px scrolled during playback, 0 px too long at the end, 0 rows out of view, in all 60 runs (before: 30 runs scrolled, up to 87 px, and up to six rows were cut). Line sizes at the end: one size (Sam 15.5–17.5 px, Ana 15 px), or 15 and 14 px; 14 px throughout for Amara and Omar at 1366×657 only. Ages 13 px (14.35 px for Sam at 1440×900, 82% of his one size). Shortened rows at the end: 0 to 6 (Theo 6 at 1133×744, 1 at 1366×657, none at 1440×900; Nora 5, 3 and 1).
+- **Where a list ends:** 4 px above the Pause row when the life fits at one size (2 px before). Where the tightest moment was an earlier step, not the end, a little more is left: up to 20 px (Leo and Zoe at 1133×744).
+- **The room:** the list's box is 490 px at 1133×744 (367 before) and 399 px at 1366×657 (268); 1440×900 is unchanged (469).
+- **"Choices add up":** 3/3, with no clash (each other, the labels that stay, a dot, a pin over a dot, the map's edge, the end card), for all 70 lives × sizes at 1280×800, 1440×900, 1920×1080, 2560×1440, 744×1133, 1133×744 and 1366×657 (before: 2 short and 14 with a chip over a dot).
+- **The whole opening, keyboard only:** each life from the cover through the story; at the end a changed life from the last ring (Enter on the ring, Enter on its first choice); Escape back; Next to "Choices add up" (3 labels); Next to the hike; ← ← back to the story. All 70 lives × sizes pass at the quicker pace. The normal pace passes at 1440×900 and 1366×657 (Theo, Nora, Omar, Sam), and reduced motion passes at 1440×900, 744×1133 and 1133×744 (all ten lives). A changed life's list never scrolls in any of them. No console errors or warnings.
+- **Cost of a line arriving:** layouts per line (Chrome's own count, stepping through the story): Theo at 1133×744 6.4 → **1.3** on average, 9 → 4 at most; Sam at 1920×1080 1.3 → 1.3. The longest tasks at 4× slowdown cannot be judged on this VM. Its headless Chromium composites in software, and the same baseline run swings from 77 to 846 ms (Sam at 1920×1080, 72d8ffe) between runs. With that noise, the arrival task read 77 → 67 ms (Theo at 1133×744) and 101–846 → 213 ms (Sam at 1920×1080). `node sweep.mjs --budget --sizes 1133x744 --lives theo` repeats it on a real machine.
+- **Memory:** five Replays at 1133×744: JavaScript heap 14.4 → 15.2 MB, 522 to 537 page elements (before: 14.2 → 15.0 MB, 498 to 506).
+- `npm test` passes (264 tests); `npm run lives:check`: no errors, no warnings.
+- **WebKit** could not be installed here: the VM's network policy blocks Playwright's download hosts. On a Mac: `npx playwright install webkit`, then `node sweep.mjs --engine webkit --sizes 1133x744,1440x900,1366x657` and with `--no-story --sizes 1280x800,1440x900,1920x1080,2560x1440,744x1133,1133x744,1366x657`.
+
+### Simplified, and known issues
+
+- The plan assumes each row's height depends only on its own size and width, which holds for this list (a grid of independent rows). A row's text changing after the plan (a font arriving late) is fitted again only if the list's box changes size.
+- A life whose tightest moment is not its end keeps the labels it needed then: Nora at 1440×900 shortens one row although the finished list would have room for it. Rows never lengthen again, so nothing changes under the reader.
+- At 1366×657, Amara and Omar need 14 px for every row, plus labels. 1366×657 is a laptop browser window, below the project's minimum targets, but it now fits.
+- Option B's words were never written; it was drawn only.
+
+### Review images (v06)
+
+| Moment | v06 | Compare |
+| --- | --- | --- |
+| Theo at the end of the story, 1133×744 | [list theo v06](opening-list-1133x744-theo-v06.png) | [end 1133 v04](opening-end-1133-v04.png) |
+| Theo mid-story (step 10), 1133×744 | [list theo play v06](opening-list-1133x744-theo-play-v06.png) | |
+| Nora at the end, 1440×900 | [list nora v06](opening-list-1440-nora-v06.png) | [option C (today's fold, two sizes)](opening-list-option-c-v01.png) |
+| Ana at the end, 1366×657 | [list ana v06](opening-list-1366x657-ana-v06.png) | |
+| Sam at the end, 1920×1080 | [list sam v06](opening-list-1920-sam-v06.png) | [story v05](opening-history-story-1920x1080-v05.png) |
+| "Choices add up", Theo, 1133×744 | [adds theo v06](opening-adds-1133x744-theo-v06.png) | |
+| "Choices add up", Lena, 744×1133 | [adds lena v06](opening-adds-744-lena-v06.png) | [adds 744 v01](opening-adds-744-v01.png) |
+| "Choices add up", Omar, 744×1133 | [adds omar v06](opening-adds-744-omar-v06.png) | |
+| The five list options | [A](opening-list-option-a-v01.png), [B](opening-list-option-b-v01.png), [C](opening-list-option-c-v01.png), [D](opening-list-option-d-v01.png), [E, the pick](opening-list-option-e-v01.png) | |
+
 ## Round 4: the owner's notes on v04 (v05)
 
 The notes, paraphrased:
@@ -244,7 +287,7 @@ Each line has the same rhythm. In the first 420 ms the line rises 14 px and fade
 
 - Choices keep the route level. The radio play lifts it (the star). The split drops it (the diamond). Asking for help starts the climb back.
 - Builds-on pulses: choir → guitar → band → song → radio and record deal; teaching guitar answers the guitar; the school job answers teaching; his daughter on stage answers choir.
-- Lines older than the last four step back to the quiet colour. Beside the map, when the list would outgrow its column, the oldest step down to 15 px, then 14 px, and always wrap to their whole text; the three before the newest step down last.
+- Lines older than the last four step back to the quiet colour. Beside the map the list is planned before it plays (round 5): one size if the whole story fits; otherwise the oldest rows, one at a time, show their step's map label, and older rows may be a pixel smaller. The four newest rows always show their whole line.
 - After the last line the end card appears on the map, clear of the route: lower right where there is room (1920×1080), lower left otherwise (at 1280×800 and 1440×900 a gray label holds the lower right), and as a bar along the top of the map at 744×1133 and 1133×744.
 - **A changed choice:** the traveller goes back to the fork, and each step of the new life takes 700 ms plus 70 ms a year (at most 1500 ms), with a 320 ms pause. Its labels follow the explorer's rules. The list shows each event as it is reached, newest at the bottom. With reduced motion, the new life appears at once.
 - In "Choices add up", three labels mark the guitar (His choice), the radio play (Luck) and the split (Not his choice); on another life, its first own choice that builds on an earlier one, its first lucky break and its first setback. The gray choices' labels step back there, so the three have room; their lines stay. Where a life's own labels still leave no room, the labels of other steps in the way step back too.
