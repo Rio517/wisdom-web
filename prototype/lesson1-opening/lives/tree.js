@@ -124,8 +124,15 @@ function buildModel({ store, errors, warnings, ms }) {
     } else if (item.node) push(byNode, item.node, item);
   }
 
+  // Runs, and the runs each node is a step of.
+  const runs = [...store.runs.values()];
+  const runsByNode = new Map();
+  for (const run of runs) for (const id of run.steps) { if (!runsByNode.has(id)) runsByNode.set(id, []); runsByNode.get(id).push(run); }
+  const byRun = new Map();
+  for (const item of items) if (item.run) push(byRun, item.run, item);
+
   return {
-    store, errors, warnings, ms, next, links, fresh, bands, home, loose, uses, lives, byNode, byStep, byLife,
+    store, errors, warnings, ms, next, links, fresh, bands, home, loose, uses, lives, byNode, byStep, byLife, runs, runsByNode, byRun,
     bandByKey: new Map(bands.map(band => [band.key, band])),
   };
 }
@@ -286,11 +293,19 @@ function nodeHTML(node, path, depth) {
   const row = `<button type="button" class="row${kids ? '' : ' leaf'}${state}" data-act="toggle" data-key="${esc(node.id)}" aria-expanded="${open}">`
     + `<span class="caret" aria-hidden="true"></span>${glyph(node.kind)}`
     + `<span class="label">${marked(node.label ?? node.id)}${idHint}</span>`
-    + `${node.by === 'family' ? '<span class="family">family</span>' : ''}${flagHTML(model.byNode.get(node.id))}`
+    + `${node.by === 'family' ? '<span class="family">family</span>' : ''}${runChip(node.id)}${flagHTML(model.byNode.get(node.id))}`
     + `<span class="ages">${ages(node)}</span><span class="file">${esc(fileShort(node.file))}</span>`
     + `<span class="uses"${lives.length ? ` title="${esc(lives.join(', '))}"` : ''}>${lives.length ? plural(lives.length, 'life', 'lives') : ''}</span>`
     + '</button>';
   return `<li class="item" data-key="${esc(node.id)}">${row}${open ? openHTML(node.id, path, depth) : ''}</li>`;
+}
+
+/** A small "run" mark on a node that is a step of one or more runs. */
+function runChip(id) {
+  const runs = model.runsByNode.get(id);
+  if (!runs?.length) return '';
+  const names = runs.map(run => `${run.label ?? run.id} (${run.steps.indexOf(id) + 1}/${run.steps.length})`).join(', ');
+  return `<span class="run-chip" title="${esc(`In a run: ${names}`)}">run<span class="visually-hidden">: ${esc(names)}</span></span>`;
 }
 
 function groupHTML(key, path, depth) {
@@ -473,6 +488,7 @@ function problemHTML(item) {
     const node = model.store.nodes.get(item.node);
     where.push(`<button type="button" class="chip node-chip" data-act="go" data-id="${esc(item.node)}">${glyph(node.kind)}${esc(item.node)}</button>`);
   }
+  if (item.run && model.store.runs.has(item.run)) where.push(`<button type="button" class="chip run-link" data-act="run" data-run="${esc(item.run)}">run ${esc(item.run)}</button>`);
   const file = `<span class="chip file-chip">${esc(item.file ?? '')}${item.line ? `, line ${item.line}` : ''}</span>`;
   return `<li class="problem p-${item.level}"><p><strong>${item.level === 'error' ? 'Error' : 'Warning'}</strong> ${esc(item.message)}</p><p class="where">${file}${where.join('')}</p></li>`;
 }
@@ -488,6 +504,36 @@ function renderChecker() {
   }
   const list = [...errors.map(item => ({ ...item, level: 'error' })), ...warnings.map(item => ({ ...item, level: 'warning' }))];
   $('#checker-body').innerHTML = `<p class="counts-line">${counts}</p><ol class="problems">${list.map(problemHTML).join('')}</ol>`;
+}
+
+// ——— Runs ———
+/** Each run as its chain of steps: try, the no, the change, the outcome. */
+function renderRuns() {
+  const { runs, store } = model;
+  $('#runs-count').textContent = runs.length ? `${runs.length}` : '';
+  if (!runs.length) { $('#runs-body').innerHTML = '<p class="rule-note">No runs yet.</p>'; return; }
+  const byFile = new Map();
+  for (const run of runs) { if (!byFile.has(run.file)) byFile.set(run.file, []); byFile.get(run.file).push(run); }
+  $('#runs-body').innerHTML = [...byFile].map(([file, list]) => `<h3 class="runs-file">${esc(fileShort(file))}</h3><ol class="runs">${list.map(run => {
+    const chain = run.steps.map(id => {
+      const node = store.nodes.get(id);
+      if (!node) return `<li class="run-step missing"><span class="rule-note">${esc(id)}?</span></li>`;
+      const canGo = model.home.has(id);
+      const label = canGo ? `<button type="button" class="link-btn" data-act="go" data-id="${esc(id)}">${esc(node.label ?? id)}</button>` : esc(node.label ?? id);
+      return `<li class="run-step">${glyph(node.kind)}${label}</li>`;
+    }).join('<li class="run-arrow" aria-hidden="true">→</li>');
+    const used = model.lives.filter(life => life.steps.some(step => step.run === run.id)).map(life => life.name ?? life.id);
+    return `<li class="run" data-run="${esc(run.id)}"><p class="run-head"><span class="run-label">${esc(run.label ?? run.id)}</span>`
+      + `<code class="row-id">${esc(run.id)}</code><span class="ages">${esc(run.span ?? '?')} yr</span>${used.length ? `<span class="run-uses">${esc(used.join(', '))}</span>` : ''}${flagHTML(model.byRun.get(run.id))}</p>`
+      + `<ol class="run-chain">${chain}</ol></li>`;
+  }).join('')}</ol>`).join('');
+}
+
+function showRun(id) {
+  const target = $('#runs-body').querySelector(`[data-run="${CSS.escape(id)}"]`);
+  if (!target) return;
+  target.scrollIntoView({ block: 'center', behavior: reduceMotion() ? 'auto' : 'smooth' });
+  flash(target);
 }
 
 // ——— Written lives ———
@@ -517,9 +563,9 @@ function stepHTML(life, raw, index, step) {
       + `<button type="button" class="grow-btn" data-act="grow" data-life="${esc(life.id)}" data-step="${index}" data-alt="${esc(alt.id)}">Grow ${GROW_COUNT} lives</button></div>`
       + '<div class="grown" aria-live="polite"></div></li>').join('')}</ul>`
     : '';
-  return `<li class="step${problems.some(item => item.level === 'error') ? ' has-error' : ''}" data-step="${index}">`
+  return `<li class="step${problems.some(item => item.level === 'error') ? ' has-error' : ''}${step.run ? ' in-run' : ''}" data-step="${index}">`
     + `<span class="s-age">${esc(raw.age)}</span><span class="s-mark">${glyph(step.kind)}</span>`
-    + `<div class="s-body" data-copy-ok="question pronoun"><p class="s-head">${label}${step.byFamily ? '<span class="family">family</span>' : ''}</p>`
+    + `<div class="s-body" data-copy-ok="question pronoun"><p class="s-head">${label}${step.byFamily ? '<span class="family">family</span>' : ''}${step.run ? `<span class="run-chip" title="${esc(`Run ${step.run}, step ${step.runStep + 1} of ${step.runSize}`)}">run ${step.runStep + 1}/${step.runSize}</span>` : ''}</p>`
     + `<p class="s-line">${esc(step.line)}</p>${problemList}${alts}</div></li>`;
 }
 
@@ -566,7 +612,9 @@ function grownHTML(life, number) {
   const from = Math.max(0, life.steps.findIndex(step => step.picked));
   const lines = life.steps.slice(from).map(step => {
     const mark = step.kind === 'lucky' ? '<span class="g-mark g-lucky">lucky</span>' : step.kind === 'setback' ? '<span class="g-mark g-setback">setback</span>' : '';
-    return `<li${step.picked ? ' class="fork"' : ''}><span class="g-age">${esc(step.age)}</span><span class="g-dash" aria-hidden="true">—</span>${glyph(step.kind)}<span class="g-line">${esc(step.line)}${mark}</span></li>`;
+    const run = step.run ? `<span class="g-mark g-run">run ${step.runStep + 1}/${step.runSize}</span>` : '';
+    const classes = [step.picked ? 'fork' : '', step.run ? 'in-run' : ''].filter(Boolean).join(' ');
+    return `<li${classes ? ` class="${classes}"` : ''}><span class="g-age">${esc(step.age)}</span><span class="g-dash" aria-hidden="true">—</span>${glyph(step.kind)}<span class="g-line">${esc(step.line)}${mark}${run}</span></li>`;
   }).join('');
   const ending = life.endedEarly ? `<span class="g-early">ends early, at ${esc(life.lastAge)}</span>` : `<span class="g-end">to ${esc(life.end)}</span>`;
   return `<article class="grown-life"><h4>Life ${number}${ending}<span class="g-seed">seed ${esc(life.seed)}</span></h4><ol>${lines}</ol></article>`;
@@ -590,7 +638,7 @@ function growFive(button) {
 function renderHead() {
   const { store, ms } = model;
   const nodeFiles = store.files.filter(file => file.kind === 'nodes').length;
-  $('#stats').textContent = `${plural(store.nodes.size, 'node')} in ${plural(nodeFiles, 'file')} · ${plural(model.lives.length, 'written life', 'written lives')} · read and checked in ${roundMs(ms.total)} ms`;
+  $('#stats').textContent = `${plural(store.nodes.size, 'node')} in ${plural(nodeFiles, 'file')} · ${plural(store.runs.size, 'run')} · ${plural(model.lives.length, 'written life', 'written lives')} · read and checked in ${roundMs(ms.total)} ms`;
   $(source.fixture ? '#use-fixture' : '#use-real').setAttribute('aria-current', 'page');
   const root = source.fixture ? 'tests/fixtures/lives/' : 'prototype/lesson1-opening/lives/';
   for (const span of document.querySelectorAll('[data-root]')) span.textContent = root;
@@ -662,6 +710,7 @@ function wire() {
     else if (act === 'life') selectLife(target.dataset.life, { scroll: !target.closest('#who') });
     else if (act === 'step') selectLife(target.dataset.life, { step: Number(target.dataset.step) });
     else if (act === 'grow') growFive(target);
+    else if (act === 'run') showRun(target.dataset.run);
     else if (act === 'expand-all') expandAll();
     else if (act === 'collapse-all') collapseAll();
     else if (act === 'clear') clearFilters();
@@ -696,6 +745,7 @@ async function init() {
   renderHead();
   renderControls();
   renderChecker();
+  renderRuns();
   renderTree();
   renderWho();
   renderLife();

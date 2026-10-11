@@ -295,3 +295,23 @@ button.chip:hover { border-color: var(--sage); background: var(--paper-deep); }
 @media (prefers-reduced-motion: reduce) {
   .row, .step, .row[aria-expanded] .caret::before { transition: none; }
 }
+
+/* Runs (round 6): a short burst of trying again. */
+.run-chip {
+  flex: none; padding: 0 7px; border-radius: 999px; background: var(--paper-deep);
+  box-shadow: inset 0 0 0 1px var(--sage); color: var(--forest-deep); font-size: 11.5px; font-weight: 600;
+}
+.runs-count { color: var(--quiet); font: 600 13px/1 var(--font-guide); }
+.runs-block > .rule-note { margin: 6px 0 10px; }
+.runs-file { margin: 12px 0 4px; color: var(--quiet); font: 600 12px/1.3 var(--font-guide); text-transform: lowercase; }
+.runs { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.run { padding: 8px 10px; border: 1px solid var(--rule); border-radius: 10px; background: var(--paper); }
+.run-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 8px; margin: 0 0 4px; }
+.run-label { font-weight: 600; }
+.run-uses { color: var(--forest); font-size: 12px; font-weight: 600; }
+.run-chain { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 2px 4px; font-size: 13.5px; }
+.run-step { display: inline-flex; align-items: center; gap: 2px; }
+.run-step .glyph { width: 14px; height: 14px; }
+.run-arrow { color: var(--quiet); }
+.step.in-run .s-age { color: var(--forest); font-weight: 600; }
+.g-run { background: var(--paper-deep); color: var(--forest-deep); }

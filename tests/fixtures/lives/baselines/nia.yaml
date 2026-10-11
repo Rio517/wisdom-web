@@ -19,7 +19,14 @@ steps:
     age: 12
   - node: buildsApp
     age: 15
+    run: appAgain
     alts: [schoolTeam, writesStories]
+  - node: appCrashes
+    age: 15
+    run: appAgain
+  - node: rebuildsApp
+    age: 16
+    run: appAgain
   - node: illForMonths
     age: 17
   - node: studiesScience

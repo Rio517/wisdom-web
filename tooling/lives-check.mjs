@@ -24,7 +24,7 @@ const quiet = args.includes('--quiet');
 
 function readStore(dir) {
   const files = {};
-  for (const folder of ['nodes', 'baselines']) {
+  for (const folder of ['nodes', 'runs', 'baselines']) {
     const path = join(dir, folder);
     if (!existsSync(path)) continue;
     for (const name of readdirSync(path).filter(file => /\.ya?ml$/.test(file)).sort()) files[`${folder}/${name}`] = readFileSync(join(path, name), 'utf8');
@@ -40,11 +40,11 @@ const pad = (value, width) => String(value).padEnd(width);
 const padStart = (value, width) => String(value).padStart(width);
 const percent = value => (value === null ? '—' : `${Math.round(value * 100)}%`);
 const signed = value => `${value >= 0 ? '+' : '−'}${Math.abs(value).toFixed(2)}`;
-const where = item => [item.file, item.baseline ? `${item.baseline}${item.step !== undefined ? ` step ${item.step + 1}` : ''}` : '', item.node && !item.baseline ? item.node : ''].filter(Boolean).join('  ');
+const where = item => [item.file, item.baseline ? `${item.baseline}${item.step !== undefined ? ` step ${item.step + 1}` : ''}` : '', item.node && !item.baseline ? item.node : '', item.run ? `run ${item.run}` : ''].filter(Boolean).join('  ');
 
 const nodeFiles = store.files.filter(file => file.kind === 'nodes');
 out.push(`Lives store: ${relative(root, storeDir) || '.'}`);
-out.push(`  ${store.nodes.size} nodes in ${nodeFiles.length} files; ${store.baselines.size} baseline${store.baselines.size === 1 ? '' : 's'} (${[...store.baselines.keys()].join(', ')})`);
+out.push(`  ${store.nodes.size} nodes in ${nodeFiles.length} files; ${store.runs.size} run${store.runs.size === 1 ? '' : 's'}; ${store.baselines.size} baseline${store.baselines.size === 1 ? '' : 's'} (${[...store.baselines.keys()].join(', ')})`);
 out.push('');
 out.push(errors.length ? `Errors (${errors.length})` : 'Errors: none');
 for (const item of errors) out.push(`  ${where(item)}: ${item.message}`);
@@ -55,11 +55,15 @@ if (livesPer > 0 && store.baselines.size) {
   const rows = variety(store, { lives: livesPer });
   out.push('');
   out.push(`Variety: ${livesPer} grown lives from each of ${rows.length} alternatives`);
-  out.push(`  ${pad('life', 8)}${pad('fork', 6)}${pad('alternative', 22)}${padStart('reach', 6)}${padStart('steps', 7)}${padStart('distinct', 10)}${padStart('overlap', 9)}${padStart('end', 7)}${padStart('others', 8)}${padStart('luck', 6)}${padStart('build', 7)}`);
+  out.push(`  ${pad('life', 8)}${pad('fork', 6)}${pad('alternative', 22)}${padStart('reach', 6)}${padStart('steps', 7)}${padStart('distinct', 10)}${padStart('overlap', 9)}${padStart('end', 7)}${padStart('others', 8)}${padStart('luck', 6)}${padStart('build', 7)}${padStart('run', 6)}`);
   for (const row of rows) {
-    out.push(`  ${pad(row.baseline, 8)}${pad(row.age, 6)}${pad(row.alt, 22)}${padStart(`${Math.round(row.reach * 100)}%`, 6)}${padStart(row.steps.toFixed(1), 7)}${padStart(row.distinct, 10)}${padStart(row.overlap === null ? '—' : row.overlap.toFixed(2), 9)}${padStart(signed(row.rise), 7)}${padStart(signed(row.othersRise), 8)}${padStart(percent(row.surprise), 6)}${padStart(percent(row.build), 7)}${row.flagged ? '  ← ends apart from its fork' : ''}`);
+    out.push(`  ${pad(row.baseline, 8)}${pad(row.age, 6)}${pad(row.alt, 22)}${padStart(`${Math.round(row.reach * 100)}%`, 6)}${padStart(row.steps.toFixed(1), 7)}${padStart(row.distinct, 10)}${padStart(row.overlap === null ? '—' : row.overlap.toFixed(2), 9)}${padStart(signed(row.rise), 7)}${padStart(signed(row.othersRise), 8)}${padStart(percent(row.surprise), 6)}${padStart(percent(row.build), 7)}${padStart(percent(row.run), 6)}${row.flagged ? '  ← ends apart from its fork' : ''}`);
   }
   const mean = key => { const values = rows.map(row => row[key]).filter(value => value !== null); return values.reduce((sum, value) => sum + value, 0) / (values.length || 1); };
+  const roomy = rows.filter(row => row.needsRun && store.baselines.get(row.baseline).end - row.age >= 10);
+  const roomyRun = roomy.reduce((sum, row) => sum + row.run, 0) / (roomy.length || 1);
+  const leastRun = roomy.reduce((least, row) => (row.run < least.run ? row : least), roomy[0] ?? { run: 1 });
+  out.push(`  runs: ${percent(roomyRun)} of the lives grown from the ${roomy.length} forks at least 10 years before end that come before the written run got one (aim: 80% or more; least ${percent(leastRun.run)}${leastRun.baseline ? `, ${leastRun.baseline} at ${leastRun.age} ${leastRun.alt}` : ''})`);
   out.push(`  mean: reach ${Math.round(mean('reach') * 100)}%, steps ${mean('steps').toFixed(1)}, distinct ${mean('distinct').toFixed(1)}, overlap ${mean('overlap').toFixed(2)}, luck or setback at ${percent(mean('surprise'))} of the forks from 8 to end − 4 (aim: about 33%), building on the last two steps ${percent(mean('build'))}; ${rows.filter(row => row.flagged).length} flagged (end more than 0.12 from the fork's other options)`);
 }
 
@@ -70,6 +74,7 @@ if (randomLives > 0 && store.baselines.size) {
   const { tells } = report;
   const share = (part, whole) => (whole ? `${Math.round((100 * part) / whole)}%` : '—');
   out.push(`  ${share(tells.endSurprise, report.lives)} end on a lucky break or a setback (aim: 0); ${share(tells.ownStory, tells.surprises)} of the surprises follow the life's own story (aim: half or more); ${share(tells.answered, tells.setbacks)} of the setbacks are answered within four years (aim: 60% or more)`);
+  out.push(`  runs grown: ${report.runs.used}/${report.runs.total}${report.runs.unused.length ? `  unused: ${report.runs.unused.join(', ')}` : ''}`);
   for (const file of report.files) {
     out.push(`  ${pad(file.file, 16)}${padStart(`${file.used}/${file.total}`, 8)}${file.unused.length ? `  unused: ${file.unused.slice(0, 12).join(', ')}${file.unused.length > 12 ? ', …' : ''}` : ''}`);
   }

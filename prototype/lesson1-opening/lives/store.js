@@ -4,6 +4,7 @@ import { loadStore, check } from './engine.js';
 
 const TEXTS = {
   ...import.meta.glob('./nodes/*.yaml', { query: '?raw', import: 'default', eager: true }),
+  ...import.meta.glob('./runs/*.yaml', { query: '?raw', import: 'default', eager: true }),
   ...import.meta.glob('./baselines/*.yaml', { query: '?raw', import: 'default', eager: true }),
 };
 // The engine's test fixture (two written lives), for checks and captures: `?store=fixture`.

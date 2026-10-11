@@ -1,6 +1,6 @@
 # Lives: the store behind the Lesson 1 opening
 
-Status: mockup data (design 001, round v13, round 4), English only. Created 2026-10-10.
+Status: mockup data (design 001, round v13, rounds 4 to 6), English only. Created 2026-10-10. Updated 2026-10-11 (round 6: runs, choices are not verdicts, drinking and drugs).
 
 The opening tells one person's life on the map, one fork at a time, and then
 lets the reader change one of that person's choices and watch a different life
@@ -10,6 +10,8 @@ grow from the fork. This folder holds everything those lives are made of:
   science, …). A node is one thing that can happen in a life: a choice, a lucky
   break, a setback or an event. Every life, written or grown, is a path through
   these nodes.
+- `runs/*.yaml`: the **runs**, one file per area like `nodes/`. A run is a
+  short burst of trying again: a few nodes in a row, close together.
 - `baselines/*.yaml`: the **baselines**, one file per person. A baseline is a
   written life: the nodes it passes through, at which ages, and which other
   choices the reader may try at each fork.
@@ -65,7 +67,13 @@ wobble a little but don't move it. A grown life also drifts a tenth of the way
 back to the middle at each step, so no life gets stuck at the top or bottom.
 
 **Kinds and how they draw.** A `choice` is a plain dot where lines split, and
-never moves the path up or down by itself: choices are not ranked. A `lucky`
+never moves the path up or down by itself: choices are not ranked.
+**Choices are not verdicts.** A choice's label, line and `if` tell what the
+person does, never how it turns out or whether it was bad ("Goes on a world
+tour", not "Parties every night"). Anything that goes wrong comes in a later
+step: a setback or an event with its own cause, in its own words. A written
+life may give a choice a positive `move` (asking for help can start the climb
+back) but never a negative one. A `lucky`
 break is a sun star and lifts the path (`move` 1 to 3). A `setback` is a clay
 diamond and drops it (`move` -1 to -3). An `event` is something that happens
 that is neither a choice nor plain luck (a record deal after a song is played,
@@ -83,6 +91,34 @@ She after the first line of a story; anywhere else it stays the name, so write
 capitalized for you. Quote every line and `if` (they start with `{`). Never
 "you". A line must make sense on its own, right after any node that can come
 before it: no "it" or "they" pointing at the previous line.
+
+## A run
+
+A **run** is a short burst of 3 to 5 steps over at most 2 years. The person
+tries something, meets a no (a rejection, a split, a failed try, an injury),
+changes something (a new band, a new approach, more practice, someone's help)
+and tries again. It ends in a success, a partial success or a change of
+course: persistence isn't always winning.
+
+```yaml
+- id: newBand                # camelCase, unique among runs
+  label: Starts over with a new band   # the tree page's name for it, at most 30 characters
+  steps: [ownSong, bandSplits, formsNewBand, radioPlay]   # 3–5 node ids, in order
+  span: 2                    # years from its first step to its last, 1 or 2
+```
+
+- Each step is an ordinary node, and its rules (`after`, `needs`, `unless`,
+  `ages`) hold in sequence: the run is a path, not a special case. Write the
+  nodes a run needs with `within: 1`, so they read as "right after".
+- The first step is a try (a choice or an event); a setback comes after it and
+  before the last step; the last step is not a setback.
+- Inside a run, two steps in a row may share an age; the whole run takes 1 to
+  `span` years. Outside a run a step still comes at least a year after the one
+  before it.
+- Vary the shapes: some runs end in a win, some in a partial win (a small
+  press, a market stall), some in a change of course (a new position, a new
+  field). Two or more runs per area, so a grown life nearly always finds one
+  that follows its story.
 
 ## A baseline
 
@@ -103,6 +139,7 @@ steps:
     move: …                              # optional: this life's own rise or fall at the step
     y: …                                 # optional: the exact height, 0 (top) to 1 (bottom), to fine-tune a shape
     echoes: [choir]                      # optional: earlier steps that pulse when this one lands
+    run: newBand                         # this step is part of the life's run (mark each of its steps)
 ```
 
 Every step must be possible where it stands: its node's rules hold for the
@@ -113,7 +150,10 @@ years before `end`, so a different life has room to grow. When a step names no
 
 ## What a written life needs
 
-- 12 to 15 steps, from `born` to `end`, then "Many paths still ahead."
+- 12 to 17 steps, from `born` to `end`, then "Many paths still ahead." The
+  run's steps count.
+- **Exactly one run**, its steps marked `run: <id>`, in the run's order, one
+  after another, within its span.
 - One family choice before 8, and at least six of the person's own choices,
   most of them with two or three alternatives.
 - At least three steps that build on earlier ones, at least one lucky break and
@@ -123,8 +163,20 @@ years before `end`, so a different life has room to grow. When a step names no
   start hard, some peak early, some go steadily and meet one big surprise late.
 - Hard things are real but fit for an 8-year-old reading with a grown-up: a lost
   job, a lost home, an injury, an illness, a failed exam, a business that
-  closes, a parent who needs care. No deaths, violence, abuse, drugs by name or
-  self-harm. Sam's "bad habits, money gone" is the darkest level.
+  closes, a parent who needs care. No deaths, violence, abuse or self-harm.
+- **Drinking and drugs** may be named as a setback, in the general words a
+  child reads with a grown-up: "{name} starts drinking too much." or "Drinking
+  and drugs take over, and {his} shows fall apart." That is the darkest level.
+  Never name a particular drug, and never describe how it is used or what it
+  does to the body. Such a node is a setback tagged `substance`, and:
+  - it always has a cause on the path before it (fame, a loss, stress): its
+    `after` names it, not just any setback;
+  - it is always answered by asking for help or being helped (a step that
+    gives `helped`) within 1–2 years, in the life and in the node rules: a
+    help node with `within` 1 or 2 names it or `substance` in its `after`
+    (`getsHelpToStop`); a grown life always takes help next;
+  - it is used sparingly: Sam's is the only written life with it, and at most
+    one or two nodes in the pool lead to it, only after fame or a big loss.
 - Respect for every job and every path. Fame and money are never the point, and
   no life ends as a lesson about the "right" choice.
 
@@ -157,8 +209,17 @@ The gray lines at each new dot are other nodes that were possible there.
   them) counts a quarter as much. A dance class at 4 rarely leads to
   something at 18 unless dancing carried on in between.
 
+- **One run.** A grown life with no run yet (none before the fork) starts one
+  at a fork, about half the time, when a run's first step's rules hold there
+  and the whole run fits before `end` − 4; when fewer than eight years are left
+  before then, it starts one wherever one fits. It does this once. The run's
+  steps are added together: the same age as the step before or a year later,
+  using the run's whole span where they can. A pick inside a written run (not
+  at its first step) stays part of that run.
+- **Drinking or drugs** is always followed by help, 1–2 years later.
+
 A node happens at most once in a life. A step comes at least a year after the
-one before it.
+one before it, except inside a run.
 
 ## Check it
 
@@ -169,20 +230,36 @@ npm run lives:check -- --quiet            # errors and the report, warnings coun
 npm run lives:check -- --store tests/fixtures/lives --lives 20 --random 1000
 ```
 
-**Errors** (fix them all): a file that doesn't parse; duplicate ids; an id
+**Errors** (fix them all): a file that doesn't parse; duplicate ids (nodes or
+runs); an id
 that isn't camelCase; an unknown name in `after`, `needs`, `unless`, `drops` or
 `echoes`; a tag named like another node; bad `ages`; a kind's `move` out of its
 range (choice 0, lucky 1 to 3, setback -1 to -3, event -3 to 3); a choice
 without `if`; a label over 22 characters; a line over 12 words; an unknown
-`{token}`; a line that starts with `{name}'s`; words that say "you"; a
+`{token}`; a line that starts with `{name}'s`; a sentence that starts with
+`{his}` or `{him}` (it stays lower case); words that say "you"; a
 baseline step or alternative that isn't possible where it stands (the message
 says which rule fails); alternatives on a step that isn't a choice, or an
 alternative that isn't one; alternatives less than six years before `end`;
-ages that don't go up; `end` outside 38 to 45; a
-written life with fewer than 12 or more than 15 steps, or one that doesn't
-start with `born` at 0 and finish at `end`.
+ages that don't go up (inside a run two steps may share one); `end` outside 38
+to 45; a written life with fewer than 12 or more than 17 steps, or one that
+doesn't start with `born` at 0 and finish at `end`; a choice step with a
+negative `move`. **Runs:** a label over 30 characters; a `span` other than 1 or
+2; fewer than 3 or more than 5 steps, an unknown or repeated one; a run that
+doesn't start with a try, meets no setback in its middle or ends on one; a
+step that can't follow the run's earlier steps (their tags are in its
+`unless`, or it has `within` and none of them gives its `after`); no ages that
+fit in order within the span. A written life with more than one run, or whose
+run's steps aren't together, in order and within the span. **Drinking and
+drugs:** a particular drug named, or how it's used (`NAMED_DRUGS` in
+`engine.js`); a `substance` node that isn't a setback, has no cause of its own
+in `after`, or that no help node names (`within` 1–2); a written life
+where help doesn't follow it within 2 years.
 
-**Warnings:** nodes no life can reach (nothing they need can come before them
+**Warnings:** a choice whose label, line or `if` uses a verdict word ("bad",
+"wastes", "too much", "gone", "lazy", "wrong" and a few more: `VERDICT_WORDS`
+in `engine.js`); a written life with no run; more than two nodes leading to a
+drinking or drug setback, or more than one written life with one; nodes no life can reach (nothing they need can come before them
 in time), duplicate labels, nodes where every grown life through them stops
 more than three years before its end, and a written life without a lucky
 break, a setback, a family choice before 8 or six of the person's own choices.
@@ -197,8 +274,11 @@ other alternatives). A pick whose lives end more than 0.12 apart from its
 fork's others is flagged: no choice may reliably end higher. `luck` is the
 share of grown forks from 8 to `end` − 4 that were a lucky break or a setback
 (aim: about a third), `build` the share of steps that built on one of the last
-two. Then, across 5,000 random lives (`--random`): how many end on a lucky
+two, `run` the share of grown lives that have a run (kept from before the
+fork or grown after it). The `runs:` line gives that share for the forks at
+least 10 years before `end` that come before the written run (aim: 80% or
+more). Then, across 5,000 random lives (`--random`): how many end on a lucky
 break or a setback (aim: none), how many of the surprises follow the life's
 own story (aim: half or more), how many setbacks are answered within four
 years (aim: 60% or more), and how many nodes of each file are ever used, and
-which are not.
+which are not, and which runs are ever grown.

@@ -1,5 +1,5 @@
 // The lives engine and checker of the Lesson 1 opening (prototype/lesson1-opening/lives),
-// on the fixture store in tests/fixtures/lives (two baselines, about 70 nodes).
+// on the fixture store in tests/fixtures/lives (two baselines, about 75 nodes, two runs).
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readdirSync, readFileSync } from 'node:fs';
@@ -7,7 +7,7 @@ import { join } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import {
-  loadStore, check, grow, heights, writtenLife, blocked, newPath, takeStep, say, forksOf, variety, coverage,
+  loadStore, check, grow, heights, writtenLife, blocked, newPath, takeStep, say, forksOf, variety, coverage, runFits,
 } from '../prototype/lesson1-opening/lives/engine.js';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
@@ -15,16 +15,17 @@ const FIXTURE = join(root, 'tests/fixtures/lives');
 
 function readStore(dir) {
   const files = {};
-  for (const folder of ['nodes', 'baselines']) {
+  for (const folder of ['nodes', 'runs', 'baselines']) {
     for (const name of readdirSync(join(dir, folder)).filter(file => file.endsWith('.yaml'))) files[`${folder}/${name}`] = readFileSync(join(dir, folder, name), 'utf8');
   }
   return files;
 }
 const fixture = loadStore(readStore(FIXTURE));
 
-// A small store written inline: `nodes` is YAML for one nodes file, `baselines` maps id → YAML.
-function mini(nodes, baselines = {}) {
+// A small store written inline: `nodes` is YAML for one nodes file, `baselines` maps id → YAML, `runs` is YAML for one runs file.
+function mini(nodes, baselines = {}, runs = null) {
   const files = { 'nodes/test.yaml': nodes };
+  if (runs) files['runs/test.yaml'] = runs;
   for (const [id, text] of Object.entries(baselines)) files[`baselines/${id}.yaml`] = text;
   return loadStore(files);
 }
@@ -145,7 +146,8 @@ test('every grown fixture life reaches its end, and every step is possible where
       const path = newPath();
       life.steps.forEach((step, index) => {
         if (index > 0) assert.equal(blocked(step.node, path, step.age), null, `${fork.baseline} ${fork.alt} seed ${i}: ${step.id} at ${step.age}`);
-        if (index > 0) assert.ok(step.age > life.steps[index - 1].age);
+        // Inside a run two steps may share an age; elsewhere a step comes at least a year later.
+        if (index > 0) assert.ok(step.run && step.run === life.steps[index - 1].run ? step.age >= life.steps[index - 1].age : step.age > life.steps[index - 1].age);
         takeStep(path, step.node);
       });
       for (const step of life.steps.slice(fork.forkIndex + 1)) {
@@ -273,10 +275,14 @@ steps:
   assert.ok(stale * 3 < fresh, `show after dancing at 4 only: ${stale} of 400; after dancing at 10 too: ${fresh}`);
 });
 
-test("heights: Sam's written life lands within 0.07 of round 3's", () => {
-  const round3 = [0.5, 0.515, 0.49, 0.505, 0.49, 0.4, 0.29, 0.33, 0.78, 0.67, 0.55, 0.45, 0.36, 0.27];
+test("heights: Sam's written life keeps round 3's shape: rise, fall, recovery", () => {
+  // Round 6: the run (16–18) dips and lifts; the record deal peaks as in round 3 (0.29); the fall goes as deep (0.78); the end is as high.
+  const round6 = [0.5, 0.509, 0.48, 0.499, 0.492, 0.6, 0.59, 0.4, 0.3, 0.292, 0.4, 0.82, 0.72, 0.62, 0.52, 0.42, 0.32];
   const sam = writtenLife(fixture, 'sam');
-  sam.steps.forEach((step, index) => assert.ok(Math.abs(step.y - round3[index]) <= 0.07 + 1e-9, `${step.id}: ${step.y.toFixed(3)} vs ${round3[index]}`));
+  assert.equal(sam.steps.length, round6.length);
+  sam.steps.forEach((step, index) => assert.ok(Math.abs(step.y - round6[index]) <= 0.01, `${step.id}: ${step.y.toFixed(3)} vs ${round6[index]}`));
+  const at = id => sam.steps.find(step => step.id === id).y;
+  assert.ok(Math.abs(at('recordDeal') - 0.29) <= 0.07 && Math.abs(at('labelDropsHim') - 0.78) <= 0.07 && Math.abs(sam.steps.at(-1).y - 0.27) <= 0.07);
   // A big jump is 0.42; a written y wins.
   assert.deepEqual(heights([{ id: 'a', kind: 'start' }, { id: 'b', kind: 'setback', move: -3 }]).map(y => +y.toFixed(3)), [0.5, 0.92]);
   assert.equal(heights([{ id: 'a', kind: 'start' }, { id: 'b', kind: 'choice', move: 0, fixedY: 0.3 }])[1], 0.3);
@@ -373,7 +379,7 @@ steps:
     /A setback drops the path/,
     /A choice never moves the path/,
     /end must be 38 to 45/,
-    /4 steps: a written life has 12 to 15/,
+    /4 steps: a written life has 12 to 17/,
     /drums at 8 isn't possible here: none of \[instruments\] is on the path/,
     /Only choices have alternatives; luck is a lucky break/,
     /comes after age 12: ages must go up/,
@@ -404,4 +410,186 @@ test('the variety report and coverage run on the fixture', () => {
   const report = coverage(fixture, { lives: 400 });
   assert.equal(report.total, fixture.nodes.size - 1);
   assert.ok(report.used / report.total > 0.8, `${report.used}/${report.total} nodes used`);
+});
+
+test("runs: Sam's run is marked, in order, two steps share an age, the band splits once", () => {
+  const sam = writtenLife(fixture, 'sam');
+  const run = sam.steps.filter(step => step.run === 'newBand');
+  assert.deepEqual(run.map(step => step.id), ['ownSong', 'bandSplits', 'formsNewBand', 'radioPlay']);
+  assert.deepEqual(run.map(step => step.age), [16, 16, 17, 18]);
+  assert.deepEqual(run.map(step => [step.runStep, step.runSize]), [[0, 4], [1, 4], [2, 4], [3, 4]]);
+  assert.equal(sam.steps.filter(step => step.id === 'bandSplits').length, 1);
+  assert.equal(sam.steps.filter(step => step.run).length, 4);
+});
+
+test('runs: a grown life with none yet starts one, its steps in order within the span; once', () => {
+  const grownRuns = new Map();
+  let lives = 0;
+  for (const fork of forksOf(fixture)) {
+    for (let i = 0; i < 30; i += 1) {
+      const life = grow(fixture, { ...fork, seed: `run-${i}` });
+      lives += 1;
+      const ids = [...new Set(life.steps.map(step => step.run).filter(Boolean))];
+      assert.ok(ids.length <= 1, `${fork.baseline} ${fork.alt}: ${ids.join(', ')}`);
+      if (!life.runGrown) continue;
+      grownRuns.set(life.runGrown, (grownRuns.get(life.runGrown) ?? 0) + 1);
+      const steps = life.steps.filter(step => step.run === life.runGrown);
+      const run = fixture.runs.get(life.runGrown);
+      assert.deepEqual(steps.map(step => step.id), run.steps);
+      const span = steps.at(-1).age - steps[0].age;
+      assert.ok(span >= 1 && span <= run.span, `span ${span}`);
+      steps.slice(1).forEach((step, k) => assert.ok(step.age - steps[k].age <= 1 && step.age >= steps[k].age));
+      assert.ok(steps.at(-1).age <= life.end - 4, 'a run ends before the quiet years');
+      // Every run step is possible where it stands.
+      const path = newPath();
+      life.steps.forEach((step, index) => {
+        if (index > 0 && step.run) assert.equal(blocked(step.node, path, step.age), null, `${step.id} at ${step.age}`);
+        takeStep(path, step.node, step.age);
+      });
+    }
+  }
+  assert.ok(grownRuns.size === 2, `runs grown: ${[...grownRuns.keys()].join(', ')}`);
+  // Outside runs, a step still comes at least a year after the one before.
+  const life = grow(fixture, { baseline: 'sam', forkIndex: 3, alt: 'schoolTeam', seed: 'gaps' });
+  life.steps.forEach((step, index) => { if (index && !(step.run && step.run === life.steps[index - 1].run)) assert.ok(step.age > life.steps[index - 1].age); });
+});
+
+test('runs: a fork inside a written run keeps the run; runFits lists the ages a run can take', () => {
+  // Nia's run: buildsApp (15), appCrashes (15), rebuildsApp (16). A pick at the first step drops it.
+  const fixtureNia = fixture.baselines.get('nia');
+  const first = fixtureNia.steps.findIndex(step => step.node === 'buildsApp');
+  const life = grow(fixture, { baseline: 'nia', forkIndex: first, alt: 'schoolTeam', seed: 'x' });
+  assert.ok(!life.steps.slice(0, first + 1).some(step => step.run));
+  const path = newPath();
+  for (const id of ['born', 'codingClub']) takeStep(path, fixture.nodes.get(id), id === 'born' ? 0 : 10);
+  const fits = runFits(fixture, fixture.runs.get('appAgain'), path, 14, 30);
+  assert.ok(fits.length >= 1);
+  for (const ages of fits) assert.ok(ages[0] === 14 && ages.at(-1) === 15);
+  assert.deepEqual(runFits(fixture, fixture.runs.get('appAgain'), path, 14, 14), []);
+});
+
+test('drinking and drugs: always helped within 1–2 years in a grown life', () => {
+  let seen = 0;
+  // From a fork before the tour, grown lives that tour and fall are answered by help next.
+  for (const fork of forksOf(fixture)) {
+    for (let i = 0; i < 60; i += 1) {
+      const life = grow(fixture, { ...fork, seed: `drink-${i}` });
+      life.steps.forEach((step, index) => {
+        if (index <= fork.forkIndex || step.id !== 'drinkingAndDrugs') return;
+        seen += 1;
+        const next = life.steps[index + 1];
+        assert.ok(next && next.node.gives.includes('helped') && next.age - step.age >= 1 && next.age - step.age <= 2, `${fork.baseline} ${fork.alt}: ${next?.id} at ${next?.age}`);
+      });
+    }
+  }
+  const text = messages(check(fixture));
+  assert.equal(text, '');
+});
+
+test('the checker: runs, verdicts and drinking and drugs', () => {
+  const nodes = `${BORN}
+${choice('tries', '  tags: [trying]')}
+- id: fails
+  label: Fails
+  line: "It goes wrong."
+  kind: setback
+  ages: [1, 60]
+  after: [trying]
+  within: 1
+  move: -1
+${choice('triesAgain', '  after: [fails]\n  within: 1')}
+${choice('slacks', '  move: 0')}
+- id: getsLazy
+  label: Gets lazy
+  line: "{name} gets lazy and wastes the day."
+  if: "{name} had got lazy"
+  kind: choice
+  ages: [1, 60]
+${choice('famous', '  tags: [fame]')}
+- id: drinks
+  label: Drinks
+  line: "{name} starts drinking too much."
+  kind: setback
+  ages: [1, 60]
+  after: [setback]
+  tags: [substance]
+  move: -2
+- id: pills
+  label: Pills
+  line: "{name} takes heroin."
+  kind: setback
+  ages: [1, 60]
+  after: [fame]
+  tags: [substance]
+  move: -2
+`;
+  const life = (steps, extra = '') => `id: sam
+name: Sam
+pronoun: he
+end: 40
+steps:
+  - { node: born, age: 0 }
+${steps}
+${extra}`;
+  const store = mini(nodes, {
+    sam: life(`  - { node: tries, age: 10, run: good }
+  - { node: fails, age: 10, run: good }
+  - { node: triesAgain, age: 13, run: good }
+  - { node: slacks, age: 14, move: -1 }
+  - { node: famous, age: 16, run: bad }
+  - { node: drinks, age: 20 }
+  - { node: getsLazy, age: 40 }`),
+  }, `
+- id: good
+  label: Tries again
+  steps: [tries, fails, triesAgain]
+  span: 1
+- id: bad
+  label: A run whose label is far too long to read
+  steps: [fails, tries]
+  span: 3
+- id: good
+  label: Twice
+  steps: [tries, fails, triesAgain]
+  span: 1
+- id: Ends
+  label: Ends on a no
+  steps: [tries, triesAgain, fails]
+  span: 2
+`);
+  const result = check(store);
+  const text = messages(result);
+  for (const expected of [
+    /Duplicate run id "good"/,
+    /Run label "A run whose label is far too long to read" is 41 characters/,
+    /span must be 1 or 2/,
+    /2 steps: a run has 3 to 5/,
+    /Run id "Ends" must be camelCase/,
+    /A run ends in a success, a partial success or a change of course, not on a setback/,
+    /fails comes "right after" \(within 1\) \[trying\], which no earlier step of the run gives|triesAgain comes "right after"/,
+    /2 runs \(good, bad\): a written life has exactly one/,
+    /Run "good" takes 3 years here; its span is 1/,
+    /slacks is a choice with move -1: a choice never drops the path/,
+    /The line says "heroin"/,
+    /A drinking or drug setback needs its own cause/,
+    /Nothing answers this drinking or drug setback/,
+    /answered by asking for help or being helped within 1–2 years/,
+  ]) assert.match(text, expected);
+  const warnings = result.warnings.map(item => item.message).join('\n');
+  assert.match(warnings, /The choice's label says "lazy"/);
+  assert.match(warnings, /The choice's line says "lazy"/);
+  // "had gone" is a journey, not a verdict; "money gone" is.
+  const words = mini(`${BORN}${choice('uni').replace('{name} had done uni', '{name} had gone to university')}${choice('spends').replace('{name} does spends.', '{name} spends it all. Money gone.')}`);
+  const verdicts = check(words).warnings.map(item => `${item.node}: ${item.message}`).join('\n');
+  assert.doesNotMatch(verdicts, /uni:/);
+  assert.match(verdicts, /spends: The choice's line says "gone"/);
+});
+
+test('the checker: a written life with no run is warned', () => {
+  const files = readStore(FIXTURE);
+  files['baselines/nia.yaml'] = files['baselines/nia.yaml'].replace(/\n    run: appAgain/g, '');
+  const result = check(loadStore(files));
+  assert.match(result.warnings.map(item => item.message).join('\n'), /No run: a written life has exactly one/);
+  // Without the run, two steps at 15 are no longer allowed.
+  assert.match(messages(result), /appCrashes\) at 15 comes after age 15: ages must go up/);
 });

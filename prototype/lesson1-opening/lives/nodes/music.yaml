@@ -165,14 +165,55 @@
   unless: [album]
   tags: [music, album]
 
-- id: partiesEveryNight
-  label: Parties every night
-  line: "Fame. Late nights, bad habits, money gone."
-  if: "{name} had partied every night"
+- id: goesOnTour
+  label: Goes on a world tour
+  line: "{name} goes on a world tour. Big crowds every night."
+  if: "{name} had gone on a world tour"
   kind: choice
   ages: [18, 40]
   after: [fame]
-  tags: [music, hardLiving]
+  tags: [music, touring, gigs]
+
+- id: staysHomeToWrite
+  label: Stays home to write
+  line: "{name} stays home and writes new songs."
+  if: "{name} had stayed home to write"
+  kind: choice
+  ages: [18, 45]
+  after: [fame]
+  tags: [music, songs]
+
+# Drinking and drugs, named only in general words (the README's hard-things
+# rule). Only a world tour leads here, and help always follows within 2 years.
+- id: drinkingAndDrugs
+  label: Drinking and drugs
+  line: "Drinking and drugs take over, and {his} shows fall apart."
+  kind: setback
+  ages: [19, 42]
+  after: [touring]
+  tags: [music, substance]
+  within: 2
+  move: -2
+
+- id: getsHelpToStop
+  label: Gets help to stop
+  line: "{name} asks for help to stop, and gets it."
+  if: "{name} had asked for help to stop"
+  kind: choice
+  ages: [19, 45]
+  after: [substance]
+  tags: [helped]
+  within: 1
+
+- id: labelDropsHim
+  label: The label drops {him}
+  line: "The record label drops {him}."
+  kind: setback
+  ages: [19, 43]
+  after: [drinkingAndDrugs]
+  tags: [music]
+  within: 1
+  move: -2
 
 - id: keepsEarlyNights
   label: Keeps early nights
@@ -201,6 +242,17 @@
   tags: [music]
   drops: [band]
   move: -2
+
+- id: formsNewBand
+  label: Forms a new band
+  line: "{name} forms a new band with new friends."
+  if: "{name} had formed a new band"
+  kind: choice
+  ages: [14, 40]
+  after: [bandSplits]
+  unless: [band]
+  tags: [music, band]
+  within: 1
 
 - id: handInjury
   label: Hurts a hand

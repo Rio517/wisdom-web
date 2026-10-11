@@ -8,7 +8,26 @@ export const KINDS = ['start', 'choice', 'lucky', 'setback', 'event'];
 export const LABEL_MAX = 22;
 export const LINE_MAX_WORDS = 12;
 export const END_AGES = [38, 45];
-export const STEP_COUNT = [12, 15];
+export const STEP_COUNT = [12, 17];
+/** A run: 3 to 5 steps over 1 or 2 years, its tree-page label at most 30 characters. */
+export const RUN_STEPS = [3, 5];
+export const RUN_SPANS = [1, 2];
+export const RUN_LABEL_MAX = 30;
+/**
+ * Words that judge a choice instead of telling it (rule: choices are actions,
+ * never verdicts). A choice's label, line or `if` with one of these is warned.
+ */
+export const VERDICT_WORDS = ['bad', 'waste', 'wastes', 'wasted', 'too much', 'too many', 'gone', 'lazy', 'wrong', 'mistake', 'foolish', 'reckless', 'careless', 'silly'];
+// "had gone" is a journey ("had gone to university"), not a verdict.
+const VERDICT = new RegExp(`\\b(${VERDICT_WORDS.join('|').replace(/ /g, '\\s+').replace(/\bgone\b/, '(?<!\\bhad )gone')})\\b`, 'i');
+/**
+ * Drinking and drugs may be named as a setback, in general words only: never a
+ * particular drug, never how it is used or what it does to the body.
+ */
+export const NAMED_DRUGS = ['cocaine', 'heroin', 'cannabis', 'marijuana', 'meth', 'ecstasy', 'mdma', 'lsd', 'ketamine', 'fentanyl', 'opioids?', 'overdoses?', 'injects?', 'snorts?', 'needles?'];
+const DRUG = new RegExp(`\\b(${NAMED_DRUGS.join('|')})\\b`, 'i');
+/** The tag of a drinking or drug setback (see the README's hard-things rule). */
+export const SUBSTANCE = 'substance';
 const SURPRISES = new Set(['lucky', 'setback']);
 const isSurprise = node => SURPRISES.has(node.kind);
 
@@ -55,6 +74,7 @@ export function gapFor(age) {
 const list = value => (value === undefined || value === null ? [] : Array.isArray(value) ? value : [value]);
 const fileName = path => path.split('/').pop();
 const isBaselinePath = path => /(^|\/)baselines\//.test(path);
+const isRunPath = path => /(^|\/)runs\//.test(path);
 
 function lineOf(error) {
   const line = error?.mark?.line;
@@ -112,26 +132,40 @@ function normalBaseline(raw, file) {
         move: entry.move,
         y: entry.y,
         echoes: entry.echoes === undefined ? null : list(entry.echoes).map(String),
+        run: entry.run === undefined || entry.run === null ? null : String(entry.run),
         raw: step,
       };
     }),
   };
 }
 
+function normalRun(raw, file, index) {
+  const object = raw && typeof raw === 'object' && !Array.isArray(raw) ? raw : {};
+  return {
+    id: typeof object.id === 'string' ? object.id : String(object.id ?? ''),
+    label: object.label,
+    steps: list(object.steps).map(String),
+    span: object.span,
+    file,
+    index,
+    raw,
+  };
+}
+
 /**
  * Read the store from YAML texts. `files` maps each path (any prefix, ending in
- * `nodes/<area>.yaml` or `baselines/<person>.yaml`) to its text. A file that
- * doesn't parse is listed in `parseErrors` and left out.
+ * `nodes/<area>.yaml`, `runs/<area>.yaml` or `baselines/<person>.yaml`) to its
+ * text. A file that doesn't parse is listed in `parseErrors` and left out.
  */
 export function loadStore(files) {
   const entries = files instanceof Map ? [...files] : Array.isArray(files) ? files : Object.entries(files);
   const store = {
-    nodes: new Map(), list: [], baselines: new Map(), baselineList: [], files: [], parseErrors: [], duplicates: [],
+    nodes: new Map(), list: [], baselines: new Map(), baselineList: [], runs: new Map(), runList: [], files: [], parseErrors: [], duplicates: [],
   };
   const sorted = [...entries].sort(([a], [b]) => fileName(a).localeCompare(fileName(b)));
   for (const [path, text] of sorted) {
     const file = fileName(path);
-    const kind = isBaselinePath(path) ? 'baseline' : 'nodes';
+    const kind = isBaselinePath(path) ? 'baseline' : isRunPath(path) ? 'runs' : 'nodes';
     const entry = { path, file, kind, count: 0 };
     store.files.push(entry);
     let data;
@@ -150,6 +184,20 @@ export function loadStore(files) {
       if (store.baselines.has(baseline.id)) store.duplicates.push({ kind: 'baseline', id: baseline.id, file });
       else store.baselines.set(baseline.id, baseline);
       entry.count = 1;
+    } else if (kind === 'runs') {
+      const items = data === null || data === undefined ? [] : Array.isArray(data) ? data : null;
+      if (!items) {
+        entry.error = 'A runs file must be a list of runs (each starting with "- id:").';
+        store.parseErrors.push({ file, line: 1, message: entry.error });
+        continue;
+      }
+      items.forEach((raw, index) => {
+        const run = normalRun(raw, file, index);
+        store.runList.push(run);
+        if (store.runs.has(run.id)) store.duplicates.push({ kind: 'run', id: run.id, file, first: store.runs.get(run.id).file });
+        else store.runs.set(run.id, run);
+      });
+      entry.count = items.length;
     } else {
       const items = data === null || data === undefined ? [] : Array.isArray(data) ? data : null;
       if (!items) {
@@ -323,9 +371,10 @@ export function heights(steps) {
 }
 
 // ——— A written life ———
-function stepOf(node, age, person, { lead, written = null, grown = false, picked = false } = {}) {
+function stepOf(node, age, person, { lead, written = null, grown = false, picked = false, run = null } = {}) {
   return {
     id: node.id,
+    run: run ?? written?.run ?? null, // the run this step is part of (a short burst of trying again), or null
     node,
     age,
     kind: node.kind,
@@ -410,7 +459,24 @@ export function writtenLife(store, id) {
     steps.push(step);
   }
   heights(steps).forEach((y, index) => { steps[index].y = y; });
+  markRuns(steps);
   return { id: baseline.id, name: person.name, pronoun: person.pronoun, person, end: baseline.end, file: baseline.file, steps };
+}
+
+/** Number each run's steps: `runStep` (0 for its first) and `runSize`, on the steps that carry a `run`. */
+function markRuns(steps) {
+  let start = -1;
+  steps.forEach((step, index) => {
+    if (!step.run) { start = -1; return; }
+    if (start < 0 || steps[index - 1].run !== step.run) start = index;
+    step.runStep = index - start;
+  });
+  for (let index = steps.length - 1, size = 0; index >= 0; index -= 1) {
+    const step = steps[index];
+    if (!step.run) { size = 0; continue; }
+    size = index < steps.length - 1 && steps[index + 1].run === step.run ? size : step.runStep + 1;
+    step.runSize = size;
+  }
 }
 
 // ——— Growing a new life from a fork ———
@@ -437,6 +503,8 @@ export const GROW = {
   answerFirst: 0.7, // right after a setback, a step that answers it comes 1–2 years later this often (when one can)
   staleYears: 12, // an `after` match from a step more than this many years back, its area untouched since…
   stale: 0.25, // …weighs this much
+  run: 0.5, // a life with no run yet starts one at a fork this often, when one fits there…
+  runLastChance: 8, // …and always when fewer years than this are left before the quiet years
 };
 
 /** The newest age at which the path touched the area of a step that gave `name` (see `historyPath`). */
@@ -466,6 +534,38 @@ function ownChain(node, path, age, store) {
 }
 /** Does `node` answer a setback: a `within` node whose `after` names the setback or one of its tags? */
 const answers = (node, setback) => node.within > 0 && node.after.some(name => setback.gives.includes(name));
+/** A drinking or drug setback: always answered by help, 1–2 years later. */
+const isSubstance = node => node.kind === 'setback' && node.gives.includes(SUBSTANCE);
+const copyPath = path => ({ held: new Map([...path.held].map(([name, givers]) => [name, [...givers]])), taken: new Set(path.taken), count: path.count, ages: [...path.ages] });
+
+/**
+ * The ways `run` can start at `age` on `path` and finish by `limit`: each a
+ * list of ages, one per step, starting at `age`. Steps come in order, the
+ * same age as the one before or a year later, the last 1 to `span` years after
+ * the first, and every step's rules hold in sequence.
+ */
+export function runFits(store, run, path, age, limit) {
+  const nodes = run.steps.map(id => store.nodes.get(id));
+  if (nodes.some(node => !node) || !allows(nodes[0], path, age)) return [];
+  const span = Number.isInteger(run.span) ? run.span : 2;
+  const fits = [];
+  const walk = (ages, trial) => {
+    const k = ages.length;
+    if (k === nodes.length) { if (ages[k - 1] > ages[0]) fits.push(ages); return; }
+    for (const step of [0, 1]) {
+      const at = ages[k - 1] + step;
+      if (at > age + span || at > limit) continue;
+      if (!allows(nodes[k], trial, at)) continue;
+      const next = copyPath(trial);
+      takeStep(next, nodes[k], at);
+      walk([...ages, at], next);
+    }
+  };
+  const first = copyPath(path);
+  takeStep(first, nodes[0], age);
+  walk([age], first);
+  return fits;
+}
 
 /**
  * Grow a life: the baseline's steps before `forkIndex`, then `alt` at the
@@ -515,14 +615,44 @@ export function grow(store, { baseline, forkIndex, alt, seed = '' }) {
     const node = store.nodes.get(written.node);
     if (node) add(node, written.age, { written });
   }
-  add(altNode, forkStep.age, { picked: true, grown: true });
+  // A pick inside a written run (not at its first step) is the person's own answer to the run's "no": it stays part of the run.
+  const inRun = forkStep.run && forkIndex > 0 && base.steps[forkIndex - 1].run === forkStep.run ? forkStep.run : null;
+  add(altNode, forkStep.age, { picked: true, grown: true, run: inRun });
+  let hasRun = steps.some(step => step.run);
+  let runGrown = null;
 
   const end = base.end;
   const builds = node => node.after.length > 0 && chainFrom(node, path) >= path.count - 2;
   // A stale match (see GROW.staleYears) weighs less wherever a node is picked by its `after`.
   const fade = (node, age) => (isStale(node, path, age) ? GROW.stale : 1);
-  // `setback`: only a step that answers it will do (null when none can come at this age).
-  const choose = (age, setback = null) => {
+  // A weight for a node picked by its `after`, as for any plain step.
+  const plainWeight = (node, age) => (!node.after.length ? node.weight : node.weight * (builds(node) ? 4 : chainFrom(node, path) >= 0 ? 2 * fade(node, age) : 1));
+  // Start a run at `age`, if one fits before the quiet years: its steps are added at once.
+  const startRun = age => {
+    const fitting = [];
+    for (const run of store.runs.values()) {
+      const fits = runFits(store, run, path, age, end - GROW.quietYears);
+      if (fits.length) fitting.push({ run, fits });
+    }
+    if (!fitting.length) return false;
+    const at = pickWeighted(fitting, fitting.map(({ run }) => plainWeight(store.nodes.get(run.steps[0]), age)), random);
+    if (at < 0) return false;
+    const { run, fits } = fitting[at];
+    // Prefer the ways that use the run's whole span.
+    const full = fits.filter(ages => ages.at(-1) - ages[0] === Math.max(...fits.map(other => other.at(-1) - other[0])));
+    const ages = full[Math.floor(random() * full.length)];
+    run.steps.forEach((id, k) => {
+      const node = store.nodes.get(id);
+      const others = othersAt(store, node, path, ages[k], random);
+      const step = add(node, ages[k], { grown: true, run: run.id });
+      step.others = others.map(other => ({ id: other.id, node: other, kind: other.kind, label: say(other.label, person) }));
+    });
+    hasRun = true;
+    runGrown = run.id;
+    return true;
+  };
+  // `setback`: only a step that answers it will do (null when none can come at this age); `help`: only one that gives `helped`.
+  const choose = (age, setback = null, help = false) => {
     const quiet = age > end - GROW.quietYears;
     let all = [];
     const pool = store.byAge[age] ?? [];
@@ -532,7 +662,7 @@ export function grow(store, { baseline, forkIndex, alt, seed = '' }) {
     let couldBuild = false;
     if (setback) {
       // The answers that name this setback come before those for any setback.
-      const list = all.filter(node => answers(node, setback));
+      const list = all.filter(node => answers(node, setback) && (!help || node.gives.includes('helped')));
       if (!list.length) return null;
       chosen = list[pickWeighted(list, list.map(node => node.weight * (node.after.some(name => name !== 'setback' && setback.gives.includes(name)) ? 3 : 1)), random)];
     } else if (!quiet && age >= GROW.surpriseFrom) {
@@ -558,7 +688,7 @@ export function grow(store, { baseline, forkIndex, alt, seed = '' }) {
         at = pickWeighted(building, building.map(node => node.weight), random);
         chosen = building[at];
       } else {
-        at = pickWeighted(plain, plain.map(node => (!node.after.length ? node.weight : node.weight * (builds(node) ? 4 : chainFrom(node, path) >= 0 ? 2 * fade(node, age) : 1))), random);
+        at = pickWeighted(plain, plain.map(node => plainWeight(node, age)), random);
         chosen = plain[at];
       }
       if (!chosen) return null;
@@ -582,18 +712,25 @@ export function grow(store, { baseline, forkIndex, alt, seed = '' }) {
     const last = steps.at(-1).node;
     let found = null;
     let at = age;
-    if (last.kind === 'setback' && random() < GROW.answerFirst) {
-      // Its answer, 1–2 years later (3–4 at most: a `within` match is never older).
-      const years = random() < 0.5 ? [1, 2, 3, 4] : [2, 1, 3, 4];
+    const substance = isSubstance(last);
+    if (last.kind === 'setback' && (substance || random() < GROW.answerFirst)) {
+      // Its answer, 1–2 years later (3–4 at most: a `within` match is never older). Drinking or drugs: help, 1–2 years later.
+      const years = substance ? (random() < 0.5 ? [1, 2] : [2, 1]) : random() < 0.5 ? [1, 2, 3, 4] : [2, 1, 3, 4];
       for (let i = 0; i < years.length && !found; i += 1) {
         if (age + years[i] > end) continue;
         at = age + years[i];
-        found = choose(at, last);
+        found = choose(at, last, substance);
       }
     }
     if (!found) {
       const factor = isSurprise(last) ? GROW.answer[0] + (GROW.answer[1] - GROW.answer[0]) * random() : 0.75 + 0.6 * random();
       const target = Math.min(end, age + Math.max(1, Math.round(gapFor(age) * factor)));
+      // A life with no run yet: one starts here this often, or always when time is running out.
+      if (!hasRun && store.runs.size && target <= end - GROW.quietYears
+        && (end - GROW.quietYears - target < GROW.runLastChance || random() < GROW.run) && startRun(target)) {
+        age = steps.at(-1).age;
+        continue;
+      }
       at = target;
       found = choose(at);
       if (!found && target < end) { at = target + 1; found = choose(at); }
@@ -606,9 +743,10 @@ export function grow(store, { baseline, forkIndex, alt, seed = '' }) {
     age = at;
   }
   heights(steps).forEach((y, index) => { steps[index].y = y; });
+  markRuns(steps);
   return {
     id: base.id, name: person.name, pronoun: person.pronoun, person, end, forkIndex, alt, seed,
-    steps, endedEarly: early, lastAge: steps.at(-1).age,
+    steps, endedEarly: early, lastAge: steps.at(-1).age, hasRun, runGrown,
   };
 }
 
@@ -621,7 +759,8 @@ export function lifeText(life, store) {
   life.steps.forEach((step, index) => {
     const mark = index === life.forkIndex ? '*' : step.grown ? ' ' : '·';
     const kind = step.kind === 'lucky' ? ' [luck]' : step.kind === 'setback' ? ' [setback]' : '';
-    lines.push(`${mark} Age ${String(step.age).padStart(2)}  ${step.line}${kind}`);
+    const run = step.run ? ` [run ${step.run} ${step.runStep + 1}/${step.runSize}]` : '';
+    lines.push(`${mark} Age ${String(step.age).padStart(2)}  ${step.line}${kind}${run}`);
   });
   return lines.join('\n');
 }
@@ -646,6 +785,7 @@ export function check(store, { lives = 0 } = {}) {
   for (const problem of store.parseErrors) error({ file: problem.file, line: problem.line }, `Can't read the file: ${problem.message}`);
   for (const duplicate of store.duplicates) {
     if (duplicate.kind === 'node') error({ file: duplicate.file, node: duplicate.id }, `Duplicate id "${duplicate.id}" (also in ${duplicate.first}).`);
+    else if (duplicate.kind === 'run') error({ file: duplicate.file, run: duplicate.id }, `Duplicate run id "${duplicate.id}" (also in ${duplicate.first}).`);
     else error({ file: duplicate.file, baseline: duplicate.id }, `Duplicate baseline id "${duplicate.id}".`);
   }
 
@@ -661,6 +801,7 @@ export function check(store, { lives = 0 } = {}) {
     if (label && text.length > LABEL_MAX) error(where, `Label "${text}" is ${text.length} characters (at most ${LABEL_MAX}).`);
     if (line && WORDS(text) > LINE_MAX_WORDS) error(where, `Line "${text}" is ${WORDS(text)} words (at most ${LINE_MAX_WORDS}).`);
     if (line && /^\{name\}['’]s\b/.test(text)) error(where, `Line starts with {name}'s, which reads "He's" after the first line: start with {his}.`);
+    if (/[.!?]\s+\{(his|him|himself)\}/.test(text)) error(where, `A sentence in ${field} starts with {his}, {him} or {himself}, which stays lower case: reword it.`);
   };
 
   // Nodes
@@ -686,6 +827,27 @@ export function check(store, { lives = 0 } = {}) {
     if (node.kind === 'setback' && !(node.move >= -3 && node.move <= -1)) error(where, 'A setback drops the path: move -1 to -3.');
     if (node.kind === 'event' && !(node.move >= -3 && node.move <= 3)) error(where, 'An event moves the path -3 to 3.');
     if (node.kind === 'choice' && !node.if) error(where, 'A choice needs an "if" (it completes "What if …?").');
+    if (node.kind === 'choice') {
+      for (const [field, text] of [['label', node.label], ['line', node.line], ['if', node.if]]) {
+        const found = typeof text === 'string' && text.match(VERDICT);
+        if (found) warn(where, `The choice's ${field} says "${found[0]}": a choice tells what the person does, not how it turns out. Put what goes wrong in the next step.`);
+      }
+    }
+    for (const [field, text] of [['label', node.label], ['line', node.line], ['if', node.if]]) {
+      const found = typeof text === 'string' && text.match(DRUG);
+      if (found) error(where, `The ${field} says "${found[0]}": name drinking or drugs only in general words, never a particular drug or how it is used.`);
+    }
+    if (node.tags.includes(SUBSTANCE)) {
+      if (node.kind !== 'setback') error(where, `Only a setback carries "${SUBSTANCE}" (drinking or drugs).`);
+      const causes = node.after.filter(name => name !== 'setback' && name !== 'lucky');
+      if (!causes.length || node.after.length !== causes.length) error(where, 'A drinking or drug setback needs its own cause in `after` (fame, a loss, stress), not just any step.');
+      const leads = new Set(causes.flatMap(name => (store.givers.get(name) ?? []).map(giver => giver.id)));
+      if (leads.size > 2) warn(where, `${leads.size} nodes lead to this drinking or drug setback (${[...leads].join(', ')}): at most one or two, after fame or a big loss.`);
+      // Its own answer, so help can always come (a general "asks for help" may already be on the path).
+      const helps = store.list.filter(other => other.gives.includes('helped') && other.within >= 1 && other.within <= 2
+        && other.after.some(name => name !== 'setback' && node.gives.includes(name)));
+      if (!helps.length) error(where, `Nothing answers this drinking or drug setback: it needs a node that gives "helped", with \`within\` 1 or 2, whose \`after\` names it or "${SUBSTANCE}".`);
+    }
     if (node.kind !== 'choice' && node.if) warn(where, 'Only choices use "if"; this one is never asked.');
     if (raw.within !== undefined && (!Number.isInteger(raw.within) || raw.within < 0)) error(where, 'within must be a whole number of steps.');
     if (node.within && !node.after.length) error(where, '"within" needs an "after" list.');
@@ -719,6 +881,42 @@ export function check(store, { lives = 0 } = {}) {
     if (!earliest.has(node.id)) warn({ file: node.file, node: node.id }, 'No life can reach this node: nothing it needs can come before it in time.');
   }
 
+  // Runs
+  for (const run of store.runList) {
+    const where = { file: run.file, run: run.id };
+    const raw = run.raw && typeof run.raw === 'object' ? run.raw : {};
+    if (!run.id || !CAMEL.test(run.id)) error(where, `Run id "${run.id}" must be camelCase.`);
+    if (typeof run.label !== 'string' || !run.label) error(where, 'Missing label.');
+    else if (run.label.length > RUN_LABEL_MAX) error(where, `Run label "${run.label}" is ${run.label.length} characters (at most ${RUN_LABEL_MAX}).`);
+    if (!Number.isInteger(raw.span) || raw.span < RUN_SPANS[0] || raw.span > RUN_SPANS[1]) error(where, `span must be ${RUN_SPANS[0]} or ${RUN_SPANS[1]} (years from its first step to its last), not ${JSON.stringify(raw.span ?? null)}.`);
+    if (run.steps.length < RUN_STEPS[0] || run.steps.length > RUN_STEPS[1]) error(where, `${run.steps.length} steps: a run has ${RUN_STEPS[0]} to ${RUN_STEPS[1]}.`);
+    const nodes = run.steps.map(id => store.nodes.get(id));
+    run.steps.forEach((id, k) => { if (!nodes[k]) error(where, `Unknown node "${id}" in steps.`); });
+    if (new Set(run.steps).size !== run.steps.length) error(where, 'A node comes at most once in a run.');
+    if (nodes.some(node => !node) || run.steps.length < 2) continue;
+    // The shape: it tries, meets a no (a setback), changes something and tries again, and does not end on the no.
+    if (!['choice', 'event'].includes(nodes[0].kind)) error(where, `A run starts with a try (a choice or an event), not ${nodes[0].kind === 'lucky' ? 'a lucky break' : `a ${nodes[0].kind}`} (${nodes[0].id}).`);
+    if (!nodes.slice(1, -1).some(node => node.kind === 'setback')) error(where, 'A run meets a no: a setback after its first step and before its last.');
+    if (nodes.at(-1).kind === 'setback') error(where, 'A run ends in a success, a partial success or a change of course, not on a setback.');
+    // The run is a path: each step after the first follows from the steps before it.
+    const trial = newPath();
+    takeStep(trial, nodes[0], nodes[0].lo);
+    for (let k = 1; k < nodes.length; k += 1) {
+      const node = nodes[k];
+      for (const name of node.unless) if (trial.held.has(name)) error(where, `${node.id} can't follow ${run.steps.slice(0, k).join(', ')}: they give "${name}" (its unless).`);
+      if (node.within && !node.after.some(name => trial.held.has(name))) error(where, `${node.id} comes "right after" (within ${node.within}) [${node.after.join(', ')}], which no earlier step of the run gives.`);
+      takeStep(trial, node, node.lo);
+    }
+    // Some ages fit: in order, each inside its node's ages, all within the span.
+    const span = Number.isInteger(raw.span) ? raw.span : RUN_SPANS[1];
+    let fits = false;
+    for (let first = nodes[0].lo; first <= nodes[0].hi && !fits; first += 1) {
+      let at = first;
+      fits = nodes.every((node, k) => { at = Math.max(k ? at : first, node.lo); return at <= node.hi && at <= first + span; });
+    }
+    if (!fits) error(where, `No ages fit: its steps' ages can't all fall within ${span} year${span === 1 ? '' : 's'} in order.`);
+  }
+
   // Baselines
   for (const baseline of store.baselineList) {
     const where = { file: baseline.file, baseline: baseline.id };
@@ -737,8 +935,9 @@ export function check(store, { lives = 0 } = {}) {
     baseline.steps.forEach((step, index) => {
       const at = { ...where, step: index, node: step.node };
       const node = store.nodes.get(step.node);
+      const sameRun = index > 0 && step.run && step.run === baseline.steps[index - 1].run;
       if (!Number.isInteger(step.age)) error(at, `Step ${index + 1} (${step.node}) needs a whole age.`);
-      else if (step.age <= previous) error(at, `Step ${index + 1} (${step.node}) at ${step.age} comes after age ${previous}: ages must go up.`);
+      else if (sameRun ? step.age < previous : step.age <= previous) error(at, `Step ${index + 1} (${step.node}) at ${step.age} comes after age ${previous}: ages must go up${sameRun ? ' (inside a run, two steps may share an age)' : ''}.`);
       if (Number.isInteger(step.age)) previous = step.age;
       if (!node) { error(at, `Unknown node "${step.node}" at step ${index + 1}.`); return; }
       if (index > 0) {
@@ -748,6 +947,18 @@ export function check(store, { lives = 0 } = {}) {
       words(at, 'line', step.line, { line: true });
       words(at, 'label', step.label, { label: true });
       if (step.move !== undefined && step.move !== null && !(Number.isInteger(step.move) && step.move >= -3 && step.move <= 3)) error(at, 'move must be a whole number from -3 to 3.');
+      if (node.kind === 'choice' && Number.isFinite(step.move) && step.move < 0) error(at, `${node.id} is a choice with move ${step.move}: a choice never drops the path. Put what goes wrong in the next step, a setback with its own cause.`);
+      if (node.kind === 'choice') {
+        for (const [field, text] of [['label', step.label], ['line', step.line]]) {
+          const found = typeof text === 'string' && text.match(VERDICT);
+          if (found) warn(at, `The choice's ${field} says "${found[0]}": a choice tells what the person does, not how it turns out.`);
+        }
+      }
+      for (const [field, text] of [['label', step.label], ['line', step.line]]) {
+        const found = typeof text === 'string' && text.match(DRUG);
+        if (found) error(at, `The ${field} says "${found[0]}": name drinking or drugs only in general words.`);
+      }
+      if (step.run !== null && !store.runs.has(step.run)) error(at, `Unknown run "${step.run}".`);
       if (step.y !== undefined && step.y !== null && !(Number.isFinite(step.y) && step.y >= 0 && step.y <= 1)) error(at, 'y must be from 0 (top) to 1 (bottom).');
       for (const name of step.echoes ?? []) {
         if (!path.historic.has(name)) error(at, `echoes "${name}", which no earlier step gives.`);
@@ -772,11 +983,36 @@ export function check(store, { lives = 0 } = {}) {
       if (node.kind === 'choice' && node.by !== 'family') own += 1;
       take(node, step.age);
     });
+    // Its run: exactly one, its steps in order and together, within its span.
+    const runIds = [...new Set(baseline.steps.map(step => step.run).filter(Boolean))];
+    if (!runIds.length) warn(where, 'No run: a written life has exactly one (mark its steps with run: <id>).');
+    if (runIds.length > 1) error(where, `${runIds.length} runs (${runIds.join(', ')}): a written life has exactly one.`);
+    for (const id of runIds) {
+      const run = store.runs.get(id);
+      if (!run) continue;
+      const at = baseline.steps.map((step, index) => (step.run === id ? index : -1)).filter(index => index >= 0);
+      const marked = at.map(index => baseline.steps[index]);
+      if (at.at(-1) - at[0] !== at.length - 1) error(where, `The steps of run "${id}" must come together, one after another.`);
+      if (marked.map(step => step.node).join() !== run.steps.join()) error(where, `The steps marked run: ${id} are [${marked.map(step => step.node).join(', ')}]; the run is [${run.steps.join(', ')}].`);
+      const years = marked.at(-1).age - marked[0].age;
+      if (Number.isInteger(run.span) && years > run.span) error(where, `Run "${id}" takes ${years} years here; its span is ${run.span}.`);
+      if (years < 1) error(where, `Run "${id}" happens all at one age: spread it over 1 to ${run.span} years.`);
+    }
+    // Drinking or drugs: always with a cause (its after) and answered by help 1–2 years later.
+    baseline.steps.forEach((step, index) => {
+      const node = store.nodes.get(step.node);
+      if (!node || !node.tags.includes(SUBSTANCE)) return;
+      const help = baseline.steps.slice(index + 1).find(later => store.nodes.get(later.node)?.gives.includes('helped'));
+      if (!help || help.age - step.age > 2) error({ ...where, step: index, node: step.node }, 'A drinking or drug setback is answered by asking for help or being helped within 1–2 years (a step that gives "helped").');
+    });
     if (!lucky) warn(where, 'No lucky break: a written life has at least one.');
     if (!setbacks) warn(where, 'No setback: a written life has at least one.');
     if (!family) warn(where, 'No family choice before 8.');
     if (own < 6) warn(where, `${own} of the person's own choices (at least six).`);
   }
+
+  const substanceLives = store.baselineList.filter(baseline => baseline.steps.some(step => store.nodes.get(step.node)?.tags.includes(SUBSTANCE)));
+  if (substanceLives.length > 1) warn({ file: substanceLives[1].file, baseline: substanceLives[1].id }, `${substanceLives.length} written lives have drinking or drugs (${substanceLives.map(item => item.id).join(', ')}): use it sparingly, in one.`);
 
   if (lives > 0) warnings.push(...deadEnds(store, { lives }));
   return { errors, warnings };
@@ -904,6 +1140,9 @@ export function variety(store, { lives = 50, seed = 'variety' } = {}) {
       // Measured: lucky breaks and setbacks among the grown forks where one may come, and steps that build on the last two.
       surprise: window.length ? window.filter(item => isSurprise(item.node)).length / window.length : null,
       build: after.length ? after.filter(item => item.builds).length / after.length : null,
+      // Lives with a run (one kept from before the fork, or grown after it); `needsRun`: the fork came before any written run.
+      run: grown.filter(life => life.hasRun).length / grown.length,
+      needsRun: !store.baselines.get(baseline).steps.slice(0, forkIndex + 1).some((item, index) => item.run && index < forkIndex),
       flagged: others.length > 0 && Math.abs(rise - othersRise) > 0.12,
     });
   }
@@ -916,6 +1155,7 @@ export function coverage(store, { lives = 5000, seed = 'coverage' } = {}) {
   const used = new Set();
   const random = rng(seed);
   let early = 0;
+  const runsUsed = new Set();
   // How grown lives tell: ending on a surprise, surprises from the life's own story, setbacks answered within 4 years.
   const tells = { endSurprise: 0, surprises: 0, ownStory: 0, setbacks: 0, answered: 0 };
   const narrow = name => !SURPRISES.has(name) && (store.givers.get(name)?.length ?? 0) <= store.nodes.size / 20;
@@ -926,6 +1166,7 @@ export function coverage(store, { lives = 5000, seed = 'coverage' } = {}) {
       if (!life) continue;
       if (life.lastAge < life.end - 3) early += 1;
       for (const step of life.steps) used.add(step.id);
+      if (life.runGrown) runsUsed.add(life.runGrown);
       const { steps } = life;
       if (isSurprise(steps.at(-1).node)) tells.endSurprise += 1;
       for (let k = fork.forkIndex + 1; k < steps.length; k += 1) {
@@ -948,5 +1189,6 @@ export function coverage(store, { lives = 5000, seed = 'coverage' } = {}) {
     files.set(node.file, entry);
   }
   const all = [...files.values()];
-  return { lives: forks.length ? lives : 0, early, tells, used: all.reduce((sum, item) => sum + item.used, 0), total: all.reduce((sum, item) => sum + item.total, 0), files: all };
+  const runs = { used: runsUsed.size, total: store.runs.size, unused: [...store.runs.keys()].filter(id => !runsUsed.has(id)) };
+  return { lives: forks.length ? lives : 0, early, tells, runs, used: all.reduce((sum, item) => sum + item.used, 0), total: all.reduce((sum, item) => sum + item.total, 0), files: all };
 }

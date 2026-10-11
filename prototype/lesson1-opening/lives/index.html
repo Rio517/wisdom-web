@@ -84,10 +84,16 @@
         <div id="checker-body"></div>
       </section>
 
+      <section id="runs" class="side-block runs-block" aria-labelledby="runs-title">
+        <h2 id="runs-title">Runs <span class="runs-count" id="runs-count"></span></h2>
+        <p class="rule-note">A run is a short burst of trying again: a try, a no, a change, another try, over at most two years. Its steps are marked <span class="run-chip">run</span> in the tree.</p>
+        <div id="runs-body"></div>
+      </section>
+
       <section class="side-block how" aria-labelledby="how-title">
         <h2 id="how-title">Editing</h2>
         <ul>
-          <li>Nodes live in <code><span data-root></span>nodes/&lt;area&gt;.yaml</code>, written lives in <code><span data-root></span>baselines/&lt;person&gt;.yaml</code>.</li>
+          <li>Nodes live in <code><span data-root></span>nodes/&lt;area&gt;.yaml</code>, runs in <code><span data-root></span>runs/&lt;area&gt;.yaml</code>, written lives in <code><span data-root></span>baselines/&lt;person&gt;.yaml</code>.</li>
           <li>To add a node, copy one, give it a new id, change its <code>after</code> and save. This page updates by itself.</li>
           <li>For the full report, run <code>npm run lives:check</code>. The rules are in <code>lives/README.md</code>.</li>
         </ul>

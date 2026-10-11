@@ -41,6 +41,25 @@
   after: [tech]
   tags: [tech, maker]
 
+- id: appCrashes
+  label: The app crashes
+  line: "On its first busy day, the app crashes."
+  kind: setback
+  ages: [13, 31]
+  after: [buildsApp]
+  within: 1
+  move: -1
+
+- id: rebuildsApp
+  label: Rebuilds the app
+  line: "{name} rebuilds the app with a friend's help."
+  if: "{name} had rebuilt the app"
+  kind: choice
+  ages: [13, 32]
+  after: [appCrashes]
+  within: 1
+  tags: [tech, helped]
+
 - id: studiesScience
   label: Studies science
   line: "{name} studies science at college."

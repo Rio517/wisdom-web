@@ -1,0 +1,6 @@
+# Music runs: a short burst of trying again (the README's "Runs").
+
+- id: newBand
+  label: Starts over with a new band
+  steps: [ownSong, bandSplits, formsNewBand, radioPlay]
+  span: 2

@@ -1,5 +1,5 @@
-# Sam: music, fame, a hard fall, help, and a life that keeps growing.
-# The approved story of round 3 (wording A). The schema is in ../README.md.
+# Sam: music, a band that starts again, fame, a hard fall, help.
+# Test fixture for the lives engine: the real store's Sam (round 6), with fewer alternatives.
 
 id: sam
 name: Sam
@@ -19,23 +19,41 @@ steps:
     alts: [schoolTeam]
   - node: ownSong
     age: 16
+    run: newBand
+    label: Records a song
+    line: "The band records its first song."
+  - node: bandSplits
+    age: 16
+    run: newBand
+    line: "Both friends quit. He is on his own."
+    move: -1
+  - node: formsNewBand
+    age: 17
+    run: newBand
+    line: "He forms a new band with three others."
   - node: radioPlay
     age: 18
-    line: "A radio DJ plays it. Luck!"
+    run: newBand
+    line: "A radio DJ plays one of his songs. Luck!"
+    move: 2
   - node: recordDeal
     age: 20
     line: "A record label signs the band."
     echoes: [radioPlay, ownSong]
-  - node: partiesEveryNight
-    age: 23
+  - node: goesOnTour
+    age: 22
+    line: "He goes on a world tour. He's a rock star now."
+    alts: [staysHomeToWrite, savesTheMoney]
+  - node: drinkingAndDrugs
+    age: 24
+    line: "Drinking and drugs take over. Shows fall apart."
     move: -1
-    alts: [keepsEarlyNights, savesTheMoney]
-  - node: bandSplits
+  - node: labelDropsHim
     age: 25
-    line: "The band splits. He loses his flat."
+    line: "The label drops him. He loses his flat."
     move: -3
   - node: asksForHelp
-    age: 27
+    age: 26
     line: "A friend takes him in. He asks for help."
     move: 1
     alts: [movesHome, officeJob]
