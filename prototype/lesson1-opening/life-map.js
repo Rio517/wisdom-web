@@ -34,9 +34,14 @@ const rgbOf = hex => [1, 3, 5].map(at => parseInt(hex.slice(at, at + 2), 16));
 const mix = (a, amount, b = HALO) => `#${rgbOf(a).map((value, at) => Math.round(value * amount + rgbOf(b)[at] * (1 - amount)).toString(16).padStart(2, '0')).join('')}`;
 const TAIL = mix(MIST, 0.55); // the gray lives carrying on past a gray dot
 const AHEAD = mix(SAGE, 0.9); // the paths still ahead
-const LIGHT = mix(SAGE, 0.7); // a real path behind a new life
-const LIGHT_SUN = mix(SUN, 0.5);
-const LIGHT_CLAY = mix(CLAY, 0.5);
+// The person's own life after the fork, behind a changed one (round 7: it stays readable, and second).
+// `?old=` picks the study level: 'a' round 6's pale sage, 'b' a stronger sage line with marks at 65%,
+// 'c' as b with muted labels on its lucky breaks, setbacks and last step.
+const OLD_LEVEL = (() => { try { return new URLSearchParams(location.search).get('old') ?? 'c'; } catch { return 'c'; } })();
+const LIGHT = OLD_LEVEL === 'a' ? mix(SAGE, 0.7) : mix(FOREST, 0.35, SAGE); // a real path behind a new life: sage, a third of the way to forest
+const LIGHT_SUN = mix(SUN, OLD_LEVEL === 'a' ? 0.5 : 0.65);
+const LIGHT_CLAY = mix(CLAY, OLD_LEVEL === 'a' ? 0.5 : 0.65);
+const LIGHT_DOT = OLD_LEVEL === 'a' ? LIGHT : mix(FOREST, 0.65);
 const FONT = '"Avenir Next", AvenirNext, "Segoe UI", sans-serif';
 const MAX_AGE = 45; // the axis runs 0–45; the paths still ahead run on past it
 const TOP = 24;
@@ -299,7 +304,7 @@ function drawMark(context, mark, strokes, scale = 1) {
     for (const item of own) stroke(context, [item.edge], item.color, item.width, item.at ?? 1);
     context.restore();
   }
-  disc(context, point, radius, light ? LIGHT : FOREST);
+  disc(context, point, radius, light ? LIGHT_DOT : FOREST);
   context.restore();
 }
 const near = (a, b) => Math.abs(a.x - b.x) < 0.5 && Math.abs(a.y - b.y) < 0.5;
@@ -1081,6 +1086,7 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
   function pick(altKey, { reduced = prefersReducedMotion(), silent = false, seed = newSeed() } = {}) {
     const item = itemFor(altKey);
     if (!item?.pickable) return null;
+    if (!reduced) ghostOut();
     stopWhat();
     stopAhead();
     closePop();
@@ -1141,7 +1147,7 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
     const last = nodes.at(-1);
     const ahead = aheadFor(`${model.life.id}:${seed}:ahead`, last.at, last.y).map(next => ({ a: last.point, b: g.at(next.age, next.y), bend: next.bend * g.span }));
     // Labels for the new life, clear of what stays on the map.
-    const visibleBoxes = () => [...[...labelEls.filter(element => Number(element.dataset.step) < k),
+    const visibleBoxes = () => [...[...labelEls.filter(element => element.classList.contains('is-shown')),
       ...altEls.filter(element => { const other = itemFor(element.dataset.alt); return other.stepIndex <= k && other.key !== altKey; })].map(boxOf)];
     const soft = [[...siblings.flat().map(sibling => sibling.edge), ...ahead], siblings.flat().flatMap(sibling => sibling.tails)];
     // The new life's labels are placed in age order, a few each frame while it
@@ -1160,8 +1166,16 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
     setMode('whatif');
     overlay.querySelectorAll('.life-label.is-what').forEach(element => element.remove());
     whatEls = [];
-    // The later labels and choices step aside; the real path stays, light, behind the new one.
-    labelEls.forEach(element => element.classList.toggle('is-shown', Number(element.dataset.step) < k));
+    // The later labels and choices step aside; the real path stays, light, behind the new one. At
+    // level c its lucky breaks, setbacks and last step keep a muted label (opening.css, .is-old).
+    const newRoute = sampleGrid(edges, nodes.map(node => node.point));
+    const keepsOld = index => OLD_LEVEL === 'c' && index >= k && (isSurprise(steps[index].kind) || index === END)
+      && Boolean(g.labels[index]) && !newRoute(g.labels[index].box, 4);
+    labelEls.forEach(element => {
+      const index = Number(element.dataset.step);
+      element.classList.toggle('is-shown', index < k || keepsOld(index));
+      element.classList.toggle('is-old', keepsOld(index));
+    });
     altEls.forEach(element => {
       const other = itemFor(element.dataset.alt);
       element.classList.toggle('is-shown', other.stepIndex <= k && other.key !== altKey);
@@ -1406,12 +1420,41 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
     if (what.labelFrame !== null) cancelAnimationFrame(what.labelFrame);
     if (what.planFrame) cancelAnimationFrame(what.planFrame);
     what = null;
+    labelEls.forEach(element => element.classList.remove('is-old'));
     whatEls.forEach(element => element.remove());
     whatEls = [];
   }
 
+  // Round 7: a changed life never vanishes in one frame. As it goes (Try again, Try another choice,
+  // Back to the person's life), a copy of the map as it was, its canvases and its labels, fades out
+  // over GHOST_MS above the map drawn anew, so the person's own path never blinks out and back.
+  const GHOST_MS = 350;
+  function ghostOut() {
+    if (!what || prefersReducedMotion()) return;
+    const copies = [];
+    for (const canvas of [graysCanvas, darkCanvas, marksCanvas, liveCanvas]) {
+      if (!canvas.width || !canvas.height) continue;
+      const copy = canvas.cloneNode(false);
+      copy.classList.add('life-ghost');
+      copy.getContext('2d')?.drawImage(canvas, 0, 0);
+      stack.insertBefore(copy, overlay);
+      copies.push(copy);
+    }
+    for (const element of whatEls) {
+      const copy = element.cloneNode(true);
+      copy.classList.remove('is-what'); // so the next life's clean-up leaves it to fade
+      copy.removeAttribute('data-what');
+      copy.classList.add('life-ghost');
+      overlay.append(copy);
+      copies.push(copy);
+    }
+    requestAnimationFrame(() => copies.forEach(copy => copy.classList.add('is-going')));
+    setTimeout(() => copies.forEach(copy => copy.remove()), GHOST_MS + 100);
+  }
+
   /** Back to the written life exactly as the story left it. */
   function restore(nextMode = 'ended') {
+    ghostOut();
     stopWhat();
     clearBase();
     frame = finalFrame();
