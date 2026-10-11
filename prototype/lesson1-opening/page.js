@@ -409,6 +409,9 @@ function run() {
     // then the oldest rows shortened, older rows at most a pixel smaller: of these the plan that
     // shortens fewest rows (the larger sizes first among equals), and 14 px only if none fits
     short: [[[16, 15], [15, 15], [15, 14]], [[14, 14]]],
+    // a long life (a written life may have 17 steps since round 6) that still does not fit: the
+    // three newest rows stay whole instead of four, so one more row may shorten
+    tight: [[15, 14], [14, 14]],
     margin: 2, // px kept free under the last row, for rounding
   };
   let storyPlan = null; // { short: rows shortened at each step }
@@ -444,24 +447,24 @@ function run() {
     };
     // The rows that may shorten, oldest first: older rows whose label is shorter than their line.
     // The plan: at each step, how many of them are shortened (never fewer than the step before).
-    const plan = (newest, older, allowShort) => {
+    const plan = (newest, older, allowShort, keep = 4) => {
       const full = measure(newest, older).rows;
       const { rows: past, short } = measure(older, older);
-      const can = allowShort ? rows.map((_, at) => at).filter(at => at <= last - 4 && labels[at] && past[at] - short > 0.5) : [];
+      const can = allowShort ? rows.map((_, at) => at).filter(at => at <= last - keep && labels[at] && past[at] - short > 0.5) : [];
       const steps = [];
       let count = 0; let saved = 0; let extra = Infinity;
       for (let step = 0; step <= last; step += 1) {
         let height = step * gap - saved;
-        for (let at = 0; at <= step; at += 1) height += at <= step - 4 ? past[at] : full[at];
+        for (let at = 0; at <= step; at += 1) height += at <= step - keep ? past[at] : full[at];
         while (height > room) {
-          if (count >= can.length || can[count] > step - 4) return null;
+          if (count >= can.length || can[count] > step - keep) return null;
           const gain = past[can[count]] - short;
           height -= gain; saved += gain; count += 1;
         }
         steps.push(new Set(can.slice(0, count)));
         if (step > 0) extra = Math.min(extra, (room - height) / step);
       }
-      return { newest, older, short: steps, extra };
+      return { newest, older, short: steps, extra, keep };
     };
     // The largest single size that fits, to half a pixel: a guess from the rows' height, then halving.
     const [top, bottom] = STORY_FIT.one;
@@ -477,12 +480,16 @@ function run() {
         if (result && (!found || result.short.at(-1).size < found.short.at(-1).size)) found = result;
       }
     }
+    for (const [newest, older] of found ? [] : STORY_FIT.tight) {
+      const result = plan(newest, older, true, 3);
+      if (result && (!found || result.short.at(-1).size < found.short.at(-1).size)) found = result;
+    }
     probe.remove();
     box.fitKey = `${box.clientWidth}x${box.clientHeight}:${box.children.length}`;
     if (!found) {
       // A column far too short for this life: the smallest plan, and the newest line kept in view.
       const [newest, older] = STORY_FIT.short.at(-1).at(-1);
-      found = { newest, older, short: rows.map(() => new Set(rows.map((_, at) => at).filter(at => at <= last - 4 && labels[at]))), extra: 0 };
+      found = { newest, older, keep: 3, short: rows.map(() => new Set(rows.map((_, at) => at).filter(at => at <= last - 3 && labels[at]))), extra: 0 };
     } else {
       box.classList.add('is-fits');
       lastFit.set(`story:${box.clientWidth}x${box.clientHeight}`, found.newest);
@@ -540,7 +547,9 @@ function run() {
       if (!all[position]) return;
       // Older rows change before the line starts rising, never while it moves.
       all[position].classList.remove('is-pending');
-      all.forEach((element, other) => element.classList.toggle('is-past', other <= dim));
+      // The plan may keep only the three newest rows whole (a long life in a short column).
+      const past = storyPlan?.keep ? position - storyPlan.keep : dim;
+      all.forEach((element, other) => element.classList.toggle('is-past', other <= past));
       shortenFor(position);
       lineIn(all[position], duration);
       keepStoryInView(all[position]);
@@ -549,7 +558,7 @@ function run() {
       const all = lines();
       const arriving = all.filter(element => element.classList.contains('is-pending'));
       arriving.forEach(element => element.classList.remove('is-pending'));
-      all.forEach((element, other) => element.classList.toggle('is-past', other < all.length - 4));
+      all.forEach((element, other) => element.classList.toggle('is-past', other < all.length - (storyPlan?.keep ?? 4)));
       shortenFor(all.length - 1);
       arriving.forEach(element => lineIn(element, duration));
       if (all.length) keepStoryInView(all.at(-1));

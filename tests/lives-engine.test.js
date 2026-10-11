@@ -7,7 +7,7 @@ import { join } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import {
-  loadStore, check, grow, heights, writtenLife, blocked, newPath, takeStep, say, forksOf, variety, coverage, runFits,
+  loadStore, check, grow, heights, writtenLife, blocked, newPath, takeStep, say, forksOf, variety, coverage, runFits, runAfter, GROW,
 } from '../prototype/lesson1-opening/lives/engine.js';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
@@ -616,4 +616,29 @@ test('after a pick, the next two steps build on it whenever a plain step can; af
     }
   }
   assert.ok(checked > 100, `${checked} steps checked`);
+});
+
+test('a pick inside a run carries a run on to its outcome; alternatives inside a run are checked', () => {
+  // runAfter: the rest of a run from one of its middle steps.
+  const path = newPath();
+  for (const [id, age] of [['born', 0], ['codingClub', 10], ['buildsApp', 15], ['appCrashes', 15]]) takeStep(path, fixture.nodes.get(id), age);
+  const rest = runAfter(fixture, fixture.nodes.get('appCrashes'), path, 15, 40);
+  assert.deepEqual(rest.nodes.map(node => node.id), ['rebuildsApp']);
+  assert.ok(rest.ages[0] === 16 || rest.ages[0] === 15);
+  assert.equal(runAfter(fixture, fixture.nodes.get('rebuildsApp'), path, 15, 40), null, 'a run\'s last step has nothing after it');
+  // The checker: an alternative at a run's middle step must be a middle step of some run.
+  const files = readStore(FIXTURE);
+  files['baselines/sam.yaml'] = files['baselines/sam.yaml'].replace('    line: "He forms a new band with three others."', '    line: "He forms a new band with three others."\n    alts: [asksForHelp]');
+  assert.match(messages(check(loadStore(files))), /Alternative asksForHelp sits inside run "newBand"/);
+});
+
+test('a grown step comes at most six years after the one before', () => {
+  for (const fork of forksOf(fixture)) {
+    for (let i = 0; i < 20; i += 1) {
+      const life = grow(fixture, { ...fork, seed: `gap-${i}` });
+      for (let k = fork.forkIndex + 1; k < life.steps.length; k += 1) {
+        assert.ok(life.steps[k].age - life.steps[k - 1].age <= GROW.maxGap + 1, `${fork.baseline} ${fork.alt} seed ${i}: ${life.steps[k - 1].age} → ${life.steps[k].age}`);
+      }
+    }
+  }
 });

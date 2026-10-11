@@ -51,6 +51,9 @@ export const TIMING = {
   land: 300, // Next lands everything at once
 };
 export const PACES = { normal: { short: 900, long: 1300 }, quick: { short: 700, long: 1000 } };
+/** A run's steps (a short burst of trying again) play at this share of the usual time, at either pace. */
+export const RUN_PACE = 0.6;
+const paceOf = index => (LINES[index]?.run ? RUN_PACE : 1);
 
 const clamp01 = value => Math.max(0, Math.min(1, value));
 
@@ -79,18 +82,18 @@ const bloomEase = t => {
 const landEase = bezier(0.2, 0.7, 0.2, 1);
 const sproutEase = bezier(0.3, 0, 0.3, 1);
 
-export const settleAt = index => (index === 0 ? TIMING.appear : TIMING.walkFrom + TIMING.walk);
+export const settleAt = index => (index === 0 ? TIMING.appear : TIMING.walkFrom + TIMING.walk) * paceOf(index);
 /** When a step has stopped moving: its walk and tails have settled and its pulses have faded. */
 export function quietAfter(index) {
   if (index < 0) return 0;
   const count = buildsOn(index).length;
-  return Math.max(settleAt(index), index > 0 && !LINES[index].close ? TIMING.tailsFrom + TIMING.tails : 0,
-    count ? TIMING.pulseAt + (count - 1) * TIMING.pulseGap + TIMING.pulse : 0);
+  return Math.max(settleAt(index), (index > 0 && !LINES[index].close ? TIMING.tailsFrom + TIMING.tails : 0) * paceOf(index),
+    (count ? TIMING.pulseAt + (count - 1) * TIMING.pulseGap + TIMING.pulse : 0) * paceOf(index));
 }
 export function stepDuration(index, pace) {
   const line = LINES[index];
   if (line.close) return settleAt(index) + TIMING.hold;
-  return settleAt(index) + (line.long ? pace.long : pace.short);
+  return settleAt(index) + (line.long ? pace.long : pace.short) * paceOf(index);
 }
 
 /**
@@ -101,14 +104,16 @@ export function stepDuration(index, pace) {
  * shows, and the pulses in flight. On the closing line, `sprout` grows the
  * paths still ahead. `landing` (0–1) carries the traveller to the end at once.
  */
-function frameFor({ index, elapsed, landing }) {
+function frameFor({ index, elapsed: time, landing }) {
   const frame = { index, walk: 0, appear: 1, bloom: 0, sprout: 0, tails: 0, label: false, pulses: [], resting: false, landing: null };
   if (index < 0) { frame.appear = 0; return frame; }
   const line = LINES[index];
+  // A run's step plays the same beats, faster.
+  const elapsed = time / paceOf(index);
   if (line.close) {
     frame.walk = 1; frame.bloom = 1; frame.label = true; frame.tails = 1;
     frame.sprout = sproutEase(clamp01((elapsed - TIMING.walkFrom) / TIMING.walk));
-    frame.resting = elapsed >= settleAt(index);
+    frame.resting = time >= settleAt(index);
   } else {
     const growFor = line.kind === 'lucky' || line.kind === 'setback' ? TIMING.markerBloom : TIMING.bloom;
     frame.bloom = bloomEase(clamp01((elapsed - TIMING.pointAt) / growFor));
@@ -203,7 +208,7 @@ export function createLifePlayer({ map, narration, onChange = () => {} }) {
     index = next;
     elapsed = Math.max(0, carry);
     drawnIdle = false;
-    narration.reveal(index, { duration: TIMING.line, dim: index - 4 });
+    narration.reveal(index, { duration: TIMING.line * paceOf(index), dim: index - 4 });
     if (!auto) holdAt = quietAfter(index);
   }
 

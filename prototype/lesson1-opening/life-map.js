@@ -21,7 +21,7 @@ import { canvasBitmap } from '../../src/engine/path-presentation.js';
 import { ease, prefersReducedMotion } from '../../src/lessons/choices/journey-motion.js';
 import { t } from '../../src/i18n/runtime.js';
 import { gapFor, grow, hash01, heights, newSeed } from './lives/engine.js';
-import { BORN_Y, END, finalFrame } from './life.js';
+import { BORN_Y, END, RUN_PACE, finalFrame } from './life.js';
 
 const FOREST = '#285442';
 const SAGE = '#8daa91';
@@ -56,6 +56,56 @@ const BAR = 100; // on a narrow stage the end card is a bar across the top: this
 // ——— Where the gray lines go (a pure layout in ages and heights) ———
 const clamp = (value, lo, hi) => Math.max(lo, Math.min(hi, value));
 const isSurprise = kind => kind === 'lucky' || kind === 'setback';
+
+// ——— Runs (round 6): a short burst of trying again draws close together ———
+// `?runs=` picks the study option: 'even' (the steps spread evenly over the
+// run's years), 'quiet' (the same, and the run's middle steps carry no gray
+// lines, so the burst reads as one stroke) or 'ages' (each at its own age, a
+// step that shares an age with the one before nudged 0.45 years on).
+// 'direct' is 'quiet' with the run's own strokes leaning straight (no level S between its close dots).
+const RUN_LAYOUT = (() => { try { return new URLSearchParams(location.search).get('runs') ?? 'direct'; } catch { return 'direct'; } })();
+const RUN_DIRECT = 0.75;
+const runEdge = (step, prev) => (RUN_LAYOUT === 'direct' && inRun(step) && prev?.run === step.run ? RUN_DIRECT : 0);
+const RUN_GAP = 16; // px: two dots of a run never closer than this
+const inRun = step => Boolean(step?.run);
+const runMiddle = step => inRun(step) && step.runStep > 0 && step.runStep < step.runSize - 1;
+/** Where each step sits along the axis (`at`, in years): its age, or for a run's steps, spread over the run. */
+export function placeAges(steps) {
+  for (let i = 0; i < steps.length;) {
+    const step = steps[i];
+    step.at = step.age;
+    if (!inRun(step)) { i += 1; continue; }
+    let j = i;
+    while (j + 1 < steps.length && steps[j + 1].run === step.run && steps[j + 1].runStep === steps[j].runStep + 1) j += 1;
+    const n = j - i + 1;
+    for (let k = 0; k < n; k += 1) {
+      const own = steps[i + k];
+      if (RUN_LAYOUT === 'ages') own.at = k && own.age <= steps[i + k - 1].age ? steps[i + k - 1].at + 0.45 : own.age;
+      else own.at = n > 1 ? step.age + ((steps[j].age - step.age) * k) / (n - 1) : step.age;
+    }
+    i = j + 1;
+  }
+  return steps;
+}
+/**
+ * Keep a run's dots apart on the map: a dot closer than RUN_GAP to the one
+ * before it moves up or down (the way its own step goes, else up) until it is
+ * clear. Its height in the life is unchanged; only the drawing makes room.
+ */
+function spaceRun(points, steps) {
+  for (let index = 1; index < points.length; index += 1) {
+    if (!inRun(steps[index]) || steps[index].run !== steps[index - 1].run) continue;
+    const a = points[index - 1];
+    const b = points[index];
+    const way = b.y > a.y + 0.5 ? 1 : b.y < a.y - 0.5 ? -1 : steps[index].kind === 'setback' ? 1 : -1;
+    // Clear of every dot before it (a run's steps can sit within a few px of each other along the axis).
+    const clear = point => points.slice(0, index).every(other => Math.hypot(other.x - point.x, other.y - point.y) >= RUN_GAP);
+    let point = b;
+    for (let shift = 0; shift <= 120 && !clear(point); shift += 1) point = { x: b.x, y: b.y + way * shift };
+    points[index] = point;
+  }
+  return points;
+}
 
 /** The gray lives a gray dot carries on into: one to three short lines, mostly two. */
 function tailsFor(key, age, y) {
@@ -94,6 +144,8 @@ function grayItems(steps, k, scope) {
   const base = `${scope}:${k}`;
   const moved = isSurprise(step.kind) || Boolean(step.move);
   const pickable = !step.grown && step.alts.length > 0;
+  // A run's middle steps come too fast for other lives to branch off ('quiet'): the burst reads as one stroke.
+  if ((RUN_LAYOUT === 'quiet' || RUN_LAYOUT === 'direct') && runMiddle(step) && !pickable) return [];
   let list = pickable ? step.alts : moved ? [] : step.others;
   if (!list.length) list = [{ id: null, without: true }];
   const dn = (next ? next.y : step.y) - step.y;
@@ -113,7 +165,9 @@ function grayItems(steps, k, scope) {
       if (y < 0.05 || y > 0.95) y = step.y - side * offset;
     }
     y = clamp(y, 0.04, 0.96);
-    const age = clamp(step.age + (hash01(`${base}:${option.id}:age`) - 0.5) * 0.9, prev.age + 0.7, step.age + 0.5);
+    const stepAt = step.at ?? step.age;
+    const prevAt = prev.at ?? prev.age;
+    const age = clamp(stepAt + (hash01(`${base}:${option.id}:age`) - 0.5) * 0.9, Math.min(prevAt + 0.7, stepAt), stepAt + 0.5);
     return {
       key, stepIndex: k, id: option.id ?? null, label: option.label ?? null, whatIf: option.whatIf ?? null, kind: option.kind ?? null,
       pickable: pickable && !option.without, age, y,
@@ -126,7 +180,14 @@ function grayItems(steps, k, scope) {
 // ——— Curves (the explorer's: level out of each dot, level into the next) ———
 function controls(edge) {
   const dx = edge.b.x - edge.a.x;
-  return [edge.a, { x: edge.a.x + dx * 0.5, y: edge.a.y + edge.bend }, { x: edge.b.x - dx * 0.5, y: edge.b.y }, edge.b];
+  const c1 = { x: edge.a.x + dx * 0.5, y: edge.a.y + edge.bend };
+  const c2 = { x: edge.b.x - dx * 0.5, y: edge.b.y };
+  if (!edge.direct) return [edge.a, c1, c2, edge.b];
+  // A run's quick steps: the curve leans toward a straight stroke, so a burst reads as one quick zigzag.
+  const dy = edge.b.y - edge.a.y;
+  const k = edge.direct;
+  return [edge.a, { x: c1.x + (edge.a.x + dx / 3 - c1.x) * k, y: c1.y + (edge.a.y + dy / 3 - c1.y) * k },
+    { x: c2.x + (edge.a.x + (2 * dx) / 3 - c2.x) * k, y: c2.y + (edge.a.y + (2 * dy) / 3 - c2.y) * k }, edge.b];
 }
 function pointOn(edge, at) {
   const [p0, p1, p2, p3] = controls(edge);
@@ -407,12 +468,13 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
   function setLife(life, store) {
     stopWhat();
     closePop();
+    placeAges(life.steps);
     const items = life.steps.flatMap((_, k) => (k ? grayItems(life.steps, k, life.id) : []));
     model = {
       life, store, items,
       picks: items.filter(item => item.pickable).sort((a, b) => a.age - b.age),
       forks: [...new Set(items.filter(item => item.pickable).map(item => item.stepIndex))].sort((a, b) => a - b),
-      ahead: aheadFor(`${life.id}:ahead`, life.steps.at(-1).age, life.steps.at(-1).y),
+      ahead: aheadFor(`${life.id}:ahead`, life.steps.at(-1).at, life.steps.at(-1).y),
     };
     geo = null;
     sizedFor = '';
@@ -443,8 +505,8 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
     const Y = y => o.y + (y - BORN_Y) * span;
     const at = (age, y) => ({ x: X(age), y: Y(y) });
     const steps = model.life.steps;
-    const points = steps.map(step => at(step.age, step.y));
-    const edges = points.map((point, index) => (index ? { a: points[index - 1], b: point, bend: 0 } : null));
+    const points = spaceRun(steps.map(step => at(step.at, step.y)), steps);
+    const edges = points.map((point, index) => (index ? { a: points[index - 1], b: point, bend: 0, direct: runEdge(steps[index], steps[index - 1]) } : null));
     const alts = model.items.map(item => {
       const node = at(item.age, item.y);
       return {
@@ -461,7 +523,8 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
     const band = bar ? [{ left: 0, right: r.width, top: 0, bottom: bar }] : [];
     const placer = createPlacer({ width: r.width, height: r.height, measure, paths: edges.slice(1), dots: points, right: 46, boxes: band,
       soft: [[...alts.map(entry => entry.edge), ...ahead], alts.flatMap(entry => entry.tails)] });
-    const labels = steps.map((step, index) => placer.chosen(step.label, index ? edgePoints(edges[index]) : Array(21).fill(points[0]), points[index]));
+    // A run's middle steps have no map label: the list beside the map tells them.
+    const labels = steps.map((step, index) => (runMiddle(step) ? null : placer.chosen(step.label, index ? edgePoints(edges[index]) : Array(21).fill(points[0]), points[index])));
     // The tail nearest its own height carries a gray label on if the line itself is crowded.
     const altLine = entry => {
       const tail = [...entry.tails].sort((a, b) => Math.abs(a.b.y - entry.node.y) - Math.abs(b.b.y - entry.node.y))[0];
@@ -867,8 +930,10 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
     life.steps[k].fixedY = item.y;
     heights(life.steps).forEach((y, index) => { life.steps[index].y = y; });
     const entry = g.alts.find(other => other.item.key === altKey);
+    placeAges(life.steps);
     const grown = life.steps.slice(k);
-    const nodes = grown.map((step, index) => ({ ...step, point: index ? g.at(step.age, step.y) : entry.node }));
+    const nodes = grown.map((step, index) => ({ ...step, point: index ? g.at(step.at, step.y) : entry.node }));
+    spaceRun(nodes.map(node => node.point), nodes).forEach((point, index) => { nodes[index].point = point; });
     // Each new dot sits only where its own lines split: none lands on the real
     // path behind it, and the new life's last dot keeps clear of it.
     const realLine = g.edges.slice(k).flatMap(edge => edgePoints(edge, 30));
@@ -888,8 +953,10 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
       const nearest = realLine.reduce((best, q) => (Math.hypot(q.x - node.point.x, q.y - node.point.y) < Math.hypot(best.x - node.point.x, best.y - node.point.y) ? q : best));
       const away = node.point.y > nearest.y ? 1 : -1;
       const side = node.point.x > nearest.x ? 1 : -1;
-      const lo = nodes[index - 1].point.x + 14;
-      const hi = index < nodes.length - 1 ? g.at(nodes[index + 1].age, nodes[index + 1].y).x - 14 : r.width - RIGHT;
+      // A run's dots sit closer: they may stay as near their neighbours as they already are.
+      const near = (a, b) => (inRun(a) && a.run === b.run ? Math.max(4, Math.abs(g.X(a.at) - g.X(b.at)) - 2) : 14);
+      const lo = nodes[index - 1].point.x + near(nodes[index - 1], node);
+      const hi = index < nodes.length - 1 ? g.at(nodes[index + 1].at, nodes[index + 1].y).x - near(node, nodes[index + 1]) : r.width - RIGHT;
       for (let shift = 2; shift <= 90; shift += 2) {
         const moved = [[0, away], [0, -away], [side, 0], [-side, 0]]
           .filter(([sx]) => !sx || shift <= 28)
@@ -898,7 +965,7 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
         if (moved) { node.point = moved; return; }
       }
     });
-    const edges = nodes.map((node, index) => (index ? { a: nodes[index - 1].point, b: node.point, bend: 0 } : entry.edge));
+    const edges = nodes.map((node, index) => (index ? { a: nodes[index - 1].point, b: node.point, bend: 0, direct: runEdge(node, nodes[index - 1]) } : entry.edge));
     // The gray lines at each new dot: other things that could have happened there
     // (the first fork's are the person's own other choices, already on the map).
     const siblings = nodes.map((node, index) => (index ? grayItems(life.steps, k + index, `${model.life.id}:${seed}`).map(other => {
@@ -909,7 +976,7 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
       };
     }) : []));
     const last = nodes.at(-1);
-    const ahead = aheadFor(`${model.life.id}:${seed}:ahead`, last.age, last.y).map(next => ({ a: last.point, b: g.at(next.age, next.y), bend: next.bend * g.span }));
+    const ahead = aheadFor(`${model.life.id}:${seed}:ahead`, last.at, last.y).map(next => ({ a: last.point, b: g.at(next.age, next.y), bend: next.bend * g.span }));
     // Labels for the new life, clear of what stays on the map.
     const visibleBoxes = () => [...g.band, ...[...labelEls.filter(element => Number(element.dataset.step) < k),
       ...altEls.filter(element => { const other = itemFor(element.dataset.alt); return other.stepIndex <= k && other.key !== altKey; })].map(boxOf)];
@@ -971,7 +1038,7 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
     for (let index = run.labels.length; index <= upTo && index < run.edges.length; index += 1) {
       const text = run.nodes[index].label;
       const points = edgePoints(run.edges[index]);
-      const spot = placer.chosen(text, points) ?? loose.chosen(text, points);
+      const spot = runMiddle(run.nodes[index]) ? null : placer.chosen(text, points) ?? loose.chosen(text, points);
       if (spot) { placer.reserve(spot.box); loose.reserve(spot.box); }
       run.labels.push(spot);
       html += labelHTML(spot, 'is-dark is-what', ` data-what="${index}"`);
@@ -1025,9 +1092,11 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
     if (!what) return;
     const run = what;
     if (index > run.edges.length) { growAhead(run); return; }
-    const from = index === 1 ? model.life.steps[run.fork].age : run.nodes[index - 2].age;
-    const years = run.nodes[index - 1].age - from;
-    const duration = Math.min(1500, 700 + years * 70);
+    const from = index === 1 ? model.life.steps[run.fork].at : run.nodes[index - 2].at;
+    const years = run.nodes[index - 1].at - from;
+    // A run's steps come quicker, as in the story (RUN_PACE in life.js).
+    const quick = inRun(run.nodes[index - 1]) ? RUN_PACE : 1;
+    const duration = Math.min(1500, 700 + years * 70) * quick;
     const started = performance.now();
     const tick = now => {
       if (what !== run) return;
@@ -1035,7 +1104,7 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
       drawWhatEdge(index, ease.inOut(p));
       if (p < 1) { run.frame = requestAnimationFrame(tick); return; }
       arrive(run, index);
-      run.frame = setTimeout(() => { run.frame = null; walkWhat(index + 1); }, 320);
+      run.frame = setTimeout(() => { run.frame = null; walkWhat(index + 1); }, 320 * quick);
     };
     run.frame = requestAnimationFrame(tick);
   }

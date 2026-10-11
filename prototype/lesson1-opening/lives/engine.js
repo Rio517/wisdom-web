@@ -508,6 +508,7 @@ export const GROW = {
   runLastChance: 8, // …and always when fewer years than this are left before the quiet years
   followPick: 2, // after a pick, this many steps build on it (or on what built on it) whenever one can
   followRun: 1, // after a run, this many steps build on it whenever one can
+  maxGap: 6, // a grown step comes at most this many years after the one before
 };
 
 /** The newest age at which the path touched the area of a step that gave `name` (see `historyPath`). */
@@ -571,6 +572,39 @@ export function runFits(store, run, path, age, limit) {
 }
 
 /**
+ * When the reader's pick inside a written run is itself a middle step of a run,
+ * that run carries on to its outcome: its later steps, in order, the same age
+ * or a year apart, within `span` years of `age` and by `limit`. Returns
+ * `{ run, nodes, ages }` or null.
+ */
+export function runAfter(store, node, path, age, limit) {
+  for (const run of store.runs.values()) {
+    const at = run.steps.indexOf(node.id);
+    if (at < 1 || at >= run.steps.length - 1) continue;
+    const rest = run.steps.slice(at + 1).map(id => store.nodes.get(id));
+    if (rest.some(item => !item)) continue;
+    const span = Number.isInteger(run.span) ? run.span : 2;
+    let found = null;
+    const walk = (ages, trial) => {
+      if (found) return;
+      const k = ages.length;
+      if (k === rest.length) { found = ages; return; }
+      const from = k ? ages[k - 1] : age;
+      for (const step of k ? [0, 1] : [1, 0]) {
+        const next = from + step;
+        if (next > age + span || next > limit || !allows(rest[k], trial, next)) continue;
+        const copy = copyPath(trial);
+        takeStep(copy, rest[k], next);
+        walk([...ages, next], copy);
+      }
+    };
+    walk([], copyPath(path));
+    if (found) return { run, nodes: rest, ages: found };
+  }
+  return null;
+}
+
+/**
  * Grow a life: the baseline's steps before `forkIndex`, then `alt` at the
  * fork's age, then new steps to the baseline's `end`. Each step after the
  * fork comes a gap of years later (the explorer's gaps × 0.75–1.35, and
@@ -630,7 +664,17 @@ export function grow(store, { baseline, forkIndex, alt, seed = '' }) {
   // name at most 1 node in 20 gives (so "journalism", not "job").
   const isNarrow = name => (store.givers.get(name)?.length ?? 0) <= store.nodes.size / 20;
   const onFocus = (node, narrow = false) => node.after.some(name => (!narrow || isNarrow(name)) && (path.held.get(name) ?? []).some(giver => focus.on.has(giver)));
-
+  // A pick inside a written run that is a middle step of another run: that run carries on to its outcome.
+  if (inRun) {
+    const rest = runAfter(store, altNode, path, forkStep.age, base.end - GROW.quietYears);
+    rest?.nodes.forEach((node, k) => {
+      const others = othersAt(store, node, path, rest.ages[k], random);
+      const step = add(node, rest.ages[k], { grown: true, run: inRun });
+      step.others = others.map(other => ({ id: other.id, node: other, kind: other.kind, label: say(other.label, person) }));
+    });
+    // Then the thread goes on from the run, as after any run.
+    if (rest) focus = { on: new Set(rest.nodes.map((_, k) => steps.length - rest.nodes.length + k).concat(steps.length - rest.nodes.length - 1)), left: GROW.followRun };
+  }
   const end = base.end;
   const builds = node => node.after.length > 0 && chainFrom(node, path) >= path.count - 2;
   // A stale match (see GROW.staleYears) weighs less wherever a node is picked by its `after`.
@@ -734,7 +778,7 @@ export function grow(store, { baseline, forkIndex, alt, seed = '' }) {
     return { node: chosen, others, couldBuild };
   };
 
-  let age = forkStep.age;
+  let age = steps.at(-1).age;
   let early = false;
   for (let guard = 0; age < end && guard < 40; guard += 1) {
     const last = steps.at(-1).node;
@@ -752,7 +796,7 @@ export function grow(store, { baseline, forkIndex, alt, seed = '' }) {
     }
     if (!found) {
       const factor = isSurprise(last) ? GROW.answer[0] + (GROW.answer[1] - GROW.answer[0]) * random() : 0.75 + 0.6 * random();
-      const target = Math.min(end, age + Math.max(1, Math.round(gapFor(age) * factor)));
+      const target = Math.min(end, age + Math.max(1, Math.min(GROW.maxGap, Math.round(gapFor(age) * factor))));
       // A life with no run yet: one starts here this often, or always when time is running out.
       const lastChance = end - GROW.quietYears - target < GROW.runLastChance;
       if (!hasRun && store.runs.size && target <= end - GROW.quietYears
@@ -802,6 +846,8 @@ export function lifeText(life, store) {
 
 // ——— Checking the store ———
 const WORDS = text => text.trim().split(/\s+/).filter(Boolean).length;
+// Small words that may repeat from one line to the next.
+const COMMON = new Set(['with', 'from', 'that', 'this', 'then', 'them', 'they', 'their', 'there', 'have', 'into', 'what', 'when', 'more', 'some', 'back', 'each', 'just', 'like', 'over', 'also', 'very', 'will', 'does', 'goes', 'gets', 'takes', 'makes', 'starts', 'about', 'after', 'again', 'every', 'other', 'first', 'still', 'only', 'for', 'her', 'his', 'him', 'herself', 'himself', 'she', 'he', 'and', 'the', 'one', 'two', 'new', 'own', 'year', 'years', 'time', 'day', 'days', 'helps', 'help', 'asks', 'luck', 'work', 'works', 'becomes']);
 const CAMEL = /^[a-z][A-Za-z0-9]*$/;
 const YOU = /\b(you|your|yours|yourself|yourselves)\b/i;
 
@@ -1014,6 +1060,12 @@ export function check(store, { lives = 0 } = {}) {
         if (alt.kind !== 'choice') error(at, `Alternative "${altId}" is not a choice.`);
         const why = blocked(alt, path, step.age);
         if (why) error(at, `Alternative ${altId} at ${step.age} isn't possible here: ${why.text}.`);
+        // Inside a run (not at its first step), a pick must carry a run on to an outcome.
+        // (At its last step, a pick is another outcome: that is allowed.)
+        const midRun = step.run && index > 0 && baseline.steps[index - 1].run === step.run && baseline.steps[index + 1]?.run === step.run;
+        if (midRun && ![...store.runs.values()].some(run => { const k = run.steps.indexOf(altId); return k >= 1 && k < run.steps.length - 1; })) {
+          error(at, `Alternative ${altId} sits inside run "${step.run}": it must be a middle step of some run (which then carries on to its outcome); or offer it at the run's first or last step.`);
+        }
       }
       if (node.kind === 'lucky') lucky += 1;
       if (node.kind === 'setback') setbacks += 1;
@@ -1047,6 +1099,18 @@ export function check(store, { lives = 0 } = {}) {
     if (!setbacks) warn(where, 'No setback: a written life has at least one.');
     if (!family) warn(where, 'No family choice before 8.');
     if (own < 6) warn(where, `${own} of the person's own choices (at least six).`);
+  }
+
+  // Two lines in a row of a written life don't repeat a content word (4+ letters; not a name or a small word).
+  for (const baseline of store.baselineList) {
+    if (!baseline.steps.every(step => store.nodes.has(step.node))) continue;
+    const life = writtenLife(store, baseline);
+    const words = line => new Set((line.toLowerCase().match(/[a-z']+/g) ?? []).filter(word => word.length >= 4 && !COMMON.has(word) && word !== life.name.toLowerCase()));
+    for (let index = 1; index < life.steps.length; index += 1) {
+      const before = words(life.steps[index - 1].line);
+      const same = [...words(life.steps[index].line)].filter(word => before.has(word));
+      if (same.length) warn({ file: baseline.file, baseline: baseline.id, step: index, node: life.steps[index].id }, `Repeats "${same.join('", "')}" from the line before: two lines in a row say it once.`);
+    }
   }
 
   const substanceLives = store.baselineList.filter(baseline => baseline.steps.some(step => store.nodes.get(step.node)?.tags.includes(SUBSTANCE)));
