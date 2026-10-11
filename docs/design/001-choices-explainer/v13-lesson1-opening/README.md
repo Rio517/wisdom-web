@@ -46,7 +46,7 @@ Question: does every life, written or grown, read as cause and effect, one step 
 
 ### The pool
 
-42 runs: art 3, caring 3, community 3, food 3, life 3, making 3, money 3, music 4, nature 2, science 4, sport 3, stage 3, tech 2, words 3. Shapes vary: wins (a retaken exam, a passed driving test, a second art-school try), partial wins (a small press, a market stall, a reserve-team place, a chorus place) and changes of course (a new position, a testing job instead of coding, a classroom job, a stall that becomes a repair service, dance to teaching). Written by seven Sonnet writers, two areas each; the store now has 630 nodes. Every written life has one run:
+42 runs: art 3, caring 3, community 3, food 3, life 3, making 3, money 3, music 4, nature 2, science 4, sport 3, stage 3, tech 2, words 3. Shapes vary: wins (a retaken exam, a passed driving test, a second art-school try), partial wins (a small press, a market stall, a reserve-team place, a chorus place) and changes of course (a new position, a testing job instead of coding, a classroom job, a stall that becomes a repair service, dance to teaching). Written by seven Sonnet writers, two areas each; the store now has 660 nodes. Every written life has one run:
 
 | Life | Run | Ages | Shape |
 | --- | --- | --- | --- |
@@ -85,7 +85,7 @@ A fresh Opus reader read the ten written lives and 40 seeded grown lives (four p
 - **Dots:** at 1440×900 every life's dots are at least 16.3 px apart (all ten); at 1920×1080 at least 16.3 px; at 1133×744 at least 13.6 px and at 744×1133 at least 12.5 px, where two ordinary steps a year apart sit one year apart (12.5 px a year at 744 wide), as before this round; every run's dots are 16 px or more apart at every size. Every dot sits on the line.
 - **Labels:** no map label overlaps another label or a dot, for all ten lives at 1440×900, 1920×1080, 1133×744 and 744×1133, and under reduced motion (1440×900 and 744×1133).
 - **Story time at Normal pace:** Sam 30.7 s → **33.0 s** (+2.3 s; 17 steps, was 14); Quicker 27.1 → 29.2 s. The others: 27.8 s (Leo, Zoe) to 32.6 s (Omar).
-- **The story list** (17-step lives): option E still holds; when nothing fits with the four newest rows whole, the three (then two) newest stay whole and the rows close to the short screens' 3 px gap (`is-packed`), and as the very last resort older rows go to 13 px. 13 px is used only at 1366×657 (Amara, Ana, Kai, Nora, Omar, Theo), a laptop window below the project's targets; at 1440×900 the sizes are 15/14 or 14 px.
+- **The story list** (17-step lives): option E still holds; when nothing fits with the four newest rows whole, the three (then two) newest stay whole and the rows close to the short screens' 3 px gap (`is-packed`), and as the very last resort older rows go to 13 px. 13 px is used only at 1366×657 (Amara, Ana, Nora and Omar), a laptop window below the project's targets; at 1440×900 the sizes are 15/14 or 14 px.
 - **The sweep** (`sweep.mjs`, all ten lives × 1133×744, 1440×900, 1366×657, 1280×800, 1920×1080, 744×1133 and 2560×1440 × both paces): **140 story runs, 0 with scroll, overflow or rows out of view; "Choices add up" 3/3 and clear in all 70; 0 console errors.**
 - **WebKit** could not be installed here again (Playwright's download host is blocked). On a Mac: `npx playwright install webkit`, then `node sweep.mjs --engine webkit --sizes 1133x744,1440x900,1366x657,1280x800,1920x1080,744x1133,2560x1440`.
 
@@ -106,7 +106,7 @@ A fresh Opus reader read the ten written lives and 40 seeded grown lives (four p
 - **Grown lives are thinner than written ones.** The audit's 34 editor's notes: some picks have a plain follow-up only some of the time (a drama club, a smaller shop), a few late steps recur ("helps someone new at work find their feet", now weight 0.15), and three general work steps name no job. None is a mistake a reader would stop on; each needs more nodes.
 - **A run's first map label** is often left out where the run sits tight against the step before (Sam's "Records a song"): the list tells it, and the run's last label shows.
 - **At 744×1133 and 1133×744** two ordinary steps a year apart can sit 12.5–13.7 px apart (one year's width there); runs are spaced 16 px.
-- **13 px older rows** at 1366×657 for the six longest lives (last resort).
+- **13 px older rows** at 1366×657 for four of the longest lives (last resort).
 - **The story pace** grows with the number of steps: a 17-step life takes up to 33 s at Normal pace.
 - **The test fixture's Sam** follows the real Sam's round-6 shape but not every word (its alternatives are fewer).
 
