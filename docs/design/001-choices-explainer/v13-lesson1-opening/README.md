@@ -1,6 +1,6 @@
 # v13 — Lesson 1 opening
 
-Created: 2026-10-09. Updated: 2026-10-10 (round 4: the lives store, as v05). Status: playable mockup on a branch; owner review pending. Not published.
+Created: 2026-10-09. Updated: 2026-10-11 (round 5: the story list and the "Choices add up" labels, as v06). Status: playable mockup on a branch; owner review pending. Not published.
 
 Question: does the opening tell one life clearly? Since round 3, also: does Sam's story read like the Explore chapter, and does changing one of his choices show that every gray line is a life he could have lived? Since round 4, also: can a reader play the opening five or six times and meet a really different life each time, where every step makes sense?
 
@@ -21,6 +21,68 @@ Open <http://127.0.0.1:4638/prototype/lesson1-opening/>. The lives store and its
 - At the end, the card on the map offers **Change one of his choices** (or hers) and **Watch another life**. Every fork with other choices gets a ring; a ring is a button that opens the choices there, and a gray choice on the map can also be tapped straight away. A picked choice grows a new life from that fork, a different one each time. **Try again** grows another from the same choice, **Try another choice** goes back to the rings, and **Back to Sam's life** or **Escape** puts the life back as it was.
 - The **Mockup** bar under the stage switches the pace (**Normal**: 900 ms pauses, 1300 ms after events; **Quicker**: 700 and 1000 ms) and the **Life** (any of the ten, or Random), and replays the story.
 - The address keeps the pace and the life: `?pace=quick&life=zoe`. After a pick it also holds the fork, the choice and the seed, so the same new life opens again. `?store=fixture` plays the test store (two lives); `#paths-life` opens the finished story, `#paths-adds` the next beat and `#hike-plan` the hike.
+
+## Round 5: the story list and the "Choices add up" labels (v06)
+
+The notes on v05, paraphrased: fix the story list and the missing labels, then show the result. The open issues from round 4:
+
+1. On an iPad held sideways (1133×744) the story list scrolls while a life plays, and at the end a long life's first rows sit cut off under the top fade (Theo is the worst).
+2. On long lives at other sizes the older rows look much smaller than the newest (Nora at 1440×900: old rows 14 px, the four newest 18 px), and the gaps between rows vary.
+3. "Choices add up" shows two of its three labels on some lives and sizes.
+
+The goal: at every size the list tells the whole life in one calm column. Every line arrives in place, nothing scrolls while the life plays, every row is in view and whole at the end, and the list uses at most two type sizes. "Choices add up" shows all three labels on every life at every size.
+
+### Measured before this round (72d8ffe)
+
+[`sweep.mjs`](sweep.mjs) drives the dev server with Playwright (`npm i --no-save playwright`; no change to `package.json`). It plays every life from the cover at both paces, samples the list's scroll every 100 ms, measures the list at the end, and checks the three labels of "Choices add up"; `--budget` adds layouts per arriving line and the longest main-thread tasks at 4× slowdown. Run it against a dev server on 4644 (`--url` for another), `--engine chromium|webkit`, `--sizes 1133x744,1440x900`.
+
+The room the story beat's column gives the list (px, top to bottom; the list's box runs from the heading to the Pause row):
+
+| Screen | Kicker | Heading | List box | Pause | Beat dots | Back/Next | Controls (rule to foot) |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 1133×744 | 23 (+12 margin) | 64, two lines | 220–587: **367** | 30 | 26 | 48 | 103 |
+| 1366×657 | 23 (+12) | 75, two lines | 232–500: **268** | 30 | 26 | 48 | 103 |
+| 1440×900 | 23 (+12) | 79, two lines | 236–705: 469 | 30 | 26 | 48 | 138 (with the key hint) |
+
+Each life, both paces (the same at both): most the list scrolled while playing / px too long at the end / rows not whole and in view at the end (line sizes at the end):
+
+| Life | 1133×744 | 1366×657 | 1440×900 |
+| --- | --- | --- | --- |
+| Amara | 18 / 16 / 3 (17, 13) | 71 / 70 / 6 (17, 13) | 0 / 0 / 0 (18, 15, 14) |
+| Ana | 0 / 0 / 0 (17, 13) | 16 / 8 / 3 (17, 13) | 0 / 0 / 0 (15) |
+| Kai | 0 / 0 / 0 (17, 14, 13) | 26 / 24 / 4 (17, 13) | 0 / 0 / 0 (18, 15, 14) |
+| Lena | 8 / 0 / 0 (17, 13) | 11 / 9 / 3 (17, 13) | 0 / 0 / 0 (18, 15, 14) |
+| Leo | 32 / 30 / 4 (17, 13) | 17 / 9 / 3 (17, 13) | 0 / 0 / 0 (18, 15, 14) |
+| Nora | 0 / 1 / 0 (17, 13) | 56 / 55 / 5 (17, 13) | 0 / 0 / 0 (18, 15, 14) |
+| Omar | 76 / 60 / 4 (17, 13) | 87 / 85 / 6 (17, 13) | 0 / 0 / 0 (18, 15, 14) |
+| Sam | 0 / 0 / 0 (17, 14) | 0 / 0 / 0 (17, 15, 14, 13) | 0 / 0 / 0 (17.5) |
+| Theo | 54 / 46 / 4 (17, 13) | 33 / 25 / 3 (17, 13) | 0 / 0 / 0 (15) |
+| Zoe | 32 / 30 / 3 (17, 13) | 17 / 9 / 3 (17, 13) | 0 / 0 / 0 (18, 15, 14) |
+
+So: 6 of 10 lives scroll at 1133×744 and 9 of 10 at 1366×657; up to 85 px too long at the end; up to six rows cut or under the fade; three or four line sizes in one list (the compact rows at 13 px, with 12 px ages, beside 17 px lines). At 1440×900 nothing scrolls, but seven lives end with three sizes, 18, 15 and 14 px. Lists that fit end 2 px above the Pause row.
+
+"Choices add up", the ten lives at 1280×800, 1440×900, 1920×1080, 2560×1440, 744×1133, 1133×744 and 1366×657 (70 cases): two of three labels for **Theo at 1133×744** and **Leo at 1280×800**. Lena and Omar at 744×1133 show three on this branch's store. The sweep also checks that no chip covers a dot of the route and no pin crosses one: 14 more cases fail that (Omar at 1133×744: "Luck" sits over the dot "Not his choice" points to, and that pin runs through the "Luck" chip).
+
+Why the labels failed, from a log of every try (each label has 6 heights × 3 alignments): every try was blocked by the map's edge (the 40 px axis at the foot, the top), the other chips or a named step's own label (which never steps back), and the fallback that steps other labels back found no try clear of those. For Theo at 1133×744 "Luck" had 18 tries: 9 hit a label that could step back but sat beside a chip or a named label, 9 hit the other chips or named labels. The old fallback also let a chip sit over a dot and a pin run through a chip.
+
+Cost of a line arriving (`--budget`, Theo at 1133×744): 6.4 layouts on average, 9 at most (the fold's tries). Sam at 1920×1080: 1.3 and 3.
+
+### The options (2× crops, Theo's end at 1133×744 and Nora's end at 1440×900)
+
+Every option starts from the same base:
+
+- **Room on short screens.** On the story beat at heights of 820 px or less (`opening.css`, scoped to `.narration-body[data-beat="life"]`, not a what-if): the kicker hides, as it already does in a changed life (35 px); the heading drops to one line, 24 to 28 px (39 px at 1133×744, 46 at 1366×657); the beat dots sit beside Back and Next in one row, the buttons still 48 px (44 px). The list's box grows from 367 to **490 px** at 1133×744 and from 268 to **399 px** at 1366×657.
+- **One type scale.** At most two sizes: the four newest rows and the older rows, older rows 14 px or more. The ages have one size throughout, so the age column has one width. The fold's steps (15, 14 and 13 px, the compact rows) are gone.
+
+| Option | Image | Judged as a child of eight reading it |
+| --- | --- | --- |
+| A, older rows shorten to their label, at 16/14 px (the lean) | [option A](opening-list-option-a-v01.png) | Follows from 0 to the end, every step there. The step from 16 to 14 px still reads as two styles at 1440 (Nora). |
+| B, older rows gather into one row ("Age 0–11 · 4 earlier steps") | [option B](opening-list-option-b-v01.png) | The life no longer starts at birth: the first thing read is a count. The steps are a tap away only after the story. Drawn only, its words not written. |
+| C, today's folding kept to two sizes | [option C](opening-list-option-c-v01.png) | Still too long at 1133×744 (the last line is cut), and the compact rows with their age inline are a second style halfway down. |
+| D, one size (16 px) throughout, labels sooner | [option D](opening-list-option-d-v01.png) | The calmest: one style top to bottom. More rows shorten (9 of Theo's 16 at 1133×744, 3 of Nora's at 1440). |
+| **E, the pick: one size when the whole story fits; else labels, older rows at most 1 px smaller** | [option E](opening-list-option-e-v01.png) | Reads as one story, top to bottom, at one size or a size and a pixel; Theo keeps 16 px for his four newest rows and 15 px for the rest, with seven of his older steps as labels. |
+
+**The pick: E** (A, kept to one size). A child follows the life from birth, every step still in its place, and nothing in the list changes style: a shortened row is the same type and colour as its neighbours, it only says the step in fewer words ("Helps the neighbours" for "His grandma takes soup to a neighbour, and Theo comes along"). A's 16/14 step was the kind of size difference the owner flagged; B drops the start of the story; C does not fit and keeps two looks. E ends up with fewer labels than D where the room allows (it tries a single size down to 15 px before shortening anything).
 
 ## Round 4: the owner's notes on v04 (v05)
 
