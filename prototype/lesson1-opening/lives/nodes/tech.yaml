@@ -233,11 +233,11 @@
 
 - id: worksFromHome
   label: Works from home
-  line: "{name} works from home, with a cat on the keyboard."
+  line: "{name} writes code from home, with a cat on the keyboard."
   if: "{name} had started working from home"
   kind: choice
   ages: [24, 60]
-  after: [developer, data, writing, illustration, websites]
+  after: [developer, websites]
   tags: [tech]
   weight: 0.5
 
@@ -267,7 +267,7 @@
   if: "{name} had built an online shop"
   kind: choice
   ages: [18, 55]
-  after: [online, websites]
+  after: [buildsWebsite, designsWebsites, code]
   tags: [tech, job]
 
 - id: programsRobots
@@ -289,6 +289,7 @@
   tags: [tech, job]
 
 # Runs: a launch that crashes, users' notes, a second launch (a win).
+
 - id: launchesProject
   label: Launches a project
   line: "{name} launches a project for other people to use."
@@ -320,6 +321,7 @@
   move: 1
 
 # Runs: applying for coding jobs, a no, a portfolio, and a different role (a change of course).
+
 - id: appliesForCodingJobs
   label: Applies for tech jobs
   line: "{name} applies for jobs writing software."

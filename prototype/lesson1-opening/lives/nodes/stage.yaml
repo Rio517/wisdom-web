@@ -93,8 +93,9 @@
   if: "{name} had taught dance to children"
   kind: choice
   ages: [18, 65]
-  after: [dance, theatre]
+  after: [dance, gentleDanceClass]
   tags: [stage, teaching, job]
+  within: 4
 
 - id: gentleDanceClass
   label: Leads a gentle class
@@ -276,6 +277,7 @@
   tags: [stage, theatre, community]
 
 # Runs: trying again (see ../runs/stage.yaml)
+
 - id: auditionsForPart
   label: Auditions for a part
   line: "{name} auditions for a part in a new show."

@@ -381,5 +381,27 @@
   if: "{name} had taken art and design"
   kind: choice
   ages: [14, 18]
+  unless: [scienceSubjects, takesHumanities]
   tags: [art, artSubjects]
   weight: 0.5
+
+- id: studiesAtArtSchool
+  label: Studies at art school
+  line: "{name} studies illustration at art school."
+  if: "{name} had studied at art school"
+  kind: choice
+  ages: [17, 30]
+  after: [getsArtSchoolPlace, artPlaceSecondTry]
+  tags: [art, study, drawing]
+  within: 2
+  weight: 3
+
+- id: sellsPrintsAtFair
+  label: Sells prints at a fair
+  line: "{name} sells hand-printed cards and posters at a Saturday fair."
+  if: "{name} had sold prints at a fair"
+  kind: choice
+  ages: [18, 65]
+  after: [worksInPrintShop, smallShowOpens, studiesAtArtSchool]
+  tags: [art, money]
+  within: 3

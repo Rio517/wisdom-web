@@ -88,13 +88,13 @@
 
 - id: startsABusiness
   label: Starts a business
-  line: "{name} starts a small business from the spare room."
+  line: "{name} starts a business from the spare room, mending things for neighbours."
   if: "{name} had started a small business"
   kind: choice
   ages: [18, 55]
-  after: [savings, stall, qualified, crafts]
+  after: [qualified, fixing]
+  unless: [owner]
   tags: [money, owner, business]
-
 - id: opensASmallShop
   label: Opens a small shop
   line: "{name} opens a small shop on the high street."
@@ -102,6 +102,7 @@
   kind: choice
   ages: [22, 55]
   after: [shopAssistant, shop]
+  unless: [owner]
   tags: [money, owner, business, shop]
 
 - id: sellsOnline
@@ -215,10 +216,10 @@
   if: "{name} had taken a second job"
   kind: choice
   ages: [20, 60]
-  after: [job]
+  after: [moneyGetsTight, flatSold, rentDoubles]
   unless: [workMove]
   tags: [money, job, workMove]
-  within: 3
+  within: 2
   weight: 0.6
 
 - id: deliveryWork
@@ -236,12 +237,12 @@
   kind: choice
   ages: [24, 55]
   after: [sport]
+  unless: [owner]
   tags: [money, owner, business, shop]
   within: 3
-
 - id: raisesMoney
   label: Raises money
-  line: "{name} organises a fun run to raise money for a cause."
+  line: "{name} organises a fun run to raise money for the town library."
   if: "{name} had raised money for a cause"
   kind: choice
   ages: [20, 65]
@@ -249,6 +250,7 @@
   tags: [money, community]
 
 # Run: shopToStall (a little shop, road works, a market table, regulars).
+
 - id: rentsLittleShop
   label: Rents a little shop
   line: "{name} rents a little shop and fills the shelves."
@@ -293,9 +295,10 @@
   move: 1
 
 # Run: firstIdea (a first business idea, unsold, a question, a new offer).
+
 - id: triesFirstIdea
   label: Tries a first idea
-  line: "{name} makes a batch of things to sell to neighbours."
+  line: "{name} offers to wash neighbours' cars for a small fee."
   if: "{name} had tried a first business idea"
   kind: choice
   ages: [14, 50]
@@ -305,8 +308,8 @@
   inRun: true
 
 - id: batchStaysUnsold
-  label: The batch stays unsold
-  line: "Only a few things sell, and the rest stay on the shelf."
+  label: Few neighbours say yes
+  line: "Only one neighbour says yes, and the rest wave {him} on."
   kind: setback
   ages: [14, 50]
   after: [idea]
@@ -316,7 +319,7 @@
 
 - id: asksWhatPeopleWant
   label: Asks what people want
-  line: "{name} asks neighbours what they would really buy."
+  line: "{name} asks neighbours what they would really pay for."
   if: "{name} had asked neighbours what they would buy"
   kind: choice
   ages: [14, 55]
@@ -326,7 +329,7 @@
 
 - id: offersWhatTheyAsked
   label: Offers what they asked
-  line: "{name} offers what the neighbours asked for."
+  line: "{name} offers to feed pets and water plants while neighbours travel."
   if: "{name} had offered what the neighbours asked for"
   kind: choice
   ages: [14, 55]
@@ -336,7 +339,7 @@
 
 - id: firstOrders
   label: First orders arrive
-  line: "Four neighbours place orders, one after another."
+  line: "Four neighbours book {him} for the summer holidays."
   kind: event
   ages: [14, 56]
   after: [offersWhatTheyAsked]
@@ -345,6 +348,7 @@
   move: 1
 
 # Run: bankLoan (a loan for a business, a no, a smaller plan, a local fund).
+
 - id: asksForLoan
   label: Asks for a bank loan
   line: "{name} asks a bank for a loan to start a business."
@@ -386,3 +390,23 @@
   tags: [money, owner, business]
   within: 1
   move: 1
+
+- id: deliveryRegulars
+  label: Regular customers
+  line: "Regular customers start asking for {him} by name."
+  kind: event
+  ages: [18, 62]
+  after: [deliveryWork]
+  tags: [money]
+  within: 2
+  move: 1
+
+- id: takesOnAVan
+  label: Saves for a van
+  line: "{name} saves for a van and takes on bigger loads."
+  if: "{name} had saved for a van"
+  kind: choice
+  ages: [20, 62]
+  after: [deliveryWork, deliveryRegulars]
+  tags: [money, job]
+  within: 3

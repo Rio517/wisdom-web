@@ -60,7 +60,7 @@ steps:
     age: 31
   - node: forestSchool
     age: 34
-    line: "At 34, {name} starts leading outdoor classes for children."
+    line: "{name} starts something new: outdoor classes for children."
     alts: [leadsWalkingGroups, parkRanger]
     echoes: [rebuildsAsCommunityGarden, playsOutside]
   - node: keepsBees

@@ -75,8 +75,8 @@
   kind: choice
   ages: [17, 26]
   after: [clinic, carer]
+  unless: [takesUpNursingPlace]
   tags: [caring, nurse, job, study]
-
 - id: nurseMentor
   label: A nurse guides {him}
   line: "A senior nurse takes {him} under her wing. Luck!"
@@ -255,6 +255,7 @@
   tags: [caring, teaching, community]
 
 # Run: a care exam, a miss, studying with a friend, a pass (win).
+
 - id: sitsCareExam
   label: Sits a care exam
   line: "{name} sits an exam for a care qualification."
@@ -296,6 +297,7 @@
   move: 1
 
 # Run: a busy ward, a hard start, advice, another ward (change of course).
+
 - id: startsBusyWard
   label: Starts on a busy ward
   line: "{name} starts work on a busy hospital ward."
@@ -337,6 +339,7 @@
   within: 1
 
 # Run: a course application, a no, more experience, a waiting list (partial win).
+
 - id: appliesForCareCourse
   label: Applies for a course
   line: "{name} applies for a place on a care training course."
@@ -344,6 +347,7 @@
   kind: choice
   ages: [17, 50]
   after: [caring]
+  unless: [nurse, paramedic, midwife, physio, worksAsDoctor, studiesMedicine, passesCareExam]
   tags: [caring]
   inRun: true
 
@@ -376,3 +380,15 @@
   tags: [caring]
   within: 1
   move: 1
+
+- id: takesUpNursingPlace
+  label: Takes a nursing place
+  line: "{name} takes the place and starts nursing studies."
+  if: "{name} had taken the nursing place"
+  kind: choice
+  ages: [16, 28]
+  after: [lastMinutePlace]
+  unless: [nurseTraining]
+  tags: [caring, nurse, study]
+  within: 2
+  weight: 3

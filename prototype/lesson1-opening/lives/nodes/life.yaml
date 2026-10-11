@@ -192,7 +192,7 @@
 
 - id: staysNearFamily
   label: Stays near family
-  line: "{name} chooses to stay close to family."
+  line: "{name} turns down a job far away to stay close to family."
   if: "{name} had stayed near family"
   kind: choice
   ages: [18, 35]
@@ -326,8 +326,7 @@
   kind: lucky
   ages: [9, 60]
   move: 1
-  weight: 0.4
-
+  weight: 0.25
 - id: teacherNotices
   label: A teacher sees talent
   line: "A teacher notices what {name} is good at."
@@ -470,7 +469,7 @@
 
 - id: quitsAClub
   label: Quits a club
-  line: "{name} leaves a club to make time for something else."
+  line: "{name} gives up a club to make time for friends and homework."
   if: "{name} had quit a club"
   kind: choice
   ages: [8, 16]
@@ -693,3 +692,89 @@
   after: [staysWithFriend]
   tags: [home]
   within: 1
+
+# Follow-ups for early picks and for exams.
+- id: passesTheExams
+  label: Passes the big exams
+  line: "{name} passes the big exams."
+  kind: event
+  ages: [15, 20]
+  after: [studiesHardForExams]
+  tags: [exams, passed]
+  within: 1
+  move: 1
+
+- id: takesCollegePlace
+  label: Takes a college place
+  line: "{name} takes a place on a college course."
+  if: "{name} had taken a place on a college course"
+  kind: choice
+  ages: [16, 21]
+  after: [passesTheExams]
+  tags: [study, college]
+  within: 2
+
+- id: grandparentStories
+  label: Hears family stories
+  line: "{his} grandparents tell {him} stories of when they were young."
+  if: "{his} grandparents had told {him} stories"
+  kind: choice
+  by: family
+  ages: [4, 10]
+  after: [timeWithGrandparents]
+  tags: [family, stories]
+
+- id: friendMusicShopJob
+  label: Job at a music shop
+  line: "An old friend offers {him} a job at a music shop."
+  kind: lucky
+  ages: [25, 60]
+  after: [music]
+  unless: [workMove]
+  tags: [job, workMove]
+  move: 2
+  weight: 0.6
+
+- id: friendBakeryJob
+  label: Job at a bakery
+  line: "An old friend offers {him} a job at a bakery."
+  kind: lucky
+  ages: [25, 60]
+  after: [food]
+  unless: [workMove]
+  tags: [job, workMove]
+  move: 2
+  weight: 0.6
+
+- id: friendWorkshopJob
+  label: Job in a workshop
+  line: "An old friend offers {him} a job in a workshop."
+  kind: lucky
+  ages: [25, 60]
+  after: [making]
+  unless: [workMove]
+  tags: [job, workMove]
+  move: 2
+  weight: 0.6
+
+- id: friendStudioJob
+  label: Job at a design studio
+  line: "An old friend offers {him} a job at a design studio."
+  kind: lucky
+  ages: [25, 60]
+  after: [art]
+  unless: [workMove]
+  tags: [job, workMove]
+  move: 2
+  weight: 0.6
+
+- id: friendGardenJob
+  label: Job at a plant nursery
+  line: "An old friend offers {him} a job at a plant nursery."
+  kind: lucky
+  ages: [25, 60]
+  after: [nature]
+  unless: [workMove]
+  tags: [job, workMove]
+  move: 2
+  weight: 0.6

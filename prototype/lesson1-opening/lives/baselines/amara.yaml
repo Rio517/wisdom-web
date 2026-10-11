@@ -75,5 +75,5 @@ steps:
     echoes: [smallPressYes, writesABook]
   - node: joinsBookGroup
     age: 42
-    line: "She joins a reading group and never mentions her own."
+    line: "She joins a reading group and never mentions her own writing."
     echoes: [readNightly]

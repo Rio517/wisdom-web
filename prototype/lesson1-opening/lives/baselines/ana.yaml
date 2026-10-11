@@ -68,7 +68,7 @@ steps:
   - node: caters
     age: 38
     label: Cooks for weddings
-    line: "The two of them bake for weddings and parties too."
+    line: "Ana's bakery bakes for weddings and parties too."
     echoes: [openBakery]
   - node: teachesCooking
     age: 41

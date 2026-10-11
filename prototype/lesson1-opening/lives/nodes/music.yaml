@@ -185,6 +185,7 @@
 
 # Drinking and drugs, named only in general words (the README's hard-things
 # rule). Only a world tour leads here, and help always follows within 2 years.
+
 - id: drinkingAndDrugs
   label: Drinking and drugs
   line: "Drinking and drugs take over, and {his} shows fall apart."
@@ -318,7 +319,7 @@
   if: "{name} had taught at a school"
   kind: choice
   ages: [22, 65]
-  after: [teaching]
+  after: [givesMusicLessons, teachesMusic, studiesMusic, joinsAdultChoir, joinsChoir, schoolBand, band, instrument]
   needs: [music]
   tags: [music, teacher, job]
 
@@ -473,3 +474,22 @@
   after: [friendCoaches]
   tags: [music, ensemble]
   within: 1
+
+- id: singsForRelatives
+  label: Sings for the family
+  line: "{name} sings for the relatives at a family party."
+  if: "{name} had sung for the relatives"
+  kind: choice
+  ages: [4, 10]
+  after: [singsAtHome]
+  tags: [music, sings]
+
+- id: singsAtSchoolConcert
+  label: Sings at a concert
+  line: "{name} sings a verse alone at the school concert."
+  if: "{name} had sung alone at the school concert"
+  kind: choice
+  ages: [7, 14]
+  after: [sings]
+  tags: [music, sings]
+  weight: 2

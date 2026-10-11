@@ -31,10 +31,9 @@
   line: "An older relative teaches {him} the family recipes."
   if: "{name} had learned the family recipes"
   kind: choice
-  ages: [9, 15]
+  ages: [5, 15]
   after: [timeWithGrandparents, cooking, baking]
   tags: [food, cooking, recipes]
-
 - id: lemonadeStall
   label: Runs a lemonade stall
   line: "{name} runs a lemonade stall on a sunny street."
@@ -257,6 +256,7 @@
   tags: [food]
 
 # Run: cookOff (a contest, a cake that sinks, practice, a ribbon).
+
 - id: entersCookOff
   label: "Enters a bake-off"
   line: "{name} enters a baking contest at the town hall."
@@ -299,6 +299,7 @@
   move: 1
 
 # Run: sourdough (flat loaves, an old baker's advice, a café order).
+
 - id: triesSourdough
   label: Tries sourdough bread
   line: "{name} tries to bake sourdough bread from scratch."
@@ -341,6 +342,7 @@
   move: 1
 
 # Run: popUpDinner (a first menu, an empty room, a friend's advice, a new way to cook).
+
 - id: hostsPopUp
   label: Hosts a pop-up dinner
   line: "{name} cooks a first menu for a one-night pop-up dinner."
@@ -381,3 +383,43 @@
   after: [asksChefFriend]
   tags: [food, job]
   within: 1
+
+- id: plantsVegPatch
+  label: Plants a pupils' patch
+  line: "{name} plants a vegetable patch with the pupils."
+  if: "{name} had planted a vegetable patch with the pupils"
+  kind: choice
+  ages: [20, 65]
+  after: [cooksSchoolLunches]
+  tags: [food, community]
+  within: 3
+
+- id: runsCookingClub
+  label: Starts a cooking club
+  line: "{name} starts an after-school cooking club for the pupils."
+  if: "{name} had started a cooking club"
+  kind: choice
+  ages: [20, 65]
+  after: [cooksSchoolLunches]
+  tags: [food, community, teaching]
+  within: 3
+
+- id: bakesForMoreCafes
+  label: Bakes for more cafés
+  line: "{name} starts supplying three more cafés on the same street."
+  if: "{name} had begun supplying more cafés"
+  kind: choice
+  ages: [16, 62]
+  after: [cafeBuysLoaves, cooksInHomes, winsCookOff]
+  tags: [food]
+  within: 3
+
+- id: cooksStreetSupper
+  label: Cooks for the street
+  line: "{name} cooks a long supper for the whole street."
+  if: "{name} had cooked a supper for the street"
+  kind: choice
+  ages: [16, 65]
+  after: [cooksInHomes, cafeBuysLoaves, winsCookOff, practisesRecipe]
+  tags: [food, community]
+  within: 3

@@ -144,6 +144,7 @@
   kind: choice
   ages: [16, 40]
   after: [apprentice, trade, robots]
+  unless: [qualified]
   tags: [making, qualified, trade, job]
 
 - id: carpenter
@@ -153,6 +154,7 @@
   kind: choice
   ages: [16, 40]
   after: [wood, apprentice]
+  unless: [qualified]
   tags: [making, qualified, trade, job]
 
 - id: plumber
@@ -162,6 +164,7 @@
   kind: choice
   ages: [16, 40]
   after: [fixing, apprentice]
+  unless: [qualified]
   tags: [making, qualified, trade, job]
 
 - id: mechanic
@@ -171,6 +174,7 @@
   kind: choice
   ages: [16, 40]
   after: [fixing, apprentice]
+  unless: [qualified]
   tags: [making, qualified, trade, job]
 
 - id: ownBusiness
@@ -180,8 +184,8 @@
   kind: choice
   ages: [21, 50]
   after: [engineer, qualified, chef]
+  unless: [owner]
   tags: [making, owner, business]
-
 - id: bigCustomer
   label: Wins a big customer
   line: "A big company becomes {his} customer. Luck!"
@@ -252,7 +256,7 @@
 
 - id: borrowsTools
   label: Borrows tools
-  line: "Friends in the trade lend {him} tools until the new ones come."
+  line: "Friends in the trade lend {him} what is needed to keep working."
   if: "{name} had borrowed tools from friends in the trade"
   kind: choice
   ages: [20, 60]
@@ -266,7 +270,7 @@
   if: "{name} had trained apprentices"
   kind: choice
   ages: [28, 65]
-  after: [qualified, owner, engineer]
+  after: [qualified, engineer]
   tags: [making, teaching, job]
 
 - id: designsMachines
@@ -315,6 +319,7 @@
   tags: [making, building, community]
 
 # Run: a prototype breaks, a redesign, a fair (partial win).
+
 - id: buildsPrototype
   label: Builds a prototype
   line: "{name} builds a first prototype of an invention."
@@ -357,6 +362,7 @@
   move: 1
 
 # Run: a trade test, a miss, practice with an expert, a pass (win).
+
 - id: sitsTradeTest
   label: Sits a trade test
   line: "{name} sits the test for a trade certificate."
@@ -399,6 +405,7 @@
   move: 1
 
 # Run: a market stall, a rainy day, repairs on the spot (change of course).
+
 - id: setsUpStall
   label: Sets up a market stall
   line: "{name} sets up a stall at the weekend market."
@@ -406,7 +413,9 @@
   kind: choice
   ages: [14, 60]
   after: [making]
+  needs: [fixing]
   tags: [making, stall]
+  within: 4
   inRun: true
 
 - id: stockSoaked
@@ -426,6 +435,7 @@
   kind: choice
   ages: [14, 61]
   after: [stockSoaked]
+  needs: [fixing]
   tags: [making, fixing]
   within: 1
 
@@ -438,3 +448,41 @@
   tags: [making, job]
   within: 1
   move: 1
+
+- id: buildsTreehouse
+  label: Builds a treehouse
+  line: "{name} builds a treehouse with a neighbour, plank by plank."
+  if: "{name} had built a treehouse"
+  kind: choice
+  ages: [7, 13]
+  after: [buildsDens]
+  tags: [making, building]
+
+- id: smallBusinessGrows
+  label: The business grows
+  line: "Customers send their friends, and the small business grows."
+  kind: event
+  ages: [23, 60]
+  after: [newIdea]
+  tags: [making, owner]
+  within: 2
+  move: 1
+
+- id: sellsToolsOnline
+  label: Sells tools online
+  line: "{name} sells second-hand tools online to people far away."
+  if: "{name} had sold second-hand tools online"
+  kind: choice
+  ages: [20, 55]
+  after: [making]
+  tags: [making, money, online]
+  weight: 0.5
+
+- id: buildsGoKart
+  label: Builds a go-kart
+  line: "{name} builds a go-kart from old wheels and planks."
+  if: "{name} had built a go-kart"
+  kind: choice
+  ages: [8, 14]
+  after: [buildsDens, buildsTreehouse]
+  tags: [making, building]

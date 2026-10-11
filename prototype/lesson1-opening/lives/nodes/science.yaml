@@ -20,7 +20,7 @@
 
 - id: mathsClub
   label: Joins the maths club
-  line: "{name} joins the maths club to solve puzzles together."
+  line: "{name} joins a club to solve problems together."
   if: "{name} had joined the maths club"
   kind: choice
   ages: [7, 12]
@@ -92,6 +92,7 @@
   kind: choice
   ages: [14, 18]
   after: [teacherSpotsTalent, tournament, experiments, maths]
+  unless: [takesArtSubjects, takesHumanities]
   tags: [science, sciences]
   weight: 2
 
@@ -244,7 +245,7 @@
   if: "{name} had guided young scientists"
   kind: choice
   ages: [28, 60]
-  after: [research, teaching, lab]
+  after: [research, lab]
   tags: [science, teaching, job]
 
 - id: measuresRiverWater
@@ -292,6 +293,7 @@
   tags: [science, research, lab]
 
 # Runs: an exam, retaken with a classmate's help (a win).
+
 - id: sitsBigExams
   label: Sits the big exams
   line: "{name} sits the big school exams in the sciences."
@@ -323,6 +325,7 @@
   move: 1
 
 # Runs: an advanced course, a failed exam, and a new course (a change of course).
+
 - id: takesAdvancedMaths
   label: Takes advanced maths
   line: "{name} signs up for an advanced maths course."
@@ -344,6 +347,7 @@
   within: 1
 
 # Runs: a new experiment, a failed try, a new method, a partial answer.
+
 - id: triesNewExperiment
   label: Tests a new idea
   line: "{name} sets up an experiment to test a new idea."
@@ -386,6 +390,7 @@
   move: 1
 
 # Runs: a lab application, a no, advice, and a new position (a change of course).
+
 - id: appliesToLab
   label: Applies to a lab
   line: "{name} applies for a place in a research lab."

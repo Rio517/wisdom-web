@@ -44,12 +44,12 @@ steps:
     age: 23
   - node: borrowsTools
     age: 24
-    line: "Friends in the trade lend {him} theirs until new ones come."
+    line: "Friends in the trade lend {him} what is needed to keep working."
     move: 1
     alts: [replacesTools]
   - node: ownBusiness
     age: 26
-    alts: [sellsOnline, movesToNewCity]
+    alts: [sellsToolsOnline, movesToNewCity]
     echoes: [passesTradeTest, borrowsTools]
   - node: bigCustomer
     age: 30

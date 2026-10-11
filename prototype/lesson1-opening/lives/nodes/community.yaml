@@ -87,7 +87,7 @@
   ages: [24, 65]
   after: [job]
   tags: [community, mentoring]
-
+  weight: 0.3
 - id: teachesACraft
   label: Teaches {his} craft
   line: "{name} teaches others a craft learned over many years."
@@ -162,8 +162,7 @@
   ages: [22, 65]
   after: [volunteer, teaching, leader]
   tags: [community, youthGroup, volunteer]
-  weight: 2
-
+  weight: 0.7
 - id: fundingEnds
   label: The money runs out
   line: "The money runs out, and the group loses its room."
@@ -294,6 +293,7 @@
 
 # Run steps (see runs/community.yaml): a petition the council refuses, a club
 # nobody comes to at first, and a study room that closes.
+
 - id: startsPetition
   label: Starts a petition
   line: "{name} starts a petition for a safe crossing outside the school."

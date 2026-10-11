@@ -150,7 +150,7 @@
   kind: choice
   ages: [25, 70]
   after: [garden]
-  unless: [floodRuinsHarvest]
+  unless: [floodRuinsHarvest, rentsAllotment, farmerOffersLand]
   tags: [nature, garden, community, grower]
 
 - id: wildlifeSpotted
@@ -168,6 +168,7 @@
   kind: lucky
   ages: [20, 60]
   after: [grower]
+  unless: [rentsAllotment, startsCommunityGarden]
   tags: [nature, grower]
   move: 2
 
@@ -291,6 +292,7 @@
 
 # Run steps (see runs/nature.yaml): seeds that fade and are planted again,
 # and an early crop caught by frost.
+
 - id: sowsSeedlings
   label: Sows seeds indoors
   line: "{name} sows tomato seeds in pots on the windowsill."
@@ -298,6 +300,7 @@
   kind: choice
   ages: [9, 45]
   after: [nature]
+  unless: [grower, landscapeGardener, growsForRestaurants, parkRanger]
   tags: [nature, garden, seedlings]
   inRun: true
 
@@ -380,3 +383,13 @@
   tags: [nature, earns]
   within: 1
   move: 1
+
+- id: growsBeansWithGrandad
+  label: Grows beans in a pot
+  line: "{his} grandad shows {him} how to grow beans in a pot."
+  if: "{his} grandad had shown {him} how to grow beans"
+  kind: choice
+  by: family
+  ages: [4, 11]
+  after: [timeWithGrandparents]
+  tags: [nature, garden]

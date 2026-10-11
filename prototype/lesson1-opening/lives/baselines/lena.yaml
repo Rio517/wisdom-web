@@ -18,7 +18,7 @@ steps:
     echoes: [puzzlesAndBlocks]
   - node: mathsTournament
     age: 11
-    line: "{name} enters a contest against other schools."
+    line: "{name} enters a maths contest against other schools."
     alts: [roboticsClub, secondLanguage]
     echoes: [mathsClub]
   - node: teacherSpotsTalent
@@ -31,7 +31,7 @@ steps:
   - node: takesAdvancedMaths
     age: 17
     run: examNewCourse
-    alts: [studyScience, studiesEnvironment]
+    alts: [studiesEnvironment, sitsBigExams]
     echoes: [scienceSubjects]
   - node: failsAnExam
     age: 18
@@ -45,7 +45,7 @@ steps:
     run: examNewCourse
     label: Switches to statistics
     line: "She switches to statistics, the maths of what is likely."
-    alts: [retakesTheExam, partTimeJob]
+    alts: [retakesTheExam, studyScience]
     echoes: [mathsClub]
   - node: worksWithData
     age: 23
@@ -54,7 +54,7 @@ steps:
     echoes: [studiesStatistics]
   - node: codingCourse
     age: 27
-    alts: [mentorsSomeone, changesCareers]
+    alts: [mentorsSomeone, trainsToTeach]
     echoes: [worksWithData]
   - node: becomesParent
     age: 32

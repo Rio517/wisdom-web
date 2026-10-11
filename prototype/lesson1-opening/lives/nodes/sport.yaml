@@ -119,7 +119,7 @@
   if: "{name} had trained before school"
   kind: choice
   ages: [11, 17]
-  after: [team, running, swimming, gymnastics, club]
+  after: [team, running, swimming, gymnastics]
   tags: [sport, training]
 
 - id: winsRegionalMedal
@@ -147,6 +147,7 @@
   ages: [10, 24]
   after: [team]
   tags: [sport]
+  within: 3
   move: 1
 
 - id: kitPaidByShop
@@ -262,9 +263,9 @@
   if: "{name} had learned to referee"
   kind: choice
   ages: [14, 50]
-  after: [team, football, club]
+  after: [team, football, club, coaching]
   tags: [sport]
-
+  within: 4
 - id: joinsWeekendLeague
   label: Joins a weekend league
   line: "{name} joins a friendly weekend football league."
@@ -310,19 +311,20 @@
   tags: [sport, job]
 
 # Runs: trying again (see ../runs/sport.yaml)
+
 - id: squadTrials
   label: Goes to squad trials
   line: "{name} goes to trials for a place in a bigger squad."
   if: "{name} had gone to squad trials"
   kind: choice
   ages: [13, 30]
-  after: [sport]
+  after: [team, running, gymnastics]
   tags: [sport, tryout]
   inRun: true
 
 - id: playsWholeGame
-  label: Plays a whole game
-  line: "{name} takes part in a whole game again."
+  label: Back at full strength
+  line: "{name} is back at full strength and takes part in everything."
   kind: event
   ages: [13, 50]
   after: [rebuilt]
@@ -409,3 +411,33 @@
   tags: [sport]
   within: 1
   move: 1
+
+# Follow-ups that let a sport thread go on after a run or a try-out.
+- id: picksForTeam
+  label: Picked for the team
+  line: "The coach reads the list, and {name} is on it."
+  kind: event
+  ages: [9, 16]
+  after: [triesOutForTeam]
+  tags: [sport, team]
+  within: 1
+  move: 1
+  weight: 2
+
+- id: movesUpAnAgeGroup
+  label: Moves up an age group
+  line: "{name} moves up to train with an older age group."
+  if: "{name} had moved up an age group"
+  kind: choice
+  ages: [11, 30]
+  after: [startsInNewRole, reserveSpot, playsWholeGame, restsAndRebuilds, picksForTeam]
+  tags: [sport, team]
+
+- id: helpsNewPlayers
+  label: Shows new players
+  line: "{name} shows the new players how the drills work."
+  if: "{name} had shown new players the drills"
+  kind: choice
+  ages: [13, 50]
+  after: [startsInNewRole, reserveSpot, playsWholeGame, learnsNewPosition]
+  tags: [sport, coaching]

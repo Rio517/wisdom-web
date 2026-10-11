@@ -243,9 +243,9 @@
   if: "{name} had started a town newsletter"
   kind: choice
   ages: [20, 62]
-  after: [journalism, community]
+  after: [journalism]
   tags: [words, journalism, community]
-
+  weight: 0.3
 - id: bookshopJob
   label: Works in a bookshop
   line: "{name} works in a bookshop, finding each customer the right book."
@@ -344,7 +344,7 @@
 
 - id: smallPressYes
   label: A small press says yes
-  line: "A small press agrees to print {his} book, a few hundred copies."
+  line: "A small press says yes and prints a few hundred copies."
   kind: event
   ages: [18, 66]
   after: [rewritesTheBook]
@@ -440,5 +440,26 @@
   if: "{name} had taken history, geography and languages"
   kind: choice
   ages: [14, 18]
+  unless: [scienceSubjects, takesArtSubjects]
   tags: [words, humanities]
   weight: 0.5
+
+- id: writesFromHome
+  label: Writes from home
+  line: "{name} writes from home, with a cat on the keyboard."
+  if: "{name} had started writing from home"
+  kind: choice
+  ages: [24, 60]
+  after: [writing, journalism]
+  tags: [words]
+  weight: 0.5
+
+- id: translatesFromHome
+  label: Translates from home
+  line: "{name} translates from home, with a cat on the keyboard."
+  if: "{name} had started translating from home"
+  kind: choice
+  ages: [24, 60]
+  after: [translatesBooks, interpreter]
+  tags: [words]
+  weight: 0.8
