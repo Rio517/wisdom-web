@@ -229,6 +229,12 @@ function run() {
     if (state) journeyRoot.dataset.cover = state;
     else delete journeyRoot.dataset.cover;
     if (state === 'true') {
+      // Back to the cover: the column slides out as the card opens (its arrival's fill would hold it).
+      const column = $('#narration');
+      if (column?.classList.contains('is-arriving')) {
+        column.classList.remove('is-arriving');
+        if (!prefersReducedMotion()) column.animate([{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'translateX(40px)' }], { duration: 180, easing: 'cubic-bezier(.2, .7, .2, 1)' });
+      }
       coverStage.classList.remove('is-lifted');
       coverStage.getAnimations({ subtree: true }).forEach(animation => animation.cancel());
     }
@@ -877,8 +883,8 @@ function run() {
         narrationEl.classList.add('is-arriving');
       }
       if (focus === 'next') narrationEl.focus({ preventScroll: true });
-      // The story starts once the column has landed (opening.css: 500 ms).
-      if (!(await wait(prefersReducedMotion() ? 0 : 500, run))) return;
+      // The story starts once the column has landed (opening.css: 140 ms + 440 ms).
+      if (!(await wait(prefersReducedMotion() ? 0 : 580, run))) return;
       scenes.paths.beginStory(prefersReducedMotion() ? 0 : 600);
       player.play();
       return;

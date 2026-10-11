@@ -172,23 +172,32 @@
   .journey:is([data-beat="cover"], [data-beat="life"], [data-beat="adds"]) { --cut: calc(var(--col) - 20px); }
   .journey:is([data-beat="cover"], [data-beat="life"], [data-beat="adds"]) > .stage {
     grid-column: 1 / -1; margin: 4px 20px 8px; background: transparent;
-    clip-path: inset(0 var(--cut) 0 0 round 22px); transition: clip-path 500ms cubic-bezier(.2, .7, .2, 1);
+    clip-path: inset(0 var(--cut) 0 0 round 22px); transition: clip-path 380ms cubic-bezier(.2, .7, .2, 1);
   }
-  .journey[data-cover] > .stage { clip-path: inset(0 0 0 0 round 22px); }
+  /* Back to the cover, the column goes first (page.js), then the card opens. */
+  .journey[data-cover] > .stage { clip-path: inset(0 0 0 0 round 22px); transition-delay: 100ms; }
   /* The card's paper fades in under the field as the column arrives. */
-  .journey > .stage::before { content: ""; position: absolute; inset: 0; background: var(--color-paper-deep); pointer-events: none; transition: opacity 500ms cubic-bezier(.2, .7, .2, 1); }
+  .journey > .stage::before { content: ""; position: absolute; inset: 0; background: var(--color-paper-deep); pointer-events: none; transition: opacity 380ms cubic-bezier(.2, .7, .2, 1); }
   .journey[data-cover] > .stage::before { opacity: 0; }
   /* The column waits, laid out but unseen, on the cover; it slides in 40 px as it fades in. */
   .journey > .narration { z-index: 1; }
   .journey[data-cover] > .narration { display: flex; visibility: hidden; opacity: 0; transform: translateX(40px); pointer-events: none; transition: opacity 300ms ease, transform 300ms ease, visibility 0s 300ms; }
-  .narration.is-arriving { animation: column-in 500ms cubic-bezier(.2, .7, .2, 1) both; }
+  /* The card's edge leads and the column follows it in, so the words never land on the paths. */
+  .narration.is-arriving { animation: column-in 440ms cubic-bezier(.2, .7, .2, 1) 140ms both; }
+  /* The field fades out before the card's edge rather than stopping at it: the fade moves in with
+     the edge (--edge, registered below, so it can ease like the clip; it eases on the stack, as the field's
+     own transition is set by map.js). */
+  .journey:is([data-beat="cover"], [data-beat="life"], [data-beat="adds"]) .map-stack #map-base { mask-image: linear-gradient(to left, transparent var(--edge), #000 calc(var(--edge) + 96px)); }
+  .journey:is([data-beat="life"], [data-beat="adds"]):not([data-cover]) .map-stack:not([data-grow="growing"]) { --edge: var(--cut); transition: --edge 380ms cubic-bezier(.2, .7, .2, 1); }
   .map-stack :is(.life-axis, .life-overlay, .map-callouts) { right: var(--cut, 0px); }
   .map-stack canvas:is(.life-grays, .life-dark, .life-marks) { width: calc(100% - var(--cut, 0px)); }
 }
 @media (min-width: 990px) and (max-width: 1100px) { .journey { --col: 330px; } }
+@property --edge { syntax: '<length>'; inherits: true; initial-value: 0px; }
 @keyframes column-in { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) {
   .journey > .stage, .journey > .stage::before, .journey[data-cover] > .narration { transition: none !important; }
+  .journey .map-stack { transition: none !important; }
 }
 
 /* ——— Mockup controls: a quiet bar under the stage ——— */

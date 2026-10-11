@@ -136,7 +136,7 @@ Before (72d8ffe, `node sweep.mjs --cover --sizes 1440x900,1920x1080`): as the co
 What changed (opening.css, and the visible-area reads in map.js and life-map.js):
 
 - Beside the narration (990 px and wider), the cover, the story and "Choices add up" keep the stage at full width. The grid keeps its two columns from the cover on, and the narration sits over the stage's right part. The card takes its story shape with `clip-path: inset(0 var(--cut) 0 0 round 22px)`, where `--cut` is the column's width minus 20 px. Its paper is a `::before` layer that fades in. The hike's first step keeps the lesson's own layout.
-- On the cover the column is laid out but unseen (`visibility: hidden`, `opacity: 0`). As the cover leaves, the clip closes in over 500 ms while the column slides in 40 px and fades in, both with `cubic-bezier(.2,.7,.2,1)`. The story starts once it has landed (500 ms, was 380). With reduced motion nothing moves; the column and the card appear at once. Back to the cover reverses it: the column fades and slides out over 300 ms, and the clip opens again.
+- On the cover the column is laid out but unseen (`visibility: hidden`, `opacity: 0`). As the cover leaves, the card's edge leads: the clip closes in over 380 ms, and the column follows 140 ms later, sliding in 40 px and fading in over 440 ms, both with `cubic-bezier(.2,.7,.2,1)`, so its words never land on the paths. The field fades out over the 96 px before the card's edge rather than stopping at it; that fade moves in with the edge (`--edge`, a registered length eased on `.map-stack`, as map.js sets the field's own transition inline). The story starts once the column has landed (580 ms, was 380). With reduced motion nothing moves; the column and the card appear at once. Back to the cover reverses it: the column slides out over 180 ms first, then the clip opens (100 ms later).
 - The life map, its labels, rings, popovers and end card, and the chips are laid out in the card's visible part from the start: its layers stop `--cut` short of the stage's right edge, and their width is read from there. Born stays where it was on the cover.
 
 After, in Chromium:
@@ -150,6 +150,12 @@ After, in Chromium:
 | --- | --- |
 | The cover, mid-slide (about 200 ms in), landed, the first line, 1440×900 | [cover to story v06](opening-cover-to-story-1440-v06.png) |
 | The landed story, 72d8ffe (left) beside this round (right), 1440×900 | [landed v05/v06](opening-story-landed-1440-v05-v06.png) (the field is mid-fade at a different moment in the two; compare the card and the column) |
+
+### Checked on a Mac
+
+- **The story list and the labels in WebKit** (`sweep.mjs --engine webkit`, all ten lives at 1133×744, 1366×657, 1440×900, 1280×800, 1920×1080, 744×1133 and 2560×1440, both paces): 140 runs with no scroll while playing, no overflow and no row out of view at the end; "Choices add up" 3/3 and clear in all 70. The sizes match Chromium's: 15 and 14 px at 1440×900 for the longer lives (18, 15 and 14 px before), 15 to 19 px at 1920×1080 as before. No console errors.
+- **The cover to the story** (`sweep.mjs --cover`, frames sampled in the page): in WebKit the long frames at the moment the column arrived are gone (49 and 65 ms at 1440×900 and 33 and 116 ms at 1920×1080 before; none over 25 ms after, with the soft edge). Over the whole step, from ArrowRight to the first line, the longest WebKit frame is 27 ms at 1440×900, 37 ms at 1920×1080 and 35 ms at 1133×744 (29 and 54 ms at the first two before), the rest coming from the paths growing and the story's first draw, not the column. Headless Chromium paces its frames unevenly (26 to 27 ms gaps at rest), so its counts over 20 ms say little.
+- **A line arriving** (`--budget`, Chromium at 4× slowdown): layouts per line 6.0 → 1.3 (Theo at 1133×744). The longest task varies too much between runs of the same build on this machine to judge the 16.7 ms budget: 19 to 55 ms for Theo at 1920×1080 on one build. Not yet measured on a real iPad.
 
 ## Round 4: the owner's notes on v04 (v05)
 
