@@ -553,7 +553,7 @@ ${extra}`;
   steps: [tries, fails, triesAgain]
   span: 1
 - id: Ends
-  label: Ends on a no
+  label: Ends on a no setback
   steps: [tries, triesAgain, fails]
   span: 2
 `);
@@ -562,6 +562,7 @@ ${extra}`;
   for (const expected of [
     /Duplicate run id "good"/,
     /Run label "A run whose label is far too long to read" is 41 characters/,
+    /Run label "Ends on a no setback" is 5 words: a run's name is a noun phrase of 1 to 4 words/,
     /span must be 1 or 2/,
     /2 steps: a run has 3 to 5/,
     /Run id "Ends" must be camelCase/,

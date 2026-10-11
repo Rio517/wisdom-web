@@ -525,7 +525,7 @@ function renderRuns() {
     const used = model.lives.filter(life => life.steps.some(step => step.run === run.id)).map(life => life.name ?? life.id);
     return `<li class="run" data-run="${esc(run.id)}"><p class="run-head"><span class="run-label">${esc(run.label ?? run.id)}</span>`
       + `<code class="row-id">${esc(run.id)}</code><span class="ages">${esc(run.span ?? '?')} yr</span>${used.length ? `<span class="run-uses">${esc(used.join(', '))}</span>` : ''}${flagHTML(model.byRun.get(run.id))}</p>`
-      + `<ol class="run-chain">${chain}</ol></li>`;
+      + `<ol class="run-chain" data-copy-ok="pronoun question">${chain}</ol></li>`;
   }).join('')}</ol>`).join('');
 }
 

@@ -1,16 +1,16 @@
 # Money runs: a short burst of trying again (the README's "Runs").
 
 - id: shopToStall
-  label: Moves from shop to stall
+  label: Shop to stall
   steps: [rentsLittleShop, shopCloses, sellsAtMarket, marketRegulars]
   span: 2
 
 - id: firstIdea
-  label: Changes a first idea
+  label: First business idea
   steps: [triesFirstIdea, batchStaysUnsold, asksWhatPeopleWant, offersWhatTheyAsked, firstOrders]
   span: 2
 
 - id: bankLoan
-  label: Tries again for a loan
+  label: Bank loan
   steps: [asksForLoan, loanRefused, makesSmallerPlan, fundBacksPlan]
   span: 2

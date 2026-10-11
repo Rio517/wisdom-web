@@ -103,7 +103,7 @@ course: persistence isn't always winning.
 
 ```yaml
 - id: newBand                # camelCase, unique among runs
-  label: Starts over with a new band   # the tree page's name for it, at most 30 characters
+  label: New band             # the tree page's name for it: a noun phrase, 1 to 4 words, at most 30 characters
   steps: [ownSong, bandSplits, formsNewBand, radioPlay]   # 3–5 node ids, in order
   span: 2                    # years from its first step to its last, 1 or 2
 ```
@@ -254,7 +254,7 @@ alternative that isn't one; alternatives less than six years before `end`;
 ages that don't go up (inside a run two steps may share one); `end` outside 38
 to 45; a written life with fewer than 12 or more than 17 steps, or one that
 doesn't start with `born` at 0 and finish at `end`; a choice step with a
-negative `move`. **Runs:** a label over 30 characters; a `span` other than 1 or
+negative `move`. **Runs:** a label over 4 words or 30 characters; a `span` other than 1 or
 2; fewer than 3 or more than 5 steps, an unknown or repeated one; a run that
 doesn't start with a try, meets no setback in its middle or ends on one; a
 step that can't follow the run's earlier steps (their tags are in its

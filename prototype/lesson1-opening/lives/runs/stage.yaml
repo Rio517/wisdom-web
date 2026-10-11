@@ -2,18 +2,18 @@
 
 # A part that goes elsewhere, classes, another audition: a partial win.
 - id: castingAgain
-  label: Goes back to auditions
+  label: Casting, second try
   steps: [auditionsForPart, notCast, takesActingClasses, triesADifferentShow, chorusPlace]
   span: 2
 
 # A rough opening night, more rehearsal, a night that works: a win.
 - id: openingNight
-  label: Fixes a rough opening night
+  label: Opening night
   steps: [joinsTheCast, openingNightTrouble, rehearsesAgain, showRunsSmoothly]
   span: 1
 
 # A dance place, an injury, a gentler class, teaching: a change of course.
 - id: danceToTeaching
-  label: Teaches after an injury
+  label: Dance to teaching
   steps: [triesForDanceCompany, ankleInjury, gentleDanceClass, teachesDance]
   span: 2

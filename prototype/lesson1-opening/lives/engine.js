@@ -9,10 +9,11 @@ export const LABEL_MAX = 22;
 export const LINE_MAX_WORDS = 12;
 export const END_AGES = [38, 45];
 export const STEP_COUNT = [12, 17];
-/** A run: 3 to 5 steps over 1 or 2 years, its tree-page label at most 30 characters. */
+/** A run: 3 to 5 steps over 1 or 2 years; its tree-page name a noun phrase of at most 4 words and 30 characters. */
 export const RUN_STEPS = [3, 5];
 export const RUN_SPANS = [1, 2];
 export const RUN_LABEL_MAX = 30;
+export const RUN_LABEL_WORDS = 4;
 /**
  * Words that judge a choice instead of telling it (rule: choices are actions,
  * never verdicts). A choice's label, line or `if` with one of these is warned.
@@ -981,6 +982,7 @@ export function check(store, { lives = 0 } = {}) {
     if (!run.id || !CAMEL.test(run.id)) error(where, `Run id "${run.id}" must be camelCase.`);
     if (typeof run.label !== 'string' || !run.label) error(where, 'Missing label.');
     else if (run.label.length > RUN_LABEL_MAX) error(where, `Run label "${run.label}" is ${run.label.length} characters (at most ${RUN_LABEL_MAX}).`);
+    else if (WORDS(run.label) > RUN_LABEL_WORDS) error(where, `Run label "${run.label}" is ${WORDS(run.label)} words: a run's name is a noun phrase of 1 to ${RUN_LABEL_WORDS} words ("New band").`);
     if (!Number.isInteger(raw.span) || raw.span < RUN_SPANS[0] || raw.span > RUN_SPANS[1]) error(where, `span must be ${RUN_SPANS[0]} or ${RUN_SPANS[1]} (years from its first step to its last), not ${JSON.stringify(raw.span ?? null)}.`);
     if (run.steps.length < RUN_STEPS[0] || run.steps.length > RUN_STEPS[1]) error(where, `${run.steps.length} steps: a run has ${RUN_STEPS[0]} to ${RUN_STEPS[1]}.`);
     const nodes = run.steps.map(id => store.nodes.get(id));

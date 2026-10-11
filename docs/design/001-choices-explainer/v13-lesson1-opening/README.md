@@ -89,6 +89,8 @@ A fresh Opus reader read the ten written lives and 40 seeded grown lives (four p
 - **The sweep** (`sweep.mjs`, all ten lives × 1133×744, 1440×900, 1366×657, 1280×800, 1920×1080, 744×1133 and 2560×1440 × both paces): **140 story runs, 0 with scroll, overflow or rows out of view; "Choices add up" 3/3 and clear in all 70; 0 console errors.**
 - **WebKit** could not be installed here again (Playwright's download host is blocked). On a Mac: `npx playwright install webkit`, then `node sweep.mjs --engine webkit --sizes 1133x744,1440x900,1366x657,1280x800,1920x1080,744x1133,2560x1440`.
 
+- **Copy check** (the tree page's run section): a run's name is a noun phrase of 1 to 4 words ("New band", "Knee comeback", "Art school, new route"); all 42 were renamed from clause titles, and the checker errors on a run label over 4 words or 30 characters. A run's chain of steps shows the store's own map labels (story words), so `ol.run-chain` carries `data-copy-ok="pronoun question"`, as a written life's `.s-body` does.
+
 ### Review images (v07)
 
 | Moment | Image |

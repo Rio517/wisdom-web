@@ -1,11 +1,11 @@
 # Tech runs: a short burst of trying again (the README's "Runs").
 
 - id: relaunch
-  label: Fixes a launch and tries again
+  label: Relaunch
   steps: [launchesProject, launchDayBug, asksUsersForFeedback, fixesTheBug, secondLaunchWorks]
   span: 2
 
 - id: codingJobsToTesting
-  label: Finds a different tech role
+  label: Testing job
   steps: [appliesForCodingJobs, codingJobsSayNo, buildsPortfolio, offeredTestingJob]
   span: 2

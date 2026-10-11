@@ -1,4 +1,4 @@
 - id: appAgain
-  label: Rebuilds a crashed app
+  label: App rebuild
   steps: [buildsApp, appCrashes, rebuildsApp]
   span: 1

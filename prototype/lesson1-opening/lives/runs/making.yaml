@@ -1,16 +1,16 @@
 # Making runs: a short burst of trying again (the README's "Runs").
 
 - id: prototypeFair
-  label: Rebuilds a prototype
+  label: Prototype rebuild
   steps: [buildsPrototype, prototypeBreaks, redesignsPrototype, fairSecondPlace]
   span: 2
 
 - id: tradeTest
-  label: Takes the trade test again
+  label: Trade test retake
   steps: [sitsTradeTest, failsTradeTest, practisesWithPro, passesTradeTest]
   span: 2
 
 - id: marketStall
-  label: Turns a stall into repairs
+  label: Market stall
   steps: [setsUpStall, stockSoaked, offersRepairs, repairRegulars]
   span: 2
