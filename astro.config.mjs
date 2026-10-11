@@ -28,7 +28,8 @@ export default defineConfig({
   i18n: { locales: LOCALES, defaultLocale: DEFAULT_LOCALE, routing: { prefixDefaultLocale: false } },
   vite: {
     plugins: [tailwindcss()],
-    server: { strictPort: true },
-    preview: { strictPort: true },
+    // Also answer to *.ts.net names: a tailnet-only proxy in front of these loopback servers.
+    server: { strictPort: true, allowedHosts: ['.ts.net'] },
+    preview: { strictPort: true, allowedHosts: ['.ts.net'] },
   },
 });

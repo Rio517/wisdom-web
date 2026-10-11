@@ -59,8 +59,9 @@ function projectPortGuard() {
 export default defineConfig({
   base: './',
   plugins: [tailwindcss(), readingContentPlugin(), choicesContentPlugin(), projectPortGuard()],
-  server: { host: '127.0.0.1', port: PORTS.prototypeDev, strictPort: true },
-  preview: { host: '127.0.0.1', port: PORTS.prototypePreview, strictPort: true },
+  // Also answer to *.ts.net names: a tailnet-only proxy in front of these loopback servers.
+  server: { host: '127.0.0.1', port: PORTS.prototypeDev, strictPort: true, allowedHosts: ['.ts.net'] },
+  preview: { host: '127.0.0.1', port: PORTS.prototypePreview, strictPort: true, allowedHosts: ['.ts.net'] },
   build: {
     outDir: 'dist-prototype',
     rolldownOptions: { input: { lesson: 'prototype/index.html', paths: 'prototype/path-lab.html', choices: 'prototype/choices.html' } },
