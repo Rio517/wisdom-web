@@ -1,6 +1,6 @@
 # v13 — Lesson 1 opening
 
-Created: 2026-10-09. Updated: 2026-10-11 (round 6: stories that make sense step by step, and one run of trying again in every life, as v07). Status: playable mockup on a branch; owner review pending. Not published.
+Created: 2026-10-09. Updated: 2026-10-11 (round 7: every step labelled, the end eases in, the old path stays readable, as v08). Status: playable mockup on a branch; owner review pending. Not published.
 
 Question: does the opening tell one life clearly? Since round 3, also: does Sam's story read like the Explore chapter, and does changing one of his choices show that every gray line is a life he could have lived? Since round 4, also: can a reader play the opening five or six times and meet a really different life each time, where every step makes sense?
 
@@ -21,6 +21,55 @@ Open <http://127.0.0.1:4638/prototype/lesson1-opening/>. The lives store and its
 - At the end, the card on the map offers **Change one of his choices** (or hers) and **Watch another life**. Every fork with other choices gets a ring; a ring is a button that opens the choices there, and a gray choice on the map can also be tapped straight away. A picked choice grows a new life from that fork, a different one each time. **Try again** grows another from the same choice, **Try another choice** goes back to the rings, and **Back to Sam's life** or **Escape** puts the life back as it was.
 - The **Mockup** bar under the stage switches the pace (**Normal**: 900 ms pauses, 1300 ms after events; **Quicker**: 700 and 1000 ms) and the **Life** (any of the ten, or Random), and replays the story.
 - The address keeps the pace and the life: `?pace=quick&life=zoe`. After a pick it also holds the fork, the choice and the seed, so the same new life opens again. `?store=fixture` plays the test store (two lives); `#paths-life` opens the finished story, `#paths-adds` the next beat and `#hike-plan` the hike.
+
+## Round 7: every step labelled, the end eases in, the old path stays readable (v08)
+
+The owner's notes on round 6, paraphrased: the setback and the comeback in a run (his friends quit the band, he forms a new band) show no labels, which is bad, and they don't show in the screenshot either; at the end, the paths still ahead and the card appear abruptly instead of fading in; after a what-if the old path nearly disappears, and it should stay visible as less important rather than vanish.
+
+### 1. Every step keeps its label, runs included
+
+Round 6 labelled only a run's first and last steps, and any label the placer found no room for was left out: across the ten lives, 2 to 6 steps a life had no map label at 1440×900, 1133×744 and 744×1133 (30 of 30 lives × those sizes).
+
+What changed (`life-map.js`):
+
+- **All of the route's labels are placed before the story plays.** A label first takes the nearest clear spot along its line, as before. Where none is clear it goes further out, above or below its dot or a point of its line, with a leader to the dot: straight, to one of the label's corners, or an elbow (up or down from the dot, then across), the leader crossing no label and passing no mark within 10 px. Then the same with the line's clearance cut from 8 to 2 px; then in the end card's band when the card goes elsewhere; then at 13 px (the gray choices' size). A label still left out is placed first in a new try (up to three for the story, five for a changed life).
+- **A run tighter than 24 px a step spreads**, up to 24 px before the next step (`widenRuns`), before its dots are spaced (`spaceRun`). Where the neighbouring steps leave no room (Sam at 1133×744 and 744×1133), its labels stack in a short column just below the burst, each with its leader.
+- **A changed life's labels** are planned the same way, a few milliseconds a frame from the pick on (the pick's own label first, so it can show at once), so a pick stays a short task.
+- **The end card's bar** on a narrow stage keeps its band clear of labels only where it will go: at the foot when the route or the paths ahead reach into the top.
+- **"Choices add up"**: where no chip fits by the named step (Kai's run spans one year; at 744×1133 its dots are stacked, so every pin crosses a sibling), the next step of the same kind is named (never drinking or drugs), and the static text names the same steps.
+- **The sweep's label check** (`sweep.mjs`, on by default; `--no-labels`, `--no-grown`): with the life shown whole, every step of the written life, and of two changed lives per person (an early fork and a later one, fixed seeds), has a label that is shown, whole, inside the map and clear of every mark, every other label and gray choice, and the end card.
+
+Sam's run now shows all four labels: Records a song, The band splits, Forms a new band, A DJ plays the song ([1440×900](opening-run-sam-crop-1440-v08.png), [1133×744](opening-run-sam-crop-1133x744-v08.png), [744×1133](opening-run-sam-crop-744x1133-v08.png)).
+
+### 2. The end of the story eases in
+
+Before: at the close the paths ahead grew with the closing line (700 ms), and when the story landed whole (Next, the trail or a link, Back to the person's life) `bakeAhead()` painted them in one frame; the card appeared at the end of the closing line, 1.3 s after the paths began, with the explorer's entrance.
+
+Now the paths ahead grow out of the last dot on a clock of their own, over 900 ms with an ease-out (`growStoryAhead`), whenever they first show, and are never painted in one frame. The closing line ends 300 ms after they begin, and the card fades and rises in over 400 ms (`.is-arriving`), timed from the paths: measured in the page, it starts at about 310 ms and is whole by about 650 ms. The gray choices at each fork already grow from the dot with each step and their labels fade over 260 ms; they don't pop, so they are unchanged. With reduced motion, the paths and the card are there at once. Frames at [0, 450 and 900 ms](opening-end-ease-1440-v08.png) ([0](opening-end-ease-0ms-1440-v08.png), [450](opening-end-ease-450ms-1440-v08.png), [900](opening-end-ease-900ms-1440-v08.png); taken in real time, each within about 110 ms after its mark).
+
+### 3. The old path after a what-if stays readable
+
+| Level | Judged |
+| --- | --- |
+| (a) round 6: pale sage line, pale marks, no labels | At its end it reads as gone, as the owner said. |
+| (b) a stronger sage line (sage a third of the way to forest), marks at 65% | Clearly there and clearly second, but an unnamed shape: what happened in it is only in the list of the story. |
+| **(c), the pick: b, plus muted gray labels on its lucky breaks, setbacks and last step** | **The life he had reads as a life (Label drops the band, Watches daughter sing), behind the life he might have had; the new path in forest with its dark labels still wins at a glance.** |
+
+The options: [1440×900](opening-whatif-old-options-1440-v08.png), [1133×744](opening-whatif-old-options-1133x744-v08.png); the chosen level's end: [what-if end](opening-whatif-end-1440-v08.png). `?old=a|b|c` shows any of them. An old label is shown only where the new path's line and dots leave it clear, and the new life's labels are planned around it.
+
+**Transitions:** Try again, Try another choice and Back to the person's life now fade the outgoing map out: a copy of its canvases and labels fades over 350 ms above the map drawn anew (`ghostOut`), so nothing is removed in one frame and the person's own path never blinks out and back. Measured: the copies fade from 1 to 0 between about 100 and 430 ms after the press and are gone by 510 ms. With reduced motion, the change is at once.
+
+### Measured (Chromium)
+
+The full sweep is running; its numbers follow in the next commit.
+
+### Known issues
+
+- **A run's labels in a column.** At 1133×744 and 744×1133 the steps on either side of Sam's run leave no room to widen it, so its four labels stack just below the burst with leaders rather than beside each dot. Busy stretches of other lives at the smaller sizes take long leaders too.
+- **At 1440×900 the end card is often the bar along the top** for longer lives, since every corner now holds a label.
+- **13 px route labels** are the last resort for a label boxed in by others (rare: one changed life of the 210 checked, Ana's at 744×1133).
+- **"Choices add up"** may name a later lucky break or setback than the first where a run is too tight for a chip (Kai at 744×1133).
+- **WebKit** frames and the sweep in WebKit are for the lead's Mac (Playwright's WebKit download is blocked here).
 
 ## Round 6: stories that make sense, and one run of trying again in every life (v07)
 
