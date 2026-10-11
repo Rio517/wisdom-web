@@ -44,6 +44,7 @@ const BOTTOM = 56;
 const RIGHT = 56; // room past 45 for the paths still ahead
 const CHOSEN_SIZE = 15;
 const GRAY_SIZE = 13;
+const SMALL_SIZE = 13; // a route label's last resort (round 7): every step keeps its label
 const OVER_GRAY = 30; // label cost of sitting over a gray choice or a path ahead
 const OVER_TAIL = 14; // and over a fainter gray tail
 const LIVED = 4.4;
@@ -67,6 +68,7 @@ const RUN_LAYOUT = (() => { try { return new URLSearchParams(location.search).ge
 const RUN_DIRECT = 0.75;
 const runEdge = (step, prev) => (RUN_LAYOUT === 'direct' && inRun(step) && prev?.run === step.run ? RUN_DIRECT : 0);
 const RUN_GAP = 16; // px: two dots of a run never closer than this
+const RUN_DX = 24; // px: where a run is tighter than this a step, it spreads (round 7: room for every label), up to the next step
 const inRun = step => Boolean(step?.run);
 const runMiddle = step => inRun(step) && step.runStep > 0 && step.runStep < step.runSize - 1;
 /** Where each step sits along the axis (`at`, in years): its age, or for a run's steps, spread over the run. */
@@ -92,6 +94,21 @@ export function placeAges(steps) {
  * before it moves up or down (the way its own step goes, else up) until it is
  * clear. Its height in the life is unchanged; only the drawing makes room.
  */
+function widenRuns(points, steps) {
+  for (let i = 0; i < steps.length;) {
+    if (!inRun(steps[i])) { i += 1; continue; }
+    let j = i;
+    while (j + 1 < steps.length && steps[j + 1].run === steps[i].run) j += 1;
+    const n = j - i;
+    if (n > 0 && (points[j].x - points[i].x) / n < RUN_DX) {
+      const room = j + 1 < steps.length ? points[j + 1].x - RUN_DX - points[i].x : RUN_DX * n;
+      const width = Math.max(points[j].x - points[i].x, Math.min(RUN_DX * n, room));
+      for (let k = 1; k <= n; k += 1) points[i + k] = { x: points[i].x + (width * k) / n, y: points[i + k].y };
+    }
+    i = j + 1;
+  }
+  return points;
+}
 function spaceRun(points, steps) {
   for (let index = 1; index < points.length; index += 1) {
     if (!inRun(steps[index]) || steps[index].run !== steps[index - 1].run) continue;
@@ -349,15 +366,84 @@ function sampleGrid(edges, points = []) {
     return false;
   };
 }
-function createPlacer({ width, height, measure, paths = [], dots = [], boxes = [], right = 2, soft = [[], []] }) {
+function createPlacer({ width, height, measure, paths = [], dots = [], boxes = [], band = [], right = 2, soft = [[], []] }) {
   const onPath = sampleGrid(paths, dots);
   const nearSoft = soft.map(edges => sampleGrid(edges));
-  const taken = [...boxes];
+  const taken = [...boxes, ...band];
+  const reserved = new Set(band); // the end card's band on a narrow stage: a last resort for a label
   const outside = box => box.left < 2 || box.right > width - right || box.top < 2 || box.bottom > height - 26;
   const clash = box => taken.some(o => box.left < o.right && box.right > o.left && box.top < o.bottom && box.bottom > o.top);
   const distance = (box, p) => Math.hypot(Math.max(box.left - p.x, 0, p.x - box.right), Math.max(box.top - p.y, 0, p.y - box.bottom));
   // A label must read as its own dot's: no other dot may sit nearer to it.
   const strayed = (box, own) => dots.some(p => p !== own && distance(box, p) + 2 < distance(box, own));
+  // Round 7: every step keeps its label. When no spot near the line is clear, a label goes
+  // further out, above or below its dot or a point of its line, with a leader to the dot: the
+  // nearest box clear of the map's edge, every other label, every dot and every route line, whose
+  // leader crosses no label and passes no other dot. Then the same with the line's clearance cut
+  // from 8 px to 2 px. A leader shows whose label it is, so another dot may be a little nearer.
+  const leaderClear = (from, to, home) => {
+    for (let k = 1; k < 12; k += 1) {
+      const x = from.x + ((to.x - from.x) * k) / 12;
+      const y = from.y + ((to.y - from.y) * k) / 12;
+      if (taken.some(o => x > o.left && x < o.right && y > o.top && y < o.bottom)) return false;
+      if (dots.some(p => p !== home && Math.hypot(p.x - x, p.y - y) < 10)) return false;
+    }
+    return true;
+  };
+  const far = (text, textWidth, points, home, size = CHOSEN_SIZE) => {
+    // Every candidate box, nearest first: the search stops once no nearer one can beat the best.
+    const anchors = [home, ...points.filter((_, i) => i % 2 === 0), ...[-250, -200, -150, -100, -50, 50, 100, 150].map(dx => ({ x: home.x + dx, y: home.y }))];
+    const candidates = [];
+    for (const anchor of anchors) {
+      for (const dy of [-18, 26, -30, 38, -44, 52, -60, 68, -78, 86, -98, 106, -120, 128, -150, 158, -185, 192, -225, 232, -270, 276, 320]) {
+        for (const shift of [0, -0.5, 0.5, -0.9, 0.9, -1.4, 1.4, -2, 2]) {
+          const left = anchor.x - textWidth / 2 + shift * textWidth * 0.5;
+          const baseline = anchor.y + dy;
+          const box = { left: left - 4, right: left + textWidth + 4, top: baseline - size, bottom: baseline + 4 };
+          // Out here a label may run over the paths still ahead (soft lines), up to the map's edge.
+          if (box.left < 2 || box.right > width - 4 || box.top < 2 || box.bottom > height - 26) continue;
+          candidates.push({ box, left, baseline, dy, dist: Math.hypot((box.left + box.right) / 2 - home.x, (box.top + box.bottom) / 2 - home.y) });
+        }
+      }
+    }
+    candidates.sort((a, b) => a.dist - b.dist);
+    for (const [margin, useBand] of [[4, false], [2, false], [2, true]]) {
+      const clash = box => taken.some(o => (!useBand || !reserved.has(o)) && box.left < o.right && box.right > o.left && box.top < o.bottom && box.bottom > o.top);
+      let best = null;
+      for (const { box, left, baseline, dy, dist } of candidates) {
+        if (best && dist >= best.cost) break;
+        if (clash(box) || onPath(box, margin)) continue;
+        // Clear of every mark, a star's points included.
+        if (dots.some(p => p.x > box.left - 9 && p.x < box.right + 9 && p.y > box.top - 9 && p.y < box.bottom + 9)) continue;
+        const cost = dist + (nearSoft[0](box, 3) ? OVER_GRAY : 0) + (nearSoft[1](box, 3) ? OVER_TAIL : 0);
+        if (best && cost >= best.cost) continue;
+        // The leader runs straight to the label, or to either of its near corners, whichever passes clear.
+        const y = dy < 0 ? box.bottom - 2 : box.top + 2;
+        const from = { x: home.x, y: home.y + Math.sign(y - home.y) * 5 };
+        let via = null;
+        let to = [Math.min(Math.max(home.x, box.left + 4), box.right - 4), box.left + 4, box.right - 4]
+          .map(x => ({ x, y })).find(end => leaderClear(from, end, home));
+        // Else an elbow: straight up or down from the dot to the label's middle, then across to its side.
+        if (!to && (home.x < box.left - 6 || home.x > box.right + 6)) {
+          const mid = (box.top + box.bottom) / 2;
+          const corner = { x: home.x, y: mid };
+          const side = { x: home.x < box.left ? box.left : box.right, y: mid };
+          const start = { x: home.x, y: home.y + Math.sign(mid - home.y) * 5 };
+          if (leaderClear(start, corner, home) && leaderClear(corner, side, home)) { to = side; via = corner; }
+          if (to) { best = { cost: cost + 6, box, left, baseline, from: start, via, to }; continue; }
+        }
+        if (!to) continue;
+        best = { cost, box, left, baseline, from, to };
+      }
+      if (best) {
+        taken.push(best.box);
+        const leader = best.via ? { from: best.from, via: best.via, to: best.to }
+          : Math.hypot(best.to.x - best.from.x, best.to.y - best.from.y) > 8 ? { from: best.from, to: best.to } : null;
+        return { text, left: best.left, baseline: best.baseline, box: best.box, leader, size };
+      }
+    }
+    return null;
+  };
   return {
     onPath,
     reserve(box) { taken.push(box); },
@@ -377,7 +463,8 @@ function createPlacer({ width, height, measure, paths = [], dots = [], boxes = [
         const cost = spot.cost + (nearSoft[0](box, 3) ? OVER_GRAY : 0) + (nearSoft[1](box, 3) ? OVER_TAIL : 0);
         if (!best || cost < best.cost) best = { cost, spot, anchor, box, left, baseline };
       }
-      if (!best) return null;
+      // Last of all, the same at the gray labels' size.
+      if (!best) return far(text, textWidth, points, home) ?? far(text, measure(text, `650 ${SMALL_SIZE}px ${FONT}`), points, home, SMALL_SIZE);
       const { spot, anchor, box, left, baseline } = best;
       taken.push(box);
       const leader = !spot.dot && spot.gap > 14 ? {
@@ -505,7 +592,7 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
     const Y = y => o.y + (y - BORN_Y) * span;
     const at = (age, y) => ({ x: X(age), y: Y(y) });
     const steps = model.life.steps;
-    const points = spaceRun(steps.map(step => at(step.at, step.y)), steps);
+    const points = spaceRun(widenRuns(steps.map(step => at(step.at, step.y)), steps), steps);
     const edges = points.map((point, index) => (index ? { a: points[index - 1], b: point, bend: 0, direct: runEdge(steps[index], steps[index - 1]) } : null));
     const alts = model.items.map(item => {
       const node = at(item.age, item.y);
@@ -520,11 +607,32 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
 
     // Labels: the route's in age order (an earlier label never moves when a
     // later one arrives), then the gray choices, which give way to them.
-    const band = bar ? [{ left: 0, right: r.width, top: 0, bottom: bar }] : [];
-    const placer = createPlacer({ width: r.width, height: r.height, measure, paths: edges.slice(1), dots: points, right: 46, boxes: band,
+    // The end card's bar goes across the top unless the route or the paths ahead reach into it
+    // (the same test showCard makes); then it goes to the foot, and that band stays clear instead.
+    const BAR_HEIGHT = 90;
+    const topBar = { left: 12, right: r.width - 12, top: 12, bottom: 12 + BAR_HEIGHT };
+    const routeGrid = sampleGrid(edges.slice(1), points);
+    const topBlocked = bar && (routeGrid(topBar) || [...points, ...ahead.map(edge => edge.b)].some(point => point.x > topBar.left - 18 && point.x < topBar.right + 18 && point.y > topBar.top - 18 && point.y < topBar.bottom + 18));
+    const band = !bar ? [] : topBlocked ? [{ left: 0, right: r.width, top: r.height - 30 - BAR_HEIGHT - 6, bottom: r.height }] : [{ left: 0, right: r.width, top: 0, bottom: bar }];
+    const newPlacer = () => createPlacer({ width: r.width, height: r.height, measure, paths: edges.slice(1), dots: points, right: 46, band,
       soft: [[...alts.map(entry => entry.edge), ...ahead], alts.flatMap(entry => entry.tails)] });
-    // A run's middle steps have no map label: the list beside the map tells them.
-    const labels = steps.map((step, index) => (runMiddle(step) ? null : placer.chosen(step.label, index ? edgePoints(edges[index]) : Array(21).fill(points[0]), points[index])));
+    // Every step keeps its label (round 7). All are placed before the story plays, in age order; a
+    // label that found no room is placed first in a new try (up to three), so it gets first pick.
+    const placeAll = first => {
+      const placer = newPlacer();
+      const labels = [];
+      const along = index => (index ? edgePoints(edges[index]) : Array(21).fill(points[0]));
+      for (const index of [...first, ...steps.map((_, at) => at).filter(at => !first.includes(at))]) labels[index] = placer.chosen(steps[index].label, along(index), points[index]);
+      return { placer, labels };
+    };
+    let first = [];
+    let placed = placeAll(first);
+    for (let round = 0; round < 3 && placed.labels.some(label => !label); round += 1) {
+      first = [...first, ...placed.labels.map((label, at) => (label ? -1 : at)).filter(at => at >= 0 && !first.includes(at))];
+      const next = placeAll(first);
+      if (next.labels.filter(Boolean).length >= placed.labels.filter(Boolean).length) placed = next;
+    }
+    const { placer, labels } = placed;
     // The tail nearest its own height carries a gray label on if the line itself is crowded.
     const altLine = entry => {
       const tail = [...entry.tails].sort((a, b) => Math.abs(a.b.y - entry.node.y) - Math.abs(b.b.y - entry.node.y))[0];
@@ -548,13 +656,18 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
   // its height (opening.css), so the leader is lowered by as much.
   function leaderHTML(item) {
     if (!item.leader) return '';
-    const { from, to } = item.leader;
-    const angle = Math.atan2(to.y - from.y, to.x - from.x);
-    return `<i class="life-leader" style="left:${(from.x - item.left).toFixed(1)}px;top:${(from.y - item.baseline + item.size * 0.8).toFixed(1)}px;width:${Math.hypot(to.x - from.x, to.y - from.y).toFixed(1)}px;transform:rotate(${angle.toFixed(4)}rad)"></i>`;
+    const { from, via, to } = item.leader;
+    const segment = (a, b) => {
+      const angle = Math.atan2(b.y - a.y, b.x - a.x);
+      return `<i class="life-leader" style="left:${(a.x - item.left).toFixed(1)}px;top:${(a.y - item.baseline + item.size * 0.8).toFixed(1)}px;width:${Math.hypot(b.x - a.x, b.y - a.y).toFixed(1)}px;transform:rotate(${angle.toFixed(4)}rad)"></i>`;
+    };
+    // An elbow leader (round 7) is two segments: down or up from the dot, then across to the label.
+    return via ? segment(from, via) + segment(via, to) : segment(from, to);
   }
   function labelHTML(item, className, extra = '') {
     if (!item) return '';
-    return `<span class="life-label ${className}" style="left:${item.left.toFixed(1)}px;top:${item.baseline.toFixed(1)}px"${extra}>${escapeHTML(item.text)}${leaderHTML(item)}</span>`;
+    const small = item.size !== CHOSEN_SIZE ? `;font-size:${item.size}px` : '';
+    return `<span class="life-label ${className}" style="left:${item.left.toFixed(1)}px;top:${item.baseline.toFixed(1)}px${small}"${extra}>${escapeHTML(item.text)}${leaderHTML(item)}</span>`;
   }
   function buildOverlay() {
     const g = geo;
@@ -933,7 +1046,7 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
     placeAges(life.steps);
     const grown = life.steps.slice(k);
     const nodes = grown.map((step, index) => ({ ...step, point: index ? g.at(step.at, step.y) : entry.node }));
-    spaceRun(nodes.map(node => node.point), nodes).forEach((point, index) => { nodes[index].point = point; });
+    spaceRun(widenRuns(nodes.map(node => node.point), nodes), nodes).forEach((point, index) => { nodes[index].point = point; });
     // Each new dot sits only where its own lines split: none lands on the real
     // path behind it, and the new life's last dot keeps clear of it.
     const realLine = g.edges.slice(k).flatMap(edge => edgePoints(edge, 30));
@@ -978,7 +1091,7 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
     const last = nodes.at(-1);
     const ahead = aheadFor(`${model.life.id}:${seed}:ahead`, last.at, last.y).map(next => ({ a: last.point, b: g.at(next.age, next.y), bend: next.bend * g.span }));
     // Labels for the new life, clear of what stays on the map.
-    const visibleBoxes = () => [...g.band, ...[...labelEls.filter(element => Number(element.dataset.step) < k),
+    const visibleBoxes = () => [...[...labelEls.filter(element => Number(element.dataset.step) < k),
       ...altEls.filter(element => { const other = itemFor(element.dataset.alt); return other.stepIndex <= k && other.key !== altKey; })].map(boxOf)];
     const soft = [[...siblings.flat().map(sibling => sibling.edge), ...ahead], siblings.flat().flatMap(sibling => sibling.tails)];
     // The new life's labels are placed in age order, a few each frame while it
@@ -986,10 +1099,11 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
     const placers = () => {
       const boxes = visibleBoxes();
       return [
-        createPlacer({ width: r.width, height: r.height, measure, right: 46, boxes, soft,
+        createPlacer({ width: r.width, height: r.height, measure, right: 46, boxes, band: g.band, soft,
           paths: [...g.edges.slice(1), ...edges], dots: [...g.points, ...nodes.map(node => node.point)] }),
-        createPlacer({ width: r.width, height: r.height, measure, right: 46, boxes,
-          paths: [...g.edges.slice(1, k), ...edges], dots: [...g.points.slice(0, k), ...nodes.map(node => node.point)] }),
+        createPlacer({ width: r.width, height: r.height, measure, right: 46, boxes, band: g.band,
+          // Its labels may cross the old path's lines, but never sit on its dots (round 7: it stays visible).
+          paths: [...g.edges.slice(1, k), ...edges], dots: [...g.points, ...nodes.map(node => node.point)] }),
       ];
     };
     what = { item, k, fork: k - 1, life, seed, nodes, edges, siblings, ahead, labels: [], placers, reached: 0, frame: null, labelFrame: null, drawn: false, done: false, silent };
@@ -1006,6 +1120,7 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
     pulses([]);
     if (!silent) onPick({ item, age: steps[k].age, life, nodes, seed });
     if (reduced) { finishWhat(); what.silent = false; return what; }
+    what.planFrame = requestAnimationFrame(() => planAhead(what));
     // The map behind it changes over the next two frames (the gray lines, then
     // the routes), the new life starts to grow, and its labels follow, one a frame.
     const run = what;
@@ -1030,18 +1145,66 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
     redrawWhat();
   }
   // Labels for the new life up to node `upTo`, clear of what stays on the map.
-  function placeLabels(run, upTo) {
-    if (run.labels.length > upTo) return;
-    run.place ??= run.placers();
-    const [placer, loose] = run.place;
-    let html = '';
-    for (let index = run.labels.length; index <= upTo && index < run.edges.length; index += 1) {
+  // Every step of the new life keeps its label (round 7). All its labels are planned before the
+  // first is shown, as the story's are (a label that found no room gets first pick in a new try, up
+  // to three), a few a frame from the pick on, so the pick stays a short task; the first label is
+  // needed about a second later. When the life must show at once, the rest are planned there.
+  const PLAN_MS = 8; // planning time a frame
+  function planStep(run, budget = PLAN_MS) {
+    const count = run.edges.length;
+    let job = run.planJob;
+    if (!job) {
+      const [placer, loose] = run.placers();
+      const first = run.planFirst ?? [];
+      // The pick's own label always goes first, so it is the same in every try and can show at once.
+      job = run.planJob = { placer, loose, spots: [], order: [0, ...first.filter(at => at), ...Array.from({ length: count }, (_, at) => at).filter(at => at && !first.includes(at))], at: 0 };
+    }
+    const started = performance.now();
+    for (; job.at < job.order.length && (job.at === 0 || performance.now() - started < budget); job.at += 1) {
+      const index = job.order[job.at];
       const text = run.nodes[index].label;
       const points = edgePoints(run.edges[index]);
-      const spot = runMiddle(run.nodes[index]) ? null : placer.chosen(text, points) ?? loose.chosen(text, points);
-      if (spot) { placer.reserve(spot.box); loose.reserve(spot.box); }
-      run.labels.push(spot);
-      html += labelHTML(spot, 'is-dark is-what', ` data-what="${index}"`);
+      const spot = job.placer.chosen(text, points) ?? job.loose.chosen(text, points);
+      if (spot) { job.placer.reserve(spot.box); job.loose.reserve(spot.box); }
+      job.spots[index] = spot;
+    }
+    if (job.at < job.order.length) return false;
+    // A pass is done: keep the better of it and the last, and try again with the misses first.
+    const placed = list => list.filter(Boolean).length;
+    if (!run.planBest || placed(job.spots) >= placed(run.planBest)) run.planBest = job.spots;
+    run.planJob = null;
+    run.planRound = (run.planRound ?? 0) + 1;
+    const misses = run.planBest.map((spot, at) => (spot ? -1 : at)).filter(at => at >= 0);
+    if (misses.length && run.planRound < 6) {
+      run.planFirst = [...(run.planFirst ?? []), ...misses.filter(at => !(run.planFirst ?? []).includes(at))];
+      return false;
+    }
+    run.plan = run.planBest;
+    return true;
+  }
+  function planLabels(run, upTo = Infinity) {
+    // The pick's own label is final once the first try has placed it.
+    if (upTo === 0 && !run.plan) {
+      if (!run.planBest && !(run.planJob?.at > 0)) planStep(run, 0);
+      return run.planBest ?? run.planJob.spots;
+    }
+    while (!run.plan) planStep(run, Infinity);
+    return run.plan;
+  }
+  // Plan in the background, a few labels a frame, until done or the life is gone.
+  function planAhead(run) {
+    if (run.plan || what !== run) return;
+    if (planStep(run)) return;
+    run.planFrame = requestAnimationFrame(() => planAhead(run));
+  }
+  // Labels for the new life up to node `upTo`, from the plan.
+  function placeLabels(run, upTo) {
+    if (run.labels.length > upTo) return;
+    const plan = planLabels(run, upTo);
+    let html = '';
+    for (let index = run.labels.length; index <= upTo && index < run.edges.length; index += 1) {
+      run.labels.push(plan[index]);
+      html += labelHTML(plan[index], 'is-dark is-what', ` data-what="${index}"`);
     }
     if (!html) return;
     overlay.insertAdjacentHTML('beforeend', html);
@@ -1191,6 +1354,7 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
     if (!what) return;
     if (what.frame !== null) { cancelAnimationFrame(what.frame); clearTimeout(what.frame); }
     if (what.labelFrame !== null) cancelAnimationFrame(what.labelFrame);
+    if (what.planFrame) cancelAnimationFrame(what.planFrame);
     what = null;
     whatEls.forEach(element => element.remove());
     whatEls = [];

@@ -16,7 +16,8 @@
 // Usage:
 //   node sweep.mjs [--engine chromium|webkit] [--sizes 1133x744,1440x900,1366x657]
 //                  [--lives amara,ana,...] [--paces normal,quick] [--url http://127.0.0.1:4644]
-//                  [--jobs 4] [--no-story] [--no-adds] [--room] [--json out.json]
+//                  [--jobs 4] [--no-story] [--no-adds] [--no-labels] [--no-grown] [--all-rows] [--room] [--json out.json]
+// The label check (round 7) runs for the written lives and two changed lives per person; --no-grown skips the changed ones.
 // --room also prints the column's room at each size (box, kicker, heading, dots, Back/Next).
 // --budget (Chromium only) measures, for each life and size, the layouts each arriving line forces
 // (stepping through the story while paused) and, with the processor slowed 4x, the longest
@@ -59,8 +60,8 @@ async function pool(browser, tasks) {
   const worker = async () => {
     while (next < tasks.length) {
       const at = next++;
-      const { size, run } = tasks[at];
-      const context = await browser.newContext({ viewport: { width: size[0], height: size[1] } });
+      const { size, run, contextOptions = {} } = tasks[at];
+      const context = await browser.newContext({ viewport: { width: size[0], height: size[1] }, ...contextOptions });
       const page = await context.newPage();
       const errors = [];
       page.on('console', message => { if (message.type() === 'error') errors.push(message.text()); });
@@ -193,6 +194,75 @@ function addsTask(life, size) {
   };
 }
 
+// Round 7: every step keeps its map label. With the life shown whole (reduced motion), every step of the
+// written life (or, in a changed life, every step before the fork and every new step) has a label that is
+// shown, whole (not cut by its box), inside the map, clear of every dot and mark, of every other label and
+// gray choice, and of the end card.
+const measureLabels = fork => {
+  const overlay = document.querySelector('.life-overlay').getBoundingClientRect();
+  const points = opening.scenes.paths.lifePoints().map(point => ({ x: point.x + overlay.left, y: point.y + overlay.top }));
+  const visible = element => element.classList.contains('is-shown') && !element.classList.contains('is-under-card')
+    && getComputedStyle(element).visibility !== 'hidden' && Number(getComputedStyle(element).opacity) > 0.3;
+  const dark = [...document.querySelectorAll('.life-label.is-dark')].filter(visible);
+  const whatif = fork !== null;
+  const own = whatif ? dark.filter(element => !element.classList.contains('is-what') && Number(element.dataset.step) < fork) : dark;
+  const fresh = whatif ? dark.filter(element => element.classList.contains('is-what')) : [];
+  const expected = whatif ? [...document.querySelectorAll('#whatif-list li')].filter(row => /^\d/.test(row.textContent.trim())).length : points.length;
+  const missing = whatif ? Math.max(0, fork - own.length) + Math.max(0, expected - fresh.length) : expected - new Set(own.map(element => element.dataset.step)).size;
+  const labels = [...own, ...fresh];
+  const boxes = [...labels, ...[...document.querySelectorAll('.life-alt')].filter(visible)].map(element => element.getBoundingClientRect());
+  const map = document.querySelector('.life-overlay').getBoundingClientRect();
+  const card = document.querySelector('.life-end:not([hidden])')?.getBoundingClientRect();
+  const hits = (a, b) => a.left < b.right - 0.5 && a.right > b.left + 0.5 && a.top < b.bottom - 0.5 && a.bottom > b.top + 0.5;
+  let overlap = 0; let onDot = 0; let outside = 0; let cut = 0; let underCard = 0;
+  boxes.forEach((box, i) => {
+    for (let j = i + 1; j < boxes.length; j += 1) if (hits(box, boxes[j])) overlap += 1;
+    if (points.some(point => point.x > box.left && point.x < box.right && point.y > box.top && point.y < box.bottom)) onDot += 1;
+    if (box.left < map.left - 1 || box.right > map.right + 1 || box.top < map.top - 1 || box.bottom > map.bottom + 1) outside += 1;
+    if (card && i < labels.length && hits(box, card)) underCard += 1;
+  });
+  // Whole: the label's own text is no wider than its box (its leader is a child and may reach out).
+  labels.forEach(element => {
+    const range = document.createRange();
+    range.selectNodeContents(element.firstChild);
+    if (range.getBoundingClientRect().width > element.getBoundingClientRect().width + 1) cut += 1;
+  });
+  return { steps: whatif ? fork + expected : expected, labels: labels.length, missing, overlap, onDot, outside, cut, underCard };
+};
+function labelsTask(item, size) {
+  return {
+    size,
+    contextOptions: { reducedMotion: 'reduce' },
+    run: async page => {
+      const query = item.alt ? `life=${item.life}&fork=${item.fork}&alt=${item.alt}&seed=${item.seed}` : `life=${item.life}`;
+      await page.goto(`${PAGE}?${query}#paths-life`);
+      await ready(page);
+      await page.waitForTimeout(1500);
+      return { item, size, labels: await page.evaluate(measureLabels, item.alt ? item.fork : null) };
+    },
+  };
+}
+// Two changed lives per person: an early fork and a later one, each with its first choice and a fixed seed.
+async function grownCases() {
+  const { readdirSync, readFileSync } = await import('node:fs');
+  const { fileURLToPath } = await import('node:url');
+  const engine = await import('../../../../prototype/lesson1-opening/lives/engine.js');
+  const dir = fileURLToPath(new URL('../../../../prototype/lesson1-opening/lives/', import.meta.url));
+  const files = {};
+  for (const folder of ['nodes', 'runs', 'baselines']) for (const name of readdirSync(dir + folder)) files[`${folder}/${name}`] = readFileSync(dir + folder + '/' + name, 'utf8');
+  const store = engine.loadStore(files);
+  const cases = [];
+  for (const life of LIVES) {
+    const forks = engine.forksOf(store).filter(fork => fork.baseline === life);
+    const at = [...new Set(forks.map(fork => fork.forkIndex))];
+    [at[1], at[Math.floor(at.length * 0.6)]].forEach((forkIndex, k) => {
+      const fork = forks.find(item => item.forkIndex === forkIndex);
+      if (fork) cases.push({ life, fork: forkIndex, alt: fork.alt, seed: `r7${k}` });
+    });
+  }
+  return cases;
+}
+
 // Layouts per arriving line, then the longest main-thread task at 4x slowdown while the story plays.
 function budgetTask(life, size) {
   return {
@@ -295,7 +365,7 @@ function coverTask(life, size, rate) {
 
 const browser = await launch();
 const label = size => `${size[0]}x${size[1]}`;
-const out = { engine: ENGINE, story: [], adds: [], room: [] };
+const out = { engine: ENGINE, story: [], adds: [], room: [], labels: [] };
 console.log(`engine ${ENGINE} ${browser.version()}`);
 
 if (flag('budget')) {
@@ -348,7 +418,22 @@ if (!flag('no-adds')) {
   console.log(`adds: ${out.adds.length} runs, ${bad.length} not 3/3 and clear`);
 }
 
-const errorCount = [...out.story, ...out.adds, ...out.room].reduce((sum, row) => sum + (row.errors?.length ?? 0), 0);
+if (!flag('no-labels')) {
+  const items = [...LIVES.map(life => ({ life })), ...(flag('no-grown') ? [] : await grownCases())];
+  out.labels = await pool(browser, SIZES.flatMap(size => items.map(item => labelsTask(item, size))));
+  console.log('\nlabels  size       life    change                    steps  missing  overlap  on-dot  outside  cut  under-card');
+  for (const row of out.labels) {
+    if (row.failed) { console.log(`FAILED ${row.failed}`); continue; }
+    const l = row.labels;
+    const change = row.item.alt ? `${row.item.fork}:${row.item.alt}` : '-';
+    const bad = l.missing || l.overlap || l.onDot || l.outside || l.cut || l.underCard;
+    if (bad || flag('all-rows')) console.log(`labels  ${label(row.size).padEnd(10)} ${row.item.life.padEnd(6)}  ${change.padEnd(24)}  ${String(l.steps).padStart(5)}  ${String(l.missing).padStart(7)}  ${String(l.overlap).padStart(7)}  ${String(l.onDot).padStart(6)}  ${String(l.outside).padStart(7)}  ${String(l.cut).padStart(3)}  ${String(l.underCard).padStart(10)}${row.errors.length ? `  ERRORS ${row.errors.length}` : ''}`);
+  }
+  const bad = out.labels.filter(row => row.failed || row.labels.missing || row.labels.overlap || row.labels.onDot || row.labels.outside || row.labels.cut || row.labels.underCard);
+  console.log(`labels: ${out.labels.length} lives × sizes (written and changed), ${bad.length} with a step missing its label or a label not whole and clear`);
+}
+
+const errorCount = [...out.story, ...out.adds, ...out.room, ...out.labels].reduce((sum, row) => sum + (row.errors?.length ?? 0), 0);
 console.log(`console errors: ${errorCount}`);
 if (opt('json')) writeFileSync(opt('json'), JSON.stringify(out, null, 1));
 await browser.close();

@@ -29,8 +29,16 @@ export function addsSteps(life) {
     { step: steps.findIndex(step => step.kind === 'lucky'), key: 'map.life.luck', tone: 'possible', tries: [{ dy: -30 }, { dy: 54 }, { dy: -52 }, { dy: 76 }, { dy: -74 }, { dy: 98 }] },
     { step: steps.findIndex(step => step.kind === 'setback'), key: 'map.life.notHis', tone: 'closed', tries: [{ dy: 54 }, { dy: 76 }, { dy: -30 }, { dy: -52 }, { dy: 98 }, { dy: -74 }] },
   ];
+  // Round 7: where no chip fits by a step (a tight run on a narrow map), the next step of the same
+  // kind is named instead (never drinking or drugs); `life.addsChosen` records what the map named.
+  const same = (item, test) => steps.map((step, at) => (at > item.step && test(step) ? at : -1)).filter(at => at > 0);
+  found[0].alternates = same(found[0], step => step.kind === 'choice' && !step.byFamily && step.age >= 8);
+  found[1].alternates = same(found[1], step => step.kind === 'lucky');
+  found[2].alternates = same(found[2], step => step.kind === 'setback' && !step.node?.tags?.includes('substance'));
   return found.filter(item => item.step > 0);
 }
+/** The steps "Choices add up" names, as the map last named them (or as `addsSteps` gives them). */
+export const addsNamed = life => life.addsChosen ?? addsSteps(life);
 
 export function createPathsScene(root, { edgeFade = null, life = {} } = {}) {
   const stack = root.querySelector('.map-stack');
@@ -122,7 +130,7 @@ export function createPathsScene(root, { edgeFade = null, life = {} } = {}) {
   const crosses = (box, other) => box.left < other.right && box.right > other.left && box.top < other.bottom && box.bottom > other.top;
   // The farther tries "Choices add up" may use, after an item's own (out to 140 px from the dot),
   // and the short slides along the route, after no slide at all.
-  const FARTHER = [{ dy: -96 }, { dy: 120 }, { dy: -118 }, { dy: 140 }, { dy: -140 }];
+  const FARTHER = [{ dy: -96 }, { dy: 120 }, { dy: -118 }, { dy: 140 }, { dy: -140 }, { dy: 165 }, { dy: -165 }, { dy: 195 }, { dy: -195 }];
   const SLIDES = [0, 20, -20, 40, -40];
   // A chip near its dot, inside the map, clear of the other chips, of every dot (its pin crosses
   // none but its own) and of the steps' labels: first also clear of the route, then over it; then,
@@ -214,9 +222,14 @@ export function createPathsScene(root, { edgeFade = null, life = {} } = {}) {
     const others = labels.filter(item => !named.has(item.step));
     const { onPath } = lifeMap.geometry().placer;
     const card = lifeMap.card.hidden ? null : boxIn(lifeMap.card);
+    const chosen = [];
     items.forEach((item, index) => {
-      chip(t(item.key, { pronoun: lifeMap.life.pronoun }), points[item.step], item.tone, index, { placed, tries: item.tries, labels: others, dots: points, onPath, card });
+      for (const step of [item.step, ...(item.alternates ?? [])]) {
+        const box = chip(t(item.key, { pronoun: lifeMap.life.pronoun }), points[step], item.tone, index, { placed, tries: item.tries, labels: others, dots: points, onPath, card });
+        if (box) { chosen.push({ ...item, step }); break; }
+      }
     });
+    lifeMap.life.addsChosen = chosen.length === items.length ? chosen : null;
   }
 
   /**

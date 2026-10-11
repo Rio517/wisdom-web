@@ -10,7 +10,7 @@ import { createHikeScene } from '../../src/lessons/choices/journey-hike.js';
 import { watchField } from '../../src/components/stage-field.js';
 import { initSiteNav } from '../../src/components/site-nav.js';
 import { UI, lessonsFor } from '../../src/data/site.js';
-import { addsSteps, createPathsScene } from './map.js';
+import { addsNamed, createPathsScene } from './map.js';
 import { LIFE, LINES, createLifePlayer, useLife } from './life.js';
 import { writtenLife } from './lives/engine.js';
 import { openStore, storeFromURL } from './lives/store.js';
@@ -75,7 +75,7 @@ Object.defineProperty(addsBeat, 'body', {
 });
 Object.defineProperty(addsBeat, 'alt', {
   get: () => {
-    const [choice, luck, notHis] = addsSteps(LIFE).map(item => LIFE.steps[item.step].label);
+    const [choice, luck, notHis] = addsNamed(LIFE).map(item => LIFE.steps[item.step].label);
     return choice && luck && notHis
       ? t('opening.adds.alt', { name: LIFE.name, pronoun: LIFE.pronoun, choice, luck, notHis })
       : t('opening.adds.altShort', { name: LIFE.name });
