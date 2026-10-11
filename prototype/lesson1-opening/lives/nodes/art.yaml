@@ -405,3 +405,13 @@
   after: [worksInPrintShop, smallShowOpens, studiesAtArtSchool]
   tags: [art, money]
   within: 3
+
+- id: fillsArtPortfolio
+  label: Fills a portfolio
+  line: "{name} fills a big folder with drawings and designs."
+  if: "{name} had filled a portfolio"
+  kind: choice
+  ages: [15, 19]
+  after: [artSubjects]
+  within: 2
+  tags: [art, drawing, portfolio]

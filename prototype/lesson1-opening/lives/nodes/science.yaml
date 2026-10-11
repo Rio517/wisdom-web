@@ -172,6 +172,7 @@
   ages: [22, 46]
   after: [unkindSupervisor, lab]
   tags: [science]
+  drops: [lab, research]
 
 - id: newSupervisor
   label: Asks to change teams
@@ -209,8 +210,9 @@
   ages: [24, 50]
   after: [research, newSupervisor, lab]
   tags: [science]
-  move: 3
-  weight: 3
+  within: 3
+  move: 2
+  weight: 2
 
 - id: writesAPaper
   label: Writes up the results

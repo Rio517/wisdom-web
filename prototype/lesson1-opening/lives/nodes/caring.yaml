@@ -263,6 +263,7 @@
   kind: choice
   ages: [17, 55]
   after: [caring]
+  unless: [nurse, paramedic, midwife]
   tags: [caring, study]
   inRun: true
 

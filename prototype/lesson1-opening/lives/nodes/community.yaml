@@ -162,7 +162,7 @@
   ages: [22, 65]
   after: [volunteer, teaching, leader]
   tags: [community, youthGroup, volunteer]
-  weight: 0.7
+  weight: 0.35
 - id: fundingEnds
   label: The money runs out
   line: "The money runs out, and the group loses its room."

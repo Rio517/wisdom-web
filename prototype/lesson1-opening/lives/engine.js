@@ -496,7 +496,7 @@ function pickWeighted(pool, weights, random) {
 /** How a life grows (see `grow`). */
 export const GROW = {
   build: 0.65, // when something builds on the last two steps, one of those is taken this often
-  surprise: 1 / 3, // about one fork in three is a lucky break or a setback…
+  surprise: 0.45, // about one fork in three (measured) is a lucky break or a setback: higher than a third, as the steps right after a pick or a run are plain…
   storyLean: 0.12, // …more often (+) when one follows the life's own story, less often (−) when none does…
   surpriseFrom: 8, // …from this age…
   quietYears: 4, // …and never in the last four years before the end
@@ -659,7 +659,8 @@ export function grow(store, { baseline, forkIndex, alt, seed = '' }) {
   let runGrown = null;
   // The thread the next steps must build on, when anything can: the pick for two
   // steps (and what builds on it), then a run's steps for one step after it.
-  let focus = { on: new Set([steps.length - 1]), left: GROW.followPick };
+  const pickIndex = steps.length - 1;
+  let focus = { on: new Set([pickIndex]), left: GROW.followPick };
   // Does `node` build on a focus step: one of its `after` names was given by it? `narrow`: through a
   // name at most 1 node in 20 gives (so "journalism", not "job").
   const isNarrow = name => (store.givers.get(name)?.length ?? 0) <= store.nodes.size / 20;
@@ -792,6 +793,15 @@ export function grow(store, { baseline, forkIndex, alt, seed = '' }) {
         if (age + years[i] > end) continue;
         at = age + years[i];
         found = choose(at, last, substance);
+      }
+    }
+    // Right after the pick, a step that follows it comes 1–3 years later, when one can
+    // (so a follow-up with `within`, like taking up a place just offered, can come).
+    if (!found && steps.length - 1 === pickIndex) {
+      for (const years of [2, 1, 3]) {
+        if (found || age + years > end - 1) continue;
+        const next = choose(age + years);
+        if (next && onFocus(next.node) && !isSurprise(next.node)) { found = next; at = age + years; }
       }
     }
     if (!found) {

@@ -217,6 +217,7 @@
   kind: choice
   ages: [20, 60]
   after: [moneyGetsTight, flatSold, rentDoubles]
+  needs: [job]
   unless: [workMove]
   tags: [money, job, workMove]
   within: 2
@@ -250,6 +251,7 @@
   tags: [money, community]
 
 # Run: shopToStall (a little shop, road works, a market table, regulars).
+  weight: 0.3
 
 - id: rentsLittleShop
   label: Rents a little shop
@@ -301,7 +303,7 @@
   line: "{name} offers to wash neighbours' cars for a small fee."
   if: "{name} had tried a first business idea"
   kind: choice
-  ages: [14, 50]
+  ages: [14, 22]
   after: [money]
   tags: [money, idea]
   weight: 0.2
@@ -351,7 +353,7 @@
 
 - id: asksForLoan
   label: Asks for a bank loan
-  line: "{name} asks a bank for a loan to start a business."
+  line: "{name} asks a bank for a loan to open a small shop."
   if: "{name} had asked a bank for a loan"
   kind: choice
   ages: [20, 55]

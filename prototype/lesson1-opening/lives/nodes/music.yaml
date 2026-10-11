@@ -319,7 +319,7 @@
   if: "{name} had taught at a school"
   kind: choice
   ages: [22, 65]
-  after: [givesMusicLessons, teachesMusic, studiesMusic, joinsAdultChoir, joinsChoir, schoolBand, band, instrument]
+  after: [givesMusicLessons, teachesMusic, studiesMusic]
   needs: [music]
   tags: [music, teacher, job]
 
