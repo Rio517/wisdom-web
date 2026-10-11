@@ -157,7 +157,7 @@
   line: "A big customer never pays the bill."
   kind: setback
   ages: [22, 60]
-  after: [owner, business]
+  after: [owner]
   tags: [money]
   move: -1
 
@@ -193,7 +193,7 @@
 
 - id: paymentsUpFront
   label: Asks for payment first
-  line: "{name} asks customers to pay before the work starts."
+  line: "{name} asks customers to pay first."
   if: "{name} had asked customers to pay first"
   kind: choice
   ages: [22, 60]

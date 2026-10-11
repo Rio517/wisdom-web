@@ -410,8 +410,8 @@ function run() {
     // shortens fewest rows (the larger sizes first among equals), and 14 px only if none fits
     short: [[[16, 15], [15, 15], [15, 14]], [[14, 14]]],
     // a long life (a written life may have 17 steps since round 6) that still does not fit: the
-    // three newest rows stay whole instead of four, so one more row may shorten
-    tight: [[15, 14], [14, 14]],
+    // three (then two) newest rows stay whole instead of four, so more rows may shorten
+    tight: [[15, 14], [14, 14], [14, 13]],
     tightGap: 3,
     margin: 2, // px kept free under the last row, for rounding
   };
@@ -481,17 +481,19 @@ function run() {
         if (result && (!found || result.short.at(-1).size < found.short.at(-1).size)) found = result;
       }
     }
-    for (const [newest, older] of found ? [] : STORY_FIT.tight) {
-      // The rows close up to the short screens' 3 px gap (opening.css, .is-packed) as well.
-      const result = plan(newest, older, true, 3, Math.min(gap, STORY_FIT.tightGap));
-      if (result && (!found || result.short.at(-1).size < found.short.at(-1).size)) found = result;
+    for (const keep of [3, 2]) {
+      for (const [newest, older] of found ? [] : STORY_FIT.tight) {
+        // The rows close up to the short screens' 3 px gap (opening.css, .is-packed) as well.
+        const result = plan(newest, older, true, keep, Math.min(gap, STORY_FIT.tightGap));
+        if (result && (!found || result.short.at(-1).size < found.short.at(-1).size)) found = result;
+      }
     }
     probe.remove();
     box.fitKey = `${box.clientWidth}x${box.clientHeight}:${box.children.length}`;
     if (!found) {
       // A column far too short for this life: the smallest plan, and the newest line kept in view.
       const [newest, older] = STORY_FIT.short.at(-1).at(-1);
-      found = { newest, older, keep: 3, short: rows.map(() => new Set(rows.map((_, at) => at).filter(at => at <= last - 3 && labels[at]))), extra: 0 };
+      found = { newest, older, keep: 2, tight: true, short: rows.map(() => new Set(rows.map((_, at) => at).filter(at => at <= last - 2 && labels[at]))), extra: 0 };
     } else {
       box.classList.add('is-fits');
       lastFit.set(`story:${box.clientWidth}x${box.clientHeight}`, found.newest);
