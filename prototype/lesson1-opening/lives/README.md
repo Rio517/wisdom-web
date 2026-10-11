@@ -219,6 +219,13 @@ The gray lines at each new dot are other nodes that were possible there.
   steps are added together: the same age as the step before or a year later,
   using the run's whole span where they can. A pick inside a written run (not
   at its first step) stays part of that run.
+- **The next steps follow the pick.** After the reader's pick, the next two
+  steps build on it (or on a step that built on it) whenever a plain step can;
+  one that follows through a narrow name ("journalism", not "job") weighs ×3. A
+  lucky break or a setback is never forced this way. A run started then must
+  build on the pick too, unless time is running out.
+- **The thread goes on after a run.** The step after a grown run builds on the
+  run's steps whenever one can.
 - **Drinking or drugs** is always followed by help, 1–2 years later.
 
 A node happens at most once in a life. A step comes at least a year after the

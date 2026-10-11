@@ -47,7 +47,7 @@ steps:
     alts: [replacesTools]
   - node: ownBusiness
     age: 26
-    alts: [leadsATeam, movesToNewCity]
+    alts: [takesJobNearFamily, movesToNewCity]
     echoes: [passesTradeTest, borrowsTools]
   - node: bigCustomer
     age: 30

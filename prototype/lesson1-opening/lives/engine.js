@@ -506,6 +506,8 @@ export const GROW = {
   stale: 0.25, // …weighs this much
   run: 0.5, // a life with no run yet starts one at a fork this often, when one fits there…
   runLastChance: 8, // …and always when fewer years than this are left before the quiet years
+  followPick: 2, // after a pick, this many steps build on it (or on what built on it) whenever one can
+  followRun: 1, // after a run, this many steps build on it whenever one can
 };
 
 /** The newest age at which the path touched the area of a step that gave `name` (see `historyPath`). */
@@ -621,6 +623,13 @@ export function grow(store, { baseline, forkIndex, alt, seed = '' }) {
   add(altNode, forkStep.age, { picked: true, grown: true, run: inRun });
   let hasRun = steps.some(step => step.run);
   let runGrown = null;
+  // The thread the next steps must build on, when anything can: the pick for two
+  // steps (and what builds on it), then a run's steps for one step after it.
+  let focus = { on: new Set([steps.length - 1]), left: GROW.followPick };
+  // Does `node` build on a focus step: one of its `after` names was given by it? `narrow`: through a
+  // name at most 1 node in 20 gives (so "journalism", not "job").
+  const isNarrow = name => (store.givers.get(name)?.length ?? 0) <= store.nodes.size / 20;
+  const onFocus = (node, narrow = false) => node.after.some(name => (!narrow || isNarrow(name)) && (path.held.get(name) ?? []).some(giver => focus.on.has(giver)));
 
   const end = base.end;
   const builds = node => node.after.length > 0 && chainFrom(node, path) >= path.count - 2;
@@ -629,11 +638,17 @@ export function grow(store, { baseline, forkIndex, alt, seed = '' }) {
   // A weight for a node picked by its `after`, as for any plain step.
   const plainWeight = (node, age) => (!node.after.length ? node.weight : node.weight * (builds(node) ? 4 : chainFrom(node, path) >= 0 ? 2 * fade(node, age) : 1));
   // Start a run at `age`, if one fits before the quiet years: its steps are added at once.
-  const startRun = age => {
+  const startRun = (age, lastChance = false) => {
     const fitting = [];
     for (const run of store.runs.values()) {
       const fits = runFits(store, run, path, age, end - GROW.quietYears);
-      if (fits.length) fitting.push({ run, fits });
+      if (fits.length) fitting.push({ run, fits, follows: onFocus(store.nodes.get(run.steps[0])) });
+    }
+    // Right after a pick or a run, a run that builds on it; any run only when time is running out.
+    if (focus.left > 0) {
+      const following = fitting.filter(entry => entry.follows);
+      if (following.length) fitting.splice(0, fitting.length, ...following);
+      else if (!lastChance) return false;
     }
     if (!fitting.length) return false;
     const at = pickWeighted(fitting, fitting.map(({ run }) => plainWeight(store.nodes.get(run.steps[0]), age)), random);
@@ -650,6 +665,8 @@ export function grow(store, { baseline, forkIndex, alt, seed = '' }) {
     });
     hasRun = true;
     runGrown = run.id;
+    const first = steps.length - run.steps.length;
+    focus = { on: new Set(run.steps.map((_, k) => first + k)), left: GROW.followRun };
     return true;
   };
   // `setback`: only a step that answers it will do (null when none can come at this age); `help`: only one that gives `helped`.
@@ -659,6 +676,16 @@ export function grow(store, { baseline, forkIndex, alt, seed = '' }) {
     const pool = store.byAge[age] ?? [];
     for (let i = 0; i < pool.length; i += 1) if (!pool[i].inRun && allows(pool[i], path, age) && !(quiet && isSurprise(pool[i]))) all.push(pool[i]);
     if (!all.length) return null;
+    // Right after a pick or a run, only what builds on it, when anything does (not for a setback's answer).
+    let narrowly = null;
+    if (!setback && focus.left > 0) {
+      // Only when a plain step follows: a lucky break or a setback is never forced just because it fits.
+      const following = all.filter(node => onFocus(node));
+      if (following.some(node => !isSurprise(node))) all = following;
+      narrowly = new Set(all.filter(node => onFocus(node, true)));
+    }
+    // A plain pick that follows the thread through a narrow name ("journalism", not "job") weighs ×3.
+    const focusWeight = node => (narrowly?.has(node) ? 3 : 1);
     let chosen = null;
     let couldBuild = false;
     if (setback) {
@@ -686,10 +713,10 @@ export function grow(store, { baseline, forkIndex, alt, seed = '' }) {
       couldBuild = building.length > 0;
       let at;
       if (building.length && random() < GROW.build) {
-        at = pickWeighted(building, building.map(node => node.weight), random);
+        at = pickWeighted(building, building.map(node => node.weight * focusWeight(node)), random);
         chosen = building[at];
       } else {
-        at = pickWeighted(plain, plain.map(node => plainWeight(node, age)), random);
+        at = pickWeighted(plain, plain.map(node => plainWeight(node, age) * focusWeight(node)), random);
         chosen = plain[at];
       }
       if (!chosen) return null;
@@ -727,8 +754,9 @@ export function grow(store, { baseline, forkIndex, alt, seed = '' }) {
       const factor = isSurprise(last) ? GROW.answer[0] + (GROW.answer[1] - GROW.answer[0]) * random() : 0.75 + 0.6 * random();
       const target = Math.min(end, age + Math.max(1, Math.round(gapFor(age) * factor)));
       // A life with no run yet: one starts here this often, or always when time is running out.
+      const lastChance = end - GROW.quietYears - target < GROW.runLastChance;
       if (!hasRun && store.runs.size && target <= end - GROW.quietYears
-        && (end - GROW.quietYears - target < GROW.runLastChance || random() < GROW.run) && startRun(target)) {
+        && (lastChance || random() < GROW.run) && startRun(target, lastChance)) {
         age = steps.at(-1).age;
         continue;
       }
@@ -738,9 +766,15 @@ export function grow(store, { baseline, forkIndex, alt, seed = '' }) {
       else if (!found && target - 1 > age) { at = target - 1; found = choose(at); }
     }
     if (!found) { early = true; break; }
+    const following = focus.left > 0 && onFocus(found.node);
     const step = add(found.node, at, { grown: true });
     step.others = found.others.map(node => ({ id: node.id, node, kind: node.kind, label: say(node.label, person) }));
     step.couldBuild = found.couldBuild;
+    if (focus.left > 0) {
+      // A step that builds on the thread carries it on; one that couldn't still counts as a step.
+      if (following) focus.on.add(steps.length - 1);
+      focus.left -= 1;
+    }
     age = at;
   }
   heights(steps).forEach((y, index) => { steps[index].y = y; });

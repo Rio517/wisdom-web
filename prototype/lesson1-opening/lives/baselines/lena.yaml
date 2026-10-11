@@ -52,7 +52,7 @@ steps:
     echoes: [studiesStatistics]
   - node: codingCourse
     age: 28
-    alts: [mentorsSomeone, takesBigProject]
+    alts: [mentorsSomeone, changesCareers]
     echoes: [worksWithData]
   - node: becomesParent
     age: 32

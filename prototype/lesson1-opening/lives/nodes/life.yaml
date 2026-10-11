@@ -198,7 +198,7 @@
 
 - id: changesCareers
   label: Changes careers
-  line: "{name} changes careers and starts again."
+  line: "{name} leaves {his} job to train for a new one."
   if: "{name} had changed careers"
   kind: choice
   ages: [24, 55]
@@ -239,6 +239,7 @@
   kind: choice
   ages: [24, 55]
   after: [job]
+  within: 2
   weight: 0.7
 
 - id: takesJobNearFamily
@@ -258,6 +259,7 @@
   kind: choice
   ages: [26, 60]
   after: [job]
+  within: 2
   weight: 0.7
 
 - id: worksFewerHours
@@ -342,6 +344,8 @@
   line: "A neighbour helps out just when {name} needs it."
   kind: lucky
   ages: [5, 70]
+  after: [setback]
+  within: 2
   move: 1
   weight: 0.3
 

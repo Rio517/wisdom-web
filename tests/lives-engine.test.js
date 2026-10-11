@@ -593,3 +593,27 @@ test('the checker: a written life with no run is an error', () => {
   // Without the run, two steps at 15 are no longer allowed.
   assert.match(messages(result), /appCrashes\) at 15 comes after age 15: ages must go up/);
 });
+
+test('after a pick, the next two steps build on it whenever a plain step can; after a run, the next one', () => {
+  let checked = 0;
+  for (const fork of forksOf(fixture)) {
+    for (let i = 0; i < 20; i += 1) {
+      const life = grow(fixture, { ...fork, seed: `follow-${i}` });
+      const path = newPath();
+      life.steps.slice(0, fork.forkIndex + 1).forEach(step => takeStep(path, step.node, step.age));
+      const thread = new Set([fork.forkIndex]);
+      for (let k = fork.forkIndex + 1; k <= fork.forkIndex + 2 && k < life.steps.length; k += 1) {
+        const step = life.steps[k];
+        const builds = node => node.after.some(name => (path.held.get(name) ?? []).some(giver => thread.has(giver)));
+        if (step.run && step.runStep > 0) break; // inside a run that started on the thread
+        const prev = life.steps[k - 1];
+        // Could any plain node have followed the thread here? Then this step does.
+        const could = [...fixture.nodes.values()].some(node => !node.inRun && node.kind !== 'lucky' && node.kind !== 'setback' && builds(node) && blocked(node, path, step.age) === null);
+        if (could && prev.kind !== 'setback') { assert.ok(builds(step.node), `${fork.baseline} ${fork.alt} seed ${i}: ${step.id} at ${step.age} doesn't build on the pick`); checked += 1; }
+        if (builds(step.node)) thread.add(k);
+        takeStep(path, step.node, step.age);
+      }
+    }
+  }
+  assert.ok(checked > 100, `${checked} steps checked`);
+});
