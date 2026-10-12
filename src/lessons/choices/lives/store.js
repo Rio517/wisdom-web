@@ -1,6 +1,7 @@
 // The lives store in the browser: every YAML file in this folder as text, parsed
 // and checked by the engine. Vite reloads the page when a file changes.
-import { loadStore, check } from './engine.js';
+import { check } from './engine.js';
+import { loadStore } from './yaml.js';
 
 const TEXTS = {
   ...import.meta.glob('./nodes/*.yaml', { query: '?raw', import: 'default', eager: true }),

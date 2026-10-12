@@ -12,8 +12,8 @@ import { initSiteNav } from '../../src/components/site-nav.js';
 import { UI, lessonsFor } from '../../src/data/site.js';
 import { addsNamed, createPathsScene } from './map.js';
 import { LIFE, LINES, createLifePlayer, useLife } from './life.js';
-import { writtenLife } from './lives/engine.js';
-import { openStore, storeFromURL } from './lives/store.js';
+import { writtenLife } from '../../src/lessons/choices/lives/engine.js';
+import { openStore, storeFromURL } from '../../src/lessons/choices/lives/store.js';
 
 const SITE_URL = 'https://wisdom.knyflores.com';
 const esc = value => String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;');

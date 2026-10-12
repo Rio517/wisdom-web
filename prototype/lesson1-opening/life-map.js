@@ -20,7 +20,7 @@
 import { canvasBitmap } from '../../src/engine/path-presentation.js';
 import { ease, prefersReducedMotion } from '../../src/lessons/choices/journey-motion.js';
 import { t } from '../../src/i18n/runtime.js';
-import { gapFor, grow, hash01, heights, newSeed } from './lives/engine.js';
+import { gapFor, grow, hash01, heights, newSeed } from '../../src/lessons/choices/lives/engine.js';
 import { BORN_Y, END, RUN_PACE, finalFrame } from './life.js';
 
 const FOREST = '#285442';

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Checks the lives store of the Lesson 1 opening (prototype/lesson1-opening/lives):
+// Checks the lives store of the Lesson 1 opening (src/lessons/choices/lives):
 // errors, warnings, and a variety report of grown lives. Exit 1 on errors.
 //
 //   npm run lives:check                      the real store
@@ -8,7 +8,8 @@
 import { readdirSync, readFileSync, existsSync } from 'node:fs';
 import { join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { loadStore, check, variety, coverage, forksOf, grow, lifeText, rng } from '../prototype/lesson1-opening/lives/engine.js';
+import { check, variety, coverage, forksOf, grow, lifeText, rng } from '../src/lessons/choices/lives/engine.js';
+import { loadStore } from '../src/lessons/choices/lives/yaml.js';
 
 const root = resolve(fileURLToPath(new URL('..', import.meta.url)));
 const args = process.argv.slice(2);
@@ -16,7 +17,7 @@ const option = (name, fallback) => {
   const at = args.indexOf(`--${name}`);
   return at >= 0 && args[at + 1] !== undefined ? args[at + 1] : fallback;
 };
-const storeDir = resolve(root, option('store', 'prototype/lesson1-opening/lives'));
+const storeDir = resolve(root, option('store', 'src/lessons/choices/lives'));
 const livesPer = Number(option('lives', 50));
 const randomLives = Number(option('random', 5000));
 const samples = Number(option('samples', 0));

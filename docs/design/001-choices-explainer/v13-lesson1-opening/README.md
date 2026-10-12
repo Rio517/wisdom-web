@@ -14,7 +14,7 @@ Related: [product 013](../../../product/013-choices-guided-journey.md) (the guid
 npm run dev:prototype -- --host 127.0.0.1 --port 4638 --strictPort
 ```
 
-Open <http://127.0.0.1:4638/prototype/lesson1-opening/>. The lives store and its tree page: <http://127.0.0.1:4638/prototype/lesson1-opening/lives/> (see [its README](../../../../prototype/lesson1-opening/lives/README.md)).
+Open <http://127.0.0.1:4638/prototype/lesson1-opening/>. The lives store and its tree page: <http://127.0.0.1:4638/prototype/lesson1-opening/lives/> (see [its README](../../../../src/lessons/choices/lives/README.md); the store moved into the site in the integration round).
 
 - Press **Watch the paths grow** on the cover. Then a life plays by itself: Sam's on the first visit, then each **Replay** or **Watch another life** plays one of the ten people not seen yet (remembered in the browser), until all have played.
 - **Space** or **Pause** holds the story. **→**, or a click on the map or the lines, plays the next step (while paused, one step plays and holds). **Next** lands the whole story at once (300 ms), then moves on. **Back** and **←** go back a beat.
@@ -568,7 +568,7 @@ Frame cost at 1440×900 with the processor slowed 4×, measured from browser tra
 - `page.js`: the lesson controller for the opening, with the trail, beats, keys, the end card's controls, the what-if narration and the Mockup bar.
 - `life.js`: the life that plays (from the store), the timing and the player.
 - `life-map.js`: the life in the Explore chapter's drawing, with the labels, the rings and their popovers, the end card and the changed lives. A study copy of the drawing and label code in `src/lessons/choices/journey-explore.js`.
-- `lives/`: the store (`nodes/*.yaml`, `baselines/*.yaml`), its README (the schema and the growth rules), `engine.js` (read, check, heights, grow), `store.js` (loads the store after first paint, and the test store with `?store=fixture`) and the tree page (`index.html`, `tree.js`, `tree.css`).
+- `lives/`: the tree page (`index.html`, `tree.js`, `tree.css`). The store itself (`nodes/*.yaml`, `runs/*.yaml`, `baselines/*.yaml`), its README (the schema and the growth rules), `engine.js` (read, check, heights, grow), `yaml.js` and `store.js` (loads the store after first paint, and the test store with `?store=fixture`) are in `src/lessons/choices/lives/` since the integration round.
 - `map.js`: a study copy of `src/lessons/choices/journey-map.js`, with the cover's field, its fade and the "Choices add up" labels.
 - `opening.css`: the rules added to `src/lessons/choices/journey.css`.
 - `copy.json`: the page's own words (headings, buttons, the closing line); the lives' words are in the store.

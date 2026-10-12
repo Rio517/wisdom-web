@@ -1,7 +1,8 @@
 // The lives engine (design 001 v13, round 4): reads the lives store (README.md
 // in this folder), checks it, and grows a new life from any fork of a written
 // one. Pure: no DOM. Used by the opening, the tree page and `npm run lives:check`.
-import { load } from 'js-yaml';
+// It reads no YAML itself: `yaml.js` parses the files (Node, the tree page), and
+// the site ships the store already parsed (`data.js`), so no parser reaches the browser.
 
 export const TOKENS = ['name', 'his', 'him', 'himself'];
 export const KINDS = ['start', 'choice', 'lucky', 'setback', 'event'];
@@ -155,11 +156,12 @@ function normalRun(raw, file, index) {
 }
 
 /**
- * Read the store from YAML texts. `files` maps each path (any prefix, ending in
+ * Read the store. `files` maps each path (any prefix, ending in
  * `nodes/<area>.yaml`, `runs/<area>.yaml` or `baselines/<person>.yaml`) to its
- * text. A file that doesn't parse is listed in `parseErrors` and left out.
+ * contents: already parsed, or text that `parse` reads (yaml.js passes js-yaml's
+ * `load`). A file that doesn't parse is listed in `parseErrors` and left out.
  */
-export function loadStore(files) {
+export function loadStore(files, parse = data => data) {
   const entries = files instanceof Map ? [...files] : Array.isArray(files) ? files : Object.entries(files);
   const store = {
     nodes: new Map(), list: [], baselines: new Map(), baselineList: [], runs: new Map(), runList: [], files: [], parseErrors: [], duplicates: [],
@@ -172,7 +174,7 @@ export function loadStore(files) {
     store.files.push(entry);
     let data;
     try {
-      data = load(String(text ?? ''));
+      data = typeof text === 'string' || text === undefined || text === null ? parse(String(text ?? '')) : text;
     } catch (error) {
       const line = lineOf(error);
       entry.error = `${error.reason ?? error.message.split('\n')[0]}${line ? ` (line ${line})` : ''}`;
@@ -240,9 +242,12 @@ function index(store) {
 // ——— A path through the nodes ———
 /** `within` also asks that the matching step came at most this many years before. */
 export const WITHIN_YEARS = 4;
-/** An empty path: the names it holds (each with the steps that gave it), the nodes it took and their ages. */
+/**
+ * An empty path: the names it holds (each with the steps that gave it), the nodes it took and their
+ * ages, and the nodes it may never take (`barred`: a grown life's other choices at the forks it passed).
+ */
 export function newPath() {
-  return { held: new Map(), taken: new Set(), count: 0, ages: [] };
+  return { held: new Map(), taken: new Set(), barred: new Set(), count: 0, ages: [] };
 }
 /** Add `node` as the next step, at `age`: it drops its `drops`, then gives its names. */
 export function takeStep(path, node, age) {
@@ -268,6 +273,7 @@ const recent = (node, path, giver, age) => giver >= path.count - node.within
 export function blocked(node, path, age) {
   if (!(age >= node.lo && age <= node.hi)) return { rule: 'ages', text: `age ${age} is outside its ages [${node.lo}, ${node.hi}]` };
   if (path.taken.has(node.id)) return { rule: 'once', text: 'it is already on the path' };
+  if (path.barred?.has(node.id)) return { rule: 'passed', text: 'it was another choice at a fork the life passed' };
   for (const name of node.unless) if (path.held.has(name)) return { rule: 'unless', text: `the path has "${name}" (unless)` };
   for (const name of node.needs) if (!path.held.has(name)) return { rule: 'needs', text: `the path lacks "${name}" (needs)` };
   if (node.after.length) {
@@ -286,7 +292,7 @@ export function blocked(node, path, age) {
 }
 const allows = (node, path, age) => {
   // The hot loop of growing: the same rules as `blocked`, without the reasons.
-  if (age < node.lo || age > node.hi || path.taken.has(node.id)) return false;
+  if (age < node.lo || age > node.hi || path.taken.has(node.id) || path.barred.has(node.id)) return false;
   for (let i = 0; i < node.unless.length; i += 1) if (path.held.has(node.unless[i])) return false;
   for (let i = 0; i < node.needs.length; i += 1) if (!path.held.has(node.needs[i])) return false;
   if (!node.after.length) return true;
@@ -541,7 +547,7 @@ function ownChain(node, path, age, store) {
 const answers = (node, setback) => node.within > 0 && node.after.some(name => setback.gives.includes(name));
 /** A drinking or drug setback: always answered by help, 1–2 years later. */
 const isSubstance = node => node.kind === 'setback' && node.gives.includes(SUBSTANCE);
-const copyPath = path => ({ held: new Map([...path.held].map(([name, givers]) => [name, [...givers]])), taken: new Set(path.taken), count: path.count, ages: [...path.ages] });
+const copyPath = path => ({ held: new Map([...path.held].map(([name, givers]) => [name, [...givers]])), taken: new Set(path.taken), barred: path.barred, count: path.count, ages: [...path.ages] });
 
 /**
  * The ways `run` can start at `age` on `path` and finish by `limit`: each a
@@ -653,6 +659,10 @@ export function grow(store, { baseline, forkIndex, alt, seed = '' }) {
     const node = store.nodes.get(written.node);
     if (node) add(node, written.age, { written });
   }
+  // The other choices at every fork the life has passed, the fork itself included, stay gray lines
+  // on the map: the life never takes one of them later on (its name would show twice).
+  for (let index = 0; index <= forkIndex; index += 1) for (const id of base.steps[index].alts) if (id !== alt) path.barred.add(id);
+  path.barred.add(forkStep.node);
   // A pick inside a written run (not at its first step) is the person's own answer to the run's "no": it stays part of the run.
   const inRun = forkStep.run && forkIndex > 0 && base.steps[forkIndex - 1].run === forkStep.run ? forkStep.run : null;
   add(altNode, forkStep.age, { picked: true, grown: true, run: inRun });
@@ -1111,6 +1121,17 @@ export function check(store, { lives = 0 } = {}) {
     if (!setbacks) warn(where, 'No setback: a written life has at least one.');
     if (!family) warn(where, 'No family choice before 8.');
     if (own < 6) warn(where, `${own} of the person's own choices (at least six).`);
+  }
+
+  // A written life never takes, later on, a step that was another choice at one of its own forks: that
+  // choice is still a gray line on the map there, so its name would show twice.
+  for (const baseline of store.baselineList) {
+    baseline.steps.forEach((step, index) => {
+      for (const altId of step.alts) {
+        const later = baseline.steps.findIndex((other, at) => at > index && other.node === altId);
+        if (later >= 0) warn({ file: baseline.file, baseline: baseline.id, step: later, node: altId }, `${altId} at ${baseline.steps[later].age} was another choice at ${step.age} (${step.node}): its name shows twice on the map. Pick another step or another alternative.`);
+      }
+    });
   }
 
   // Two lines in a row of a written life don't repeat a content word (4+ letters; not a name or a small word).

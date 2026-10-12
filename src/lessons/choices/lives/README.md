@@ -1,6 +1,6 @@
 # Lives: the store behind the Lesson 1 opening
 
-Status: mockup data (design 001, round v13, rounds 4 to 6), English only. Created 2026-10-10. Updated 2026-10-11 (round 6: runs, choices are not verdicts, drinking and drugs).
+Status: the lives of the Lesson 1 opening (design 001, round v13). Created 2026-10-10. Updated 2026-10-12 (moved from the prototype into the site; a grown life never retakes a choice it passed).
 
 The opening tells one person's life on the map, one fork at a time, and then
 lets the reader change one of that person's choices and watch a different life
@@ -16,8 +16,12 @@ grow from the fork. This folder holds everything those lives are made of:
   written life: the nodes it passes through, at which ages, and which other
   choices the reader may try at each fork.
 
-The tree page (`/prototype/lesson1-opening/lives/` on the prototype server)
-shows the store as a nested tree, the baselines, sample lives grown from any
+The code: `engine.js` (read, check, heights, grow; no DOM and no YAML parser),
+`yaml.js` (reads the YAML files: the checker, the tests, the tree page) and
+`store.js` (the YAML store in the browser on the prototype's dev server).
+
+The tree page (`/prototype/lesson1-opening/lives/` on the prototype server, a
+dev tool that is never part of the site build) shows the store as a nested tree, the baselines, sample lives grown from any
 fork, and every problem the checker finds. It reloads when a file changes.
 With `?store=fixture` it shows the small test store in `tests/fixtures/lives`
 instead; the opening takes the same address option (and `&scale=6` copies the
@@ -229,7 +233,9 @@ The gray lines at each new dot are other nodes that were possible there.
 - **Drinking or drugs** is always followed by help, 1–2 years later.
 
 A node happens at most once in a life. A step comes at least a year after the
-one before it, except inside a run.
+one before it, except inside a run. A grown life never takes, later on, one of
+the other choices at a fork it passed (the written step there, or one of its
+alternatives): that choice is still a gray line with its name on the map.
 
 ## Check it
 
@@ -269,7 +275,8 @@ where help doesn't follow it within 2 years.
 **Warnings:** a choice whose label, line or `if` uses a verdict word ("bad",
 "wastes", "too much", "gone", "lazy", "wrong" and a few more: `VERDICT_WORDS`
 in `engine.js`); a written life with no run; more than two nodes leading to a
-drinking or drug setback, or more than one written life with one; nodes no life can reach (nothing they need can come before them
+drinking or drug setback, or more than one written life with one; a written life that later takes one of the other choices at one of its own forks (its name
+shows twice on the map); nodes no life can reach (nothing they need can come before them
 in time), duplicate labels, nodes where every grown life through them stops
 more than three years before its end, and a written life without a lucky
 break, a setback, a family choice before 8 or six of the person's own choices.

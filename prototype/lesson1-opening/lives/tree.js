@@ -3,8 +3,8 @@
 // lists the written lives, grows sample lives from any fork and shows every
 // problem the checker finds. Nothing here writes: edit the YAML files and the
 // dev server reloads the page.
-import { openStore, storeFromURL } from './store.js';
-import { writtenLife, grow, newSeed } from './engine.js';
+import { openStore, storeFromURL } from '../../../src/lessons/choices/lives/store.js';
+import { writtenLife, grow, newSeed } from '../../../src/lessons/choices/lives/engine.js';
 
 // ——— Keys ———
 // Every full row in the tree has one key: a node id, or one of these groups.
@@ -640,7 +640,7 @@ function renderHead() {
   const nodeFiles = store.files.filter(file => file.kind === 'nodes').length;
   $('#stats').textContent = `${plural(store.nodes.size, 'node')} in ${plural(nodeFiles, 'file')} · ${plural(store.runs.size, 'run')} · ${plural(model.lives.length, 'written life', 'written lives')} · read and checked in ${roundMs(ms.total)} ms`;
   $(source.fixture ? '#use-fixture' : '#use-real').setAttribute('aria-current', 'page');
-  const root = source.fixture ? 'tests/fixtures/lives/' : 'prototype/lesson1-opening/lives/';
+  const root = source.fixture ? 'tests/fixtures/lives/' : 'src/lessons/choices/lives/';
   for (const span of document.querySelectorAll('[data-root]')) span.textContent = root;
   document.title = `Lives tree${source.fixture ? ' (fixture)' : ''} · Lesson 1 opening · Wisdom`;
 }

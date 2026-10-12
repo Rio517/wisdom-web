@@ -1,4 +1,4 @@
-// The lives engine and checker of the Lesson 1 opening (prototype/lesson1-opening/lives),
+// The lives engine and checker of the Lesson 1 opening (src/lessons/choices/lives),
 // on the fixture store in tests/fixtures/lives (two baselines, about 75 nodes, two runs).
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -7,8 +7,9 @@ import { join } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import {
-  loadStore, check, grow, heights, writtenLife, blocked, newPath, takeStep, say, forksOf, variety, coverage, runFits, runAfter, GROW,
-} from '../prototype/lesson1-opening/lives/engine.js';
+  check, grow, heights, writtenLife, blocked, newPath, takeStep, say, forksOf, variety, coverage, runFits, runAfter, GROW,
+} from '../src/lessons/choices/lives/engine.js';
+import { loadStore } from '../src/lessons/choices/lives/yaml.js';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 const FIXTURE = join(root, 'tests/fixtures/lives');
@@ -602,6 +603,10 @@ test('after a pick, the next two steps build on it whenever a plain step can; af
       const life = grow(fixture, { ...fork, seed: `follow-${i}` });
       const path = newPath();
       life.steps.slice(0, fork.forkIndex + 1).forEach(step => takeStep(path, step.node, step.age));
+      // The other choices at the forks it passed are never taken later (they stay gray lines).
+      const base = fixture.baselines.get(fork.baseline);
+      base.steps.slice(0, fork.forkIndex + 1).forEach(step => step.alts.forEach(id => { if (id !== fork.alt) path.barred.add(id); }));
+      path.barred.add(base.steps[fork.forkIndex].node);
       const thread = new Set([fork.forkIndex]);
       for (let k = fork.forkIndex + 1; k <= fork.forkIndex + 2 && k < life.steps.length; k += 1) {
         const step = life.steps[k];
@@ -642,4 +647,20 @@ test('a grown step comes at most six years after the one before', () => {
       }
     }
   }
+});
+
+test('a grown life never takes, later on, another choice from a fork it passed; the checker warns on a written life that does', () => {
+  for (const fork of forksOf(fixture)) {
+    const base = fixture.baselines.get(fork.baseline);
+    const passed = new Set(base.steps.slice(0, fork.forkIndex + 1).flatMap(step => step.alts).filter(id => id !== fork.alt));
+    passed.add(base.steps[fork.forkIndex].node);
+    for (let i = 0; i < 20; i += 1) {
+      const life = grow(fixture, { ...fork, seed: `passed-${i}` });
+      for (const step of life.steps.slice(fork.forkIndex + 1)) assert.ok(!passed.has(step.id), `${fork.baseline} ${fork.alt} seed ${i}: ${step.id} at ${step.age} was another choice at a fork it passed`);
+    }
+  }
+  const store = mini(`${BORN}${choice('drums')}${choice('piano')}`, {
+    pat: 'id: pat\nname: Pat\npronoun: she\nend: 40\nsteps:\n  - { node: born, age: 0 }\n  - { node: drums, age: 6, alts: [piano] }\n  - { node: piano, age: 9 }\n',
+  });
+  assert.ok(check(store).warnings.some(item => /piano at 9 was another choice at 6/.test(item.message)));
 });
