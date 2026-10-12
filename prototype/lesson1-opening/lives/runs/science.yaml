@@ -1,0 +1,21 @@
+# Science runs: a short burst of trying again (the README's "Runs").
+
+- id: examRetake
+  label: Exam retake
+  steps: [sitsBigExams, failsAnExam, worksWithClassmate, retakesTheExam, passesTheExam]
+  span: 2
+
+- id: examNewCourse
+  label: New course
+  steps: [takesAdvancedMaths, failsAnExam, asksTutorForIdeas, studiesStatistics]
+  span: 2
+
+- id: experimentRedo
+  label: Experiment redo
+  steps: [triesNewExperiment, experimentFails, changesMethod, partialAnswer]
+  span: 2
+
+- id: labToSchool
+  label: School lab job
+  steps: [appliesToLab, labSaysNo, asksScientistAdvice, takesSchoolLabJob]
+  span: 2

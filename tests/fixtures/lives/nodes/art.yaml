@@ -1,0 +1,70 @@
+# Test fixture for the lives engine (not the real store): drawing, making and writing.
+
+- id: drawingClass
+  label: Goes to drawing class
+  line: "{his} parents take {him} to a drawing class."
+  if: "{his} parents had picked drawing class"
+  kind: choice
+  by: family
+  ages: [4, 9]
+  tags: [art]
+
+- id: paintsMural
+  label: Paints a mural
+  line: "{name} paints a mural on the school wall."
+  if: "{name} had painted a mural"
+  kind: choice
+  ages: [11, 25]
+  after: [art]
+  tags: [art, painting]
+
+- id: artPrize
+  label: Wins an art prize
+  line: "{his} painting wins a prize in town."
+  kind: lucky
+  ages: [10, 40]
+  after: [painting, art]
+  move: 1
+
+- id: designJob
+  label: Works as a designer
+  line: "{name} gets a job designing posters."
+  if: "{name} had worked as a designer"
+  kind: choice
+  ages: [20, 45]
+  after: [art]
+  unless: [job]
+  tags: [job, design]
+
+- id: illustratesBook
+  label: Draws a picture book
+  line: "{name} draws the pictures for a children's book."
+  if: "{name} had drawn a picture book"
+  kind: choice
+  ages: [22, 60]
+  after: [art, design]
+  tags: [book]
+
+- id: writesStories
+  label: Writes stories
+  line: "{name} fills notebooks with stories."
+  if: "{name} had written stories"
+  kind: choice
+  ages: [9, 30]
+  tags: [writing]
+
+- id: publishersSayNo
+  label: Publishers say no
+  line: "Ten publishers say no to {his} book."
+  kind: setback
+  ages: [20, 60]
+  after: [writing, book]
+  move: -1
+
+- id: bookDeal
+  label: A publisher says yes
+  line: "A publisher wants {his} book. Luck!"
+  kind: lucky
+  ages: [22, 60]
+  after: [publishersSayNo, book]
+  move: 2

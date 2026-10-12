@@ -1,0 +1,16 @@
+# Food runs: a short burst of trying again (the README's "Runs").
+
+- id: cookOff
+  label: Bake-off
+  steps: [entersCookOff, cakeSinks, practisesRecipe, winsCookOff]
+  span: 2
+
+- id: sourdough
+  label: Sourdough
+  steps: [triesSourdough, loavesStayFlat, asksOldBaker, cafeBuysLoaves]
+  span: 2
+
+- id: popUpDinner
+  label: Pop-up dinners
+  steps: [hostsPopUp, rainKeepsGuests, asksChefFriend, cooksInHomes]
+  span: 2

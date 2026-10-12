@@ -1,0 +1,485 @@
+# Words: reading, writing, newspapers, languages, books.
+# The schema and the rules are in ../README.md.
+
+- id: storiesAtBedtime
+  label: Hears bedtime stories
+  line: "{his} mum reads {him} a story every night."
+  if: "{his} family had read {him} a story every night"
+  kind: choice
+  by: family
+  ages: [2, 7]
+  tags: [words, reading]
+
+- id: libraryVisits
+  label: Visits the library
+  line: "{his} grandad takes {him} to the library every week."
+  if: "{his} family had taken {him} to the library every week"
+  kind: choice
+  by: family
+  ages: [3, 8]
+  tags: [words, reading, library]
+
+- id: twoLanguagesHome
+  label: Hears two languages
+  line: "{name} hears two languages at home."
+  if: "{his} family had spoken two languages at home"
+  kind: choice
+  by: family
+  ages: [2, 8]
+  tags: [words, languages]
+
+- id: readNightly
+  label: Reads every night
+  line: "{name} sneaks a book under the covers, torch in hand."
+  if: "{name} had read every night"
+  kind: choice
+  ages: [5, 10]
+  tags: [words, reading]
+
+- id: kindLibrarian
+  label: A librarian helps out
+  line: "A librarian saves the best new books for {him}. Luck!"
+  kind: lucky
+  ages: [6, 14]
+  tags: [words, reading, library]
+  move: 1
+  weight: 0.6
+
+- id: writesStories
+  label: Writes stories
+  line: "{name} fills a notebook with stories."
+  if: "{name} had written stories"
+  kind: choice
+  ages: [6, 12]
+  tags: [words, writing]
+
+- id: schoolPaper
+  label: Writes for the paper
+  line: "{name} writes for the school paper."
+  if: "{name} had written for the school paper"
+  kind: choice
+  ages: [9, 15]
+  after: [reading, writing]
+  tags: [words, writing, journalism]
+
+- id: startsNewspaper
+  label: Starts a school paper
+  line: "{name} starts a newspaper for the whole school."
+  if: "{name} had started a school newspaper"
+  kind: choice
+  ages: [11, 15]
+  after: [reading, writing]
+  tags: [words, writing, journalism]
+
+- id: secondLanguage
+  label: Starts a new language
+  line: "{name} starts learning another language."
+  if: "{name} had started a second language"
+  kind: choice
+  ages: [11, 16]
+  tags: [words, languages]
+
+- id: debateTeam
+  label: Joins the debate team
+  line: "{name} joins the debate team and learns to argue kindly."
+  if: "{name} had joined the debate team"
+  kind: choice
+  ages: [13, 19]
+  tags: [words, speaking, club]
+
+- id: historyLanguages
+  label: Picks languages
+  line: "{name} picks history and languages for school."
+  if: "{name} had picked history and languages"
+  kind: choice
+  ages: [14, 19]
+  after: [reading, languages]
+  tags: [words, languages]
+
+- id: exchangeTrip
+  label: Wins an exchange trip
+  line: "{name} wins a free place on an exchange trip. Luck!"
+  kind: lucky
+  ages: [12, 18]
+  after: [schoolPaper, reading, languages]
+  tags: [words, abroad]
+  move: 2
+
+- id: studyLanguages
+  label: Studies languages
+  line: "{name} studies languages at university."
+  if: "{name} had studied languages"
+  kind: choice
+  ages: [16, 23]
+  after: [exchangeTrip, schoolPaper, secondLanguage]
+  tags: [words, languages, study]
+
+- id: moveAbroad
+  label: Moves abroad
+  line: "{name} moves to another country."
+  if: "{name} had moved to another country"
+  kind: choice
+  ages: [19, 45]
+  after: [studyLanguages, exchangeTrip]
+  tags: [words, abroad]
+
+- id: interpreter
+  label: Becomes an interpreter
+  line: "{name} helps people understand each other as an interpreter."
+  if: "{name} had worked as an interpreter"
+  kind: choice
+  ages: [20, 55]
+  after: [studyLanguages]
+  tags: [words, job, languages]
+
+- id: learnsNewLanguage
+  label: Learns a new language
+  line: "{name} learns a new language, one word at a time."
+  if: "{name} had learned a new language"
+  kind: choice
+  ages: [22, 70]
+  tags: [words, languages]
+  weight: 0.7
+
+- id: writesABook
+  label: Writes a book
+  line: "{name} writes a whole book."
+  if: "{name} had written a book"
+  kind: choice
+  ages: [18, 60]
+  after: [schoolPaper, writing, reading]
+  tags: [words, book, writing]
+
+- id: publishersSayNo
+  label: Publishers say no
+  line: "Publisher after publisher says no to {his} book."
+  kind: setback
+  ages: [18, 60]
+  after: [book]
+  tags: [words]
+  move: -2
+
+- id: keepsWriting
+  label: Keeps writing
+  line: "{name} keeps writing, a page at a time."
+  if: "{name} had kept writing"
+  kind: choice
+  ages: [18, 62]
+  after: [publishersSayNo]
+  tags: [words]
+  within: 2
+
+- id: rewritesTheBook
+  label: Rewrites the book
+  line: "{name} rewrites {his} book from the first page."
+  if: "{name} had rewritten the book"
+  kind: choice
+  ages: [18, 62]
+  after: [publishersSayNo]
+  tags: [words, book]
+  within: 2
+
+- id: selfPublishes
+  label: Publishes it {himself}
+  line: "{name} prints {his} book {himself} and sells it locally."
+  if: "{name} had published the book {himself}"
+  kind: choice
+  ages: [18, 62]
+  after: [publishersSayNo]
+  tags: [words, book]
+  within: 2
+
+- id: joinsWritingGroup
+  label: Joins a writing group
+  line: "{name} joins a writing group, and they read each other's work."
+  if: "{name} had joined a writing group"
+  kind: choice
+  ages: [16, 70]
+  after: [writing, book]
+  tags: [words, writing, helped]
+
+- id: bookDeal
+  label: A publisher says yes
+  line: "A publisher wants {his} book at last. Luck and patience!"
+  kind: lucky
+  ages: [20, 66]
+  after: [keepsWriting, rewritesTheBook, selfPublishes, smallPressYes]
+  tags: [words, published]
+  move: 3
+
+- id: reportsForPaper
+  label: Reports for a paper
+  line: "{name} reports the news for a local paper."
+  if: "{name} had reported for a local paper"
+  kind: choice
+  ages: [18, 60]
+  after: [journalism]
+  unless: [newspaperHiresOther]
+  tags: [words, job, journalism]
+  weight: 2
+
+- id: paperCloses
+  label: The local paper closes
+  line: "The local paper closes, and {his} job goes with it."
+  kind: setback
+  ages: [20, 60]
+  after: [reportsForPaper]
+  tags: [words]
+  move: -2
+
+- id: freelanceWriting
+  label: Writes freelance
+  line: "{name} writes articles for several magazines."
+  if: "{name} had written freelance"
+  kind: choice
+  ages: [20, 62]
+  after: [paperCloses]
+  tags: [words, job, writing]
+  within: 2
+
+- id: startsTownNewsletter
+  label: Starts a newsletter
+  line: "{name} starts a newsletter about the town."
+  if: "{name} had started a town newsletter"
+  kind: choice
+  ages: [20, 62]
+  after: [journalism]
+  tags: [words, journalism, community]
+  weight: 0.3
+- id: bookshopJob
+  label: Works in a bookshop
+  line: "{name} works in a bookshop, finding each customer the right book."
+  if: "{name} had worked in a bookshop"
+  kind: choice
+  ages: [16, 60]
+  after: [reading]
+  tags: [words, job]
+
+- id: libraryJob
+  label: Works at a library
+  line: "{name} works at the library and knows every shelf."
+  if: "{name} had worked at a library"
+  kind: choice
+  ages: [18, 60]
+  after: [reading]
+  tags: [words, job, library]
+
+- id: joinsBookGroup
+  label: Joins a book group
+  line: "{name} joins a book group that argues cheerfully."
+  if: "{name} had joined a book group"
+  kind: choice
+  ages: [20, 70]
+  after: [reading]
+  tags: [words]
+  weight: 0.7
+
+- id: translatesBooks
+  label: Translates books
+  line: "{name} translates books from one language into another."
+  if: "{name} had translated books"
+  kind: choice
+  ages: [24, 65]
+  after: [studyLanguages, interpreter]
+  tags: [words, job, book]
+
+- id: teachesALanguage
+  label: Teaches a language
+  line: "{name} teaches a language to adults in the evenings."
+  if: "{name} had taught a language"
+  kind: choice
+  ages: [22, 65]
+  after: [languages]
+  tags: [words, teaching, job]
+
+- id: writesLifeStory
+  label: Writes a life story
+  line: "{name} writes down the story of {his} life so far."
+  if: "{name} had written down {his} life story"
+  kind: choice
+  ages: [28, 80]
+  tags: [words, writing]
+  weight: 0.6
+
+- id: writesPictureBooks
+  label: Writes picture books
+  line: "{name} writes picture books for young children."
+  if: "{name} had written picture books"
+  kind: choice
+  ages: [22, 60]
+  after: [illustration]
+  tags: [words, book, writing]
+
+- id: writesHealthLeaflets
+  label: Writes health leaflets
+  line: "{name} writes clear leaflets so patients understand their medicine."
+  if: "{name} had written health leaflets"
+  kind: choice
+  ages: [22, 60]
+  after: [nurse, doctor]
+  tags: [words, job, writing]
+
+- id: writesSpeeches
+  label: Writes speeches
+  line: "{name} writes speeches for the town council."
+  if: "{name} had written speeches for the council"
+  kind: choice
+  ages: [24, 65]
+  after: [civic]
+  tags: [words, job, writing]
+
+# Runs: a book sent out, a story contest, a newspaper job that goes elsewhere.
+# Their steps are listed in ../runs/words.yaml.
+
+- id: sendsBookOut
+  label: Sends the book out
+  line: "{name} posts {his} finished pages in a stack of envelopes."
+  if: "{name} had sent {his} book to publishers"
+  kind: choice
+  ages: [18, 60]
+  after: [book]
+  unless: [publishersSayNo, smallPressYes, bookDeal]
+  tags: [words]
+  inRun: true
+
+- id: smallPressYes
+  label: A small press says yes
+  line: "A small press says yes and prints a few hundred copies."
+  kind: event
+  ages: [18, 66]
+  after: [rewritesTheBook]
+  tags: [words, smallPress]
+  within: 1
+  move: 1
+
+- id: entersStoryContest
+  label: Enters a story contest
+  line: "{name} sends a story to a writing contest."
+  if: "{name} had entered a story contest"
+  kind: choice
+  ages: [10, 55]
+  after: [writing, reading]
+  unless: [storyContestMiss]
+  tags: [words, writing, writingContest]
+  inRun: true
+
+- id: storyContestMiss
+  label: Another story wins
+  line: "The judges pick another story and send {name} a short note."
+  kind: setback
+  ages: [10, 56]
+  after: [writingContest]
+  tags: [words]
+  within: 1
+  move: -1
+
+- id: asksForNotes
+  label: Asks for feedback
+  line: "{name} asks a trusted reader for honest notes."
+  if: "{name} had asked a reader for notes"
+  kind: choice
+  ages: [10, 58]
+  after: [storyContestMiss]
+  tags: [words, writing, helped]
+  within: 1
+
+- id: storyInMagazine
+  label: Story gets printed
+  line: "After a rewrite, a small magazine prints {his} story."
+  kind: event
+  ages: [10, 60]
+  after: [asksForNotes]
+  tags: [words, printed]
+  within: 1
+  move: 2
+
+- id: appliesAtNewspaper
+  label: Applies at a newspaper
+  line: "{name} applies for a reporter's job at a newspaper."
+  if: "{name} had applied to a newspaper"
+  kind: choice
+  ages: [18, 55]
+  after: [writing, reading]
+  unless: [reportsForPaper, paperCloses, newspaperHiresOther]
+  tags: [words]
+  inRun: true
+
+- id: newspaperHiresOther
+  label: Not chosen for the job
+  line: "The newspaper gives the job to another person."
+  kind: setback
+  ages: [18, 56]
+  after: [appliesAtNewspaper]
+  tags: [words]
+  within: 1
+  move: -1
+
+- id: takesEditingCourse
+  label: Studies editing
+  line: "{name} takes an evening course in editing."
+  if: "{name} had taken an editing course"
+  kind: choice
+  ages: [18, 58]
+  after: [newspaperHiresOther]
+  tags: [words, editing, study]
+  within: 1
+
+- id: becomesEditor
+  label: Becomes an editor
+  line: "{name} starts work as an editor at a small publisher."
+  if: "{name} had started work as an editor"
+  kind: choice
+  ages: [19, 60]
+  after: [takesEditingCourse]
+  tags: [words, editing, job]
+  within: 1
+
+- id: takesHumanities
+  label: Takes the humanities
+  line: "{name} takes history, geography and languages."
+  if: "{name} had taken history, geography and languages"
+  kind: choice
+  ages: [14, 18]
+  unless: [scienceSubjects, takesArtSubjects]
+  tags: [words, humanities]
+  weight: 0.5
+
+- id: writesFromHome
+  label: Writes from home
+  line: "{name} writes from home, with a cat on the keyboard."
+  if: "{name} had started writing from home"
+  kind: choice
+  ages: [24, 60]
+  after: [writing, journalism]
+  tags: [words]
+  weight: 0.5
+
+- id: translatesFromHome
+  label: Translates from home
+  line: "{name} translates from home, with a cat on the keyboard."
+  if: "{name} had started translating from home"
+  kind: choice
+  ages: [24, 60]
+  after: [translatesBooks, interpreter]
+  tags: [words]
+  weight: 0.8
+
+- id: coversCouncil
+  label: Covers the council
+  line: "{name} reports on the town council's meetings every month."
+  if: "{name} had covered the council"
+  kind: choice
+  ages: [19, 60]
+  after: [reportsForPaper]
+  within: 3
+  tags: [words, journalism]
+
+- id: writesAColumn
+  label: Writes a column
+  line: "{name} writes a weekly column about life in the town."
+  if: "{name} had written a column"
+  kind: choice
+  ages: [20, 62]
+  after: [reportsForPaper]
+  within: 3
+  tags: [words, journalism, writing]

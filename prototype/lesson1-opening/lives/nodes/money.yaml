@@ -1,0 +1,415 @@
+# Money: first jobs, saving, shops, starting a business.
+# The schema and the rules are in ../README.md.
+
+- id: pocketMoneyChores
+  label: Earns pocket money
+  line: "{his} dad pays {him} pocket money for small chores."
+  if: "{his} family had paid {him} pocket money for chores"
+  kind: choice
+  by: family
+  ages: [5, 9]
+  tags: [money, savings]
+
+- id: savesInJar
+  label: Saves in a jar
+  line: "{name} saves coins in a jar for something special."
+  if: "{name} had saved coins in a jar"
+  kind: choice
+  ages: [6, 12]
+  tags: [money, savings]
+
+- id: sellsOldToys
+  label: Sells old toys
+  line: "{name} sells old toys and books to other children."
+  if: "{name} had sold old toys"
+  kind: choice
+  ages: [8, 14]
+  tags: [money, stall]
+
+- id: paperRound
+  label: Delivers papers
+  line: "{name} delivers newspapers before school."
+  if: "{name} had delivered newspapers"
+  kind: choice
+  ages: [12, 16]
+  tags: [money, earns]
+
+- id: helpsInFamilyShop
+  label: Helps in a shop
+  line: "{name} helps in {his} uncle's shop after school."
+  if: "{name} had helped in {his} uncle's shop"
+  kind: choice
+  ages: [10, 17]
+  tags: [money, earns, shop]
+
+- id: partTimeJob
+  label: Gets a Saturday job
+  line: "{name} gets a Saturday job at the supermarket."
+  if: "{name} had got a Saturday job"
+  kind: choice
+  ages: [14, 19]
+  tags: [money, earns]
+
+- id: savesForSomethingBig
+  label: Saves for a big goal
+  line: "{name} saves for something big, a little each month."
+  if: "{name} had saved for something big"
+  kind: choice
+  ages: [14, 30]
+  after: [savings, earns, job]
+  tags: [money, savings]
+  weight: 0.5
+
+- id: learnsToBudget
+  label: Learns to budget
+  line: "{name} learns to plan where every pound goes."
+  if: "{name} had learned to budget"
+  kind: choice
+  ages: [14, 30]
+  tags: [money, savings]
+  weight: 0.7
+
+- id: shopAssistant
+  label: Works in a shop
+  line: "{name} works on the till and gets to know the regulars."
+  if: "{name} had worked in a shop"
+  kind: choice
+  ages: [16, 30]
+  tags: [money, job, shop]
+  weight: 0.6
+
+- id: shopManager
+  label: Becomes a shop manager
+  line: "{name} becomes manager and holds the keys to the shop."
+  if: "{name} had become a shop manager"
+  kind: choice
+  ages: [22, 60]
+  after: [shopAssistant]
+  tags: [money, job]
+
+- id: startsABusiness
+  label: Starts a business
+  line: "{name} starts a business from the spare room, mending things for neighbours."
+  if: "{name} had started a small business"
+  kind: choice
+  ages: [18, 55]
+  after: [qualified, fixing]
+  unless: [owner]
+  tags: [money, owner, business]
+- id: opensASmallShop
+  label: Opens a small shop
+  line: "{name} opens a small shop on the high street."
+  if: "{name} had opened a small shop"
+  kind: choice
+  ages: [22, 55]
+  after: [shopAssistant, shop]
+  unless: [owner]
+  tags: [money, owner, business, shop]
+
+- id: sellsOnline
+  label: Sells things online
+  line: "{name} sells old books and records online."
+  if: "{name} had sold things online"
+  kind: choice
+  ages: [18, 55]
+  tags: [money, business, online]
+  weight: 0.8
+
+- id: buysASmallHouse
+  label: Buys a small house
+  line: "{name} buys a small house with money saved over the years."
+  if: "{name} had bought a small house"
+  kind: choice
+  ages: [26, 60]
+  after: [savings]
+  tags: [money, home]
+
+- id: happyCustomer
+  label: Word gets around
+  line: "A happy customer tells everybody about the place. Luck!"
+  kind: lucky
+  ages: [18, 55]
+  after: [owner]
+  tags: [money]
+  move: 2
+
+- id: localPrize
+  label: Wins a business prize
+  line: "{name} wins a small business prize with some money. Luck!"
+  kind: lucky
+  ages: [20, 55]
+  after: [owner, business]
+  tags: [money]
+  move: 1
+
+- id: customersDryUp
+  label: Customers stop coming
+  line: "Far fewer customers come in, all year long."
+  kind: setback
+  ages: [22, 60]
+  after: [owner]
+  tags: [money]
+  move: -2
+  weight: 2
+
+- id: customerNeverPays
+  label: A customer never pays
+  line: "A big customer never pays the bill."
+  kind: setback
+  ages: [22, 60]
+  after: [owner]
+  tags: [money]
+  move: -1
+
+- id: offersSomethingNew
+  label: Offers something new
+  line: "{name} offers something new to bring customers back."
+  if: "{name} had offered something new"
+  kind: choice
+  ages: [22, 60]
+  after: [customersDryUp]
+  tags: [money]
+  within: 2
+
+- id: cutsCosts
+  label: Cuts costs carefully
+  line: "{name} cuts costs carefully until things settle."
+  if: "{name} had cut costs carefully"
+  kind: choice
+  ages: [22, 60]
+  after: [customersDryUp, customerNeverPays]
+  tags: [money]
+  within: 2
+
+- id: asksAccountant
+  label: Asks for expert advice
+  line: "{name} asks an accountant, a money expert, to check the books."
+  if: "{name} had asked an accountant for advice"
+  kind: choice
+  ages: [22, 60]
+  after: [customersDryUp, customerNeverPays]
+  tags: [money, helped]
+  within: 2
+
+- id: paymentsUpFront
+  label: Asks for payment first
+  line: "{name} asks customers to pay first."
+  if: "{name} had asked customers to pay first"
+  kind: choice
+  ages: [22, 60]
+  after: [customerNeverPays]
+  tags: [money]
+  within: 2
+
+- id: earnsToHelpAtHome
+  label: Earns to help at home
+  line: "{name} takes small jobs to help the family through."
+  if: "{name} had taken small jobs to help the family"
+  kind: choice
+  ages: [12, 60]
+  after: [moneyGetsTight]
+  tags: [money, earns]
+  within: 2
+
+- id: takesSecondJob
+  label: Takes a second job
+  line: "{name} takes a second job in the evenings, besides the first."
+  if: "{name} had taken a second job"
+  kind: choice
+  ages: [20, 60]
+  after: [moneyGetsTight, flatSold, rentDoubles]
+  needs: [job]
+  unless: [workMove]
+  tags: [money, job, workMove]
+  within: 2
+  weight: 0.6
+
+- id: deliveryWork
+  label: Does delivery work
+  line: "{name} delivers parcels and meals on a bike."
+  if: "{name} had done delivery work"
+  kind: choice
+  ages: [18, 60]
+  tags: [money, job]
+
+- id: opensSportsShop
+  label: Opens a sports shop
+  line: "{name} opens a shop selling shoes and kit."
+  if: "{name} had opened a sports shop"
+  kind: choice
+  ages: [24, 55]
+  after: [sport]
+  unless: [owner]
+  tags: [money, owner, business, shop]
+  within: 3
+- id: raisesMoney
+  label: Raises money
+  line: "{name} organises a fun run to raise money for the town library."
+  if: "{name} had raised money for a cause"
+  kind: choice
+  ages: [20, 65]
+  after: [volunteer]
+  tags: [money, community]
+
+# Run: shopToStall (a little shop, road works, a market table, regulars).
+  weight: 0.3
+
+- id: rentsLittleShop
+  label: Rents a little shop
+  line: "{name} rents a little shop and fills the shelves."
+  if: "{name} had rented a little shop"
+  kind: choice
+  ages: [20, 55]
+  after: [money]
+  unless: [owner]
+  tags: [money, owner, business, shop]
+  weight: 0.2
+  inRun: true
+
+- id: shopCloses
+  label: The shop closes
+  line: "Road works block the street for months, and the shop closes."
+  kind: setback
+  ages: [20, 55]
+  after: [rentsLittleShop]
+  tags: [money]
+  drops: [shop, owner]
+  within: 1
+  move: -2
+
+- id: sellsAtMarket
+  label: Takes a market table
+  line: "{name} takes a table at the Saturday market."
+  if: "{name} had taken a market table"
+  kind: choice
+  ages: [20, 60]
+  after: [shopCloses]
+  tags: [money, market]
+  within: 1
+
+- id: marketRegulars
+  label: Regulars come back
+  line: "A few regular customers visit the table every Saturday."
+  kind: event
+  ages: [20, 62]
+  after: [sellsAtMarket]
+  tags: [money, owner]
+  within: 1
+  move: 1
+
+# Run: firstIdea (a first business idea, unsold, a question, a new offer).
+
+- id: triesFirstIdea
+  label: Tries a first idea
+  line: "{name} offers to wash neighbours' cars for a small fee."
+  if: "{name} had tried a first business idea"
+  kind: choice
+  ages: [14, 22]
+  after: [money]
+  tags: [money, idea]
+  weight: 0.2
+  inRun: true
+
+- id: batchStaysUnsold
+  label: Few neighbours say yes
+  line: "Only one neighbour says yes, and the rest wave {him} on."
+  kind: setback
+  ages: [14, 50]
+  after: [idea]
+  tags: [money]
+  within: 1
+  move: -1
+
+- id: asksWhatPeopleWant
+  label: Asks what people want
+  line: "{name} asks neighbours what they would really pay for."
+  if: "{name} had asked neighbours what they would buy"
+  kind: choice
+  ages: [14, 55]
+  after: [batchStaysUnsold]
+  tags: [money, helped]
+  within: 1
+
+- id: offersWhatTheyAsked
+  label: Offers what they asked
+  line: "{name} offers to feed pets and water plants while neighbours travel."
+  if: "{name} had offered what the neighbours asked for"
+  kind: choice
+  ages: [14, 55]
+  after: [asksWhatPeopleWant]
+  tags: [money]
+  within: 1
+
+- id: firstOrders
+  label: First orders arrive
+  line: "Four neighbours book {him} for the summer holidays."
+  kind: event
+  ages: [14, 56]
+  after: [offersWhatTheyAsked]
+  tags: [money]
+  within: 1
+  move: 1
+
+# Run: bankLoan (a loan for a business, a no, a smaller plan, a local fund).
+
+- id: asksForLoan
+  label: Asks for a bank loan
+  line: "{name} asks a bank for a loan to open a small shop."
+  if: "{name} had asked a bank for a loan"
+  kind: choice
+  ages: [20, 55]
+  after: [money]
+  unless: [owner]
+  tags: [money, loan]
+  weight: 0.2
+  inRun: true
+
+- id: loanRefused
+  label: The bank says no
+  line: "The bank says no, and explains that the sums do not fit."
+  kind: setback
+  ages: [20, 55]
+  after: [loan]
+  tags: [money]
+  within: 1
+  move: -1
+
+- id: makesSmallerPlan
+  label: Makes a smaller plan
+  line: "{name} draws up a smaller plan with a money adviser."
+  if: "{name} had made a smaller plan with an adviser"
+  kind: choice
+  ages: [20, 56]
+  after: [loanRefused]
+  tags: [money, helped]
+  within: 1
+
+- id: fundBacksPlan
+  label: A fund backs the plan
+  line: "A local fund for new businesses backs the smaller plan."
+  kind: event
+  ages: [20, 57]
+  after: [makesSmallerPlan]
+  tags: [money, owner, business]
+  within: 1
+  move: 1
+
+- id: deliveryRegulars
+  label: Regular customers
+  line: "Regular customers start asking for {him} by name."
+  kind: event
+  ages: [18, 62]
+  after: [deliveryWork]
+  tags: [money]
+  within: 2
+  move: 1
+
+- id: takesOnAVan
+  label: Saves for a van
+  line: "{name} saves for a van and takes on bigger loads."
+  if: "{name} had saved for a van"
+  kind: choice
+  ages: [20, 62]
+  after: [deliveryWork, deliveryRegulars]
+  tags: [money, job]
+  within: 3

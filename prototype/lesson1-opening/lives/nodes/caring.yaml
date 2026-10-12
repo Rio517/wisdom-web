@@ -1,0 +1,395 @@
+# Caring: first aid, looking after others, nursing, medicine, care work.
+# The schema and the rules are in ../README.md.
+
+- id: familyHelpsNeighbours
+  label: Helps the neighbours
+  line: "{his} grandma takes soup to a neighbour, and {name} comes along."
+  if: "{his} family had taken soup to the neighbours"
+  kind: choice
+  by: family
+  ages: [4, 8]
+  tags: [caring, helper]
+
+- id: playsHospital
+  label: Plays hospital
+  line: "{name} bandages every toy in the house."
+  if: "{name} had played hospital with the toys"
+  kind: choice
+  ages: [4, 8]
+  tags: [caring, helper]
+
+- id: looksAfterYounger
+  label: Helps with a sibling
+  line: "{name} helps look after a younger brother or sister."
+  if: "{name} had helped look after a younger sibling"
+  kind: choice
+  ages: [10, 15]
+  tags: [caring, helper, carer, sibling]
+
+- id: firstAid
+  label: Learns first aid
+  line: "{name} learns first aid and practises on a dummy."
+  if: "{name} had learned first aid"
+  kind: choice
+  ages: [11, 16]
+  tags: [caring, firstAidSkill, helper]
+
+- id: helpsNeighbour
+  label: Shops for a neighbour
+  line: "{name} does the shopping for an older neighbour."
+  if: "{name} had done an older neighbour's shopping"
+  kind: choice
+  ages: [10, 16]
+  tags: [caring, helper, carer]
+
+- id: babysits
+  label: Starts babysitting
+  line: "{name} babysits for families on the street."
+  if: "{name} had started babysitting"
+  kind: choice
+  ages: [12, 18]
+  tags: [caring, carer, earns, money]
+
+- id: volunteerClinic
+  label: Helps at a clinic
+  line: "{name} helps out on Saturdays at a local clinic."
+  if: "{name} had helped out at a local clinic"
+  kind: choice
+  ages: [14, 20]
+  after: [firstAidSkill, helper]
+  tags: [caring, clinic]
+
+- id: lastMinutePlace
+  label: A place opens up
+  line: "A nursing course offers {him} a late place. Luck!"
+  kind: lucky
+  ages: [16, 26]
+  after: [clinic]
+  tags: [caring]
+  move: 1
+
+- id: nurseTraining
+  label: Trains as a nurse
+  line: "{name} trains as a nurse and learns to stay calm."
+  if: "{name} had trained as a nurse"
+  kind: choice
+  ages: [17, 26]
+  after: [clinic, carer]
+  unless: [takesUpNursingPlace]
+  tags: [caring, nurse, job, study]
+- id: nurseMentor
+  label: A nurse guides {him}
+  line: "A senior nurse takes {him} under her wing. Luck!"
+  kind: lucky
+  ages: [20, 45]
+  after: [nurse]
+  tags: [caring, mentor]
+  move: 1
+
+- id: midwife
+  label: Trains as a midwife
+  line: "{name} trains as a midwife and helps babies arrive."
+  if: "{name} had trained as a midwife"
+  kind: choice
+  ages: [21, 50]
+  after: [nurseMentor, nurse]
+  tags: [caring, job, study]
+
+- id: hospitalCloses
+  label: The hospital closes
+  line: "The hospital closes, and {his} ward goes with it."
+  kind: setback
+  ages: [23, 55]
+  after: [nurse, midwife]
+  tags: [caring]
+  move: -3
+
+- id: moveForWork
+  label: Moves for work
+  line: "{name} moves to a new city for a new job."
+  if: "{name} had moved to a new city for work"
+  kind: choice
+  ages: [23, 56]
+  after: [hospitalCloses]
+  tags: [caring, moved, job]
+  within: 2
+
+- id: joinsHomeCare
+  label: Joins a home-care team
+  line: "{name} joins a team that cares for people at home."
+  if: "{name} had joined a home-care team"
+  kind: choice
+  ages: [23, 56]
+  after: [hospitalCloses]
+  tags: [caring, carer, job]
+  within: 2
+
+- id: parentIll
+  label: "{his} dad falls ill"
+  line: "{his} dad becomes very ill for a long time."
+  kind: setback
+  ages: [8, 45]
+  tags: [caring, illness]
+  move: -2
+  weight: 0.4
+
+- id: helpsAtHome
+  label: Helps at home
+  line: "{name} helps at home with meals and small jobs."
+  if: "{name} had helped at home"
+  kind: choice
+  ages: [8, 17]
+  after: [parentIll]
+  tags: [caring, carer]
+  within: 2
+
+- id: pausesStudies
+  label: Takes time off to help
+  line: "{name} takes a year out of study to help at home."
+  if: "{name} had taken a year off to help at home"
+  kind: choice
+  ages: [18, 30]
+  after: [parentIll]
+  tags: [caring, carer]
+  within: 2
+
+- id: burnedOut
+  label: Gets worn out
+  line: "A long, hard winter at work leaves {him} worn out."
+  kind: setback
+  ages: [22, 55]
+  after: [nurse, doctor, paramedic, careAssistant, joinsHomeCare]
+  tags: [caring]
+  move: -2
+
+- id: movesToDayShifts
+  label: Moves to day shifts
+  line: "{name} moves to day shifts to get some rest."
+  if: "{name} had moved to day shifts"
+  kind: choice
+  ages: [22, 55]
+  after: [burnedOut]
+  tags: [caring]
+  within: 2
+
+- id: talksItThrough
+  label: Talks it through
+  line: "{name} talks it through with colleagues who understand."
+  if: "{name} had talked it through with colleagues"
+  kind: choice
+  ages: [22, 55]
+  after: [burnedOut]
+  tags: [caring, helped]
+  within: 2
+
+- id: physio
+  label: Trains as a physio
+  line: "{name} trains as a physio, helping people heal after injuries."
+  if: "{name} had trained as a physio"
+  kind: choice
+  ages: [16, 40]
+  after: [kneeInjury, handInjury, injury]
+  tags: [caring, physio, job, study]
+
+- id: careAssistant
+  label: Works as a carer
+  line: "{name} cares for older people in a care home."
+  if: "{name} had worked in a care home"
+  kind: choice
+  ages: [18, 60]
+  after: [clinic, carer, helper]
+  tags: [caring, carer, job]
+
+- id: paramedic
+  label: Trains as a paramedic
+  line: "{name} trains as a paramedic and rides in the ambulance."
+  if: "{name} had trained as a paramedic"
+  kind: choice
+  ages: [19, 50]
+  after: [firstAidSkill, clinic]
+  tags: [caring, job, study]
+
+- id: studiesMedicine
+  label: Studies medicine
+  line: "{name} studies medicine at university."
+  if: "{name} had studied medicine"
+  kind: choice
+  ages: [18, 26]
+  after: [sciences, clinic]
+  tags: [caring, doctorStudy, study, university]
+
+- id: worksAsDoctor
+  label: Works as a doctor
+  line: "{name} starts work as a doctor."
+  if: "{name} had started work as a doctor"
+  kind: choice
+  ages: [24, 60]
+  after: [doctorStudy]
+  tags: [caring, doctor, job]
+
+- id: childminder
+  label: Looks after children
+  line: "{name} looks after other people's children at home."
+  if: "{name} had looked after other people's children"
+  kind: choice
+  ages: [18, 60]
+  after: [carer, helper]
+  tags: [caring, carer, job]
+
+- id: careForAParent
+  label: Cares for a parent
+  line: "{name} cares for a parent who needs more help each year."
+  if: "{name} had cared for a parent"
+  kind: choice
+  ages: [28, 56]
+  tags: [caring, carer]
+  weight: 0.8
+
+- id: teachesFirstAid
+  label: Teaches first aid
+  line: "{name} teaches first aid to schools and clubs."
+  if: "{name} had taught first aid"
+  kind: choice
+  ages: [22, 65]
+  after: [firstAidSkill, nurse, paramedic]
+  tags: [caring, teaching, community]
+
+# Run: a care exam, a miss, studying with a friend, a pass (win).
+
+- id: sitsCareExam
+  label: Sits a care exam
+  line: "{name} sits an exam for a care qualification."
+  if: "{name} had sat a care exam"
+  kind: choice
+  ages: [17, 55]
+  after: [caring]
+  unless: [nurse, paramedic, midwife]
+  tags: [caring, study]
+  inRun: true
+
+- id: failsCareExam
+  label: A few points short
+  line: "The exam results come back a few points short."
+  kind: setback
+  ages: [17, 56]
+  after: [sitsCareExam]
+  tags: [caring]
+  within: 1
+  move: -2
+
+- id: studiesWithFriend
+  label: Studies with a friend
+  line: "{name} and a friend quiz each other every lunchtime."
+  if: "{name} had studied with a friend"
+  kind: choice
+  ages: [17, 56]
+  after: [failsCareExam]
+  tags: [caring, study, helped]
+  within: 1
+
+- id: passesCareExam
+  label: Passes the care exam
+  line: "{name} sits the exam again, and the results say pass."
+  kind: event
+  ages: [17, 57]
+  after: [studiesWithFriend]
+  tags: [caring, certified]
+  within: 1
+  move: 1
+
+# Run: a busy ward, a hard start, advice, another ward (change of course).
+
+- id: startsBusyWard
+  label: Starts on a busy ward
+  line: "{name} starts work on a busy hospital ward."
+  if: "{name} had started on a busy ward"
+  kind: choice
+  ages: [18, 55]
+  after: [nurse, clinic, carer]
+  tags: [caring, ward]
+  inRun: true
+
+- id: wardShortStaffed
+  label: The ward runs short
+  line: "Too few staff, and the days run long."
+  kind: setback
+  ages: [18, 56]
+  after: [startsBusyWard]
+  tags: [caring]
+  within: 1
+  move: -2
+
+- id: asksSeniorNurse
+  label: Asks a senior nurse
+  line: "{name} asks a senior nurse how to cope when it gets busy."
+  if: "{name} had asked a senior nurse for advice"
+  kind: choice
+  ages: [18, 56]
+  after: [wardShortStaffed]
+  tags: [caring, helped]
+  within: 1
+
+- id: movesToOtherWard
+  label: Moves to another ward
+  line: "{name} moves to a ward with a smaller team."
+  if: "{name} had moved to another ward"
+  kind: choice
+  ages: [18, 57]
+  after: [asksSeniorNurse]
+  tags: [caring]
+  within: 1
+
+# Run: a course application, a no, more experience, a waiting list (partial win).
+
+- id: appliesForCareCourse
+  label: Applies for a course
+  line: "{name} applies for a place on a care training course."
+  if: "{name} had applied for a care course"
+  kind: choice
+  ages: [17, 50]
+  after: [caring]
+  unless: [nurse, paramedic, midwife, physio, worksAsDoctor, studiesMedicine, passesCareExam]
+  tags: [caring]
+  inRun: true
+
+- id: courseFull
+  label: The course is full
+  line: "A letter says the course is full this year."
+  kind: setback
+  ages: [17, 51]
+  after: [appliesForCareCourse]
+  tags: [caring]
+  within: 1
+  move: -2
+
+- id: helpsAtCareHome
+  label: Helps at a care home
+  line: "{name} spends Saturdays helping at a care home."
+  if: "{name} had spent Saturdays at a care home"
+  kind: choice
+  ages: [17, 52]
+  after: [courseFull]
+  tags: [caring, carer]
+  within: 1
+
+- id: waitingListPlace
+  label: Joins a waiting list
+  line: "The course puts {him} on a waiting list for places."
+  kind: event
+  ages: [17, 53]
+  after: [helpsAtCareHome]
+  tags: [caring]
+  within: 1
+  move: 1
+
+- id: takesUpNursingPlace
+  label: Takes a nursing place
+  line: "{name} takes the place and starts nursing studies."
+  if: "{name} had taken the nursing place"
+  kind: choice
+  ages: [16, 28]
+  after: [lastMinutePlace]
+  unless: [nurseTraining]
+  tags: [caring, nurse, study]
+  within: 2
+  weight: 3

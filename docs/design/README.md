@@ -8,6 +8,8 @@ The first complete website is [002 — Site shell and home, v01 — Launch](002-
 
 Newest implementation for review: [v09 — Guided journey](001-choices-explainer/v09-guided-journey/README.md) ([013](../product/013-choices-guided-journey.md)). The previous live implementation is [v08 — Alfredo lesson](001-choices-explainer/v08-alfredo-lesson/README.md). The older rounds below remain design history.
 
+The new opening of Lesson 1, as a playable mockup for review: [v13 — Lesson 1 opening](001-choices-explainer/v13-lesson1-opening/README.md), with a [six-frame strip](001-choices-explainer/v13-lesson1-opening/opening-life-strip-1440-v02.png) of Sam's life on the map.
+
 Maya, redrawn from the picked concept (A · Garden) for review: [v12 — Maya figure](001-choices-explainer/v12-maya-figure/README.md), with a [size strip](001-choices-explainer/v12-maya-figure/size-strip-v01.png) beside the concept.
 
 Open prototype round: [v11 — Hike water](001-choices-explainer/v11-hike-water/README.md) asks which water the hike keeps: three versions of the hike map's streams and waterfall (flat Canvas 2D, Three.js flat, Three.js with light) on one shared geography. C goes forward, with A as its fallback, and B is retired. Round 3 (a trailhead clearing, the falls lined up with their rock, a three-quarter bridge, the stream starting at the hill's crest, and Alfredo and his dad in the style of Maya's figure) is now in the lesson, with C on plain WebGL, on a branch for review.

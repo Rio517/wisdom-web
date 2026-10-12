@@ -1,0 +1,5 @@
+# Test fixture runs (the README's "Runs").
+- id: newBand
+  label: New band
+  steps: [ownSong, bandSplits, formsNewBand, radioPlay]
+  span: 2

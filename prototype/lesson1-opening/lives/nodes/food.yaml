@@ -1,0 +1,426 @@
+# Food: baking, cooking, cafés, kitchens, markets.
+# The schema and the rules are in ../README.md.
+
+- id: helpBake
+  label: Helps to bake
+  line: "{name} stirs dough with {his} dad and gets flour on {his} nose."
+  if: "{his} family had let {him} help to bake"
+  kind: choice
+  by: family
+  ages: [3, 7]
+  tags: [food, baking, cooking]
+
+- id: cooksDinner
+  label: Cooks a family dinner
+  line: "{name} cooks dinner for the whole family."
+  if: "{name} had cooked dinner for the family"
+  kind: choice
+  ages: [8, 14]
+  tags: [food, cooking]
+
+- id: bakesAtHome
+  label: Bakes at weekends
+  line: "{name} bakes something new at the weekend."
+  if: "{name} had baked at the weekend"
+  kind: choice
+  ages: [7, 13]
+  tags: [food, baking]
+
+- id: learnsFamilyRecipes
+  label: Learns family recipes
+  line: "An older relative teaches {him} the family recipes."
+  if: "{name} had learned the family recipes"
+  kind: choice
+  ages: [5, 15]
+  after: [timeWithGrandparents, cooking, baking]
+  tags: [food, cooking, recipes]
+- id: lemonadeStall
+  label: Runs a lemonade stall
+  line: "{name} runs a lemonade stall on a sunny street."
+  if: "{name} had run a lemonade stall"
+  kind: choice
+  ages: [7, 13]
+  tags: [food, stall, money]
+
+- id: bakeSale
+  label: Runs a bake sale table
+  line: "{name} runs a table at the school bake sale."
+  if: "{name} had run a bake sale table"
+  kind: choice
+  ages: [7, 13]
+  after: [baking, cooking, stall]
+  tags: [food, stall]
+
+- id: cafeJob
+  label: Gets a café job
+  line: "{name} gets a weekend job in a café."
+  if: "{name} had got a weekend café job"
+  kind: choice
+  ages: [14, 20]
+  after: [bakeSale, cooking, baking]
+  tags: [food, earns, kitchen]
+
+- id: chefOffer
+  label: A chef takes {him} on
+  line: "A chef sees {him} work and offers to train {him}. Luck!"
+  kind: lucky
+  ages: [15, 26]
+  after: [cafeJob, kitchen]
+  tags: [food]
+  move: 1
+
+- id: trainChef
+  label: Trains as a chef
+  line: "{name} trains as a chef in a hot, noisy kitchen."
+  if: "{name} had trained as a chef"
+  kind: choice
+  ages: [16, 28]
+  after: [chefOffer, cafeJob]
+  tags: [food, chef, job, study]
+
+- id: trainsAsBaker
+  label: Trains as a baker
+  line: "{name} trains as a baker and learns to start before dawn."
+  if: "{name} had trained as a baker"
+  kind: choice
+  ages: [16, 30]
+  after: [bakeSale, baking]
+  tags: [food, baker, job, study]
+
+- id: worksInKitchen
+  label: Works in a kitchen
+  line: "{name} works in a busy restaurant kitchen."
+  if: "{name} had worked in a restaurant kitchen"
+  kind: choice
+  ages: [16, 60]
+  after: [cafeJob, cooking]
+  tags: [food, job, kitchen]
+
+- id: openBakery
+  label: Opens a small bakery
+  line: "{name} opens a small bakery with {his} name on the sign."
+  if: "{name} had opened a small bakery"
+  kind: choice
+  ages: [24, 55]
+  after: [trainChef, baker]
+  tags: [food, owner, business, bakery]
+
+- id: rentDoubles
+  label: The rent doubles
+  line: "The rent doubles, and the sums stop adding up."
+  kind: setback
+  ages: [25, 60]
+  after: [owner]
+  tags: [food]
+  move: -3
+
+- id: marketStall
+  label: Sells at markets
+  line: "{name} sells at markets instead, with a van and a table."
+  if: "{name} had sold at markets instead"
+  kind: choice
+  ages: [25, 62]
+  after: [rentDoubles]
+  tags: [food, market, job]
+  within: 2
+
+- id: teamsUpWithPartner
+  label: Teams up with someone
+  line: "{name} teams up with a business partner to share the costs."
+  if: "{name} had teamed up with a business partner"
+  kind: choice
+  ages: [25, 62]
+  after: [rentDoubles, ovenBreaks]
+  tags: [food, helped]
+  within: 2
+
+- id: smallerShop
+  label: Finds a smaller shop
+  line: "{name} moves to a smaller shop with a lower rent."
+  if: "{name} had moved to a smaller shop"
+  kind: choice
+  ages: [25, 62]
+  after: [rentDoubles]
+  tags: [food, owner]
+  within: 2
+
+- id: startsFoodTruck
+  label: Starts a food van
+  line: "{name} starts a food van and parks it by the market."
+  if: "{name} had started a food van"
+  kind: choice
+  ages: [22, 55]
+  after: [cooking, chef]
+  tags: [food, owner, business, market]
+
+- id: foodWriterPraises
+  label: A food writer visits
+  line: "A food writer visits and writes kind words. Luck!"
+  kind: lucky
+  ages: [22, 60]
+  after: [owner]
+  needs: [food]
+  tags: [food]
+  move: 2
+
+- id: ovenBreaks
+  label: The oven breaks
+  line: "The big oven breaks on a busy morning."
+  kind: setback
+  ages: [22, 60]
+  after: [baker, kitchen]
+  tags: [food]
+  move: -1
+
+- id: borrowsAnOven
+  label: Borrows an oven
+  line: "A neighbour lends {him} an oven for the weekend."
+  if: "{name} had borrowed a neighbour's oven"
+  kind: choice
+  ages: [22, 60]
+  after: [ovenBreaks]
+  tags: [food, helped]
+  within: 2
+
+- id: changesTheMenu
+  label: Changes the menu
+  line: "{name} changes the menu to dishes that need no big oven."
+  if: "{name} had changed the menu"
+  kind: choice
+  ages: [22, 60]
+  after: [ovenBreaks]
+  tags: [food]
+  within: 2
+
+- id: caters
+  label: Cooks for parties
+  line: "{name} cooks for parties and weddings."
+  if: "{name} had cooked for parties"
+  kind: choice
+  ages: [20, 60]
+  after: [cooking, chef]
+  tags: [food, job, business]
+
+- id: teachesCooking
+  label: Teaches cooking
+  line: "{name} teaches cooking classes in the evenings."
+  if: "{name} had taught cooking classes"
+  kind: choice
+  ages: [25, 65]
+  after: [cooking, chef, baker]
+  tags: [food, teaching]
+
+- id: cooksSchoolLunches
+  label: Cooks school lunches
+  line: "{name} cooks lunches for a whole school."
+  if: "{name} had cooked school lunches"
+  kind: choice
+  ages: [20, 60]
+  after: [cooking]
+  tags: [food, job, community]
+
+- id: writesRecipeBook
+  label: Writes a recipe book
+  line: "{name} writes down {his} recipes for a book."
+  if: "{name} had written a recipe book"
+  kind: choice
+  ages: [28, 70]
+  after: [chef, baker]
+  tags: [food, book]
+
+- id: studiesFoodScience
+  label: Studies food science
+  line: "{name} studies why bread rises and milk turns."
+  if: "{name} had studied food science"
+  kind: choice
+  ages: [18, 40]
+  after: [cooking, baking]
+  tags: [food, study]
+
+- id: opensAShopCafe
+  label: Opens a shop café
+  line: "{name} opens a small café inside a shop."
+  if: "{name} had opened a shop café"
+  kind: choice
+  ages: [24, 55]
+  after: [shop]
+  needs: [cooking]
+  tags: [food, owner, business]
+
+- id: cooksWithGardenVeg
+  label: Cooks home-grown food
+  line: "{name} cooks with vegetables grown in the garden."
+  if: "{name} had cooked with home-grown vegetables"
+  kind: choice
+  ages: [14, 70]
+  after: [garden, cooking]
+  tags: [food]
+
+# Run: cookOff (a contest, a cake that sinks, practice, a ribbon).
+
+- id: entersCookOff
+  label: "Enters a bake-off"
+  line: "{name} enters a baking contest at the town hall."
+  if: "{name} had entered a baking contest"
+  kind: choice
+  ages: [10, 50]
+  after: [food]
+  tags: [food, bakingContest]
+  weight: 0.2
+  inRun: true
+
+- id: cakeSinks
+  label: The cake sinks
+  line: "{his} cake sinks in the oven, and the judges move on."
+  kind: setback
+  ages: [10, 50]
+  after: [bakingContest]
+  tags: [food]
+  within: 1
+  move: -1
+
+- id: practisesRecipe
+  label: Practises the recipe
+  line: "{name} bakes the same cake every evening for a month."
+  if: "{name} had practised the recipe"
+  kind: choice
+  ages: [10, 50]
+  after: [cakeSinks]
+  tags: [food, practice]
+  within: 1
+
+- id: winsCookOff
+  label: Wins a blue ribbon
+  line: "At the next contest, the judges give {him} a blue ribbon."
+  kind: event
+  ages: [10, 50]
+  after: [practice]
+  tags: [food]
+  within: 1
+  move: 1
+
+# Run: sourdough (flat loaves, an old baker's advice, a café order).
+
+- id: triesSourdough
+  label: Tries sourdough bread
+  line: "{name} tries to bake sourdough bread from scratch."
+  if: "{name} had tried sourdough bread"
+  kind: choice
+  ages: [14, 60]
+  after: [food]
+  tags: [food, bread]
+  weight: 0.2
+  inRun: true
+
+- id: loavesStayFlat
+  label: The loaves stay flat
+  line: "The first loaves come out flat and hard as stones."
+  kind: setback
+  ages: [14, 60]
+  after: [bread]
+  tags: [food]
+  within: 1
+  move: -1
+
+- id: asksOldBaker
+  label: Asks an old baker
+  line: "{name} asks an old baker why the dough will not rise."
+  if: "{name} had asked an old baker for help"
+  kind: choice
+  ages: [14, 60]
+  after: [loavesStayFlat]
+  tags: [food, helped]
+  within: 1
+
+- id: cafeBuysLoaves
+  label: A café buys the bread
+  line: "A café owner buys six loaves a week."
+  kind: event
+  ages: [14, 62]
+  after: [asksOldBaker]
+  tags: [food]
+  within: 1
+  move: 1
+
+# Run: popUpDinner (a first menu, an empty room, a friend's advice, a new way to cook).
+
+- id: hostsPopUp
+  label: Hosts a pop-up dinner
+  line: "{name} cooks a first menu for a one-night pop-up dinner."
+  if: "{name} had hosted a pop-up dinner"
+  kind: choice
+  ages: [18, 55]
+  after: [food]
+  tags: [food, popup]
+  weight: 0.2
+  inRun: true
+
+- id: rainKeepsGuests
+  label: Rain empties the room
+  line: "Heavy rain keeps most guests away, and only three come."
+  kind: setback
+  ages: [18, 55]
+  after: [popup]
+  tags: [food]
+  within: 1
+  move: -1
+
+- id: asksChefFriend
+  label: Asks a chef friend
+  line: "{name} asks a chef friend what to change."
+  if: "{name} had asked a chef friend for advice"
+  kind: choice
+  ages: [18, 60]
+  after: [rainKeepsGuests]
+  tags: [food, helped]
+  within: 1
+
+- id: cooksInHomes
+  label: Becomes a home chef
+  line: "{name} cooks dinners in other people's homes, one table at a time."
+  if: "{name} had started cooking in people's homes"
+  kind: choice
+  ages: [18, 62]
+  after: [asksChefFriend]
+  tags: [food, job]
+  within: 1
+
+- id: plantsVegPatch
+  label: Plants a pupils' patch
+  line: "{name} plants a vegetable patch with the pupils."
+  if: "{name} had planted a vegetable patch with the pupils"
+  kind: choice
+  ages: [20, 65]
+  after: [cooksSchoolLunches]
+  tags: [food, community]
+  within: 3
+
+- id: runsCookingClub
+  label: Starts a cooking club
+  line: "{name} starts an after-school cooking club for the pupils."
+  if: "{name} had started a cooking club"
+  kind: choice
+  ages: [20, 65]
+  after: [cooksSchoolLunches]
+  tags: [food, community, teaching]
+  within: 3
+
+- id: bakesForMoreCafes
+  label: Bakes for more cafés
+  line: "{name} starts supplying three more cafés on the same street."
+  if: "{name} had begun supplying more cafés"
+  kind: choice
+  ages: [16, 62]
+  after: [cafeBuysLoaves, cooksInHomes, winsCookOff]
+  tags: [food]
+  within: 3
+
+- id: cooksStreetSupper
+  label: Cooks for the street
+  line: "{name} cooks a long supper for the whole street."
+  if: "{name} had cooked a supper for the street"
+  kind: choice
+  ages: [16, 65]
+  after: [cooksInHomes, cafeBuysLoaves, winsCookOff, practisesRecipe]
+  tags: [food, community]
+  within: 3

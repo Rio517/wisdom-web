@@ -1,0 +1,11 @@
+# Nature runs: a short burst of trying again (the README's "Runs").
+
+- id: seedlingsReplanted
+  label: Seedling replant
+  steps: [sowsSeedlings, seedlingsFade, asksOldGardener, replantsSeedlings, strongShoots]
+  span: 2
+
+- id: earlyFrostSwitch
+  label: Frost and new crop
+  steps: [plantsEarlyCrop, lateFrost, growsHardyGreens, cafeBuysGreens]
+  span: 1

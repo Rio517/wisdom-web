@@ -20,6 +20,7 @@ The earlier [opening](v06-flat-canvas/opening-desktop-v06.png), [full context](v
 
 | Round | Date | Question and artifact type | Status |
 | --- | --- | --- | --- |
+| [v13 — Lesson 1 opening](v13-lesson1-opening/README.md) | 2026-10-09 | Does the opening tell one life clearly? A playable mockup: the cover, Sam's life growing point by point on the path field, "Choices add up", then the fade into the hike. | Mockup on a branch; owner review pending; not published. |
 | [v12 — Maya figure](v12-maya-figure/README.md) | 2026-10-09 | Does the new Maya, redrawn from the picked concept (A · Garden), match it in both of her lanes at every size? | Implemented on a branch; owner review pending; not published. |
 | [v11 — Hike water](v11-hike-water/README.md) | 2026-10-09 | Which water does the hike keep? Three prototype versions of the hike map's streams and waterfall (flat Canvas 2D, Three.js flat, Three.js with light) on one geography: the stream from behind the hill, the fall back in its rock, a side stream joining below the bridge. | C chosen, with A as its fallback; B retired. C is in the lesson on plain WebGL, on a branch for review. |
 | [v10 — Voice pass](v10-voice-pass/README.md) | 2026-10-09 | Does Lesson 1 read in one warm narrator's voice at an 8–12 reading level, with good luck as well as bad, and does a chain-based explorer show choices building on each other? | Implemented on a branch; owner review pending; not published. |

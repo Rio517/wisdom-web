@@ -1,0 +1,395 @@
+# Nature: animals, gardens, farms, the outdoors, the environment.
+# The schema and the rules are in ../README.md.
+
+- id: playsOutside
+  label: Plays outside daily
+  line: "{name} plays outside every day, whatever the weather."
+  if: "{his} family had sent {him} outside every day"
+  kind: choice
+  by: family
+  ages: [2, 8]
+  tags: [nature, outdoors]
+
+- id: looksAfterPet
+  label: Looks after a pet
+  line: "{name} feeds and brushes the family pet."
+  if: "{name} had looked after a pet"
+  kind: choice
+  ages: [5, 10]
+  tags: [nature, animals]
+
+- id: growVegetables
+  label: Grows vegetables
+  line: "{name} grows vegetables in a patch behind the house."
+  if: "{name} had grown vegetables"
+  kind: choice
+  ages: [7, 11]
+  tags: [nature, garden]
+
+- id: joinsScouts
+  label: Joins the Scouts
+  line: "{name} joins the Scouts and learns to tie knots."
+  if: "{name} had joined the Scouts"
+  kind: choice
+  ages: [7, 11]
+  tags: [nature, outdoors, club]
+
+- id: birdWatching
+  label: Watches birds
+  line: "{name} watches birds from the window with a notebook."
+  if: "{name} had watched birds"
+  kind: choice
+  ages: [8, 14]
+  tags: [nature, animals, outdoors]
+
+- id: riverCleanup
+  label: Cleans up a river
+  line: "{name} helps clean up the river with a school group."
+  if: "{name} had helped clean up a river"
+  kind: choice
+  ages: [11, 16]
+  tags: [nature, environment, community]
+
+- id: animalShelter
+  label: Helps at a shelter
+  line: "{name} walks dogs at the animal shelter."
+  if: "{name} had volunteered at an animal shelter"
+  kind: choice
+  ages: [11, 15]
+  tags: [nature, animals, shelter]
+
+- id: worksOnFarm
+  label: Works on a farm
+  line: "{name} works on a farm in the holidays."
+  if: "{name} had worked on a farm"
+  kind: choice
+  ages: [14, 22]
+  after: [garden, animals, outdoors]
+  tags: [nature, farm, earns]
+
+- id: vetAssistant
+  label: "Helps at a vet's"
+  line: "{name} helps at a vet's surgery on Saturdays."
+  if: "{name} had helped at a vet's"
+  kind: choice
+  ages: [16, 24]
+  after: [shelter, animals]
+  tags: [nature, vetwork, job]
+
+- id: trainsAsVet
+  label: Trains as a vet
+  line: "{name} trains to look after sick animals."
+  if: "{name} had trained as a vet"
+  kind: choice
+  ages: [18, 28]
+  after: [vetwork, sciences]
+  tags: [nature, vet, job, study]
+
+- id: landscapeGardener
+  label: Works as a gardener
+  line: "{name} works as a gardener, making other people's gardens bloom."
+  if: "{name} had worked as a gardener"
+  kind: choice
+  ages: [18, 60]
+  after: [garden]
+  tags: [nature, job, garden, grower]
+
+- id: rentsAllotment
+  label: Rents a garden plot
+  line: "{name} rents a small plot of land and grows enough to share."
+  if: "{name} had rented a garden plot"
+  kind: choice
+  ages: [20, 70]
+  after: [garden, farm]
+  unless: [farmerOffersLand]
+  tags: [nature, garden, grower]
+
+- id: floodRuinsHarvest
+  label: A flood ruins the crop
+  line: "A flood washes away the whole harvest."
+  kind: setback
+  ages: [20, 60]
+  after: [grower]
+  tags: [nature]
+  move: -3
+
+- id: plantsHardierCrops
+  label: Plants for wet ground
+  line: "{name} plants crops that cope better with wet ground."
+  if: "{name} had planted hardier crops"
+  kind: choice
+  ages: [20, 60]
+  after: [floodRuinsHarvest]
+  tags: [nature]
+  within: 2
+
+- id: farmerNetwork
+  label: Joins other growers
+  line: "{name} joins other growers who share seed, tools and advice."
+  if: "{name} had joined other growers"
+  kind: choice
+  ages: [20, 60]
+  after: [floodRuinsHarvest, dryYear]
+  tags: [nature, helped, grower]
+  within: 2
+
+- id: rebuildsAsCommunityGarden
+  label: Starts a shared garden
+  line: "{name} starts over with a garden the whole town can share."
+  if: "{name} had started over with a shared garden"
+  kind: choice
+  ages: [20, 60]
+  after: [floodRuinsHarvest]
+  tags: [nature, garden, community, grower]
+  within: 2
+
+- id: startsCommunityGarden
+  label: Starts a town garden
+  line: "{name} starts a community garden on an empty plot."
+  if: "{name} had started a community garden"
+  kind: choice
+  ages: [25, 70]
+  after: [garden]
+  unless: [floodRuinsHarvest, rentsAllotment, farmerOffersLand]
+  tags: [nature, garden, community, grower]
+
+- id: wildlifeSpotted
+  label: A rare bird visits
+  line: "A rare bird nests in the school garden. Luck!"
+  kind: lucky
+  ages: [6, 16]
+  after: [animals, outdoors, garden]
+  tags: [nature]
+  move: 1
+
+- id: farmerOffersLand
+  label: Gets a field to use
+  line: "A neighbour offers {him} a field to use. Luck!"
+  kind: lucky
+  ages: [20, 60]
+  after: [grower]
+  unless: [rentsAllotment, startsCommunityGarden]
+  tags: [nature, grower]
+  move: 2
+
+- id: dryYear
+  label: The garden dries up
+  line: "A very dry summer shrivels the garden."
+  kind: setback
+  ages: [20, 60]
+  after: [grower]
+  tags: [nature]
+  move: -1
+
+- id: collectsRainwater
+  label: Collects rainwater
+  line: "{name} sets out barrels to catch every drop of rain."
+  if: "{name} had collected rainwater"
+  kind: choice
+  ages: [20, 60]
+  after: [dryYear, grower]
+  tags: [nature, grower]
+
+- id: plantsTougherPlants
+  label: Plants for dry soil
+  line: "{name} plants herbs and flowers that like dry soil."
+  if: "{name} had planted tougher plants"
+  kind: choice
+  ages: [20, 60]
+  after: [dryYear]
+  tags: [nature]
+  within: 2
+
+- id: studiesEnvironment
+  label: Studies nature
+  line: "{name} studies how the natural world fits together."
+  if: "{name} had studied the environment"
+  kind: choice
+  ages: [17, 26]
+  after: [outdoors, environment, sciences]
+  tags: [nature, environment, study, university]
+
+- id: parkRanger
+  label: Works as a park ranger
+  line: "{name} works as a park ranger, helping visitors and wildlife."
+  if: "{name} had worked as a park ranger"
+  kind: choice
+  ages: [20, 60]
+  after: [environment, outdoors]
+  tags: [nature, job, outdoors]
+
+- id: movesToCountryside
+  label: Moves to the country
+  line: "{name} moves to the countryside."
+  if: "{name} had moved to the countryside"
+  kind: choice
+  ages: [25, 60]
+  tags: [nature, moved, outdoors]
+  weight: 0.6
+
+- id: growsAGarden
+  label: Grows a garden
+  line: "{name} grows a garden of flowers and vegetables."
+  if: "{name} had grown a garden"
+  kind: choice
+  ages: [22, 70]
+  tags: [nature, garden, grower]
+  weight: 0.7
+
+- id: keepsBees
+  label: Keeps bees
+  line: "{name} keeps bees and learns their ways."
+  if: "{name} had kept bees"
+  kind: choice
+  ages: [22, 70]
+  after: [garden, farm, outdoors]
+  tags: [nature, animals]
+
+- id: leadsWalkingGroups
+  label: Leads walking groups
+  line: "{name} leads walking groups into the hills."
+  if: "{name} had led walking groups"
+  kind: choice
+  ages: [22, 60]
+  after: [outdoors]
+  tags: [nature, job, community]
+
+- id: forestSchool
+  label: Teaches outdoors
+  line: "{name} teaches children outdoors in the woods."
+  if: "{name} had taught children outdoors"
+  kind: choice
+  ages: [24, 60]
+  after: [outdoors, environment]
+  tags: [nature, teaching, job]
+
+- id: plantsTrees
+  label: Plants trees
+  line: "{name} plants trees with a volunteer group."
+  if: "{name} had planted trees with volunteers"
+  kind: choice
+  ages: [20, 70]
+  after: [environment, garden, outdoors]
+  tags: [nature, environment, community]
+
+- id: buildsAGreenhouse
+  label: Builds a greenhouse
+  line: "{name} builds a greenhouse from old windows."
+  if: "{name} had built a greenhouse"
+  kind: choice
+  ages: [18, 70]
+  after: [garden, building]
+  tags: [nature, garden, grower]
+
+- id: growsForRestaurants
+  label: Grows for restaurants
+  line: "{name} grows herbs and salad leaves for local restaurants."
+  if: "{name} had grown food for restaurants"
+  kind: choice
+  ages: [22, 60]
+  after: [garden, farm, cooking]
+  tags: [nature, job]
+
+# Run steps (see runs/nature.yaml): seeds that fade and are planted again,
+# and an early crop caught by frost.
+
+- id: sowsSeedlings
+  label: Sows seeds indoors
+  line: "{name} sows tomato seeds in pots on the windowsill."
+  if: "{name} had sown seeds indoors"
+  kind: choice
+  ages: [9, 45]
+  after: [nature]
+  unless: [grower, landscapeGardener, growsForRestaurants, parkRanger]
+  tags: [nature, garden, seedlings]
+  inRun: true
+
+- id: seedlingsFade
+  label: The seedlings flop
+  line: "The windowsill gets little sun, and the seedlings flop over."
+  kind: setback
+  ages: [9, 46]
+  after: [sowsSeedlings]
+  tags: [nature]
+  within: 1
+  move: -1
+
+- id: asksOldGardener
+  label: Asks an old gardener
+  line: "{name} asks an old gardener down the road for advice."
+  if: "{name} had asked an old gardener for advice"
+  kind: choice
+  ages: [9, 47]
+  after: [seedlingsFade]
+  tags: [nature, helped]
+  within: 1
+
+- id: replantsSeedlings
+  label: Plants the seeds again
+  line: "{name} sows fresh seeds in a sunny spot."
+  if: "{name} had sown the seeds again"
+  kind: choice
+  ages: [9, 47]
+  after: [asksOldGardener]
+  tags: [nature, garden]
+  within: 1
+
+- id: strongShoots
+  label: Strong shoots come up
+  line: "Green shoots push up, short and sturdy."
+  kind: event
+  ages: [9, 48]
+  after: [replantsSeedlings]
+  tags: [nature, garden, grower]
+  within: 1
+  move: 1
+
+- id: plantsEarlyCrop
+  label: Sows an early crop
+  line: "{name} sows beans and peas weeks early, as the days turn mild."
+  if: "{name} had sown an early crop"
+  kind: choice
+  ages: [16, 55]
+  after: [garden, grower, farm]
+  tags: [nature, garden, grower]
+  inRun: true
+
+- id: lateFrost
+  label: A late frost
+  line: "A hard frost in late spring blackens the young plants."
+  kind: setback
+  ages: [16, 56]
+  after: [plantsEarlyCrop]
+  tags: [nature]
+  within: 1
+  move: -1
+
+- id: growsHardyGreens
+  label: Grows hardy greens
+  line: "{name} switches to leafy greens that cope with cold nights."
+  if: "{name} had switched to hardy greens"
+  kind: choice
+  ages: [16, 56]
+  after: [lateFrost]
+  tags: [nature, garden]
+  within: 1
+
+- id: cafeBuysGreens
+  label: A café buys greens
+  line: "A café cook starts buying from {him} every week. Luck!"
+  kind: lucky
+  ages: [16, 56]
+  after: [growsHardyGreens]
+  tags: [nature, earns]
+  within: 1
+  move: 1
+
+- id: growsBeansWithGrandad
+  label: Grows beans in a pot
+  line: "{his} grandad shows {him} how to grow beans in a pot."
+  if: "{his} grandad had shown {him} how to grow beans"
+  kind: choice
+  by: family
+  ages: [4, 11]
+  after: [timeWithGrandparents]
+  tags: [nature, garden]

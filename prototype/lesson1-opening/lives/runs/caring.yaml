@@ -1,0 +1,16 @@
+# Caring runs: a short burst of trying again (the README's "Runs").
+
+- id: careExam
+  label: Care exam retake
+  steps: [sitsCareExam, failsCareExam, studiesWithFriend, passesCareExam]
+  span: 2
+
+- id: busyWard
+  label: Ward move
+  steps: [startsBusyWard, wardShortStaffed, asksSeniorNurse, movesToOtherWard]
+  span: 2
+
+- id: courseWaitingList
+  label: Course waiting list
+  steps: [appliesForCareCourse, courseFull, helpsAtCareHome, waitingListPlace]
+  span: 2

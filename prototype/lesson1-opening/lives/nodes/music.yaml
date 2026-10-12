@@ -1,0 +1,495 @@
+# Music: singing, instruments, bands, songs, records, teaching music.
+# The schema and the rules are in ../README.md.
+
+- id: choir
+  label: Joins a choir
+  line: "{his} parents sign {him} up for choir."
+  if: "{his} family had picked choir"
+  kind: choice
+  by: family
+  ages: [4, 9]
+  tags: [music, sings]
+
+- id: singsAtHome
+  label: Sings at home
+  line: "Music fills the house, and {name} sings along."
+  if: "{his} family had filled the house with music"
+  kind: choice
+  by: family
+  ages: [3, 8]
+  tags: [music, sings]
+
+- id: startPiano
+  label: Starts piano lessons
+  line: "{name} starts piano lessons."
+  if: "{name} had started piano lessons"
+  kind: choice
+  ages: [7, 11]
+  tags: [music, instrument, piano]
+
+- id: startsViolin
+  label: Starts the violin
+  line: "{name} starts the violin."
+  if: "{name} had started the violin"
+  kind: choice
+  ages: [7, 12]
+  tags: [music, instrument, strings]
+
+- id: guitar
+  label: Picks guitar
+  line: "{name} picks guitar."
+  if: "{name} had picked guitar"
+  kind: choice
+  ages: [7, 16]
+  tags: [music, instrument]
+
+- id: drums
+  label: Picks drums
+  line: "{name} picks drums."
+  if: "{name} had picked drums"
+  kind: choice
+  ages: [7, 16]
+  tags: [music, instrument, drumming]
+
+- id: givenOldPiano
+  label: Gets an old piano
+  line: "A neighbour who is moving gives {him} an old piano. Luck!"
+  kind: lucky
+  ages: [6, 14]
+  unless: [piano]
+  tags: [music, instrument, piano]
+  move: 1
+  weight: 0.6
+
+- id: joinsChoir
+  label: Joins the school choir
+  line: "{name} joins the school choir."
+  if: "{name} had joined the school choir"
+  kind: choice
+  ages: [8, 14]
+  tags: [music, sings, ensemble]
+
+- id: schoolBand
+  label: Joins the school band
+  line: "{name} joins the school band."
+  if: "{name} had joined the school band"
+  kind: choice
+  ages: [9, 15]
+  after: [instrument]
+  tags: [music, ensemble]
+
+- id: switchesToDrums
+  label: Switches to drums
+  line: "{name} swaps the piano stool for a drum stool."
+  if: "{name} had switched from piano to drums"
+  kind: choice
+  ages: [10, 15]
+  after: [piano]
+  unless: [drums]
+  tags: [music, instrument, drumming]
+
+- id: jamsWithFriends
+  label: Jams with friends
+  line: "{name} makes music with friends after school."
+  if: "{name} had made music with friends"
+  kind: choice
+  ages: [13, 19]
+  after: [instrument, sings]
+  unless: [band]
+  tags: [music, jamming]
+
+- id: startsBand
+  label: Starts a band
+  line: "{name} starts a band with two friends."
+  if: "{name} had started a band"
+  kind: choice
+  ages: [12, 19]
+  after: [instrument, sings]
+  unless: [band]
+  tags: [music, band]
+
+- id: bandInvite
+  label: A band invites {him}
+  line: "An older band asks {him} to join. Luck!"
+  kind: lucky
+  ages: [12, 22]
+  after: [instrument, sings]
+  unless: [band]
+  tags: [music, band]
+  move: 1
+
+- id: playGigs
+  label: Plays weekend gigs
+  line: "{name} plays gigs at weekends."
+  if: "{name} had played weekend gigs"
+  kind: choice
+  ages: [14, 30]
+  after: [band, jamming, ensemble]
+  tags: [music, gigs]
+
+- id: ownSong
+  label: Writes a song
+  line: "The band writes its own song."
+  if: "{name}'s band had written its own song"
+  kind: choice
+  ages: [13, 25]
+  after: [band]
+  tags: [music, songs]
+
+- id: radioPlay
+  label: A DJ plays the song
+  line: "A radio DJ plays {his} song. Luck!"
+  kind: lucky
+  ages: [15, 40]
+  after: [songs]
+  tags: [music]
+  move: 1
+
+- id: recordDeal
+  label: Signs a record deal
+  line: "A record label offers {him} a deal."
+  kind: event
+  ages: [17, 40]
+  after: [radioPlay]
+  tags: [music, fame, job]
+  within: 2
+  move: 1
+
+- id: recordsAlbum
+  label: Records an album
+  line: "{name} records an album in a small studio."
+  if: "{name} had recorded an album"
+  kind: choice
+  ages: [18, 45]
+  after: [fame, radioPlay, gigs]
+  unless: [album]
+  tags: [music, album]
+
+- id: goesOnTour
+  label: Goes on a world tour
+  line: "{name} goes on a world tour. Big crowds every night."
+  if: "{name} had gone on a world tour"
+  kind: choice
+  ages: [18, 40]
+  after: [fame]
+  tags: [music, touring, gigs]
+
+- id: staysHomeToWrite
+  label: Stays home to write
+  line: "{name} stays home and writes new songs."
+  if: "{name} had stayed home to write"
+  kind: choice
+  ages: [18, 45]
+  after: [fame]
+  tags: [music, songs]
+
+# Drinking and drugs, named only in general words (the README's hard-things
+# rule). Only a world tour leads here, and help always follows within 2 years.
+
+- id: drinkingAndDrugs
+  label: Drinking and drugs
+  line: "Drinking and drugs take over, and {his} shows fall apart."
+  kind: setback
+  ages: [19, 42]
+  after: [touring]
+  tags: [music, substance]
+  within: 2
+  move: -2
+
+- id: getsHelpToStop
+  label: Gets help to stop
+  line: "{name} asks for help to stop, and gets it."
+  if: "{name} had asked for help to stop"
+  kind: choice
+  ages: [19, 45]
+  after: [substance]
+  tags: [helped]
+  within: 1
+
+- id: labelDropsHim
+  label: The label drops {him}
+  line: "The record label drops {him}."
+  kind: setback
+  ages: [19, 43]
+  after: [drinkingAndDrugs]
+  tags: [music]
+  within: 1
+  move: -2
+
+- id: keepsEarlyNights
+  label: Keeps early nights
+  line: "{name} keeps early nights, even on tour."
+  if: "{name} had kept early nights"
+  kind: choice
+  ages: [18, 40]
+  after: [fame]
+  tags: [music]
+
+- id: savesTheMoney
+  label: Saves the money
+  line: "{name} puts the money away for later."
+  if: "{name} had saved the money"
+  kind: choice
+  ages: [18, 45]
+  after: [fame]
+  tags: [music, savings]
+
+- id: bandSplits
+  label: The band splits
+  line: "The band splits up."
+  kind: setback
+  ages: [16, 45]
+  after: [band]
+  tags: [music]
+  drops: [band]
+  move: -2
+
+- id: formsNewBand
+  label: Forms a new band
+  line: "{name} forms a new band with new friends."
+  if: "{name} had formed a new band"
+  kind: choice
+  ages: [14, 40]
+  after: [bandSplits]
+  unless: [band]
+  tags: [music, band]
+  within: 1
+
+- id: handInjury
+  label: Hurts a hand
+  line: "{name} hurts a hand and cannot play for a year."
+  kind: setback
+  ages: [15, 45]
+  after: [instrument]
+  tags: [music, injury]
+  move: -2
+
+- id: switchesInstrument
+  label: Tries a new instrument
+  line: "{name} learns a different instrument while {his} hand heals."
+  if: "{name} had tried a new instrument"
+  kind: choice
+  ages: [15, 50]
+  after: [handInjury]
+  tags: [music, instrument]
+  within: 2
+
+- id: writesForOthers
+  label: Writes for others
+  line: "{name} writes songs for other people to sing."
+  if: "{name} had written songs for other people"
+  kind: choice
+  ages: [16, 60]
+  after: [handInjury, bandSplits, radioPlay]
+  tags: [music, songs, job]
+  within: 2
+
+- id: teachesMusic
+  label: Teaches music
+  line: "{name} starts teaching music to children."
+  if: "{name} had started teaching music"
+  kind: choice
+  ages: [18, 65]
+  after: [handInjury, bandSplits]
+  tags: [music, teaching, job]
+  within: 2
+
+- id: goesSolo
+  label: Plays solo gigs
+  line: "{name} plays alone now, with a stool and one microphone."
+  if: "{name} had gone solo"
+  kind: choice
+  ages: [16, 45]
+  after: [bandSplits]
+  tags: [music, gigs, job]
+  within: 2
+
+- id: givesMusicLessons
+  label: Gives music lessons
+  line: "{name} gives music lessons in {his} front room."
+  if: "{name} had given music lessons"
+  kind: choice
+  ages: [16, 70]
+  after: [instrument]
+  tags: [music, teaching, job]
+
+- id: teachesSchoolMusic
+  label: Teaches at a school
+  line: "{name} teaches music at the local school."
+  if: "{name} had taught at a school"
+  kind: choice
+  ages: [22, 65]
+  after: [givesMusicLessons, teachesMusic, studiesMusic]
+  needs: [music]
+  tags: [music, teacher, job]
+
+- id: watchesChildPerform
+  label: Cheers {his} child on
+  line: "{name} watches {his} child perform on stage."
+  kind: event
+  ages: [30, 70]
+  after: [parent]
+  needs: [music]
+  tags: [music]
+  move: 1
+
+- id: studiesMusic
+  label: Studies music
+  line: "{name} goes to college to study music."
+  if: "{name} had studied music"
+  kind: choice
+  ages: [17, 26]
+  after: [instrument, sings]
+  unless: [musicCollege]
+  tags: [music, study]
+
+- id: joinsAdultChoir
+  label: Joins a local choir
+  line: "{name} joins a local choir that meets on Tuesdays."
+  if: "{name} had joined a local choir"
+  kind: choice
+  ages: [25, 80]
+  tags: [music, sings, ensemble]
+
+- id: writesMusicForShows
+  label: Writes show music
+  line: "{name} writes music for stage shows and films."
+  if: "{name} had written music for shows"
+  kind: choice
+  ages: [18, 60]
+  after: [theatre, film]
+  needs: [music]
+  tags: [music, songs, job]
+
+# Runs: a hand that heals and learns again, a college that says not yet, a solo
+# gig that goes wrong and a friend who coaches.
+
+- id: learnsHardPiece
+  label: Learns a hard piece
+  line: "{name} sets out to learn a hard piece by heart."
+  if: "{name} had set out to learn a hard piece"
+  kind: choice
+  ages: [14, 50]
+  after: [instrument]
+  tags: [music, practice]
+  inRun: true
+
+- id: playsDifferently
+  label: Learns a new grip
+  line: "{name} learns a new way to play, with a different grip."
+  if: "{name} had learned a new way to play"
+  kind: choice
+  ages: [15, 50]
+  after: [handInjury]
+  tags: [music, helped]
+  within: 1
+
+- id: playsAgain
+  label: Plays for friends
+  line: "{name} plays one slow song for a few friends."
+  if: "{name} had played for friends again"
+  kind: choice
+  ages: [15, 50]
+  after: [playsDifferently]
+  tags: [music]
+  within: 1
+
+- id: auditionsForCollege
+  label: Auditions for college
+  line: "{name} auditions for a place at a music college."
+  if: "{name} had auditioned for a music college"
+  kind: choice
+  ages: [16, 30]
+  after: [instrument, sings]
+  unless: [study, musicCollege]
+  tags: [music, audition]
+  inRun: true
+
+- id: collegeSaysNotYet
+  label: The college says no
+  line: "The college writes back: not this year."
+  kind: setback
+  ages: [16, 31]
+  after: [auditionsForCollege]
+  tags: [music]
+  within: 1
+  move: -1
+
+- id: practisesWithTeacher
+  label: Practises weekly
+  line: "{name} practises every week with a music teacher."
+  if: "{name} had practised with a music teacher"
+  kind: choice
+  ages: [16, 31]
+  after: [collegeSaysNotYet]
+  tags: [music, practice, helped]
+  within: 1
+
+- id: getsIntoMusicCollege
+  label: Gets a college place
+  line: "At the next audition, the college offers {him} a place."
+  kind: event
+  ages: [17, 32]
+  after: [practisesWithTeacher]
+  tags: [music, study, musicCollege]
+  within: 1
+  move: 2
+
+- id: firstSoloGig
+  label: Plays a solo gig
+  line: "{name} signs up to play alone at a local café."
+  if: "{name} had signed up to play a solo gig"
+  kind: choice
+  ages: [15, 50]
+  after: [guitar, piano, strings, sings]
+  tags: [music, solo]
+  inRun: true
+
+- id: soloGigMishap
+  label: The microphone fails
+  line: "Halfway through the first song, the microphone stops working."
+  kind: setback
+  ages: [14, 50]
+  after: [firstSoloGig]
+  tags: [music]
+  within: 1
+  move: -1
+
+- id: friendCoaches
+  label: A friend coaches {him}
+  line: "A friend who sings in a choir helps {him} practise."
+  if: "{name} had asked a friend to coach"
+  kind: choice
+  ages: [14, 50]
+  after: [soloGigMishap]
+  tags: [music, helped]
+  within: 1
+
+- id: joinsDanceBand
+  label: Joins a dance band
+  line: "{name} joins a small band that plays at weddings and dances."
+  if: "{name} had joined a dance band"
+  kind: choice
+  ages: [14, 50]
+  after: [friendCoaches]
+  tags: [music, ensemble]
+  within: 1
+
+- id: singsForRelatives
+  label: Sings for the family
+  line: "{name} sings for the relatives at a family party."
+  if: "{name} had sung for the relatives"
+  kind: choice
+  ages: [4, 10]
+  after: [singsAtHome]
+  tags: [music, sings]
+
+- id: singsAtSchoolConcert
+  label: Sings at a concert
+  line: "{name} sings a verse alone at the school concert."
+  if: "{name} had sung alone at the school concert"
+  kind: choice
+  ages: [7, 14]
+  after: [sings]
+  tags: [music, sings]
+  weight: 2

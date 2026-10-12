@@ -1,0 +1,16 @@
+# Community runs: a short burst of trying again (the README's "Runs").
+
+- id: crossingPetition
+  label: Crossing petition
+  steps: [startsPetition, councilNoMoney, takesPetitionDoors, crossingPainted]
+  span: 2
+
+- id: emptyHallClub
+  label: Club move
+  steps: [opensClub, nobodyComes, movesClubTime, clubFillsUp]
+  span: 1
+
+- id: classroomTurn
+  label: Classroom job
+  steps: [offersHomeworkHelp, studyRoomCloses, takesShortCourse, helpsInClassroom]
+  span: 2

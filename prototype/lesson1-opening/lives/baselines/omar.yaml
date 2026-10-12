@@ -1,0 +1,76 @@
+# Omar: making, an apprenticeship instead of university, stolen tools and
+# friends who lend theirs, a business that rises and fails, and a middle path
+# training apprentices.
+# The schema is in ../README.md.
+
+id: omar
+name: Omar
+pronoun: he
+end: 43
+steps:
+  - { node: born, age: 0 }
+  - node: familyFixesThings
+    age: 5
+    line: "{his} mum mends things around the house, and {name} holds the screwdriver."
+    alts: [buildsDens, timeWithGrandparents]
+  - node: fixesABike
+    age: 11
+    alts: [roboticsClub, woodwork]
+    echoes: [familyFixesThings]
+  - node: startsApprenticeship
+    age: 17
+    alts: [goesToUniversity, studiesHardForExams]
+    echoes: [fixesABike]
+  - node: sitsTradeTest
+    age: 19
+    run: tradeTest
+    line: "He sits the electrician's test."
+    alts: [plumber, mechanic]
+    echoes: [startsApprenticeship]
+  - node: failsTradeTest
+    age: 19
+    run: tradeTest
+    line: "He misses the pass mark by a little."
+  - node: practisesWithPro
+    age: 20
+    run: tradeTest
+    line: "He practises on weekends with an older electrician."
+  - node: passesTradeTest
+    age: 20
+    run: tradeTest
+    line: "He sits the test again and passes."
+    echoes: [practisesWithPro]
+  - node: lostTools
+    age: 23
+  - node: borrowsTools
+    age: 24
+    line: "Friends in the trade lend {him} what is needed to keep working."
+    move: 1
+    alts: [replacesTools]
+  - node: ownBusiness
+    age: 26
+    alts: [sellsToolsOnline, movesToNewCity]
+    echoes: [passesTradeTest, borrowsTools]
+  - node: bigCustomer
+    age: 30
+    move: 2
+    echoes: [ownBusiness]
+  - node: becomesParent
+    age: 31
+  - node: businessFails
+    age: 34
+    line: "The big orders stop, and the business runs out of money."
+    echoes: [bigCustomer]
+  - node: asksForHelp
+    age: 35
+    line: "He asks an old customer for help finding work."
+    move: 1
+    alts: [joinsBiggerFirm, newIdea]
+  - node: trainsApprentices
+    age: 40
+    move: 1
+    echoes: [startsApprenticeship, practisesWithPro]
+  - node: worksFewerHours
+    age: 43
+    line: "He works fewer hours. His child holds the screwdriver now."
+    echoes: [familyFixesThings]

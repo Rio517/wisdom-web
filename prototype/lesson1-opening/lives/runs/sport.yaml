@@ -1,0 +1,19 @@
+# Sport runs: a short burst of trying again (the README's "Runs").
+
+# Squad trials, a knee injury, slow rebuilding, a whole game again: a comeback.
+- id: backFromInjury
+  label: Knee comeback
+  steps: [squadTrials, kneeInjury, restsAndRebuilds, playsWholeGame]
+  span: 2
+
+# A trial day, not on the list, help and extra training, the reserves: a partial win.
+- id: reserveTeam
+  label: Reserve team place
+  steps: [triesForSide, notOnTheList, asksCoachWhy, trainsExtraEvening, reserveSpot]
+  span: 2
+
+# A place on the wing, the bench, a new position: a change of course.
+- id: newPosition
+  label: New position
+  steps: [playsOutWide, newPlayerArrives, learnsNewPosition, startsInNewRole]
+  span: 2

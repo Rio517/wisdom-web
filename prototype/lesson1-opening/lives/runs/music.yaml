@@ -1,0 +1,21 @@
+# Music runs: a short burst of trying again (the README's "Runs").
+
+- id: newBand
+  label: New band
+  steps: [ownSong, bandSplits, formsNewBand, radioPlay]
+  span: 2
+
+- id: handHeals
+  label: Hand injury
+  steps: [learnsHardPiece, handInjury, playsDifferently, playsAgain]
+  span: 2
+
+- id: collegeNextYear
+  label: Music college audition
+  steps: [auditionsForCollege, collegeSaysNotYet, practisesWithTeacher, getsIntoMusicCollege]
+  span: 2
+
+- id: soloToBand
+  label: Solo to dance band
+  steps: [firstSoloGig, soloGigMishap, friendCoaches, joinsDanceBand]
+  span: 1

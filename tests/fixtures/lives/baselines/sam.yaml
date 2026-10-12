@@ -1,0 +1,80 @@
+# Sam: music, a band that starts again, fame, a hard fall, help.
+# Test fixture for the lives engine: the real store's Sam (round 6), with fewer alternatives.
+
+id: sam
+name: Sam
+pronoun: he
+end: 41
+steps:
+  - { node: born, age: 0 }
+  - node: choir
+    age: 6
+    alts: [footballClub, learnsToSwim]
+  - node: guitar
+    age: 10
+    alts: [drums, chessClub]
+    echoes: [choir]
+  - node: startsBand
+    age: 14
+    alts: [schoolTeam]
+  - node: ownSong
+    age: 16
+    run: newBand
+    label: Records a song
+    line: "The band records its first song."
+  - node: bandSplits
+    age: 16
+    run: newBand
+    line: "Both friends quit. He is on his own."
+    move: -1
+  - node: formsNewBand
+    age: 17
+    run: newBand
+    line: "He forms a new band with three others."
+  - node: radioPlay
+    age: 18
+    run: newBand
+    line: "A radio DJ plays one of his songs. Luck!"
+    move: 2
+  - node: recordDeal
+    age: 20
+    line: "A record label signs the band."
+    echoes: [radioPlay, ownSong]
+  - node: goesOnTour
+    age: 22
+    line: "He goes on a world tour. Big crowds every night."
+    alts: [staysHomeToWrite, savesTheMoney]
+  - node: drinkingAndDrugs
+    age: 24
+    line: "Drinking and drugs take over. Shows fall apart."
+    move: -1
+  - node: labelDropsHim
+    age: 25
+    label: Label drops the band
+    line: "The label drops the band. He loses his flat."
+    move: -3
+  - node: asksForHelp
+    age: 26
+    line: "A friend takes him in. He asks for help."
+    move: 1
+    alts: [movesHome, officeJob]
+  - node: givesMusicLessons
+    age: 30
+    label: Teaches guitar
+    line: "He teaches guitar. New songs."
+    move: 1
+    echoes: [guitar]
+  - node: becomesParent
+    age: 33
+    label: Has two kids
+    line: "He has two great kids."
+    move: 1
+  - node: teachesSchoolMusic
+    age: 36
+    move: 1
+    echoes: [givesMusicLessons]
+  - node: watchesChildPerform
+    age: 41
+    label: Watches daughter sing
+    line: "He watches his daughter sing on stage."
+    echoes: [choir]

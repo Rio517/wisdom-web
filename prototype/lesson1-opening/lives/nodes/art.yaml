@@ -1,0 +1,419 @@
+# Art and making pictures: drawing, painting, crafts, design, photography.
+# The schema and the rules are in ../README.md.
+
+- id: paintsAtHome
+  label: Paints and glues
+  line: "Paper, paint and glue cover the kitchen table."
+  if: "{his} family had left paper and paint on the kitchen table"
+  kind: choice
+  by: family
+  ages: [3, 7]
+  tags: [art, drawing, crafts]
+
+- id: artClub
+  label: Joins the art club
+  line: "{name} joins the art club after school."
+  if: "{name} had joined the art club"
+  kind: choice
+  ages: [7, 11]
+  tags: [art, drawing, club]
+
+- id: drawsEveryDay
+  label: Draws every day
+  line: "{name} draws every day, in the back of every notebook."
+  if: "{name} had drawn every day"
+  kind: choice
+  ages: [9, 15]
+  tags: [art, drawing]
+
+- id: triesPottery
+  label: Tries pottery
+  line: "{name} tries pottery and gets very muddy."
+  if: "{name} had tried pottery"
+  kind: choice
+  ages: [8, 14]
+  tags: [art, crafts, pottery]
+
+- id: borrowsACamera
+  label: Borrows a camera
+  line: "{name} borrows a camera and looks at the world through it."
+  if: "{name} had borrowed a camera"
+  kind: choice
+  ages: [9, 15]
+  tags: [art, photography]
+
+- id: learnsToSew
+  label: Learns to sew
+  line: "{name} learns to sew on {his} aunt's old sewing machine."
+  if: "{name} had learned to sew"
+  kind: choice
+  ages: [8, 14]
+  tags: [art, crafts, sewing]
+
+- id: givenOldCamera
+  label: Gets an old camera
+  line: "{his} grandad passes on his old camera. Luck!"
+  kind: lucky
+  ages: [9, 16]
+  unless: [photography]
+  tags: [art, photography]
+  move: 1
+  weight: 0.6
+
+- id: focusOnArt
+  label: Focuses on art
+  line: "{name} chooses art as a main subject."
+  if: "{name} had focused on art"
+  kind: choice
+  ages: [14, 19]
+  after: [drawing, crafts, photography]
+  tags: [art, artSubject]
+
+- id: entersArtContest
+  label: Enters an art contest
+  line: "{name} sends a picture to a local art contest."
+  if: "{name} had entered an art contest"
+  kind: choice
+  ages: [11, 19]
+  after: [drawing, crafts, photography]
+  tags: [art, contest]
+
+- id: artShowSpot
+  label: A café hangs the work
+  line: "A café owner hangs {his} pictures on the wall. Luck!"
+  kind: lucky
+  ages: [12, 30]
+  after: [drawing, crafts, photography]
+  tags: [art]
+  move: 1
+
+- id: appliesToArtSchool
+  label: Applies to art school
+  line: "{name} sends {his} best drawings to an art school."
+  if: "{name} had applied to art school"
+  kind: choice
+  ages: [17, 24]
+  after: [artSubject, drawsEveryDay, artClub]
+  tags: [art, portfolio]
+  inRun: true
+
+- id: getsArtSchoolPlace
+  label: Gets into art school
+  line: "An art school offers {him} a place. Luck!"
+  kind: lucky
+  ages: [17, 26]
+  after: [portfolio]
+  unless: [artSchoolSaysNo]
+  tags: [art, study]
+  move: 1
+
+- id: artSchoolSaysNo
+  label: Art school says no
+  line: "The art school says no. It stings."
+  kind: setback
+  ages: [17, 26]
+  after: [appliesToArtSchool]
+  within: 1
+  unless: [getsArtSchoolPlace]
+  tags: [art]
+  move: -2
+
+- id: studiesDesign
+  label: Studies design
+  line: "{name} studies graphic design: posters, signs and book covers."
+  if: "{name} had studied design"
+  kind: choice
+  ages: [17, 30]
+  after: [artSubject, artSchoolSaysNo]
+  tags: [art, design, study]
+
+- id: worksInPrintShop
+  label: Works in a print shop
+  line: "{name} works in a print shop, among paper and ink."
+  if: "{name} had worked in a print shop"
+  kind: choice
+  ages: [18, 60]
+  after: [artSchoolSaysNo, drawing, design, portfolio]
+  tags: [art, job, print]
+
+- id: freelanceIllustrator
+  label: Draws for clients
+  line: "{name} draws pictures for clients, one job at a time."
+  if: "{name} had drawn pictures for clients"
+  kind: choice
+  ages: [20, 60]
+  after: [design, drawing]
+  tags: [art, job, illustration]
+
+- id: childrensBookJob
+  label: Draws a picture book
+  line: "A publisher asks {him} to draw a children's book. Luck!"
+  kind: lucky
+  ages: [22, 60]
+  after: [illustration, print]
+  tags: [art, job]
+  within: 4
+  move: 2
+
+- id: teachesArt
+  label: Teaches art
+  line: "{name} teaches art classes to children and grown-ups."
+  if: "{name} had taught art classes"
+  kind: choice
+  ages: [25, 65]
+  after: [drawing, crafts, painting]
+  tags: [art, teaching, job]
+
+- id: sellsAtCraftMarket
+  label: Sells at craft fairs
+  line: "{name} sells handmade things at weekend craft fairs."
+  if: "{name} had sold crafts at fairs"
+  kind: choice
+  ages: [18, 60]
+  after: [crafts]
+  tags: [art, job, market, money]
+
+- id: learnsToPaint
+  label: Learns to paint
+  line: "{name} signs up for a painting class."
+  if: "{name} had learned to paint"
+  kind: choice
+  ages: [14, 80]
+  tags: [art, painting]
+  weight: 0.8
+
+- id: paintsAMural
+  label: Paints a wall mural
+  line: "{name} paints a mural on a long grey wall."
+  if: "{name} had painted a mural"
+  kind: choice
+  ages: [20, 60]
+  after: [painting, drawing]
+  tags: [art, painting, community]
+
+- id: photographsWeddings
+  label: Photographs weddings
+  line: "{name} photographs weddings and birthdays."
+  if: "{name} had photographed weddings"
+  kind: choice
+  ages: [18, 60]
+  after: [photography]
+  tags: [art, job]
+
+- id: photographsWildPlaces
+  label: Photographs nature
+  line: "{name} hikes out at dawn to photograph wild places."
+  if: "{name} had photographed wild places"
+  kind: choice
+  ages: [16, 60]
+  after: [photography]
+  tags: [art, nature]
+
+- id: drawsForGames
+  label: Draws game characters
+  line: "{name} draws characters for a games studio."
+  if: "{name} had drawn characters for games"
+  kind: choice
+  ages: [20, 55]
+  after: [drawing, design]
+  tags: [art, games, job]
+
+- id: workRuined
+  label: Rain ruins {his} work
+  line: "Rain leaks in and spoils a year of {his} work."
+  kind: setback
+  ages: [18, 60]
+  after: [drawing, painting, crafts, photography]
+  tags: [art]
+  move: -2
+
+- id: startsAgain
+  label: Starts over
+  line: "{name} starts the work again from scratch."
+  if: "{name} had started the work again"
+  kind: choice
+  ages: [18, 60]
+  after: [workRuined]
+  tags: [art]
+  within: 2
+
+- id: joinsSharedStudio
+  label: Joins a shared studio
+  line: "{name} joins a shared studio with other artists."
+  if: "{name} had joined a shared studio"
+  kind: choice
+  ages: [18, 60]
+  after: [workRuined, artSchoolSaysNo]
+  tags: [art, helped]
+  within: 2
+
+- id: keepsMakingArt
+  label: Keeps making art
+  line: "{name} keeps making art at the kitchen table."
+  if: "{name} had kept making art"
+  kind: choice
+  ages: [17, 30]
+  after: [artSchoolSaysNo]
+  tags: [art, drawing]
+  within: 2
+
+- id: sportsPhotographer
+  label: Photographs sport
+  line: "{name} photographs matches for the local paper."
+  if: "{name} had photographed matches"
+  kind: choice
+  ages: [18, 60]
+  after: [photography]
+  needs: [sport]
+  tags: [art, job]
+
+- id: paintsLandscapes
+  label: Paints the countryside
+  line: "{name} paints the hills and fields near home."
+  if: "{name} had painted the countryside"
+  kind: choice
+  ages: [16, 80]
+  after: [outdoors]
+  tags: [art, painting]
+
+- id: opensGalleryShop
+  label: Opens a gallery shop
+  line: "{name} opens a small shop selling local art."
+  if: "{name} had opened a gallery shop"
+  kind: choice
+  ages: [25, 60]
+  after: [savings]
+  needs: [drawing]
+  tags: [art, owner, business, shop]
+
+- id: paintsStageSets
+  label: Paints stage sets
+  line: "{name} paints the scenery for stage shows."
+  if: "{name} had painted stage scenery"
+  kind: choice
+  ages: [18, 60]
+  after: [theatre]
+  tags: [art, job]
+
+- id: designsCostumes
+  label: Designs costumes
+  line: "{name} designs and sews costumes for the stage."
+  if: "{name} had designed costumes"
+  kind: choice
+  ages: [16, 60]
+  after: [sewing, theatre]
+  tags: [art, job]
+
+- id: designsWebsites
+  label: Designs websites
+  line: "{name} designs websites that are easy to read."
+  if: "{name} had designed websites"
+  kind: choice
+  ages: [18, 60]
+  after: [design, websites]
+  tags: [art, job]
+
+# Runs: art school a second time, a new route after a no, and a first show.
+# Their steps are listed in ../runs/art.yaml.
+
+- id: buildsNewPortfolio
+  label: Builds a new portfolio
+  line: "{name} joins a class to build a new portfolio with a teacher."
+  if: "{name} had built a new portfolio"
+  kind: choice
+  ages: [17, 27]
+  after: [artSchoolSaysNo]
+  tags: [art, drawing, study, helped]
+  within: 1
+
+- id: appliesAgain
+  label: Applies a second time
+  line: "{name} sends the new drawings to an art school."
+  if: "{name} had applied to art school a second time"
+  kind: choice
+  ages: [18, 28]
+  after: [buildsNewPortfolio]
+  tags: [art]
+  within: 1
+
+- id: artPlaceSecondTry
+  label: Art school says yes
+  line: "An art school offers {him} a place."
+  kind: event
+  ages: [18, 29]
+  after: [appliesAgain]
+  tags: [art, study]
+  within: 1
+  move: 2
+
+- id: eveningPrintClass
+  label: Takes a print class
+  line: "{name} takes an evening class in printmaking."
+  if: "{name} had taken a printmaking class"
+  kind: choice
+  ages: [17, 40]
+  after: [artSchoolSaysNo]
+  tags: [art, printmaking, study]
+  within: 1
+
+- id: plansFirstShow
+  label: Plans a first show
+  line: "{name} plans a first show and frames every piece."
+  if: "{name} had planned a first show"
+  kind: choice
+  ages: [15, 60]
+  after: [drawing, painting, crafts, photography]
+  unless: [workRuined]
+  tags: [art, show]
+  inRun: true
+
+- id: smallShowOpens
+  label: A library hangs a show
+  line: "The town library hangs a small show of the new work."
+  kind: event
+  ages: [15, 62]
+  after: [startsAgain]
+  tags: [art, show]
+  within: 1
+  move: 1
+
+- id: takesArtSubjects
+  label: Takes art and design
+  line: "{name} takes art and design as school subjects."
+  if: "{name} had taken art and design"
+  kind: choice
+  ages: [14, 18]
+  unless: [scienceSubjects, takesHumanities]
+  tags: [art, artSubjects]
+  weight: 0.5
+
+- id: studiesAtArtSchool
+  label: Studies at art school
+  line: "{name} studies illustration at art school."
+  if: "{name} had studied at art school"
+  kind: choice
+  ages: [17, 30]
+  after: [getsArtSchoolPlace, artPlaceSecondTry]
+  tags: [art, study, drawing]
+  within: 2
+  weight: 3
+
+- id: sellsPrintsAtFair
+  label: Sells prints at a fair
+  line: "{name} sells hand-printed cards and posters at a Saturday fair."
+  if: "{name} had sold prints at a fair"
+  kind: choice
+  ages: [18, 65]
+  after: [worksInPrintShop, smallShowOpens, studiesAtArtSchool]
+  tags: [art, money]
+  within: 3
+
+- id: fillsArtPortfolio
+  label: Fills a portfolio
+  line: "{name} fills a big folder with drawings and designs."
+  if: "{name} had filled a portfolio"
+  kind: choice
+  ages: [15, 19]
+  after: [artSubjects]
+  within: 2
+  tags: [art, drawing, portfolio]

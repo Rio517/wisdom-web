@@ -1,0 +1,77 @@
+# Nora: sport, an early peak at the academy, a knee injury at 17, help to
+# rebuild, and a long, happy road into coaching.
+# The schema is in ../README.md.
+
+id: nora
+name: Nora
+pronoun: she
+end: 41
+steps:
+  - { node: born, age: 0 }
+  - node: footballClub
+    age: 4
+    alts: [learnsToSwim, aDanceClass]
+  - node: schoolTeam
+    age: 9
+    alts: [triesClimbing, learnsToSkateboard]
+    echoes: [footballClub]
+  - node: trainsHard
+    age: 11
+    line: "{name} trains at dawn, four mornings a week."
+    alts: [takesUpRunning, kitchenExperiments]
+    echoes: [schoolTeam]
+  - node: scoutWatches
+    age: 13
+    line: "A scout watches her score. Luck!"
+    echoes: [trainsHard]
+  - node: youthAcademy
+    age: 14
+    alts: [captainsTheTeam, dramaClub]
+    echoes: [scoutWatches]
+  - node: winsRegionalMedal
+    age: 16
+    line: "She wins a medal at the regional games."
+    echoes: [trainsHard]
+  - node: squadTrials
+    age: 17
+    run: backFromInjury
+    alts: [captainsTheTeam, takesBreakFromSport]
+    echoes: [winsRegionalMedal, youthAcademy]
+  - node: kneeInjury
+    age: 17
+    run: backFromInjury
+  - node: restsAndRebuilds
+    age: 18
+    run: backFromInjury
+    line: "A physio helps her rebuild, one small exercise at a time."
+    move: 1
+  - node: playsWholeGame
+    age: 19
+    run: backFromInjury
+    line: "She plays a whole game for the squad, to the last whistle."
+    echoes: [restsAndRebuilds]
+  - node: coachKids
+    age: 20
+    alts: [physio, goesToUniversity]
+    echoes: [footballClub]
+  - node: coachingCourse
+    age: 23
+    alts: [becomesPersonalTrainer, shopAssistant]
+    echoes: [coachKids]
+  - node: coachesAClub
+    age: 27
+    move: 1
+    alts: [refereesMatches, joinsWeekendLeague]
+    echoes: [coachingCourse]
+  - node: becomesParent
+    age: 32
+  - node: trainsForMarathon
+    age: 35
+    line: "She trains for a marathon, slowly and carefully."
+    alts: [swimsEveryMorning, startsNewHobby]
+    echoes: [restsAndRebuilds]
+  - node: mentorsSomeone
+    age: 41
+    label: Guides a young player
+    line: "She helps a young player come back from a knee injury."
+    echoes: [kneeInjury, restsAndRebuilds]

@@ -1,0 +1,72 @@
+# Theo: caring, a parent's long illness at 10, nurse training, a mentor, a
+# hospital that closes, and a move for work: a life that starts hard.
+# The schema is in ../README.md.
+
+id: theo
+name: Theo
+pronoun: he
+end: 42
+steps:
+  - { node: born, age: 0 }
+  - node: familyHelpsNeighbours
+    age: 4
+    alts: [singsAtHome, oldComputerAtHome]
+  - node: parentIll
+    age: 10
+  - node: helpsAtHome
+    age: 11
+    alts: [asksTeacherForHelp, looksAfterYounger]
+  - node: firstAid
+    age: 12
+    alts: [roboticsClub, takesUpRunning]
+    echoes: [helpsAtHome]
+  - node: volunteerClinic
+    age: 14
+    alts: [paperRound, readsToYounger]
+    echoes: [firstAid]
+  - node: lastMinutePlace
+    age: 18
+    echoes: [volunteerClinic]
+  - node: nurseTraining
+    age: 19
+    alts: [studiesMedicine, paramedic]
+    echoes: [volunteerClinic, helpsAtHome]
+  - node: startsBusyWard
+    age: 21
+    run: busyWard
+    line: "He starts work on a busy hospital ward."
+    alts: [paramedic, careAssistant]
+    echoes: [nurseTraining]
+  - node: wardShortStaffed
+    age: 21
+    run: busyWard
+    line: "Too few staff, and the days run long."
+  - node: asksSeniorNurse
+    age: 22
+    run: busyWard
+    line: "He asks a senior nurse how to cope when it gets busy."
+    move: 1
+  - node: movesToOtherWard
+    age: 22
+    run: busyWard
+    line: "He moves to the children's ward, with a smaller team."
+    echoes: [asksSeniorNurse]
+  - node: midwife
+    age: 26
+    alts: [careAssistant, joinsMedicalResearch]
+    echoes: [movesToOtherWard]
+  - node: hospitalCloses
+    age: 30
+    move: -2
+  - node: moveForWork
+    age: 31
+    move: 1
+    alts: [joinsHomeCare]
+    echoes: [nurseTraining]
+  - node: careForAParent
+    age: 35
+    alts: [worksFewerHours, takesJobNearFamily]
+    echoes: [parentIll, helpsAtHome]
+  - node: teachesFirstAid
+    age: 42
+    echoes: [firstAid]

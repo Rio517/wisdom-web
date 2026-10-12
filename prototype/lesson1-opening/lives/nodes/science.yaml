@@ -1,0 +1,434 @@
+# Science and maths: puzzles, chess, clubs, experiments, study, research, data.
+# The schema and the rules are in ../README.md.
+
+- id: puzzlesAndBlocks
+  label: Does puzzles at home
+  line: "Puzzles and building blocks fill the floor at home."
+  if: "{his} family had filled the house with puzzles and blocks"
+  kind: choice
+  by: family
+  ages: [3, 7]
+  tags: [science, thinking, puzzles]
+
+- id: chessClub
+  label: Joins the chess club
+  line: "{name} joins the chess club and learns how each piece moves."
+  if: "{name} had joined the chess club"
+  kind: choice
+  ages: [7, 13]
+  tags: [science, chess, thinking, club]
+
+- id: mathsClub
+  label: Joins the maths club
+  line: "{name} joins a club to solve problems together."
+  if: "{name} had joined the maths club"
+  kind: choice
+  ages: [7, 12]
+  tags: [science, maths, club]
+
+- id: practisesTimesTables
+  label: Practises times tables
+  line: "{name} practises times tables on the bus."
+  if: "{name} had practised times tables"
+  kind: choice
+  ages: [7, 11]
+  tags: [science, maths]
+
+- id: mathsTutor
+  label: Gets a maths tutor
+  line: "{name} gets a maths tutor for the tricky parts."
+  if: "{name} had got a maths tutor"
+  kind: choice
+  ages: [8, 15]
+  tags: [science, maths, helped]
+
+- id: kitchenExperiments
+  label: Does home experiments
+  line: "{name} tests what floats, fizzes and melts at home."
+  if: "{name} had done experiments at home"
+  kind: choice
+  ages: [8, 14]
+  tags: [science, experiments]
+
+- id: looksAtStars
+  label: Looks at the stars
+  line: "{name} borrows a telescope and counts the stars."
+  if: "{name} had borrowed a telescope"
+  kind: choice
+  ages: [8, 14]
+  tags: [science, space, thinking]
+
+- id: mathsTournament
+  label: Enters a maths contest
+  line: "{name} enters a maths contest against other schools."
+  if: "{name} had entered a maths contest"
+  kind: choice
+  ages: [9, 15]
+  after: [maths, chess, puzzles]
+  tags: [science, tournament]
+
+- id: entersScienceFair
+  label: Enters a science fair
+  line: "{name} builds a project for the school science fair."
+  if: "{name} had entered the science fair"
+  kind: choice
+  ages: [9, 16]
+  after: [experiments, space]
+  tags: [science, tournament]
+
+- id: teacherSpotsTalent
+  label: A teacher lends books
+  line: "A teacher spots {his} work and offers extra books. Luck!"
+  kind: lucky
+  ages: [10, 17]
+  after: [tournament, maths, chess]
+  tags: [science]
+  move: 1
+
+- id: scienceSubjects
+  label: Takes the sciences
+  line: "{name} takes the science subjects."
+  if: "{name} had taken the science subjects"
+  kind: choice
+  ages: [14, 18]
+  after: [teacherSpotsTalent, tournament, experiments, maths]
+  unless: [takesArtSubjects, takesHumanities]
+  tags: [science, sciences]
+  weight: 2
+
+- id: scholarship
+  label: Wins a scholarship
+  line: "{name} wins a scholarship that pays for {his} studies."
+  kind: lucky
+  ages: [16, 20]
+  after: [sciences]
+  tags: [science]
+  move: 3
+  weight: 3
+
+- id: studyScience
+  label: Studies science
+  line: "{name} studies science at university."
+  if: "{name} had studied science at university"
+  kind: choice
+  ages: [17, 23]
+  after: [scholarship, sciences]
+  tags: [science, university, study]
+  weight: 2
+
+- id: studiesStatistics
+  label: Studies statistics
+  line: "{name} studies statistics, the maths of what is likely."
+  if: "{name} had studied statistics"
+  kind: choice
+  ages: [18, 40]
+  after: [maths, sciences]
+  tags: [science, data, study]
+
+- id: studiesPartTime
+  label: Studies part-time
+  line: "{name} studies part-time, in the evenings."
+  if: "{name} had studied part-time"
+  kind: choice
+  ages: [18, 46]
+  after: [parentIll, jobEnds, failsAnExam]
+  tags: [science, study]
+  within: 2
+
+- id: labTechnician
+  label: Works in a lab
+  line: "{name} takes a job in a laboratory, running tests."
+  if: "{name} had taken a job in a laboratory"
+  kind: choice
+  ages: [19, 60]
+  after: [sciences, experiments, studyScience]
+  tags: [science, lab, job]
+
+- id: joinsALab
+  label: Does research in a lab
+  line: "{name} joins a research lab and asks questions nobody has answered."
+  if: "{name} had joined a research lab"
+  kind: choice
+  ages: [21, 30]
+  after: [studyScience, studiesPartTime, studiesStatistics]
+  tags: [science, lab, research, job]
+  weight: 2
+
+- id: unkindSupervisor
+  label: Works for a harsh boss
+  line: "{his} boss is harsh and rarely says well done."
+  kind: setback
+  ages: [22, 45]
+  after: [research, lab]
+  tags: [science]
+  move: -2
+  weight: 2
+
+- id: leavesResearch
+  label: Leaves the lab
+  line: "{name} decides to leave the lab and try something else."
+  if: "{name} had left the lab"
+  kind: choice
+  ages: [22, 46]
+  after: [unkindSupervisor, lab]
+  tags: [science]
+  drops: [lab, research]
+
+- id: newSupervisor
+  label: Asks to change teams
+  line: "{name} asks to move to a kinder team."
+  if: "{name} had asked to change teams"
+  kind: choice
+  ages: [22, 46]
+  after: [unkindSupervisor]
+  tags: [science, helped]
+  within: 2
+
+- id: samplesLost
+  label: A freezer breaks down
+  line: "A broken freezer spoils a year of samples."
+  kind: setback
+  ages: [22, 50]
+  after: [lab]
+  tags: [science]
+  move: -2
+
+- id: repeatsTheWork
+  label: Starts the work again
+  line: "{name} starts the work again, step by step."
+  if: "{name} had started the work again"
+  kind: choice
+  ages: [22, 55]
+  after: [samplesLost]
+  tags: [science]
+  within: 2
+
+- id: discovery
+  label: Makes a discovery
+  line: "{his} team discovers something new. Luck and hard work!"
+  kind: lucky
+  ages: [24, 50]
+  after: [research, newSupervisor, lab]
+  tags: [science]
+  within: 3
+  move: 2
+  weight: 2
+
+- id: writesAPaper
+  label: Writes up the results
+  line: "{name} writes up the results for other scientists."
+  if: "{name} had written up the results"
+  kind: choice
+  ages: [24, 60]
+  after: [research, lab]
+  tags: [science, paper]
+
+- id: teachesScience
+  label: Teaches science
+  line: "{name} teaches science at a school."
+  if: "{name} had taught science at a school"
+  kind: choice
+  ages: [22, 60]
+  after: [leavesResearch, studyScience]
+  tags: [science, teaching, job]
+
+- id: worksWithData
+  label: Works with data
+  line: "{name} finds work with numbers and computers."
+  if: "{name} had found work with data"
+  kind: choice
+  ages: [22, 60]
+  after: [leavesResearch, studyScience, studiesStatistics, code]
+  tags: [science, data, job]
+
+- id: supervisesStudents
+  label: Guides students
+  line: "{name} guides a group of students through their first projects."
+  if: "{name} had guided young scientists"
+  kind: choice
+  ages: [28, 60]
+  after: [research, lab]
+  tags: [science, teaching, job]
+
+- id: measuresRiverWater
+  label: Tests river water
+  line: "{name} tests river water for the council."
+  if: "{name} had tested river water for the council"
+  kind: choice
+  ages: [22, 60]
+  after: [lab, sciences, research]
+  tags: [science, environment]
+
+- id: crunchesForCharity
+  label: Does a charity's sums
+  line: "{name} helps a charity make sense of its numbers."
+  if: "{name} had helped a charity with its numbers"
+  kind: choice
+  ages: [25, 60]
+  after: [data]
+  tags: [science, community]
+
+- id: runsMathsClub
+  label: Runs a maths club
+  line: "{name} runs a Saturday maths club for children."
+  if: "{name} had run a maths club"
+  kind: choice
+  ages: [25, 60]
+  after: [maths, data]
+  tags: [science, teaching, community]
+
+- id: solvesPuzzlesForFun
+  label: Does puzzles for fun
+  line: "{name} solves puzzles on the train every morning."
+  if: "{name} had solved puzzles for fun"
+  kind: choice
+  ages: [20, 70]
+  tags: [thinking, puzzles]
+
+- id: joinsMedicalResearch
+  label: Joins medical research
+  line: "{name} joins a team studying how to help patients."
+  if: "{name} had joined a medical research team"
+  kind: choice
+  ages: [26, 60]
+  after: [nurse, doctor]
+  tags: [science, research, lab]
+
+# Runs: an exam, retaken with a classmate's help (a win).
+
+- id: sitsBigExams
+  label: Sits the big exams
+  line: "{name} sits the big school exams in the sciences."
+  if: "{name} had sat the big exams"
+  kind: choice
+  ages: [16, 22]
+  after: [science]
+  tags: [science, study]
+  inRun: true
+
+- id: worksWithClassmate
+  label: Works with a classmate
+  line: "{name} and a classmate go through the hard parts together."
+  if: "{name} had worked through the hard parts with a classmate"
+  kind: choice
+  ages: [15, 25]
+  after: [failsAnExam]
+  tags: [science, helped]
+  within: 1
+
+- id: passesTheExam
+  label: Passes the exam
+  line: "The results come in, and {name} has passed."
+  kind: event
+  ages: [16, 31]
+  after: [retakesTheExam]
+  tags: [science]
+  within: 1
+  move: 1
+
+# Runs: an advanced course, a failed exam, and a new course (a change of course).
+
+- id: takesAdvancedMaths
+  label: Takes advanced maths
+  line: "{name} signs up for an advanced maths course."
+  if: "{name} had taken advanced maths"
+  kind: choice
+  ages: [16, 24]
+  after: [science]
+  tags: [science, maths, study]
+  inRun: true
+
+- id: asksTutorForIdeas
+  label: Asks a tutor for ideas
+  line: "{name} asks a tutor about other courses to try."
+  if: "{name} had asked a tutor about other courses"
+  kind: choice
+  ages: [15, 30]
+  after: [failsAnExam]
+  tags: [science, helped]
+  within: 1
+
+# Runs: a new experiment, a failed try, a new method, a partial answer.
+
+- id: triesNewExperiment
+  label: Tests a new idea
+  line: "{name} sets up an experiment to test a new idea."
+  if: "{name} had set up a new experiment"
+  kind: choice
+  ages: [14, 55]
+  after: [science]
+  tags: [science, experiments]
+  inRun: true
+
+- id: experimentFails
+  label: The experiment fails
+  line: "The experiment fails. The results will not repeat."
+  kind: setback
+  ages: [14, 56]
+  after: [experiments]
+  tags: [science]
+  within: 1
+  move: -1
+  weight: 0.6
+
+- id: changesMethod
+  label: Changes the method
+  line: "{name} changes the method and tries a smaller test."
+  if: "{name} had changed the method"
+  kind: choice
+  ages: [14, 56]
+  after: [experimentFails]
+  tags: [science]
+  within: 1
+
+- id: partialAnswer
+  label: A partial answer
+  line: "One part of the answer is clear. The rest stays open."
+  kind: event
+  ages: [14, 60]
+  after: [changesMethod]
+  tags: [science]
+  within: 1
+  move: 1
+
+# Runs: a lab application, a no, advice, and a new position (a change of course).
+
+- id: appliesToLab
+  label: Applies to a lab
+  line: "{name} applies for a place in a research lab."
+  if: "{name} had applied to a research lab"
+  kind: choice
+  ages: [20, 50]
+  after: [science]
+  unless: [lab, research]
+  tags: [science, labApplication]
+  inRun: true
+
+- id: labSaysNo
+  label: The lab says no
+  line: "The lab writes back: no places this year."
+  kind: setback
+  ages: [20, 52]
+  after: [labApplication]
+  tags: [science]
+  within: 1
+  move: -1
+
+- id: asksScientistAdvice
+  label: Asks a scientist
+  line: "{name} asks a scientist how else to work with science."
+  if: "{name} had asked a scientist for advice"
+  kind: choice
+  ages: [20, 52]
+  after: [labSaysNo]
+  tags: [science, helped]
+  within: 1
+
+- id: takesSchoolLabJob
+  label: Sets up school labs
+  line: "{name} takes a job setting up experiments at a school."
+  if: "{name} had taken a school science job"
+  kind: choice
+  ages: [20, 62]
+  after: [asksScientistAdvice, university, sciences]
+  tags: [science, job]

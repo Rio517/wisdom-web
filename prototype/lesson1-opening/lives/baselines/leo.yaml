@@ -1,0 +1,66 @@
+# Leo: stage, a lucky part in a show, an ankle injury, teaching, a youth
+# theatre that loses its hall, and a life that goes up and down twice.
+# The schema is in ../README.md.
+
+id: leo
+name: Leo
+pronoun: he
+end: 41
+steps:
+  - { node: born, age: 0 }
+  - node: aDanceClass
+    age: 4
+    alts: [singsAtHome, learnsToSwim]
+  - node: schoolPlay
+    age: 9
+    alts: [puppetShows, bakesAtHome]
+    echoes: [aDanceClass]
+  - node: dramaClub
+    age: 12
+    alts: [filmsOnPhone, takesUpRunning]
+    echoes: [schoolPlay]
+  - node: partInAShow
+    age: 15
+    line: "A theatre offers {him} a dancing part in a show. Luck!"
+    echoes: [aDanceClass, dramaClub]
+  - node: triesForDanceCompany
+    age: 18
+    run: danceToTeaching
+    alts: [dramaSchool, joinsTouringShow]
+    echoes: [aDanceClass, partInAShow]
+  - node: ankleInjury
+    age: 18
+    run: danceToTeaching
+  - node: gentleDanceClass
+    age: 19
+    run: danceToTeaching
+    move: 1
+    echoes: [aDanceClass]
+  - node: teachesDance
+    age: 20
+    run: danceToTeaching
+    line: "{name} teaches children to move on Saturday mornings."
+    alts: [runsDramaWorkshops, switchesToActing, choreographs]
+    echoes: [gentleDanceClass]
+  - node: startsYouthTheatre
+    age: 25
+    line: "{name} starts a youth theatre for the town's young actors."
+    move: 1
+    alts: [voiceActing, worksBackstage]
+    echoes: [teachesDance, dramaClub]
+  - node: becomesParent
+    age: 29
+  - node: fundingEnds
+    age: 32
+    line: "The money runs out, and the youth theatre loses its hall."
+  - node: asksShopsForHelp
+    age: 33
+    move: 1
+    alts: [movesToSchoolHall, localTheatreGroup]
+  - node: directsAPlay
+    age: 36
+    line: "Grown-up pupils of the youth theatre star in a play he directs."
+    echoes: [startsYouthTheatre]
+  - node: runsDramaWorkshops
+    age: 41
+    echoes: [schoolPlay]

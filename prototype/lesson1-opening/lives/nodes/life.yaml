@@ -1,0 +1,781 @@
+# Life: being born, family, home, friends, health, work changes, help, and the
+# luck and hard times that can come to anyone, whatever they do.
+# The schema and the rules are in ../README.md.
+
+- id: born
+  label: Born
+  line: "{name} is born."
+  kind: start
+  ages: [0, 0]
+
+- id: nurseryWithFriends
+  label: Goes to nursery
+  line: "{name} goes to nursery and plays with other children."
+  if: "{his} family had picked nursery"
+  kind: choice
+  by: family
+  ages: [3, 6]
+  weight: 0.6
+
+- id: timeWithGrandparents
+  label: Grandparents help out
+  line: "{his} grandparents look after {him} most afternoons."
+  if: "{his} grandparents had looked after {him} most days"
+  kind: choice
+  by: family
+  ages: [3, 8]
+  weight: 0.6
+
+- id: newSibling
+  label: A new baby arrives
+  line: "A baby brother or sister arrives for {name}."
+  kind: event
+  ages: [3, 15]
+  unless: [sibling]
+  tags: [sibling]
+  weight: 0.5
+
+- id: familyMoves
+  label: The family moves
+  line: "The family moves to a new house in a new town."
+  kind: event
+  ages: [4, 16]
+  tags: [moved]
+  weight: 0.5
+
+- id: newSchool
+  label: Starts a new school
+  line: "{name} starts at a new school where nobody knows {him}."
+  kind: event
+  ages: [5, 17]
+  after: [familyMoves]
+  tags: [newcomer]
+  within: 2
+
+- id: makesNewFriends
+  label: Makes new friends
+  line: "{name} sits with someone new at lunch."
+  if: "{name} had sat with someone new at lunch"
+  kind: choice
+  ages: [5, 17]
+  after: [newSchool, bestFriendMoves, fallsOutWithFriend, lonelyInNewPlace]
+  tags: [friends]
+  within: 2
+
+- id: bestFriendMoves
+  label: Best friend moves away
+  line: "{his} best friend moves far away."
+  kind: setback
+  ages: [7, 30]
+  move: -1
+  weight: 0.5
+
+- id: asksTeacherForHelp
+  label: Gets a teacher's help
+  line: "{name} asks a teacher for help."
+  if: "{name} had asked a teacher for help"
+  kind: choice
+  ages: [8, 18]
+  after: [setback]
+  tags: [helped]
+  within: 2
+
+- id: giftedProgramme
+  label: Tries for a programme
+  line: "{name} applies for a special school programme."
+  if: "{name} had applied for a special programme"
+  kind: choice
+  ages: [10, 15]
+  tags: [school]
+  weight: 0.6
+
+- id: studiesHardForExams
+  label: Studies hard for exams
+  line: "{name} studies hard for the big exams."
+  if: "{name} had studied hard for the exams"
+  kind: choice
+  ages: [14, 19]
+  tags: [exams, school]
+
+- id: failsAnExam
+  label: Fails a big exam
+  line: "{name} fails a big exam. It hurts."
+  kind: setback
+  ages: [15, 22]
+  after: [exams, study]
+  tags: [exams]
+  within: 2
+  move: -2
+  weight: 0.7
+
+- id: retakesTheExam
+  label: Takes the exam again
+  line: "{name} tries a new way to study and sits the exam again."
+  if: "{name} had taken the exam again"
+  kind: choice
+  ages: [16, 30]
+  after: [failsAnExam]
+  within: 2
+
+- id: changesCourse
+  label: Changes course
+  line: "{name} switches to a different course."
+  if: "{name} had changed course"
+  kind: choice
+  ages: [16, 26]
+  after: [failsAnExam]
+  tags: [study]
+  within: 2
+
+- id: takesAYearOff
+  label: Takes a year off
+  line: "{name} takes a year off to rest and think."
+  if: "{name} had taken a year off"
+  kind: choice
+  ages: [18, 60]
+  unless: [yearOff]
+  tags: [yearOff]
+  weight: 0.5
+
+- id: learnsToDrive
+  label: Learns to drive
+  line: "{name} learns to drive."
+  if: "{name} had learned to drive"
+  kind: choice
+  ages: [16, 30]
+  unless: [driving]
+  tags: [driving]
+  weight: 0.6
+
+- id: goesToUniversity
+  label: Goes to university
+  line: "{name} goes to university."
+  if: "{name} had gone to university"
+  kind: choice
+  ages: [17, 24]
+  tags: [university, study]
+
+- id: startsWorking
+  label: Starts working
+  line: "{name} starts a full-time job."
+  if: "{name} had started working"
+  kind: choice
+  ages: [16, 30]
+  unless: [workMove]
+  tags: [job, workMove]
+
+- id: travelsForAYear
+  label: Travels for a year
+  line: "{name} travels for a year with one small backpack."
+  if: "{name} had travelled for a year"
+  kind: choice
+  ages: [18, 30]
+  tags: [travel]
+  weight: 0.6
+
+- id: movesToNewCity
+  label: Moves to a new city
+  line: "{name} moves to a new city for a fresh start."
+  if: "{name} had moved to a new city"
+  kind: choice
+  ages: [18, 50]
+  tags: [moved]
+  weight: 0.7
+
+- id: worksAndStudies
+  label: Works and studies
+  line: "{name} works by day and studies in the evenings."
+  if: "{name} had worked and studied part-time"
+  kind: choice
+  ages: [18, 45]
+  tags: [study, job]
+
+- id: staysNearFamily
+  label: Stays near family
+  line: "{name} turns down a job far away to stay close to family."
+  if: "{name} had stayed near family"
+  kind: choice
+  ages: [18, 35]
+  tags: [home]
+  weight: 0.6
+
+- id: changesCareers
+  label: Changes careers
+  line: "{name} leaves {his} job to train for a new one."
+  if: "{name} had changed careers"
+  kind: choice
+  ages: [24, 55]
+  after: [job]
+  unless: [workMove]
+  tags: [job, workMove]
+  within: 3
+
+- id: startsAFamily
+  label: Starts a family
+  line: "{name} starts a family."
+  if: "{name} had started a family"
+  kind: choice
+  ages: [22, 44]
+  unless: [parent]
+  tags: [parent]
+  weight: 0.8
+
+- id: becomesParent
+  label: Becomes a parent
+  line: "{name} becomes a parent."
+  kind: event
+  ages: [22, 44]
+  unless: [parent]
+  tags: [parent]
+
+- id: goesBackToStudy
+  label: Goes back to study
+  line: "{name} goes back to study after years of working."
+  if: "{name} had gone back to study"
+  kind: choice
+  ages: [25, 60]
+  after: [job]
+  unless: [workMove]
+  tags: [study, workMove]
+  within: 3
+
+- id: takesBigProject
+  label: Takes on a big project
+  line: "{name} takes on a big project at work."
+  if: "{name} had taken on a big project"
+  kind: choice
+  ages: [24, 55]
+  after: [job]
+  unless: [workMove]
+  tags: [workMove]
+  within: 3
+  weight: 0.7
+
+- id: takesJobNearFamily
+  label: Takes a job nearby
+  line: "{name} takes a job in the town where {his} family lives."
+  if: "{name} had taken a job closer to family"
+  kind: choice
+  ages: [24, 55]
+  after: [job]
+  unless: [workMove]
+  tags: [home, job, workMove]
+  within: 3
+  weight: 0.6
+
+- id: leadsATeam
+  label: Leads a team
+  line: "{name} steps up to lead a team at work."
+  if: "{name} had led a team"
+  kind: choice
+  ages: [26, 60]
+  after: [job]
+  unless: [workMove]
+  tags: [workMove]
+  within: 3
+  weight: 0.7
+
+- id: worksFewerHours
+  label: Works fewer hours
+  line: "{name} works fewer hours, for more time to rest and enjoy life."
+  if: "{name} had worked fewer hours"
+  kind: choice
+  ages: [28, 65]
+  after: [job]
+  unless: [workMove]
+  tags: [workMove]
+  within: 3
+  weight: 0.6
+
+- id: learnsSomethingNew
+  label: Learns something new
+  line: "{name} signs up for a class in something brand new."
+  if: "{name} had learned something new"
+  kind: choice
+  ages: [22, 70]
+  weight: 0.7
+
+- id: startsNewHobby
+  label: Starts pottery
+  line: "{name} starts making pottery on Sunday afternoons."
+  if: "{name} had started pottery"
+  kind: choice
+  ages: [20, 70]
+  weight: 0.6
+
+- id: bigTrip
+  label: Goes on a big trip
+  line: "{name} saves up and goes on a big trip."
+  if: "{name} had gone on a big trip"
+  kind: choice
+  ages: [20, 80]
+  tags: [travel]
+  weight: 0.5
+
+- id: friendInvites
+  label: A friend invites {him}
+  line: "A friend invites {him} to try something new. Luck!"
+  kind: lucky
+  ages: [7, 16]
+  move: 1
+  weight: 0.7
+
+- id: friendForLife
+  label: Meets a true friend
+  line: "{name} meets a friend for life."
+  kind: lucky
+  ages: [9, 60]
+  move: 1
+  weight: 0.25
+- id: teacherNotices
+  label: A teacher sees talent
+  line: "A teacher notices what {name} is good at."
+  kind: lucky
+  ages: [8, 18]
+  move: 1
+  weight: 0.7
+
+- id: oldFriendJob
+  label: A friend offers a job
+  line: "An old friend offers {him} a job."
+  kind: lucky
+  ages: [25, 60]
+  after: [job]
+  unless: [workMove]
+  tags: [job, workMove]
+  move: 2
+  weight: 0.4
+
+- id: mentorAppears
+  label: A mentor appears
+  line: "A kind colleague takes {him} under his wing."
+  kind: lucky
+  ages: [20, 55]
+  after: [job]
+  tags: [mentor]
+  move: 1
+  weight: 0.3
+
+- id: helpfulNeighbour
+  label: A neighbour helps
+  line: "A neighbour helps out just when {name} needs it."
+  kind: lucky
+  ages: [5, 70]
+  after: [setback]
+  within: 1
+  move: 1
+  weight: 0.3
+
+- id: relativeLends
+  label: A relative helps out
+  line: "A relative lends {him} money for a fresh start."
+  kind: lucky
+  ages: [18, 50]
+  after: [setback]
+  within: 2
+  move: 1
+  weight: 0.12
+
+- id: illForMonths
+  label: Falls ill for months
+  line: "{name} falls ill and takes months to get better."
+  kind: setback
+  ages: [10, 60]
+  tags: [illness]
+  move: -2
+  weight: 0.4
+
+- id: slowReturn
+  label: Takes it slowly
+  line: "{name} rests and builds back up a little each day."
+  if: "{name} had rested and built back up slowly"
+  kind: choice
+  ages: [7, 62]
+  after: [illForMonths, breaksAnArm]
+  within: 1
+
+- id: jobEnds
+  label: The job ends
+  line: "{his} job ends suddenly."
+  kind: setback
+  ages: [26, 60]
+  after: [job]
+  move: -3
+  weight: 0.35
+
+- id: retrain
+  label: Learns a new trade
+  line: "{name} learns a new trade as a beginner."
+  if: "{name} had learned a new trade"
+  kind: choice
+  ages: [26, 62]
+  after: [jobEnds]
+  tags: [job, study]
+  within: 2
+
+- id: moneyGetsTight
+  label: Money gets tight
+  line: "Money gets tight at home."
+  kind: setback
+  ages: [8, 60]
+  move: -1
+  weight: 0.4
+
+- id: flatSold
+  label: Has to move out
+  line: "The landlord sells the flat, and {name} must move out."
+  kind: setback
+  ages: [20, 60]
+  move: -2
+  weight: 0.4
+
+- id: sharesAHome
+  label: Shares a home
+  line: "{name} moves in with friends to share the costs."
+  if: "{name} had moved in with friends"
+  kind: choice
+  ages: [18, 45]
+  after: [flatSold, moneyGetsTight, jobEnds]
+  tags: [home]
+  within: 2
+
+- id: asksForHelp
+  label: Asks for help
+  line: "{name} asks a friend for help."
+  if: "{name} had asked for help"
+  kind: choice
+  ages: [12, 70]
+  after: [setback]
+  tags: [helped]
+  within: 2
+
+- id: movesHome
+  label: Moves back home
+  line: "{name} moves back in with {his} family."
+  if: "{name} had moved back home"
+  kind: choice
+  ages: [18, 30]
+  after: [moneyGetsTight, flatSold, jobEnds, labelDropsHim]
+  tags: [home]
+  within: 2
+
+- id: officeJob
+  label: Takes an office job
+  line: "{name} takes an office job, with a desk by the window."
+  if: "{name} had taken an office job"
+  kind: choice
+  ages: [18, 60]
+  tags: [job, office]
+
+- id: quitsAClub
+  label: Quits a club
+  line: "{name} gives up a club to make time for friends and homework."
+  if: "{name} had quit a club"
+  kind: choice
+  ages: [10, 16]
+  after: [club, team]
+  drops: [club, team]
+  weight: 0.3
+
+- id: keepsInTouch
+  label: Keeps in touch
+  line: "{name} writes to {his} faraway friend every week."
+  if: "{name} had kept in touch with a faraway friend"
+  kind: choice
+  ages: [7, 30]
+  after: [bestFriendMoves]
+  within: 2
+
+- id: catchesUp
+  label: Catches up with help
+  line: "Friends help {him} catch up on everything missed."
+  if: "{name} had caught up with help from friends"
+  kind: choice
+  ages: [7, 60]
+  after: [illForMonths, breaksAnArm]
+  tags: [helped]
+  within: 1
+
+- id: findsCheaperPlace
+  label: Finds a cheaper place
+  line: "{name} finds a smaller, cheaper place to live."
+  if: "{name} had found a cheaper place to live"
+  kind: choice
+  ages: [18, 60]
+  after: [flatSold, moneyGetsTight]
+  tags: [home]
+  within: 2
+
+# Everyday luck and setbacks that can come to anyone. More of them keeps any
+# one from turning up in every grown life.
+
+- id: winsCoursePlace
+  label: Wins a course place
+  line: "{name} wins a free place on an evening course. Luck!"
+  kind: lucky
+  ages: [20, 60]
+  tags: [study]
+  move: 1
+  weight: 0.15
+
+- id: breaksAnArm
+  label: Breaks an arm
+  line: "{name} breaks an arm and spends six weeks in a cast."
+  kind: setback
+  ages: [6, 60]
+  tags: [injury]
+  move: -1
+  weight: 0.4
+
+- id: fallsOutWithFriend
+  label: Has a big falling-out
+  line: "{name} and {his} best friend fall out for a whole year."
+  kind: setback
+  ages: [9, 25]
+  move: -1
+  weight: 0.5
+
+- id: saysSorryFirst
+  label: Says sorry first
+  line: "{name} says sorry first and asks to start again."
+  if: "{name} had said sorry first"
+  kind: choice
+  ages: [10, 27]
+  after: [fallsOutWithFriend]
+  tags: [friends]
+  within: 2
+
+- id: lonelyInNewPlace
+  label: "Misses {his} old home"
+  line: "{name} misses {his} old home and feels lonely for a while."
+  kind: setback
+  ages: [8, 60]
+  after: [moved]
+  move: -1
+  within: 2
+
+- id: pipeBursts
+  label: A pipe bursts
+  line: "A pipe bursts in the night and floods {his} kitchen."
+  kind: setback
+  ages: [20, 70]
+  move: -1
+  weight: 0.4
+
+- id: carBreaksDown
+  label: The car gives up
+  line: "The old car breaks down for good, far from home."
+  kind: setback
+  ages: [18, 70]
+  after: [driving]
+  move: -1
+  weight: 0.6
+
+# Runs any life can reach: looking for work, learning to drive, finding a home.
+
+- id: looksForAJob
+  label: Looks for a job
+  line: "{name} starts looking for a job."
+  if: "{name} had started looking for a job"
+  kind: choice
+  ages: [16, 55]
+  tags: [jobSearch]
+  weight: 0.6
+  inRun: true
+
+- id: applicationsTurnedDown
+  label: Hears no, again
+  line: "Several employers write back to say they have found someone else."
+  kind: setback
+  ages: [16, 56]
+  after: [looksForAJob]
+  tags: [rejected]
+  within: 1
+  move: -1
+
+- id: friendReadsApplications
+  label: A friend reads them
+  line: "A friend reads {his} applications and suggests changes."
+  if: "{name} had asked a friend to read the applications"
+  kind: choice
+  ages: [16, 56]
+  after: [applicationsTurnedDown]
+  tags: [helped]
+  within: 1
+
+- id: getsTheJob
+  label: Is offered a job
+  line: "An employer offers {him} a job, and {name} says yes."
+  kind: event
+  ages: [16, 57]
+  after: [friendReadsApplications]
+  tags: [job, hired]
+  within: 1
+  move: 2
+
+- id: startsDrivingLessons
+  label: Starts driving lessons
+  line: "{name} books a first block of driving lessons."
+  if: "{name} had started driving lessons"
+  kind: choice
+  ages: [16, 60]
+  unless: [driving]
+  tags: [lessons]
+  weight: 0.6
+  inRun: true
+
+- id: failsDrivingTest
+  label: Misses the pass mark
+  line: "{name} misses the pass mark on the driving test."
+  kind: setback
+  ages: [16, 61]
+  after: [startsDrivingLessons]
+  tags: [testMissed]
+  within: 1
+  move: -1
+
+- id: moreDrivingLessons
+  label: Books more lessons
+  line: "{name} books more lessons and practises with a relative."
+  if: "{name} had booked more driving lessons"
+  kind: choice
+  ages: [16, 61]
+  after: [failsDrivingTest]
+  tags: [lessons]
+  within: 1
+
+- id: passesDrivingTest
+  label: Passes the test
+  line: "{name} passes the driving test on the second try."
+  kind: event
+  ages: [16, 62]
+  after: [moreDrivingLessons]
+  tags: [driving]
+  within: 1
+  move: 2
+
+- id: appliesForAFlat
+  label: Applies for a flat
+  line: "{name} applies for a flat in a lively street."
+  if: "{name} had applied for a flat"
+  kind: choice
+  ages: [18, 50]
+  tags: [flatSearch]
+  weight: 0.6
+  inRun: true
+
+- id: flatFallsThrough
+  label: The flat is gone
+  line: "The owner gives the flat to someone who asked first."
+  kind: setback
+  ages: [18, 51]
+  after: [appliesForAFlat]
+  tags: [flatLost]
+  within: 1
+  move: -1
+
+- id: staysWithFriend
+  label: Moves in with a friend
+  line: "{name} moves in with a friend for a while."
+  if: "{name} had moved in with a friend"
+  kind: choice
+  ages: [18, 51]
+  after: [flatFallsThrough]
+  tags: [home, helped]
+  within: 1
+
+- id: findsSmallerPlace
+  label: Finds a small place
+  line: "{name} finds a small place of {his} own."
+  if: "{name} had found a small place"
+  kind: choice
+  ages: [18, 52]
+  after: [staysWithFriend]
+  tags: [home]
+  within: 1
+
+# Follow-ups for early picks and for exams.
+- id: passesTheExams
+  label: Passes the big exams
+  line: "{name} passes the big exams."
+  kind: event
+  ages: [15, 20]
+  after: [studiesHardForExams]
+  tags: [exams, passed]
+  within: 1
+  move: 1
+
+- id: takesCollegePlace
+  label: Takes a college place
+  line: "{name} takes a place on a college course."
+  if: "{name} had taken a place on a college course"
+  kind: choice
+  ages: [16, 21]
+  after: [passesTheExams]
+  tags: [study, college]
+  within: 2
+
+- id: grandparentStories
+  label: Hears family stories
+  line: "{his} grandparents tell {him} stories of when they were young."
+  if: "{his} grandparents had told {him} stories"
+  kind: choice
+  by: family
+  ages: [4, 10]
+  after: [timeWithGrandparents]
+  tags: [family, stories]
+
+- id: friendMusicShopJob
+  label: Job at a music shop
+  line: "An old friend offers {him} a job at a music shop."
+  kind: lucky
+  ages: [25, 60]
+  after: [music]
+  unless: [workMove]
+  tags: [job, workMove]
+  move: 2
+  weight: 0.6
+
+- id: friendBakeryJob
+  label: Job at a bakery
+  line: "An old friend offers {him} a job at a bakery."
+  kind: lucky
+  ages: [25, 60]
+  after: [food]
+  unless: [workMove]
+  tags: [job, workMove]
+  move: 2
+  weight: 0.6
+
+- id: friendWorkshopJob
+  label: Job in a workshop
+  line: "An old friend offers {him} a job in a workshop."
+  kind: lucky
+  ages: [25, 60]
+  after: [making]
+  unless: [workMove]
+  tags: [job, workMove]
+  move: 2
+  weight: 0.6
+
+- id: friendStudioJob
+  label: Job at a design studio
+  line: "An old friend offers {him} a job at a design studio."
+  kind: lucky
+  ages: [25, 60]
+  after: [art]
+  unless: [workMove]
+  tags: [job, workMove]
+  move: 2
+  weight: 0.6
+
+- id: friendGardenJob
+  label: Job at a plant nursery
+  line: "An old friend offers {him} a job at a plant nursery."
+  kind: lucky
+  ages: [25, 60]
+  after: [nature]
+  unless: [workMove]
+  tags: [job, workMove]
+  move: 2
+  weight: 0.6
