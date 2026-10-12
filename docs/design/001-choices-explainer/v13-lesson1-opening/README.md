@@ -63,7 +63,12 @@ The owner asked for language that is easy to understand and does not read like m
 
 **Checks** (Chromium, the build preview; seven sizes: 1280×800, 1440×900, 1920×1080, 2560×1440, 744×1133, 1133×744, 990×800):
 
-(Sweep results are added with the record shots.)
+- `npm test` 277 pass; `lives:check` 0 errors, 0 warnings in en, de, fr, es; build OK.
+- Story (English and German, 280 runs each: ten lives × seven sizes × normal, quick and two reduced-motion passes): English 279/280 and German 273/280 in the run that shared the machine with the what-if sweep; the German misses were all at 1920×1080, fixed by refitting when a late font arrives (038548d), after which German at 1920×1080 and 2560×1440 is 80/80. "Choices add up": 69/70 in each, the one miss a chip on a dot at 1440×900 under load (seen before; clean when run alone).
+- Labels (210 lives × sizes, written and changed, per language): 0 missing, overlapping, cut or under the card in all four languages, and again with the labels 8% wider (`--label-wider 8`).
+- What-if (the new check, 490 finished what-ifs per language): at 31e25e8, 0 with the newest row or the note out of view, not at rest, or buttons over two rows, in all four languages; scrolling only at 1133×744 (German 20, French 6), never at 1440×900, 1280×800 or 1920×1080. On the build of 038548d (German, English, French; Spanish didn't run before the time limit): the same, the dots at least 12 px from Back everywhere; the circle-gap check flags every 744×1133 row, where the list runs in two columns and it compares a row with the top of the next column (a fault of the check, not the page: compare only rows in one column).
+- Cover: the page is never wider than the window, through the move to the story (1440×900, 1133×744, 990×800, 744×1133).
+- WebKit (the lead, on a Mac): story 280/280, adds 70/70, labels 210/210 in English and German at 024b819; the what-if check at 31e25e8 found Theo's 18-row life at 1133×744 short by a few px (fixed in 7d70fcc).
 
 | Moment | 1440×900 | 744×1133 |
 | --- | --- | --- |
