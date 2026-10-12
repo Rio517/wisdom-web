@@ -206,6 +206,10 @@ function renderNarration(item, { animate }) {
   body.scrollTop = 0;
 }
 
+// Beside Back and Next in one row (a what-if, a short screen) the dots may not all fit: then none show.
+const beatDots = $('#beat-dots');
+new ResizeObserver(() => beatDots.classList.toggle('is-crowded', beatDots.scrollWidth > beatDots.clientWidth + 1)).observe(beatDots);
+
 function renderControls(item) {
   const { chapter, beatIndex } = item;
   $('#beat-dots').innerHTML = chapter.beats.map((beat, position) => {

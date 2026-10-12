@@ -83,14 +83,21 @@ h1, h2, h3, h4 { font-family: var(--font-field); font-weight: 500; }
 .beat-dots button[data-seen="true"]:not([aria-current])::after { background: var(--color-sage); }
 .nav-buttons { @apply flex items-center justify-between gap-3; }
 /* Dots beside Back and Next in one row (a what-if, a short screen): the dots give way first, closing
-   up and then dropping off the end, so they never run under the Back label. */
+   up; if they still do not all fit, none show (is-crowded, journey.js: part of a set would mislead),
+   so they never run under the Back label. The key hint keeps the full width under them. */
+.beat-dots.is-crowded { visibility: hidden; }
+.narration-controls .key-hint { grid-column: 1 / -1; }
 @media (min-width: 990px) {
   .narration:has(> .narration-body.whatif) .beat-dots { min-width: 0; overflow: hidden; gap: 4px; }
-  .narration:has(> .narration-body.whatif) .beat-dots button { flex: 0 1 26px; min-width: 14px; }
+  .narration:has(> .narration-body.whatif) .beat-dots li { flex: 0 1 26px; min-width: 14px; }
+  .narration:has(> .narration-body.whatif) .beat-dots li:has([aria-current]) { min-width: 22px; }
+  .narration:has(> .narration-body.whatif) .beat-dots button { width: 100%; }
 }
 @media (min-width: 990px) and (max-height: 820px) {
   .narration:has(> .narration-body[data-beat="life"]) .beat-dots { min-width: 0; overflow: hidden; gap: 4px; }
-  .narration:has(> .narration-body[data-beat="life"]) .beat-dots button { flex: 0 1 26px; min-width: 14px; }
+  .narration:has(> .narration-body[data-beat="life"]) .beat-dots li { flex: 0 1 26px; min-width: 14px; }
+  .narration:has(> .narration-body[data-beat="life"]) .beat-dots li:has([aria-current]) { min-width: 22px; }
+  .narration:has(> .narration-body[data-beat="life"]) .beat-dots button { width: 100%; }
 }
 .back-button { @apply min-h-12 rounded-full border-0 bg-transparent px-4; color: var(--color-forest); }
 .back-button:disabled { opacity: .35; cursor: default; }
