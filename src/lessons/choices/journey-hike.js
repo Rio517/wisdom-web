@@ -40,15 +40,8 @@ const HOME = 22;
 // (map units): both kept where they were before the trail went over the hill.
 const TURN = 355.4 / MAIN_LENGTH;
 const BRIDGE_GAP = 10.7;
-// Practice walks: out along a short path to a loop and back.
-const LOOP_SPOTS = [[190, 735], [340, 738], [490, 735]];
-const LOOP_RX = 58;
-const LOOP_RY = 26;
-const loopPath = ([cx, cy]) => {
-  const top = cy - LOOP_RY;
-  return `M${cx} ${top} A${LOOP_RX} ${LOOP_RY} 0 1 1 ${cx} ${cy + LOOP_RY} A${LOOP_RX} ${LOOP_RY} 0 1 1 ${cx} ${top}`;
-};
-const connectorPath = ([x, y], [cx, cy]) => `M${n1(x)} ${n1(y)} C ${n1(x + (cx - x) * 0.35)} 668, ${cx - 50} ${cy - LOOP_RY}, ${cx} ${cy - LOOP_RY}`;
+// Practice walks: out along the trail and back, each a little farther (fractions of the way to halfway).
+const PRACTICE_REACH = [0.3, 0.5, 0.7];
 
 const TREE_SPOTS = [
   [196, 548, 1], [226, 532, .9], [258, 556, 1.1], [300, 520, .95], [338, 540, 1], [372, 510, 1.05], [520, 488, .9], [556, 470, 1],
@@ -57,7 +50,7 @@ const TREE_SPOTS = [
   [1040, 500, 1], [1092, 470, .9], [1136, 522, 1.1], [1010, 548, .85], [1104, 430, .8], [1150, 464, .9], [960, 566, .9], [900, 600, .85],
   [96, 520, .9], [64, 560, .8], [150, 500, .8], [262, 480, .7], [330, 466, .7],
 ];
-// Keep trees clear of the trails, the water and the drawn features (lake, rocks, trailhead, loops, ranger).
+// Keep trees clear of the trails, the water and the drawn features (lake, rocks, trailhead, the meadow beside it, ranger).
 // The ranger's speech bubble, beside him at the bridge.
 const BUBBLE_X = 716;
 const NO_TREE_BOXES = [[400, 590, 560, 700], [880, 250, 1130, 325], [0, 548, 190, 700], [100, 690, 640, 800], [700, 505, 1000, 580], [1004, 360, 1200, 600]];
@@ -341,7 +334,6 @@ function foregroundSVG() {
     <g id="trail-main" clip-path="url(#hike-near)"></g>
     <g class="trail-alt-plan" id="alt-plan"></g>
   </g>
-  <g id="loops">${LOOP_SPOTS.map((_, i) => `<path class="loop" id="loopc-${i}"/><path class="loop" id="loop-${i}"/>`).join('')}</g>
   <g mask="url(#hike-trail)">
     <path class="trail-walked first" id="walked-first" d="${MAIN}"/>
     <path class="trail-walked" id="walked-second" d="${MAIN}"/>
@@ -357,7 +349,6 @@ function foregroundSVG() {
   <text class="place-label small" x="412" data-x="412" y="672" text-anchor="end" id="rock-label">${tx('hike.rock')}</text>
   <text class="place-label small" x="652" data-x="652" y="792" id="stream-label">${tx('hike.stream')}</text>
   <text class="place-label" x="1102" data-x="1102" y="594" text-anchor="middle" id="falls-label">${tx('hike.waterfall')}</text>
-  <g id="loop-labels" class="fade-item">${LOOP_SPOTS.map(([cx, cy], i) => `<text class="place-label small" x="${cx}" y="${cy + LOOP_RY + 30}" text-anchor="middle">${tx(['hike.loopPark', 'hike.loopHill', 'hike.loopRiver'][i])}</text>`).join('')}</g>
   <g id="turn-flag" class="fade-item"><path d="M0 0 V-40" stroke="#9a5f3e" stroke-width="3" stroke-linecap="round"/><path d="M0 -40 L24 -33 L0 -26 Z" fill="#9a5f3e"/><text class="place-label small clay" x="30" y="54" text-anchor="middle" id="turn-flag-text"></text></g>
   <g id="whatif-note" class="fade-item"><text class="place-label clay" x="900" y="238" text-anchor="end">${tx('hike.noWater')}</text></g>
   <g id="storm" class="fade-item">
@@ -549,31 +540,6 @@ export function createHikeScene(root) {
     }));
   };
   const show = (selector, on) => $(selector).classList.toggle('shown', on);
-  // A practice walk goes out along the connector, once round the loop, and back the same way,
-  // starting and ending where the pair stands.
-  const loops = LOOP_SPOTS.map((spot, i) => {
-    const path = $(`#loop-${i}`);
-    const conn = $(`#loopc-${i}`);
-    path.setAttribute('d', loopPath(spot));
-    conn.setAttribute('d', connectorPath([homePoint.x, homePoint.y], spot));
-    return { path, length: path.getTotalLength(), conn, connLength: conn.getTotalLength() };
-  });
-  const loopTotal = loop => loop.connLength * 2 + loop.length;
-  const loopAt = (loop, f) => {
-    const s = Math.max(0, Math.min(1, f)) * loopTotal(loop);
-    if (s <= loop.connLength) return loop.conn.getPointAtLength(s);
-    if (s <= loop.connLength + loop.length) return loop.path.getPointAtLength(s - loop.connLength);
-    return loop.conn.getPointAtLength(loopTotal(loop) - s);
-  };
-  const drawLoop = (loop, f) => {
-    const s = f * loopTotal(loop);
-    loop.conn.style.strokeDasharray = `${Math.min(s, loop.connLength)} ${loop.connLength * 2}`;
-    loop.path.style.strokeDasharray = `${Math.max(0, Math.min(s - loop.connLength, loop.length))} ${loop.length * 2}`;
-  };
-  const setLoops = (amount) => loops.forEach(loop => {
-    drawLoop(loop, amount ? 1 : 0);
-    loop.conn.style.opacity = loop.path.style.opacity = String(amount);
-  });
 
   // Keep trees off the trails, the water and the drawn features.
   {
@@ -644,6 +610,9 @@ export function createHikeScene(root) {
       .catch(() => {});
   }
 
+  // The practice cards sit in the story column: the page shows the first `shown`, and `fresh` arrives.
+  const practised = (shown, fresh = -1) => root.dispatchEvent(new CustomEvent('hike-practised', { detail: { shown, fresh } }));
+
   let learned = [];
   function renderLearned(ids, fresh = []) {
     learned = ids;
@@ -666,10 +635,10 @@ export function createHikeScene(root) {
     plan: { at: ['main', home, 1], first: [0, 0], second: [0, 0], alt: 0, bottles: [2, 1], learned: [], shown: [] },
     halfway: { at: ['main', TURN, 1], first: [0, TURN], second: [0, 0], alt: 0, bottles: [2, 0.5], learned: [], shown: ['#turn-flag'] },
     turnback: { at: ['main', home, -1], first: [0, TURN], second: [0, 0], alt: 0, bottles: [2, 0.08], learned: ['water'], shown: ['#turn-flag'] },
-    practice: { at: ['main', home, 1], first: [0, TURN], second: [0, 0], alt: 0, bottles: [4, 1], learned: ['water', 'map', 'landmarks', 'rest'], shown: ['#turn-flag', '#loop-labels'], loops: 1 },
-    retry: { at: ['main', home, 1], first: [0, TURN], second: [0, 0], alt: 0, bottles: [4, 0.72], learned: ['water', 'map', 'landmarks', 'rest'], shown: ['#turn-flag'], loops: 0 },
-    closed: { learned: ['water', 'map', 'landmarks', 'rest'], shown: ['#turn-flag', '#storm', '#closed-sign', '#ranger', '#ranger-label'], closed: true, loops: 0 },
-    respond: { learned: ['water', 'map', 'landmarks', 'rest'], shown: ['#turn-flag', '#closed-sign', '#picnic'], closed: true, alt: 1, loops: 0 },
+    practice: { at: ['main', home, 1], first: [0, TURN], second: [0, 0], alt: 0, bottles: [4, 1], learned: ['water', 'map', 'landmarks', 'rest'], shown: ['#turn-flag'] },
+    retry: { at: ['main', home, 1], first: [0, TURN], second: [0, 0], alt: 0, bottles: [4, 0.72], learned: ['water', 'map', 'landmarks', 'rest'], shown: ['#turn-flag'] },
+    closed: { learned: ['water', 'map', 'landmarks', 'rest'], shown: ['#turn-flag', '#storm', '#closed-sign', '#ranger', '#ranger-label'], closed: true },
+    respond: { learned: ['water', 'map', 'landmarks', 'rest'], shown: ['#turn-flag', '#closed-sign', '#picnic'], closed: true, alt: 1 },
   };
   const shortOfBridge = bridge - BRIDGE_GAP / mainLength;
   STATE.retry.at = ['main', shortOfBridge, 1];
@@ -678,7 +647,7 @@ export function createHikeScene(root) {
   STATE.respond = { ...STATE.retry, ...STATE.respond, at: ['alt', 1, 1], bottles: [4, 0.5] };
   STATE.sort = STATE.respond;
 
-  const FADE_ITEMS = ['#turn-flag', '#loop-labels', '#storm', '#closed-sign', '#ranger', '#ranger-label', '#ranger-bubble', '#picnic', '#whatif-note'];
+  const FADE_ITEMS = ['#turn-flag', '#storm', '#closed-sign', '#ranger', '#ranger-label', '#ranger-bubble', '#picnic', '#whatif-note'];
 
   function applyState(id) {
     const state = STATE[id];
@@ -697,7 +666,7 @@ export function createHikeScene(root) {
     for (const selector of FADE_ITEMS) show(selector, state.shown.includes(selector));
     renderBottles(...state.bottles);
     if (learned.join() !== state.learned.join()) renderLearned(state.learned);
-    setLoops(state.loops ?? 0);
+    practised(3);
     setFlagText(id === 'retry' || id === 'closed' || id === 'respond' || id === 'sort' ? 'hike.turnedBack' : 'hike.halfWater');
     walkers.classList.remove('walking');
   }
@@ -740,35 +709,23 @@ export function createHikeScene(root) {
       applyState('turnback');
       renderBottles(4, 1);
       const order = ['map', 'landmarks', 'rest'];
-      for (let index = 0; index < loops.length; index += 1) {
-        const loop = loops[index];
-        loop.conn.style.opacity = loop.path.style.opacity = '1';
-        walkers.classList.add('walking');
-        let facing = 1;
-        const run = tween({ duration: 2200, easing: ease.inOut, update: t => {
-          drawLoop(loop, t);
-          const point = loopAt(loop, t);
-          walkers.setAttribute('transform', `translate(${point.x.toFixed(1)} ${point.y.toFixed(1)})`);
-          const ahead = loopAt(loop, t + 0.01);
-          if (Math.abs(ahead.x - point.x) > 0.4) facing = ahead.x > point.x ? 1 : -1;
-          flip.setAttribute('transform', `scale(${facing} 1)`);
-        } });
-        token?.onCancel(() => run.cancel());
-        if (!(await run.promise) || token?.cancelled) return;
+      practised(0);
+      // Three short walks from the trailhead. At the far end of each, its card arrives beside the
+      // story; back home, what he practised goes into the backpack.
+      for (let index = 0; index < order.length; index += 1) {
+        const far = home + (TURN - home) * PRACTICE_REACH[index];
+        const duration = 620 + 380 * index;
+        if (!(await walk({ path: main, length: mainLength, from: home, to: far, duration, token }))) return;
+        practised(index + 1, index);
+        if (!(await walk({ path: main, length: mainLength, from: far, to: home, duration, token, facing: -1 }))) return;
         renderLearned(['water', ...order.slice(0, index + 1)], [order[index]]);
-        await wait(180, token);
+        if (!(await wait(260, token))) return;
       }
-      walkers.classList.remove('walking');
-      show('#loop-labels', true);
-      await wait(250, token);
-      if (token?.cancelled) return;
       place(main, home, 1);
       return;
     }
     if (beatId === 'retry' && sequential && from === 'practice') {
       applyState('practice');
-      setLoops(0);
-      show('#loop-labels', false);
       if (!(await walk({ path: main, length: mainLength, from: home, to: shortOfBridge, duration: 4200, token, trace: $('#walked-second'), bottles: { count: 4, from: 1, to: 0.72 } }))) return;
       setFlagText('hike.turnedBack');
       return;

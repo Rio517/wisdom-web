@@ -1,4 +1,4 @@
-import { CHAPTERS, FRAGMENT_ALIASES, beatList, chaptersFor, renderReadingBeat } from './journey-story.js';
+import { CHAPTERS, FRAGMENT_ALIASES, LEARNED, beatList, chaptersFor, renderReadingBeat } from './journey-story.js';
 import { t } from '../../i18n/runtime.js';
 import { ICONS } from './journey-icons.js';
 import { createToken, prefersReducedMotion, wait } from './journey-motion.js';
@@ -37,6 +37,13 @@ const scenes = {
   skills: createSkillsScene(roots.skills),
   explore: createExploreScene(roots.explore),
 };
+// The hike's practice cards arrive with its walks: the scene says how many show and which is new.
+roots.hike.addEventListener('hike-practised', event => {
+  document.querySelectorAll('#practised li').forEach((card, index) => {
+    card.classList.toggle('is-pending', index >= event.detail.shown);
+    card.classList.toggle('is-new', index === event.detail.fresh);
+  });
+});
 const rootFor = chapterId => (chapterId === 'wrap' ? 'paths' : chapterId);
 Object.values(roots).forEach(root => { root.hidden = true; });
 
@@ -189,6 +196,9 @@ function renderNarration(item, { animate }) {
   if (beat.life) life.render($('#beat-text'), extra);
   if (beat.choice) extra.innerHTML = renderChoice(item);
   if (beat.sort) extra.innerHTML = renderSortProgress(item);
+  if (beat.practised) {
+    extra.innerHTML = `<ul class="practised" id="practised">${beat.practised.map(card => `<li><strong>${ICONS[LEARNED[card.id].icon === 'rest' ? 'restSmall' : LEARNED[card.id].icon]}${escapeHTML(LEARNED[card.id].label)}</strong><span>${escapeHTML(card.text)}</span></li>`).join('')}</ul>`;
+  }
   if (beat.closer) {
     extra.insertAdjacentHTML('beforeend', `<details class="closer"><summary>${escapeHTML(beat.closer.heading)}</summary>${beat.closer.body.map(text => `<p>${escapeHTML(text)}</p>`).join('')}</details>`);
   }

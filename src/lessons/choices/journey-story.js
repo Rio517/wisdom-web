@@ -19,7 +19,7 @@ const STRUCTURE = [
     { id: 'plan', body: 2 },
     { id: 'halfway', body: 1, choice: [{ id: 'continue' }, { id: 'turn', story: true }] },
     { id: 'turnback', body: 2, learned: ['water'] },
-    { id: 'practice', body: 2, learned: ['map', 'landmarks', 'rest'] },
+    { id: 'practice', body: 1, learned: ['map', 'landmarks', 'rest'], practised: true },
     { id: 'retry', body: 2 },
     { id: 'closed', body: 1, choice: [{ id: 'sneak' }, { id: 'home' }, { id: 'ask', story: true }] },
     { id: 'respond', body: 2, closer: 2 },
@@ -91,6 +91,8 @@ export function chaptersFor(t = runtimeT, life = null) {
         };
       }
       if (beat.learned) record.learned = beat.learned;
+      // What each practice walk was for: a card in the story column, one sentence each.
+      if (beat.practised) record.practised = beat.learned.map(id => ({ id, text: t(`lesson.practised.${id}`) }));
       if (beat.sort) record.sort = beat.sort.map(card => ({ ...card, label: t(`lesson.sort.${card.id}`) }));
       if (beat.closer) {
         record.closer = { heading: t(`${key}.closer.heading`), body: range(beat.closer).map(n => t(`${key}.closer.body${n}`)) };
@@ -136,6 +138,10 @@ const escapeHTML = value => String(value)
 function readingBeat(beat, { t, learned }) {
   const parts = [`<section class="reading-beat" id="read-${beat.id}">`, `<h3>${escapeHTML(beat.heading)}</h3>`];
   for (const paragraph of beat.body) parts.push(`<p>${escapeHTML(paragraph)}</p>`);
+  // The practice cards say what was learned, so the carried-forward line is left to them.
+  if (beat.practised) {
+    parts.push(`<ul class="reading-practised">${beat.practised.map(card => `<li><strong>${escapeHTML(learned[card.id].label)}</strong> ${escapeHTML(card.text)}</li>`).join('')}</ul>`);
+  }
   // The life, step by step as the story tells it, then how to change a choice, then the picture.
   if (beat.life) {
     parts.push(`<ol class="reading-steps">${beat.steps.map(step => `<li>${step.close ? '' : `<strong>${escapeHTML(t('lesson.ui.age', { age: step.age }))}</strong> `}${escapeHTML(step.line)}</li>`).join('')}</ol>`);
@@ -149,7 +155,7 @@ function readingBeat(beat, { t, learned }) {
     }
     parts.push('</dl>');
   }
-  if (beat.learned) {
+  if (beat.learned && !beat.practised) {
     parts.push(`<p class="reading-learned">${escapeHTML(t('reading.carriedForward', { items: beat.learned.map(id => learned[id].label).join(' · ') }))}</p>`);
   }
   if (beat.sort) {

@@ -157,6 +157,8 @@ p { text-wrap: pretty; }
 .prose .reading-visual span { font-weight: 600; }
 .prose dt { margin-top: .6em; font-weight: 600; }
 .prose dd { margin-left: 1.2em; }
+.prose .reading-practised { list-style: none; padding-left: 0; }
+.prose .reading-practised strong { display: block; font-family: var(--font-guide); font-size: 17px; color: var(--color-forest); }
 .prose .reading-closer { border-left: 3px solid var(--color-sage); padding-left: 1em; }
 .prose .journey-reading > h1 { display: none; }
 .prose .reading-intro { color: var(--color-quiet); }

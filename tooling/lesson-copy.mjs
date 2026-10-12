@@ -44,6 +44,7 @@ for (const chapter of chaptersFor(t, sam)) {
       for (const option of beat.choice.options) add(`- **${option.label}**${option.story ? ' (what they chose)' : ''} — ${option.feedback}`);
       add('');
     }
+    if (beat.practised) add(...beat.practised.map(card => `- **${learned[card.id].label}.** ${card.text}`), '');
     if (beat.learned) add(`Backpack adds: ${beat.learned.map(id => learned[id].label).join(' · ')}`, '');
     if (beat.sort) add(`Drag to sort (or skip): ${beat.sort.map(card => `${card.label} (${card.mine ? 'their choice' : 'outside their control'})`).join(' · ')}`, '');
     if (beat.closer) {
