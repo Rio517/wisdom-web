@@ -760,7 +760,8 @@ dialog::backdrop { background: #23302d66; }
 .whatif .timeline-step:hover { background: transparent; }
 .whatif .timeline li.whatif-note { margin: 6px 0 0; font-size: 15px; line-height: 1.4; color: var(--color-quiet); }
 /* Only a new life too long for its column (is-tight): older rows close up as it grows. */
-.whatif .timeline.is-tight { gap: 0; }
+.whatif .timeline.is-tight { --size: 14px; gap: 0; }
+.whatif .timeline.is-tight li.whatif-note { margin-top: 4px; font-size: 14px; line-height: 1.32; }
 .whatif .timeline li.is-folded .timeline-step { min-height: calc(var(--size) * 1.12); font-size: calc(var(--size) * .9); }
 .whatif .timeline li.is-folded .timeline-step { padding-block: 0; }
 .whatif .timeline li.is-folded .timeline-label { line-height: 1.12; }
