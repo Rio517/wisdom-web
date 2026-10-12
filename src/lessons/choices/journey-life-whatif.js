@@ -170,7 +170,7 @@ export function createWhatIf(S, api) {
       const index = job.order[job.at];
       const text = run.nodes[index].label;
       const points = edgePoints(run.edges[index]);
-      const spot = job.placer.chosen(text, points) ?? job.loose.chosen(text, points);
+      const spot = job.placer.chosen(text, points, points.at(-1), { last: false }) ?? job.loose.chosen(text, points);
       if (spot) { job.placer.reserve(spot.box); job.loose.reserve(spot.box); }
       job.spots[index] = spot;
     }

@@ -421,11 +421,38 @@ export function createPlacer({ width, height, measure, paths = [], dots = [], bo
     }
     return null;
   };
+  // The last search of all, so no step is ever left without its label: the nearest clear box anywhere on
+  // the map (clear of the edge, every label, every route line and every mark), with a straight leader to
+  // its dot that crosses no label. Then the same with the leader free to cross labels.
+  const anywhere = (text, textWidth, home, size, useBand) => {
+    const clash = box => taken.some(o => (!useBand || !reserved.has(o)) && box.left < o.right && box.right > o.left && box.top < o.bottom && box.bottom > o.top);
+    const candidates = [];
+    for (let baseline = size + 4; baseline <= height - 30; baseline += 4) {
+      for (let left = 4; left + textWidth + 8 <= width - 4; left += 6) {
+        const box = { left: left - 4, right: left + textWidth + 4, top: baseline - size, bottom: baseline + 4 };
+        candidates.push({ box, left, baseline, dist: Math.hypot((box.left + box.right) / 2 - home.x, (box.top + box.bottom) / 2 - home.y) });
+      }
+    }
+    candidates.sort((a, b) => a.dist - b.dist);
+    for (const strictLeader of [true, false]) {
+      for (const { box, left, baseline } of candidates) {
+        if (clash(box) || onPath(box, 2)) continue;
+        if (dots.some(p => p.x > box.left - 9 && p.x < box.right + 9 && p.y > box.top - 9 && p.y < box.bottom + 9)) continue;
+        const y = home.y < box.top ? box.top + 2 : box.bottom - 2;
+        const to = { x: Math.min(Math.max(home.x, box.left + 4), box.right - 4), y };
+        const from = { x: home.x, y: home.y + Math.sign(to.y - home.y) * 5 };
+        if (strictLeader && !leaderClear(from, to, home)) continue;
+        taken.push(box);
+        return { text, left, baseline, box, leader: { from, to }, size };
+      }
+    }
+    return null;
+  };
   return {
     onPath,
     reserve(box) { taken.push(box); },
     /** A route label along its edge (`points`, 21 of them, ending at its dot), or null when nowhere is clear. */
-    chosen(text, points, own = points.at(-1)) {
+    chosen(text, points, own = points.at(-1), { last = true } = {}) {
       const textWidth = measure(text, `650 ${CHOSEN_SIZE}px ${FONT}`);
       const home = dots.find(p => near(p, own)) ?? own;
       let best = null;
@@ -447,7 +474,9 @@ export function createPlacer({ width, height, measure, paths = [], dots = [], bo
         const small = measure(text, `650 ${SMALL_SIZE}px ${FONT}`);
         const clear = [[4, false], [2, false]];
         return far(text, textWidth, points, home, CHOSEN_SIZE, clear) ?? far(text, small, points, home, SMALL_SIZE, clear)
-          ?? far(text, textWidth, points, home, CHOSEN_SIZE, [[2, true]]) ?? far(text, small, points, home, SMALL_SIZE, [[2, true]]);
+          ?? (last ? anywhere(text, textWidth, home, CHOSEN_SIZE, false) ?? anywhere(text, small, home, SMALL_SIZE, false) : null)
+          ?? far(text, textWidth, points, home, CHOSEN_SIZE, [[2, true]]) ?? far(text, small, points, home, SMALL_SIZE, [[2, true]])
+          ?? (last ? anywhere(text, small, home, SMALL_SIZE, true) : null);
       }
       const { spot, anchor, box, left, baseline } = best;
       taken.push(box);

@@ -23,6 +23,7 @@
 //                  [--jobs 4] [--no-story] [--no-adds] [--no-labels] [--no-grown] [--all-rows] [--room] [--json out.json]
 // The label check (round 7) runs for the written lives and two changed lives per person; --no-grown skips the changed ones.
 // --room also prints the column's room at each size (box, kicker, heading, dots, Back/Next).
+// --label-wider 8 makes the labels' font 8% wider (measured and drawn), so the label check holds for wider fonts than the VM's.
 // --bar-taller 24 makes the end card's bar 24 px taller (a check that the map leaves room for its measured height).
 // --budget (Chromium only) measures, for each life and size, the layouts each arriving line forces
 // (stepping through the story while paused) and, with the processor slowed 4x, the longest
@@ -73,6 +74,10 @@ async function pool(browser, tasks) {
       const context = await browser.newContext({ viewport: { width: size[0], height: size[1] }, ...contextOptions });
       const page = await context.newPage();
       // --bar-taller N: the end card's bar N px taller (its padding), as a Mac's fonts can wrap its text a line more.
+      // --label-wider N: the map's UI font N% wider, for the canvas that measures the labels and the page that
+      // draws them alike (a Mac's Avenir Next is wider than a VM's fallback), via a size-adjusted face (the local Inter
+      // face is 4.95% narrower than the VM's own fallback at weight 650, hence the factor).
+      if (opt('label-wider', null)) await page.addInitScript(extra => { addEventListener('DOMContentLoaded', () => { const style = document.createElement('style'); style.textContent = `@font-face { font-family: "Avenir Next"; src: local("Inter"), local("Inter Regular"), local("DejaVu Sans"); size-adjust: ${((100 + extra) * 1.0495).toFixed(2)}%; }`; document.head.append(style); document.fonts.load('650 15px "Avenir Next"'); }); }, Number(opt('label-wider', 0)));
       if (opt('bar-taller', null)) await page.addInitScript(extra => { addEventListener('DOMContentLoaded', () => { const style = document.createElement('style'); style.textContent = `.life-end.is-bar { padding-bottom: calc(9px + ${extra}px) !important; }`; document.head.append(style); }); }, Number(opt('bar-taller', 0)));
       const errors = [];
       page.on('console', message => { if (message.type() === 'error') errors.push(message.text()); });
