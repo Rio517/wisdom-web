@@ -125,7 +125,10 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
     // A narrow stage keeps a band clear at the top for the end card's bar: the
     // route stays below it (its highest point is about 0.45 of the span above
     // Born) and no label goes in it.
-    const bar = r.width < 800 ? BAR : 0;
+    // Its height is the bar's own, measured in the page's language (German's text can take a line more
+    // than English's), so the life is laid out clear of it whatever the words.
+    const BAR_HEIGHT = r.width < 800 ? Math.max(BAR - 10, cardSize('explore-end life-end is-bar').h) : 0;
+    const bar = r.width < 800 ? BAR_HEIGHT + 10 : 0;
     const span = Math.min(r.height - TOP - BOTTOM, bar ? (o.y - bar - 8) / 0.45 : Infinity);
     setFadeFrom(r.width - 64);
     // Even years: a later life has as many steps as its childhood, so it gets the same room.
@@ -150,7 +153,6 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
     // later one arrives), then the gray choices, which give way to them.
     // The end card's bar goes across the top unless the route or the paths ahead reach into it
     // (the same test showCard makes); then it goes to the foot, and that band stays clear instead.
-    const BAR_HEIGHT = 90;
     const topBar = { left: 12, right: r.width - 12, top: 12, bottom: 12 + BAR_HEIGHT };
     const routeGrid = sampleGrid(edges.slice(1), points);
     const topBlocked = bar && (routeGrid(topBar) || [...points, ...ahead.map(edge => edge.b)].some(point => point.x > topBar.left - 18 && point.x < topBar.right + 18 && point.y > topBar.top - 18 && point.y < topBar.bottom + 18));
@@ -592,7 +594,7 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
     probe.inert = true;
     probe.className = className;
     probe.style.cssText = 'visibility:hidden';
-    card.parentNode.append(probe);
+    overlay.append(probe); // laid out in the map's visible part, as the card itself is
     const size = { w: probe.offsetWidth, h: probe.offsetHeight };
     probe.remove();
     return size;

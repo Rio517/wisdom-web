@@ -32,7 +32,7 @@ export const GRAY = 2.3;
 export const THIN = 1.8;
 export const DOT = 3.8;
 export const RING = 2; // the ring of map colour around every mark
-export const BAR = 100; // on a narrow stage the end card is a bar across the top: this much stays clear for it
+export const BAR = 100; // on a narrow stage the end card is a bar across the top: at least this much stays clear for it (its measured height + 10 px)
 
 // ——— Where the gray lines go (a pure layout in ages and heights) ———
 export const clamp = (value, lo, hi) => Math.max(lo, Math.min(hi, value));

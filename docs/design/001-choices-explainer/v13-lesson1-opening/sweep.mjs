@@ -23,6 +23,7 @@
 //                  [--jobs 4] [--no-story] [--no-adds] [--no-labels] [--no-grown] [--all-rows] [--room] [--json out.json]
 // The label check (round 7) runs for the written lives and two changed lives per person; --no-grown skips the changed ones.
 // --room also prints the column's room at each size (box, kicker, heading, dots, Back/Next).
+// --bar-taller 24 makes the end card's bar 24 px taller (a check that the map leaves room for its measured height).
 // --budget (Chromium only) measures, for each life and size, the layouts each arriving line forces
 // (stepping through the story while paused) and, with the processor slowed 4x, the longest
 // main-thread task while the story plays, and with --picks the longest task over five picks.
@@ -71,6 +72,8 @@ async function pool(browser, tasks) {
       const { size, run, contextOptions = {} } = tasks[at];
       const context = await browser.newContext({ viewport: { width: size[0], height: size[1] }, ...contextOptions });
       const page = await context.newPage();
+      // --bar-taller N: the end card's bar N px taller (its padding), as a Mac's fonts can wrap its text a line more.
+      if (opt('bar-taller', null)) await page.addInitScript(extra => { addEventListener('DOMContentLoaded', () => { const style = document.createElement('style'); style.textContent = `.life-end.is-bar { padding-bottom: calc(9px + ${extra}px) !important; }`; document.head.append(style); }); }, Number(opt('bar-taller', 0)));
       const errors = [];
       page.on('console', message => { if (message.type() === 'error') errors.push(message.text()); });
       page.on('pageerror', error => errors.push(String(error)));
