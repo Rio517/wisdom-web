@@ -6,29 +6,39 @@ import { writeFileSync } from 'node:fs';
 import { chaptersFor, learnedFor } from '../src/lessons/choices/journey-story.js';
 import { CHOICE_BANDS, CLOSED_REASONS, STORY_COUNT, bandChoices, mapStory } from '../src/lessons/choices/journey-choices.js';
 import { getTranslator } from '../src/i18n/index.js';
+import { loadWords, writtenLife } from '../src/lessons/choices/lives/engine.js';
+import { readStoreFiles, readWords } from './lives-data.mjs';
 import { LOCALES, LOCALE_NAMES, DEFAULT_LOCALE } from '../src/i18n/config.js';
 
 const locale = process.argv[2] ?? DEFAULT_LOCALE;
 if (!LOCALES.includes(locale)) throw new Error(`Unknown locale "${locale}". Use one of: ${LOCALES.join(', ')}`);
 const t = getTranslator(locale);
 const learned = learnedFor(t);
+// "Many paths" tells one life from the lives store: Sam's, the first visit's life.
+const structure = readStoreFiles();
+const sam = writtenLife(loadWords(structure, readWords(locale), { locale, fallback: readWords('en') }), 'sam');
 const out = [];
 const add = (...lines) => out.push(...lines);
 
 add(`# ${t('reading.title')} (guided journey${locale === DEFAULT_LOCALE ? '' : ` · ${LOCALE_NAMES[locale]}`})`, '');
 if (locale === DEFAULT_LOCALE) {
-  add('Status: Draft 04, the text of Lesson 1 on the site. Created: 2026-09-26. Updated: 2026-10-09.', '');
+  add('Status: Draft 04, the text of Lesson 1 on the site. Created: 2026-09-26. Updated: 2026-10-12.', '');
   add('This is the readable copy of [Lesson 1](../product/013-choices-guided-journey.md). The live words are in `src/i18n/messages/en.json`, and the translations sit beside it (see [014](../product/014-languages.md)). Edit either here or in the catalog; after a code pass, regenerate this file with `npm run copy:lesson`. [Draft 02](choices-story.md) is the text of the earlier lesson study.', '');
 } else {
   add(`Generated from \`src/i18n/messages/${locale}.json\` for review. Section labels stay in English; everything else is the ${LOCALE_NAMES[locale]} text readers see.`, '');
 }
 add(t('reading.intro'), '');
 
-for (const chapter of chaptersFor(t)) {
+for (const chapter of chaptersFor(t, sam)) {
   add(`## ${chapter.title}`, '');
   for (const beat of chapter.beats) {
     add(`### ${beat.heading}`, '');
     for (const paragraph of beat.body) add(paragraph, '');
+    if (beat.life) {
+      add(`The story of ${sam.name}, one line a step (the lives store, src/lessons/choices/lives/; another life plays on a return visit or after “${t('opening.end.another')}”):`, '');
+      for (const step of beat.steps) add(`- ${step.close ? '' : `**${t('lesson.ui.age', { age: step.age })}** `}${step.line}`);
+      add('', beat.change, '');
+    }
     if (beat.choice) {
       add(`**${beat.choice.prompt}**`, '');
       for (const option of beat.choice.options) add(`- **${option.label}**${option.story ? ' (what they chose)' : ''} — ${option.feedback}`);

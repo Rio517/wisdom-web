@@ -1,6 +1,6 @@
 # Choices — The paths we make (guided journey)
 
-Status: Draft 04, the text of Lesson 1 on the site. Created: 2026-09-26. Updated: 2026-10-09.
+Status: Draft 04, the text of Lesson 1 on the site. Created: 2026-09-26. Updated: 2026-10-12.
 
 This is the readable copy of [Lesson 1](../product/013-choices-guided-journey.md). The live words are in `src/i18n/messages/en.json`, and the translations sit beside it (see [014](../product/014-languages.md)). Edit either here or in the catalog; after a code pass, regenerate this file with `npm run copy:lesson`. [Draft 02](choices-story.md) is the text of the earlier lesson study.
 
@@ -12,56 +12,42 @@ A guided lesson for readers aged eight and up. The people and places are made up
 
 Your choices shape where a life can go. So do things nobody chooses, the lucky ones and the unlucky ones.
 
-Take your time. First you’ll join a hike and meet a girl with two paths. Then you’ll try out a whole life.
+First, one whole life in half a minute. Then a hike, and a girl with two paths.
 
 Picture: A single dot marks the beginning of a life.
 
-### A life can go many ways.
+### Many paths. Here’s one.
 
-Each line is one way a life could go. Lines split and bend. Nobody walks them all. Nobody needs to.
+The story of Sam, one line a step (the lives store, src/lessons/choices/lives/; another life plays on a return visit or after “Watch another life”):
 
-Picture: Hundreds of green paths branch out from one starting dot and spread across the map.
+- **Age 0** Sam is born.
+- **Age 6** His parents sign him up for choir.
+- **Age 10** He picks guitar.
+- **Age 14** He starts a band with two friends.
+- **Age 16** The three bandmates record a first song.
+- **Age 16** Both friends quit. He is on his own.
+- **Age 17** He forms a new band with three others.
+- **Age 18** A radio DJ plays one of his songs. Luck!
+- **Age 20** A record label signs the band.
+- **Age 22** He goes on a world tour.
+- **Age 24** Drinking and drugs take over. Shows fall apart.
+- **Age 25** The label drops the band. He loses his flat.
+- **Age 26** A friend takes him in. He asks for help.
+- **Age 30** He teaches guitar and writes new songs.
+- **Age 33** He has two great kids.
+- **Age 36** He teaches music at the local school.
+- **Age 41** He watches his daughter sing on stage.
+- Many paths still ahead.
 
-### We travel one path at a time.
+On the page you can change one of Sam’s choices and watch his path change.
 
-Here’s someone who is twelve. The dark line is the path they took. At each fork they picked one way, and the others turned gray.
+Picture: One life grows along an age line from birth to 41, one fork at a time, with gray lines leaving every fork for the choices Sam didn’t make. Luck lifts the path and setbacks drop it. Light green paths carry on past 41.
 
-The green paths ahead are still open. What they learn and practise now gets them ready for some of those paths.
+### Choices add up.
 
-#### Map story sets (one picked at random per visit)
+Choir led to guitar, guitar to a band, the band to a song. Luck lifted Sam’s path. A hard year pushed it down. Not everything was his to choose. Now let’s look at choices over just a few days.
 
-Taken choices sit on the dark route; not-taken ones on gray branches. Two related future groups sit on connected branches, one in the top half and one in the bottom half: the first step, then two ways on.
-
-1. **Taken:** Learned to swim → Joined a soccer team · **Not taken:** Piano lessons, Chess club, Art club · **Builds on it:** Make the school team → Captain the team / Coach younger kids · **Something new:** Start cello → Get a cello tutor / Switch to piano
-2. **Taken:** Went to the library a lot → Joined the chess club · **Not taken:** Gymnastics, Drum lessons, Scouts · **Builds on it:** Play in chess tournaments → Teach chess at school / Do more maths · **Something new:** Join drama club → Write a play / Make a short film
-3. **Taken:** Sang at home → Started piano · **Not taken:** Soccer team, Karate, Coding club · **Builds on it:** Take piano exams → Play in a jazz band / Study music · **Something new:** Join the running club → Run a half-marathon / Train as a sports teacher
-4. **Taken:** Built with blocks → Joined the robotics club · **Not taken:** Choir, Swimming team, Pottery class · **Builds on it:** Win a robotics contest → Study engineering / Learn electronics on the job · **Something new:** Learn to cook → Work in a café kitchen / Train as a chef
-5. **Taken:** Played outside a lot → Joined the Scouts · **Not taken:** Violin, Ballet, Chess club · **Builds on it:** Lead a Scout patrol → Volunteer as a leader / Train as an outdoor guide · **Something new:** Try photography → Take photos at school events / Study design
-6. **Taken:** Drew every day → Joined art club · **Not taken:** Soccer, Piano, Science club · **Builds on it:** Collect your best drawings → Study illustration / Design posters for local shops · **Something new:** Volunteer at an animal shelter → Work at a vet’s / Study animal care
-7. **Taken:** Spoke two languages at home → Joined Spanish club · **Not taken:** Gymnastics, Trumpet, Robotics · **Builds on it:** Visit a pen pal abroad → Study languages / Work as an interpreter · **Something new:** Join the swim team → Become a lifeguard / Teach swimming
-8. **Taken:** Helped in the garden → Grew vegetables · **Not taken:** Hockey, Guitar, Drama · **Builds on it:** Join a community garden → Study how plants grow / Work at a garden centre · **Something new:** Get a maths tutor → Join the maths club / Work with numbers
-9. **Taken:** Learned to ride a bike → Joined a cycling club · **Not taken:** Piano, Chess, Swimming · **Builds on it:** Enter bike races → Train as a bike mechanic / Lead cycling tours · **Something new:** Start guitar → Form a band / Record your own songs
-10. **Taken:** Did lots of puzzles → Practised times tables · **Not taken:** Football, Art club, Choir · **Builds on it:** Join the maths challenge group → Enter a big maths contest / Study computer science · **Something new:** Try the school play → Join a youth theatre / Build sets for plays
-11. **Taken:** Danced at home → Joined a dance class · **Not taken:** Soccer, Chess, Coding · **Builds on it:** Enter dance competitions → Teach dance to kids / Study dance · **Something new:** Get a science tutor → Win a science fair prize / Train as a nurse
-12. **Taken:** Read lots of comics → Started writing stories · **Not taken:** Tennis, Violin, Scouts · **Builds on it:** Write for the school paper → Study journalism / Publish a short story · **Something new:** Try basketball → Join a team / Referee games
-13. **Taken:** Built dens outside → Joined a woodwork club · **Not taken:** Piano, Ballet, Chess · **Builds on it:** Make your own furniture → Learn carpentry on the job / Open a small workshop · **Something new:** Learn first aid → Help out as a first-aider / Train as a paramedic
-14. **Taken:** Loved animals → Helped at a riding stable · **Not taken:** Swimming, Coding, Drums · **Builds on it:** Care for the horses → Train as a vet nurse / Work on a farm · **Something new:** Join the debate club → Enter debate contests / Study law
-15. **Taken:** Played in the park → Joined a tennis club · **Not taken:** Cello, Art, Scouts · **Builds on it:** Play in tennis tournaments → Coach tennis / Study how bodies move · **Something new:** Learn to code → Build your own game / Make apps and games
-16. **Taken:** Sang in the car → Joined the choir · **Not taken:** Soccer, Robotics, Karate · **Builds on it:** Sing a solo in the choir → Study singing / Sing in a band · **Something new:** Help a brother with homework → Tutor younger kids / Train to teach
-17. **Taken:** Watched the stars → Joined the science club · **Not taken:** Football, Violin, Dance · **Builds on it:** Enter the science fair → Study physics / Work at a planetarium · **Something new:** Try rowing → Row for a club / Coach rowing
-18. **Taken:** Cooked with family → Baked for the school fair · **Not taken:** Soccer, Piano, Chess · **Builds on it:** Run a bake sale table → Train as a pastry chef / Open a small bakery · **Something new:** Start trumpet → Join a brass band / Make music on computers
-19. **Taken:** Played board games → Joined the maths club · **Not taken:** Swimming, Art, Drama · **Builds on it:** Enter maths competitions → Study maths at university / Work with data · **Something new:** Start karate → Earn a black belt / Teach self-defence
-20. **Taken:** Helped new kids feel welcome → Joined the student council · **Not taken:** Ballet, Chess, Guitar · **Builds on it:** Lead the student council → Study politics / Work for a charity · **Something new:** Try pottery → Sell pottery at markets / Teach a pottery class
-
-Picture: A dot travels from the start to Today, at age 12. Labels name some choices: dark ones taken on the way, gray ones not taken, and green ones still possible ahead.
-
-### Not everything is yours to choose.
-
-Other people and luck shape your path too. Sometimes a way closes, and nobody chose that. Sometimes a door opens that you never knocked on.
-
-A teacher notices you. A friend invites you along. Your choices matter. They’re just not the whole story. Let’s zoom in on one stretch of path.
-
-Picture: A few paths ahead are marked closed, with reasons such as a full team or a cancelled class. Many others stay open.
+Picture: Sam’s whole route, with three labels: His choice on “Picks guitar”, Luck on “A DJ plays the song”, Not his choice on “The band splits”.
 
 ## The hike
 
@@ -213,7 +199,7 @@ Your choices matter. They’re just not the whole story. Lots of paths are still
 - **Learning builds on learning.** What you know gives the next thing a place to start. Sometimes that works even for something new.
 - **Not everything is yours to choose.** Some surprises are storms. Some are lucky breaks. Either way, you can pause, ask for help and choose your next step.
 
-Picture: The life map comes back, with the traveller at Today and many light green paths still open ahead.
+Picture: The life map comes back: Sam’s whole route, with light green paths still open past 41.
 
 ## Editorial notes
 
