@@ -163,6 +163,8 @@ h1, h2, h3, h4 { font-family: var(--font-field); font-weight: 500; }
 @keyframes callout-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 /* ——— Cover (design 002 v02 · A): the question over a faint field, full width; Begin grows the paths ——— */
 .cover-stage { display: none; }
+/* The column's wait beside the cover and its slide in never widen the page: the document stays the window's width. */
+.journey { overflow-x: clip; }
 .journey[data-cover] { grid-template-columns: minmax(0, 1fr); }
 .journey[data-cover] .narration { display: none; }
 .journey[data-cover] .stage { margin: 4px 20px 20px; background: transparent; }

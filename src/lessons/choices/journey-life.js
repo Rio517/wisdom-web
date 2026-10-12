@@ -463,10 +463,21 @@ export function createLifeStory({ scene, hooks, onLife, goToLife, rerender }) {
   }
   // A finished life rests with its newest row and the note in view: scrolled to its end (under the
   // top fade) if its column is too short even with every older row folded.
-  function restWhat(timeline, behavior) {
+  // Its true end, read after layout (WebKit sets text a few px taller than any offset expects); with
+  // reduced motion, or on a refit, set at once. Checked again a moment later, in case text settles.
+  function restWhat(timeline, behavior = prefersReducedMotion() ? 'auto' : 'smooth') {
     if (timeline.lastElementChild.classList.contains('is-pending')) return;
-    keepInView(timeline.lastElementChild, timeline, behavior);
-    if (behavior === 'auto') timeline.classList.toggle('is-scrolled', timeline.scrollTop > 2);
+    const toEnd = how => {
+      if (!timeline.isConnected) return;
+      const end = timeline.scrollHeight - timeline.clientHeight;
+      if (end <= 0 || end - timeline.scrollTop < 1) return;
+      if (how === 'auto') { timeline.scrollTop = end; timeline.classList.add('is-scrolled'); }
+      else timeline.scrollTo({ top: end, behavior: how });
+    };
+    requestAnimationFrame(() => {
+      toEnd(behavior);
+      setTimeout(() => toEnd(prefersReducedMotion() ? 'auto' : behavior), behavior === 'auto' ? 120 : 700);
+    });
   }
   // The picked choice is dated at the person's own age for that step; the rest at their own ages.
   hooks.onStep = (node, position) => {

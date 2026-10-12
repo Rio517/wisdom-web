@@ -458,7 +458,8 @@ function coverTask(life, size, rate) {
       await page.waitForTimeout(1500);
       if (rate > 1) await (await page.context().newCDPSession(page)).send('Emulation.setCPUThrottlingRate', { rate });
       await page.evaluate(() => {
-        const log = globalThis.__cover = { frames: [], resized: {}, stage: [], born: null };
+        // The page never runs wider than the window (the column waits 40 px to the right on the cover).
+        const log = globalThis.__cover = { frames: [], resized: {}, stage: [], born: null, wider: document.documentElement.scrollWidth - innerWidth };
         const stage = document.getElementById('stage');
         const box = () => { const r = stage.getBoundingClientRect(); return [Math.round(r.left), Math.round(r.width), Math.round(r.height)]; };
         log.stage.push(box());
@@ -466,6 +467,7 @@ function coverTask(life, size, rate) {
         let last = performance.now();
         const tick = now => {
           log.frames.push(now - last); last = now;
+          log.wider = Math.max(log.wider, document.documentElement.scrollWidth - innerWidth);
           const b = box(); if (b.join() !== log.stage.at(-1).join()) log.stage.push(b);
           const first = document.querySelector('#life-steps .life-step:not(.is-pending)');
           if (first && !log.lineAt) log.lineAt = now;
@@ -483,7 +485,7 @@ function coverTask(life, size, rate) {
         return { ...globalThis.__cover, bornAt: { x: born.x + s.left, y: born.y + s.top } };
       });
       const frames = log.frames.slice(1);
-      return { life, size, rate, ms: Math.round(log.lineAt - log.start), worst: frames.slice().sort((a, b) => b - a).slice(0, 3).map(ms => Math.round(ms)), over20: frames.filter(ms => ms > 20).length, over33: frames.filter(ms => ms > 33).length, resized: log.resized, stage: log.stage, born: Math.round(Math.hypot(log.bornAt.x - before.ox, log.bornAt.y - before.oy)) };
+      return { life, size, rate, ms: Math.round(log.lineAt - log.start), worst: frames.slice().sort((a, b) => b - a).slice(0, 3).map(ms => Math.round(ms)), over20: frames.filter(ms => ms > 20).length, over33: frames.filter(ms => ms > 33).length, resized: log.resized, stage: log.stage, born: Math.round(Math.hypot(log.bornAt.x - before.ox, log.bornAt.y - before.oy)), wider: log.wider };
     },
   };
 }
@@ -509,7 +511,7 @@ if (flag('cover')) {
   const rows = await pool(browser, SIZES.flatMap(size => rates.map(rate => coverTask(life, size, rate))));
   for (const row of rows) {
     if (row.failed) { console.log(`FAILED ${row.failed}`); continue; }
-    console.log(`cover   ${label(row.size).padEnd(10)} ${row.life} ${row.rate}x  first line at ${row.ms} ms; longest frames ${row.worst.join(', ')} ms (${row.over20} over 20, ${row.over33} over 33); canvas bitmap changes ${JSON.stringify(row.resized)}; stage box ${row.stage.map(b => b.join('/')).join(' -> ')}; Born moved ${row.born} px`);
+    console.log(`cover   ${label(row.size).padEnd(10)} ${row.life} ${row.rate}x  first line at ${row.ms} ms; longest frames ${row.worst.join(', ')} ms (${row.over20} over 20, ${row.over33} over 33); canvas bitmap changes ${JSON.stringify(row.resized)}; stage box ${row.stage.map(b => b.join('/')).join(' -> ')}; Born moved ${row.born} px; page wider than the window by ${row.wider} px`);
   }
   process.exit(0);
 }
