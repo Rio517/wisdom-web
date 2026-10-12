@@ -1026,14 +1026,43 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
   }
   // The end card: lower right as in the explorer, unless that covers the route
   // or its labels; then the clear corner; on a stage too small for both, a bar.
-  function showCard() {
+  // The card's size can change after it is placed (a font that loads late), so it is placed again,
+  // without arriving again, when it does.
+  let placedSize = null;
+  // Its size in either shape comes from a fresh copy: after the card's own class changes, WebKit
+  // restyles its title and text only on the next frame, so measuring the card itself reads the old shape.
+  function cardSize(className) {
+    const probe = card.cloneNode(true);
+    probe.hidden = false;
+    probe.inert = true;
+    probe.className = className;
+    probe.style.cssText = 'visibility:hidden';
+    card.parentNode.append(probe);
+    const size = { w: probe.offsetWidth, h: probe.offsetHeight };
+    probe.remove();
+    return size;
+  }
+  if (typeof ResizeObserver === 'function') {
+    // On the next frame, so the move isn't made while the observer is still delivering.
+    let queued = false;
+    new ResizeObserver(() => {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(() => {
+        queued = false;
+        if (card.hidden || !placedSize) return;
+        if (Math.abs(card.offsetWidth - placedSize.w) > 2 || Math.abs(card.offsetHeight - placedSize.h) > 2) showCard({ again: true });
+      });
+    }).observe(card);
+  }
+  function showCard({ again = false } = {}) {
     warmUp();
     const g = geometry();
     const r = rect();
     card.hidden = false;
     card.classList.remove('is-bar');
     card.style.cssText = 'visibility:hidden';
-    const width = card.offsetWidth; const height = card.offsetHeight;
+    const { w: width, h: height } = cardSize('explore-end life-end');
     const close = (box, others) => others.some(other => box.left < other.right + 6 && box.right > other.left - 6 && box.top < other.bottom + 6 && box.bottom > other.top - 6);
     const dark = labelEls.filter(element => element.classList.contains('is-shown')).map(boxOf);
     const gray = altEls.filter(element => element.classList.contains('is-shown')).map(boxOf);
@@ -1053,18 +1082,28 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
     if (spot) {
       card.style.cssText = `left:${spot.box.left}px;top:${spot.box.top}px;right:auto;bottom:auto`;
       coverGray(spot.box);
-      cardArrive();
+      placedSize = { w: width, h: height };
+      if (!again) cardArrive();
       return;
     }
     // A stage too small for a card gets a bar across the map's empty top, or else its foot.
     card.classList.add('is-bar');
-    card.style.cssText = 'visibility:hidden';
-    const barHeight = card.offsetHeight;
+    const barSize = cardSize('explore-end life-end is-bar');
+    const barHeight = barSize.h;
     const bar = top => ({ left: 12, right: r.width - 12, top, bottom: top + barHeight });
-    const top = [12, r.height - 30 - barHeight].find(y => !blocked(bar(y), false)) ?? r.height - 30 - barHeight;
+    // When neither is clear (a label a few px too close), the one that covers the fewest labels and dots.
+    const marks = [...g.points, ...g.ahead.map(edge => edge.b)];
+    const covers = box => dark.filter(other => close(box, [other])).length
+      + marks.filter(point => point.x > box.left && point.x < box.right && point.y > box.top && point.y < box.bottom).length;
+    const choose = () => {
+      const tops = [12, r.height - 30 - barHeight];
+      return tops.find(y => !blocked(bar(y), false)) ?? tops.reduce((best, y) => (covers(bar(y)) < covers(bar(best)) ? y : best));
+    };
+    const top = choose();
     card.style.cssText = `top:${top}px;bottom:auto`;
     coverGray(bar(top));
-    cardArrive();
+    placedSize = barSize;
+    if (!again) cardArrive();
   }
   // The card fades and rises in (opening.css, .is-arriving), AHEAD_CARD ms after the paths ahead begin.
   function cardArrive() {

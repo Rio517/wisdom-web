@@ -69,13 +69,17 @@ The options: [1440×900](opening-whatif-old-options-1440-v08.png), [1133×744](o
 - **Story time**: the closing line now ends 300 ms after the paths ahead begin (it held 1.0 s more before), so Sam's story is 32.0 s at Normal pace (33.0 s in round 6) and 28.2 s at the quicker one (29.2 s).
 - `npm test` passes (273); `npm run lives:check`: 0 errors, 0 warnings.
 
+### Checked on a Mac (WebKit)
+
+- **The end card covered route labels in WebKit** in 10 of the 210 label runs (Omar 8 labels, Sam 3), with reduced motion or a link straight to the story's end. After the card's class changes, WebKit restyles its title and text only on the next frame, so the card measured itself in its old shape: 634 × 144 px for a bar that is 644 × 83, and 300 × 191 for a corner card that is 300 × 228. Its sizes now come from a fresh copy (`cardSize`). A ResizeObserver places it again, without arriving again, when its size changes after it is placed (a late font), on the next frame. A bar with neither edge clear goes where it covers the fewest labels and dots.
+- **The sweep after the fix**, at all 7 sizes: in WebKit, the story list 140/140, "Choices add up" 70/70 and the label check 210/210 clean (3,395 labels, 7 at 13 px), 0 console errors; in Chromium, the label check 210/210 clean, 0 console errors. `npm test` passes (273); `npm run lives:check`: 0 errors, 0 warnings.
+
 ### Known issues
 
 - **A run's labels in a column.** At 1133×744 and 744×1133 the steps on either side of Sam's run leave no room to widen it, so its four labels stack just below the burst with leaders rather than beside each dot. Busy stretches of other lives at the smaller sizes take long leaders too.
 - **At 1440×900 the end card is often the bar along the top** for longer lives, since every corner now holds a label.
 - **13 px route labels** are the last resort for a label boxed in by others: 3 of the 3,395 labels checked, all in changed lives at the two iPad sizes. Where level (c)'s muted old labels would leave a new label no room, they step back for that life (level b).
 - **"Choices add up"** may name a later lucky break or setback than the first where a run is too tight for a chip (Kai at 744×1133).
-- **WebKit** frames and the sweep in WebKit are for the lead's Mac (Playwright's WebKit download is blocked here).
 
 ## Round 6: stories that make sense, and one run of trying again in every life (v07)
 
