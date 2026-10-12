@@ -1269,6 +1269,17 @@ export function check(store, { lives = 0 } = {}) {
     if (own < 6) warn(where, `${own} of the person's own choices (at least six).`);
   }
 
+  // A written life offers each alternative at one fork only: the same gray choice at two forks shows its name twice.
+  for (const baseline of store.baselineList) {
+    const offered = new Map();
+    baseline.steps.forEach((step, index) => {
+      for (const altId of step.alts) {
+        if (offered.has(altId)) warn({ file: baseline.file, baseline: baseline.id, step: index, node: altId }, `${altId} is offered at ${baseline.steps[offered.get(altId)].age} and again at ${step.age}: its name shows twice on the map. Offer another alternative here.`);
+        else offered.set(altId, index);
+      }
+    });
+  }
+
   // A written life never takes, later on, a step that was another choice at one of its own forks: that
   // choice is still a gray line on the map there, so its name would show twice.
   for (const baseline of store.baselineList) {

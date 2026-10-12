@@ -45,7 +45,7 @@ steps:
     run: examNewCourse
     label: Switches to statistics
     line: "She switches to statistics, the maths of what is likely."
-    alts: [retakesTheExam, studyScience]
+    alts: [changesCourse, studyScience]
     echoes: [mathsClub]
   - node: worksWithData
     age: 23

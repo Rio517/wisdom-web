@@ -33,7 +33,7 @@ steps:
   - node: interpreter
     age: 23
     move: 1
-    alts: [teachesALanguage, bookshopJob]
+    alts: [teachesALanguage, libraryJob]
     echoes: [studyLanguages]
   - node: writesABook
     age: 26

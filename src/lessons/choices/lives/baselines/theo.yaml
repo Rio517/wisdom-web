@@ -35,7 +35,7 @@ steps:
     age: 21
     run: busyWard
     line: "He starts work on a busy hospital ward."
-    alts: [paramedic, careAssistant]
+    alts: [childminder, careAssistant]
     echoes: [nurseTraining]
   - node: wardShortStaffed
     age: 21
@@ -53,7 +53,7 @@ steps:
     echoes: [asksSeniorNurse]
   - node: midwife
     age: 26
-    alts: [careAssistant, joinsMedicalResearch]
+    alts: [writesHealthLeaflets, joinsMedicalResearch]
     echoes: [movesToOtherWard]
   - node: hospitalCloses
     age: 30
