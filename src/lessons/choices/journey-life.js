@@ -70,6 +70,8 @@ export function createLifeStory({ scene, hooks, onLife, goToLife, rerender }) {
     box.style.removeProperty('--snug-gap');
     box.style.removeProperty('--fit-size');
     box.style.removeProperty('--fit-gap');
+    box.style.removeProperty('--pack');
+    box.style.removeProperty('--tight-size');
     [...box.children].forEach(row => row.classList.remove('is-folded'));
     if (!sideColumn.matches || !box.clientHeight) { box.fitKey = 'unfitted'; return; } // under the map: no fit
     // The largest size, to half a pixel, at which every row shows. Each try is a layout, so few
@@ -95,10 +97,16 @@ export function createLifeStory({ scene, hooks, onLife, goToLife, rerender }) {
     while (over - fit > 0.5) probe(Math.round(fit + over) / 2);
     const lo = fit < min ? null : fit;
     if (lo === null) {
-      // Too long even at the smallest size (a long life in a short column): older rows close up
-      // as they arrive (foldWhat), and the newest stays in view.
+      // Too long even at the smallest size (a long life in a short column): every row closes up
+      // alike, only as far as needed (--pack, from 1 roomy to 0 close), then all take a size one
+      // pixel smaller. Still too long: older rows fold as they arrive (foldWhat), and the newest stays in view.
       box.style.removeProperty('--fit-size');
       box.classList.add('is-tight');
+      const closeUp = () => [0.75, 0.5, 0.25, 0].some(pack => {
+        box.style.setProperty('--pack', pack);
+        return box.scrollHeight <= box.clientHeight;
+      });
+      if (!closeUp()) { box.style.setProperty('--tight-size', `${min - 1}px`); closeUp(); }
       box.fitKey = `${box.clientWidth}x${box.clientHeight}:${box.children.length}`;
       const shown = [...box.children].filter(row => !row.classList.contains('is-pending'));
       if (shown.length) keepInView(shown.at(-1), box);
