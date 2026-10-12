@@ -169,3 +169,9 @@ At the end of that 2026-09-07 pass, the redesigned short lesson, owner visual se
 - Built three playable directions for Lesson 2's two-week soccer, cello and reading game, reviewed and revised once (play time 3.3–4.1 minutes), and drafted Maya's habit beats in English with evidence tags.
 - Verified: 240 tests pass and the build produces 25 pages; layouts measured at 1440×900, 1024×768, 768×1024 and 744×1133 in all four languages.
 
+## 2026-10-13
+
+- Replaced Lesson 1's opening: the lesson starts on a cover, tells one of ten written lives step by step on the life map, replays the life from a changed choice (what-ifs), and shows what added up. The ten-afternoon game and most of Maya's skill beats left Lesson 1 and are held for Lesson 2.
+- Restored the earlier home page and sidebar; the lesson opens on its own cover.
+- Redrew the hike's water, reworded the lesson in whole plain sentences in all four languages, and had the three translations read afresh.
+- Verified: 277 tests pass and the build produces 25 pages; stories, what-ifs, labels and the adds page checked in Chromium and WebKit at seven sizes in all four languages.

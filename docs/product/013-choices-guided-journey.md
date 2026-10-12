@@ -1,6 +1,6 @@
 # 013 — Choices guided journey
 
-Status: Approved by the owner as Lesson 1 (2026-09-27); implemented in the Astro site at `/choices/the-paths-we-make/`. Not published. Created: 2026-09-26. Updated: 2026-09-26.
+Status: Approved by the owner as Lesson 1 (2026-09-27); implemented in the Astro site at `/choices/the-paths-we-make/`. Published. Since 2026-10-13 the lesson opens with one written life and its what-ifs ([v13](../design/001-choices-explainer/v13-lesson1-opening/README.md)), and the ten-afternoon game described below is held for Lesson 2. Created: 2026-09-26. Updated: 2026-10-13.
 
 [Editable copy (Draft 03)](../content/choices-journey.md) · [Live study](http://127.0.0.1:4600/prototype/journey.html) · [Design round v09](../design/001-choices-explainer/v09-guided-journey/README.md) · Earlier lesson: [012](012-choices-lesson-implementation.md), [Draft 02](../content/choices-story.md)
 

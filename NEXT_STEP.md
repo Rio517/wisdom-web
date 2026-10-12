@@ -24,13 +24,14 @@ Design records:
 
 Architecture and routes: [002 — Delivery architecture](docs/product/002-delivery-architecture.md#implementation-2026-09-27). Languages and catalogs: [014](docs/product/014-languages.md). Lesson structure: [013](docs/product/013-choices-guided-journey.md). The live words are in `src/i18n/messages/en.json`; the readable lesson copy, including the 20 life-map story sets, is [choices-journey.md](docs/content/choices-journey.md) (regenerate with `npm run copy:lesson`).
 
-Lesson 1 has six chapters:
-1. The life map, with coherent story sets of example choices.
+Lesson 1 has five chapters and takes about 10 minutes:
+1. The opening: a cover, one made-up life told step by step on the life map (ten written lives, each with what-ifs that replay the life from a changed choice), then what added up.
 2. Alfredo's hike, with the drag-to-sort board.
 3. Maya's two paths.
-4. The ten-afternoon game.
-5. The life-path explorer.
-6. Takeaways.
+4. The life-path explorer.
+5. Takeaways.
+
+The ten-afternoon game left Lesson 1 on 2026-10-13 and is held for Lesson 2; its code and words stay in the repository. The opening's record is [001, v13 — Lesson 1 opening](docs/design/001-choices-explainer/v13-lesson1-opening/README.md).
 
 The home page shows the lesson roadmap. Lessons 02–06 are listed as "in preparation" without pages or links, following the brief's rule against empty lesson pages.
 
@@ -44,7 +45,7 @@ The public repository is [Rio517/wisdom-web](https://github.com/Rio517/wisdom-we
 
 **2026-10-09 owner feedback round (on `main`, tagged deploys):** the hike was redrawn (a stream that reads as water, a waterfall into a pool, a trail to the lake, a new rock, readable labels, a larger packing panel), Maya's chapter aligned for every iPad size with real soccer balls, a 15px text floor, Lesson 1 rewritten in the narrator's voice in all four languages ([wisdom-voice skill](.claude/skills/wisdom-voice/SKILL.md); outside forces now bring good luck as well as bad), a richer life-path explorer (chains of choices, lucky breaks and setbacks that move the path; [design note](notes/explorer-chains.md)), the path field fanned out with new lab controls, the index line and "coming soon" popovers, doors that open on the life map, and Lesson 2 structure C accepted ([015](docs/product/015-lesson-two-proposal.md)) with a habits research pass. Captures: [v10 voice pass](docs/design/001-choices-explainer/v10-voice-pass/README.md), [v10 hike](docs/design/001-choices-explainer/v10-hike-fixes/README.md), [v10 Maya](docs/design/001-choices-explainer/v10-maya-fixes/README.md), [002 v02 directions](docs/design/002-site/v02-directions/README.md). The owner picked direction A ("Stage"), now built into the home page and the lesson cover: one centred sentence over a faint path field, no sidebar, and the paths grow on click ([002 v03 build](docs/design/002-site/v03-stage-build/README.md)).
 
-1. **Lesson 2, Habits and daily practice (structure C):** Maya's habit story and a two-week soccer, cello and reading game; the ten-afternoon game and most of Maya's skill beats leave Lesson 1 in the same release. Three playable game directions are ready for the owner's pick ([003 v01](docs/design/003-lesson-two/v01-game-directions/README.md); `npm run dev:prototype`, then `/prototype/lesson2/`), and Maya's habit beats are drafted in English ([draft](docs/habits-practice/ideas/maya-habit-beats.md)). It gets a page and navigation link only when its content is complete.
+1. **Lesson 2, Habits and daily practice (structure C):** Maya's habit story and a two-week soccer, cello and reading game; the ten-afternoon game and most of Maya's skill beats have already left Lesson 1 and wait for this lesson. Three playable game directions are ready for the owner's pick ([003 v01](docs/design/003-lesson-two/v01-game-directions/README.md); `npm run dev:prototype`, then `/prototype/lesson2/`), and Maya's habit beats are drafted in English ([draft](docs/habits-practice/ideas/maya-habit-beats.md)). It gets a page and navigation link only when its content is complete.
 2. **Keep translations in step:** any change to English text updates all four catalogs in the same change (`npm test` enforces parity); recheck German layouts afterwards.
 3. **Reader testing** near age eight and with older readers, now with the new voice and the explorer's chains.
 4. **Domain protection (optional):** verify `knyflores.com` in GitHub account settings (Pages → verified domains).
@@ -65,6 +66,8 @@ npm run dev:prototype   # earlier studies on http://127.0.0.1:4602/prototype/
 ```
 
 All servers stay in **4600–4699** on `127.0.0.1` and fail rather than move; `tooling/ports.js` holds the shared guard used by both configs.
+
+Verification on 2026-10-13 (the new opening): 277 Node tests and the Astro build (25 pages) pass. In Chromium and WebKit, in all four languages at seven sizes from 744×1133 to 2560×1440: the ten lives' stories, their what-ifs, the map labels and the adds page, with no row cut off and no console errors. A long what-if may scroll a few pixels on a landscape iPad mini.
 
 Verification on 2026-09-30 (i18n): 240 Node tests and the Astro build (25 pages) pass. In the browser, all four languages were checked at 1440×900, 1024×768 and 768×1024: every page, all 20 lesson steps, the game and the explorer, with no raw message keys, clipped text or console errors. The built preview confirmed the language-aware 404 and, before publication, the draft gate.
 
