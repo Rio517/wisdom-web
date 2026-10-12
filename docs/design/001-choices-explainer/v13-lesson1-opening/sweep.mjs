@@ -253,7 +253,10 @@ const measureLabels = fork => {
     if (range.getBoundingClientRect().width > element.getBoundingClientRect().width + 1) cut += 1;
   });
   const small = labels.filter(element => parseFloat(getComputedStyle(element).fontSize) < 14).length;
-  return { steps: whatif ? fork + expected : expected, labels: labels.length, missing, overlap, onDot, outside, cut, underCard, small };
+  // No name twice on the map (the integration round): every label shown, the old path's muted ones and the gray choices included.
+  const names = [...document.querySelectorAll('.life-label, .life-alt')].filter(visible).map(element => element.firstChild?.textContent?.trim()).filter(Boolean);
+  const twice = names.length - new Set(names).size;
+  return { steps: whatif ? fork + expected : expected, labels: labels.length, missing, overlap, onDot, outside, cut, underCard, small, twice };
 };
 function labelsTask(item, size) {
   return {
@@ -449,15 +452,15 @@ if (!flag('no-adds')) {
 if (!flag('no-labels')) {
   const items = [...LIVES.map(life => ({ life })), ...(flag('no-grown') ? [] : await grownCases())];
   out.labels = await pool(browser, SIZES.flatMap(size => items.map(item => labelsTask(item, size))));
-  console.log('\nlabels  size       life    change                    steps  missing  overlap  on-dot  outside  cut  under-card');
+  console.log('\nlabels  size       life    change                    steps  missing  overlap  on-dot  outside  cut  under-card  twice');
   for (const row of out.labels) {
     if (row.failed) { console.log(`FAILED ${row.failed}`); continue; }
     const l = row.labels;
     const change = row.item.alt ? `${row.item.fork}:${row.item.alt}` : '-';
-    const bad = l.missing || l.overlap || l.onDot || l.outside || l.cut || l.underCard;
-    if (bad || flag('all-rows')) console.log(`labels  ${label(row.size).padEnd(10)} ${row.item.life.padEnd(6)}  ${change.padEnd(24)}  ${String(l.steps).padStart(5)}  ${String(l.missing).padStart(7)}  ${String(l.overlap).padStart(7)}  ${String(l.onDot).padStart(6)}  ${String(l.outside).padStart(7)}  ${String(l.cut).padStart(3)}  ${String(l.underCard).padStart(10)}${row.errors.length ? `  ERRORS ${row.errors.length}` : ''}`);
+    const bad = l.missing || l.overlap || l.onDot || l.outside || l.cut || l.underCard || l.twice;
+    if (bad || flag('all-rows')) console.log(`labels  ${label(row.size).padEnd(10)} ${row.item.life.padEnd(6)}  ${change.padEnd(24)}  ${String(l.steps).padStart(5)}  ${String(l.missing).padStart(7)}  ${String(l.overlap).padStart(7)}  ${String(l.onDot).padStart(6)}  ${String(l.outside).padStart(7)}  ${String(l.cut).padStart(3)}  ${String(l.underCard).padStart(10)}  ${String(l.twice ?? 0).padStart(5)}${row.errors.length ? `  ERRORS ${row.errors.length}` : ''}`);
   }
-  const bad = out.labels.filter(row => row.failed || row.labels.missing || row.labels.overlap || row.labels.onDot || row.labels.outside || row.labels.cut || row.labels.underCard);
+  const bad = out.labels.filter(row => row.failed || row.labels.missing || row.labels.overlap || row.labels.onDot || row.labels.outside || row.labels.cut || row.labels.underCard || row.labels.twice);
   console.log(`labels: ${out.labels.length} lives × sizes (written and changed), ${bad.length} with a step missing its label or a label not whole and clear`);
   const small = out.labels.filter(row => row.labels?.small);
   console.log(`labels: ${out.labels.reduce((sum, row) => sum + (row.labels?.labels ?? 0), 0)} labels checked; at 13 px (the last resort): ${small.reduce((sum, row) => sum + row.labels.small, 0)}${small.length ? ` (${small.map(row => `${row.item.life}${row.item.alt ? ` ${row.item.fork}:${row.item.alt}` : ''} at ${label(row.size)}`).join(', ')})` : ''}`);

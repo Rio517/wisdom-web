@@ -109,7 +109,9 @@ export function createWhatIf(S, api) {
     // The later labels and choices step aside; the real path stays, light, behind the new one. At
     // level c its lucky breaks, setbacks and last step keep a muted label (opening.css, .is-old).
     const newRoute = sampleGrid(edges, nodes.map(node => node.point));
-    const keepsOld = index => index >= k && (isSurprise(steps[index].kind) || index === END)
+    // A step the changed life also takes is named once, on the new path: the old path's muted label for it is not drawn (its mark stays).
+    const onNewPath = new Set(life.steps.slice(k).map(step => step.id));
+    const keepsOld = index => index >= k && (isSurprise(steps[index].kind) || index === END) && !onNewPath.has(steps[index].id)
       && Boolean(g.labels[index]) && !newRoute(g.labels[index].box, 4);
     S.labelEls.forEach(element => {
       const index = Number(element.dataset.step);

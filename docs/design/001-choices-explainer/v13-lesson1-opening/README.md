@@ -1,6 +1,6 @@
 # v13 — Lesson 1 opening
 
-Created: 2026-10-09. Updated: 2026-10-11 (round 7: every step labelled, the end eases in, the old path stays readable, as v08). Status: playable mockup on a branch; owner review pending. Not published.
+Created: 2026-10-09. Updated: 2026-10-12 (the integration round: the opening plays on the lesson page in four languages, site-*-v01/v02). Status: integrated on a branch; owner review pending. Not published.
 
 Question: does the opening tell one life clearly? Since round 3, also: does Sam's story read like the Explore chapter, and does changing one of his choices show that every gray line is a life he could have lived? Since round 4, also: can a reader play the opening five or six times and meet a really different life each time, where every step makes sense?
 
@@ -21,6 +21,33 @@ Open <http://127.0.0.1:4638/prototype/lesson1-opening/>. The lives store and its
 - At the end, the card on the map offers **Change one of his choices** (or hers) and **Watch another life**. Every fork with other choices gets a ring; a ring is a button that opens the choices there, and a gray choice on the map can also be tapped straight away. A picked choice grows a new life from that fork, a different one each time. **Try again** grows another from the same choice, **Try another choice** goes back to the rings, and **Back to Sam's life** or **Escape** puts the life back as it was.
 - The **Mockup** bar under the stage switches the pace (**Normal**: 900 ms pauses, 1300 ms after events; **Quicker**: 700 and 1000 ms) and the **Life** (any of the ten, or Random), and replays the story.
 - The address keeps the pace and the life: `?pace=quick&life=zoe`. After a pick it also holds the fork, the choice and the seed, so the same new life opens again. `?store=fixture` plays the test store (two lives); `#paths-life` opens the finished story, `#paths-adds` the next beat and `#hike-plan` the hike.
+
+## The integration round: the opening on the lesson page (site-*-v01, v02)
+
+The approved opening now plays on `/choices/the-paths-we-make/` (and `/es/`, `/de/`, `/fr/`): the cover, one person's life, the end card with its what-ifs, "Choices add up" and the fade into the hike. The prototype stays, reading the store from its new home.
+
+**What moved where.** The store is `src/lessons/choices/lives/` (its README is the schema, now with "Words in other languages"); the tree page stays a dev tool at `/prototype/lesson1-opening/lives/`. The prototype's code is ported, not rewritten: `journey-life.js` (the story's list, the end card's actions, a changed life's narration), `journey-life-player.js` (life.js), `journey-life-map.js`, `journey-life-draw.js` and `journey-life-whatif.js` (life-map.js, split), and `journey-map.js` (map.js merged in; the home page keeps its cover and travel to Today). The beats `life` and `adds` replace `many`, `travel` and `outside`; `#paths-many` and `#paths-travel` land on `#paths-life`, `#paths-outside` on `#paths-adds`. The takeaways show the life on screen. Left out: the mockup bar and the `?old=` and `?runs=` switches (level c and option D are built in). The stage is about 46 px taller than in the mockup, with no bar under it.
+
+**The store in the browser.** A Vite plugin (`tooling/lives-data.mjs`) ships the structure packed (`pack.js`) and the page's language's words only, loaded after the first paint on Lesson 1: every map label, a story line only for the nodes a written life tells, a "What if" text only for the alternatives. No YAML or YAML parser reaches the browser.
+
+**Words.** The opening's words are in the four catalogs (36 keys added; 242 per catalog removed with the old map's story chips, closed ways and key). The store's Spanish, German and French words are `lives/text/<locale>.yaml`, one ICU message per text with `{name}` and `{gender, select, …}`, each entry fingerprinted against its English; `lives:check` reports a missing, stale, unknown-token, broken-ICU or over-long label per language. Map labels: 22 characters in English, 28 in the others (the widest at 28 measure about 225 px against English's 189, and the label check still finds every label). Drafted per area, then a fresh reviewer per language read the ten written lives and 30 grown lives and every finding was fixed: German 145, French 64, Spanish 70 (no what-if tense errors; most were labels that didn't read on their own). `node tooling/lives-text.mjs de` prints the lives as text.
+
+**Engine and labels.** A grown life never takes, later on, another choice at a fork it passed (its name would show twice); five written-life alternatives that did were swapped (Amara at 28 `entersStoryContest` for `joinsWritingGroup`; her in-run fork at 29 offers none now, as no node the checker accepts fits there; Ana at 27 `hostsPopUp` for `caters`; Kai at 21 `studiesEnvironment` for `rentsAllotment`; Leo at 20 `physio` for `runsDramaWorkshops`). In a what-if, a step the changed life also takes is named once, on the new path: the old path's muted label for it is not drawn (v01 showed "A DJ plays the song" twice; v02 doesn't).
+
+**Fit and speed.** German's end-card bar and age column fit (shorter German and Spanish button words; the age column sized from the language's own "Age 88"). The finished story's canvases and the list's plans are kept, so going back to the story or choosing redraws and measures nothing. Under reduced motion the fitted lists take no transition (WebKit had read the old line breaks, see "Checked on a Mac").
+
+| Moment | 1440×900 | 744×1133 |
+| --- | --- | --- |
+| Sam's step 14, EN | [en 14](site-en-sam-14-1440x900-v01.png) | [en 14](site-en-sam-14-744x1133-v01.png) |
+| Sam's end card, EN | [en end](site-en-sam-end-1440x900-v01.png) | [en end](site-en-sam-end-744x1133-v01.png) |
+| Drums at 10, EN | [v02](site-en-sam-drums-1440x900-v02.png) ([v01](site-en-sam-drums-1440x900-v01.png)) | [v02](site-en-sam-drums-744x1133-v02.png) ([v01](site-en-sam-drums-744x1133-v01.png)) |
+| Sam's step 14, DE | [de 14](site-de-sam-14-1440x900-v01.png) | [de 14](site-de-sam-14-744x1133-v01.png) |
+| Sam's end card, DE | [de end](site-de-sam-end-1440x900-v01.png) | [de end](site-de-sam-end-744x1133-v01.png) |
+| Drums at 10, DE | [v02](site-de-sam-drums-1440x900-v02.png) ([v01](site-de-sam-drums-1440x900-v01.png)) | [v02](site-de-sam-drums-744x1133-v02.png) ([v01](site-de-sam-drums-744x1133-v01.png)) |
+| Theo's end, 1133×744 | [theo](site-en-theo-end-1133x744-v01.png) | |
+| Nora's end card, DE | [nora](site-de-nora-end-1440x900-v01.png) | |
+
+Measurements: see the next commit (the sweep is still running).
 
 ## Round 7: every step labelled, the end eases in, the old path stays readable (v08)
 
