@@ -1,6 +1,6 @@
 # v13 — Lesson 1 opening
 
-Created: 2026-10-09. Updated: 2026-10-12 (the integration round: the opening plays on the lesson page in four languages, site-*-v01/v02). Status: integrated on a branch; owner review pending. Not published.
+Created: 2026-10-09. Updated: 2026-10-12 (the integration round: the opening plays on the lesson page in four languages, site-*-v01/v02; the wording round, site-*-v02/v03). Status: integrated on a branch; owner review pending. Not published.
 
 Question: does the opening tell one life clearly? Since round 3, also: does Sam's story read like the Explore chapter, and does changing one of his choices show that every gray line is a life he could have lived? Since round 4, also: can a reader play the opening five or six times and meet a really different life each time, where every step makes sense?
 
@@ -32,7 +32,7 @@ The approved opening now plays on `/choices/the-paths-we-make/` (and `/es/`, `/d
 
 **Words.** The opening's words are in the four catalogs (36 keys added; 242 per catalog removed with the old map's story chips, closed ways and key). The store's Spanish, German and French words are `lives/text/<locale>.yaml`, one ICU message per text with `{name}` and `{gender, select, …}`, each entry fingerprinted against its English; `lives:check` reports a missing, stale, unknown-token, broken-ICU or over-long label per language. Map labels: 22 characters in English, 28 in the others (the widest at 28 measure about 225 px against English's 189, and the label check still finds every label). Drafted per area, then a fresh reviewer per language read the ten written lives and 30 grown lives and every finding was fixed: German 145, French 64, Spanish 70 (no what-if tense errors; most were labels that didn't read on their own). `node tooling/lives-text.mjs de` prints the lives as text.
 
-**Engine and labels.** A grown life never takes, later on, another choice at a fork it passed (its name would show twice); five written-life alternatives that did were swapped (Amara at 28 `entersStoryContest` for `joinsWritingGroup`; her in-run fork at 29 offers none now, as no node the checker accepts fits there; Ana at 27 `hostsPopUp` for `caters`; Kai at 21 `studiesEnvironment` for `rentsAllotment`; Leo at 20 `physio` for `runsDramaWorkshops`). In a what-if, a step the changed life also takes is named once, on the new path: the old path's muted label for it is not drawn (v01 showed "A DJ plays the song" twice; v02 doesn't).
+**Engine and labels.** A grown life never takes, later on, another choice at a fork it passed (its name would show twice); five written-life alternatives that did were swapped (Amara at 28 `entersStoryContest` for `joinsWritingGroup`; her in-run fork at 29 offers none now, as no node the checker accepts fits there; Ana at 27 `hostsPopUp` for `caters`; Kai at 21 `studiesEnvironment` for `rentsAllotment`; Leo at 20 `physio` for `runsDramaWorkshops`). A written life also offers each alternative at one fork only (the checker warns otherwise), which swapped six more: Amara at 23 `bookshopJob` for `libraryJob`, Kai at 21 `studiesEnvironment` for `plantsTrees`, Lena at 19 `retakesTheExam` for `changesCourse`, Nora at 17 `captainsTheTeam` for `studiesHardForExams`, Theo at 21 `paramedic` for `childminder` and at 26 `careAssistant` for `writesHealthLeaflets`. In a what-if, a step the changed life also takes is named once, on the new path: the old path's muted label for it is not drawn (v01 showed "A DJ plays the song" twice; v02 doesn't).
 
 **Fit and speed.** German's end-card bar and age column fit (shorter German and Spanish button words; the age column sized from the language's own "Age 88"). The finished story's canvases and the list's plans are kept, so going back to the story or choosing redraws and measures nothing. Under reduced motion the fitted lists take no transition (WebKit had read the old line breaks, see "Checked on a Mac").
 
@@ -47,7 +47,36 @@ The approved opening now plays on `/choices/the-paths-we-make/` (and `/es/`, `/d
 | Theo's end, 1133×744 | [theo](site-en-theo-end-1133x744-v01.png) | |
 | Nora's end card, DE | [nora](site-de-nora-end-1440x900-v01.png) | |
 
-Measurements: see the next commit (the sweep is still running).
+**Measured** (Chromium on the VM). Weight: the lesson page's static JS 71.6 → 98.9 KB gzipped; its embedded catalog EN 15.5 → 13.6, DE 17.0 → 15.1 KB. The lives data, loaded after the first paint: structure 14.4 KB plus the page language's words (EN 10.6, DE 12.7, FR 12.0, ES 11.7), so at most 27.1 KB per language against the 28 KB budget. Memory over ten picks: heap 6.2 → 6.5 MB, DOM nodes steady (the prototype 10.1 → 10.3 MB). A pick at 4× CPU slowdown: about 105 ms, 48 ms once the plan is warm; "Try another choice" and Back are mostly canvas drawImage in software rendering, as in the prototype (about 244 and 216 ms). Sweeps: see the wording round below.
+
+## The wording round (site-*-v02)
+
+The owner asked for language that is easy to understand and does not read like machine writing; the sentence to avoid is "A real keyboard set to German, nothing to install." Rules for every narrated line, in all four languages: one plain sentence, with no colon, semicolon, exclamation mark or closing tag ("Luck!", "Glück!", "Quelle chance !", "¡Suerte!" are gone); a lucky line whose luck the sentence doesn't show starts "Luckily," ("Zum Glück", "Par chance,", "Por suerte,"); two short sentences about one thing become one; no idioms or trade words a child wouldn't know. Map labels: a short verb phrase, 22 characters in English, 28 in the others.
+
+**Catalogs.** The opening's lines as whole sentences (A); then the cover's lede and first body line as the lead wrote them, and every key the lesson page and its text version show, searched for a colon inside a sentence or a sentence without a verb: 37 more keys rewritten in each language that had one (alt texts, feedback, the game's days and summary, the play results, the text version's lede and intros). Colons that open quoted speech and the announcer's patterns stay.
+
+**The lives store.** 210 English texts changed in 131 nodes and 25 written steps: the lead's list, the luck rule, and a fresh plain-English pass over all 721 texts (129 changes proposed, 128 taken). A `{he}` token joins `{his}`/`{him}`/`{himself}`. German, French and Spanish: every line whose English changed (154 entries a language, found by its fingerprint) retranslated under the same rules, then a fresh reader per language read the ten written lives and ten grown ones for clipped or stiff lines and fixed every one: German 83, French 58, Spanish 58 (mostly stiff phrasing and labels that didn't read on their own). `lives:check` reports 0 errors and 0 warnings in all four languages.
+
+**Lines that fit the life.** A step must not point at something its life doesn't have. Help and answers come within two years of their setback (`withinYears: 2`, a new node field, on 38 nodes); a broken oven needs a bakery or kitchen within the last three steps; a band splits only within three steps of having one; moving up an age group has an age cap; a first song is tagged as the band's. A read of 40 fresh grown lives found three more of the same kind, fixed the same way: a website breaking on launch day now follows building it, stolen van tools need a trade, and a break from sport needs sport.
+
+**The finished what-if.** The lead found the last rows of a finished what-if hidden in German (Sam, chess club, 1440×900: the list ended three rows early, above the buttons). The list measured its rows from `offsetTop`, but its `contain: strict` makes it their offsetParent, so it never scrolled; and a 390 px list counted as fitting a 389 px box. Now a finished life rests with its newest row and the note whole: older rows fold (on a list too long even at 14 px rows), and only if the column is still too short does it rest scrolled to its end, under the top fade. The buttons keep to two rows: smaller padding, then the first button's short words ("Try again", "Noch einmal", "Réessayer", "Repetir"), then 13 px type, still 44 px tall. During a what-if the kicker is hidden and Back and Next sit beside the beat dots, as on short screens; the heading keeps its size. `#paths-travel` on the life beat now takes the beat's own address, as `#paths-many` did.
+
+**Checks** (Chromium, the build preview; seven sizes: 1280×800, 1440×900, 1920×1080, 2560×1440, 744×1133, 1133×744, 990×800):
+
+(Sweep results are added with the record shots.)
+
+| Moment | 1440×900 | 744×1133 |
+| --- | --- | --- |
+| Sam's step 14, EN | [v02](site-en-sam-14-1440x900-v02.png) | [v02](site-en-sam-14-744x1133-v02.png) |
+| Sam's end card, EN | [v02](site-en-sam-end-1440x900-v02.png) | [v02](site-en-sam-end-744x1133-v02.png) |
+| Drums at 10, EN | [v03](site-en-sam-drums-1440x900-v03.png) | [v03](site-en-sam-drums-744x1133-v03.png) |
+| Sam's step 14, DE | [v02](site-de-sam-14-1440x900-v02.png) | [v02](site-de-sam-14-744x1133-v02.png) |
+| Sam's end card, DE | [v02](site-de-sam-end-1440x900-v02.png) | [v02](site-de-sam-end-744x1133-v02.png) |
+| Drums at 10, DE | [v03](site-de-sam-drums-1440x900-v03.png) | [v03](site-de-sam-drums-744x1133-v03.png) |
+| Theo's end, 1133×744 | [v02](site-en-theo-end-1133x744-v02.png) | |
+| Nora's end card, DE | [v02](site-de-nora-end-1440x900-v02.png) | |
+| Sam, chess club, finished, DE | [v01](site-de-sam-chess-1440x900-v01.png) | |
+| Theo, music at home, finished, DE 1280×800 | [v01](site-de-theo-sings-1280x800-v01.png) | |
 
 ## Round 7: every step labelled, the end eases in, the old path stays readable (v08)
 
