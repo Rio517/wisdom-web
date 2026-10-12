@@ -237,6 +237,54 @@ one before it, except inside a run. A grown life never takes, later on, one of
 the other choices at a fork it passed (the written step there, or one of its
 alternatives): that choice is still a gray line with its name on the map.
 
+## Words in other languages
+
+English is written in the node and baseline files, as above. Spanish, German
+and French each have one file, `text/es.yaml`, `text/de.yaml` and
+`text/fr.yaml`, keyed by node id, and under `baselines` by person and node
+where a written life has its own words:
+
+```yaml
+lead: { he: Er, she: Sie }       # a line that starts with {name} takes this after a story's first line ('' drops the subject: Spanish)
+nodes:
+  startsBand:
+    en: 1k2x9qz                  # the fingerprint of the English it was translated from
+    label: "Gründet eine Band"
+    line: "{name} gründet mit zwei Freunden eine Band."
+    if: "{name} eine Band gegründet hätte"   # completes the catalog's "Was wäre, wenn {if}?"
+baselines:
+  sam:
+    bandSplits: { en: …, line: "Beide Freunde steigen aus. Er ist auf sich gestellt." }
+```
+
+- Each text is an ICU message with `{name}` and `{gender, select, she {…} other
+  {…}}` wherever the words depend on the person (German case and articles,
+  French and Spanish agreement). English tokens (`{his}` …) don't exist here.
+- Translate whole lines; never build a sentence from pieces. Use the
+  typographic apostrophe ’ (a straight one starts an ICU quote).
+- The `if` text completes the language's own frame from the catalogs
+  (`opening.whatif.heading`): DE "Was wäre, wenn {if}?" (Konjunktiv II, verb
+  last), FR "Et si {if} ?" (plus-que-parfait), ES "¿Y si {if}?"
+  (pluscuamperfecto de subjuntivo).
+- A map label is at most 28 characters in these languages, for a he and a she
+  (English stays at 22): the widest labels at 28 characters measure about
+  225 px against English's widest 189, and every step of the ten written
+  lives and two changed lives each still keeps its label at 744×1133,
+  1133×744 and 1440×900 (the sweep's label check, `--site --locale`).
+- Names stay as they are. Hard things keep their level: drinking and drugs in
+  general words only.
+- When the English of a node changes, its fingerprint no longer matches and
+  `npm run lives:check` reports the translation stale in each language until
+  it is translated again (and its `en` updated).
+
+The site ships the store already parsed (`tooling/lives-data.mjs`, a Vite
+plugin): the structure once, packed (`pack.js`), and the page's language's
+words only, with every map label, a story line only for the nodes a written
+life tells, and an `if` only for the alternatives (grown lives show labels).
+A translation still missing is filled from the English at build time.
+`node tooling/lives-text.mjs de` prints the written lives and seeded grown
+lives as plain text in any language, for reading.
+
 ## Check it
 
 ```sh
@@ -246,7 +294,9 @@ npm run lives:check -- --quiet            # errors and the report, warnings coun
 npm run lives:check -- --store tests/fixtures/lives --lives 20 --random 1000
 ```
 
-**Errors** (fix them all): a file that doesn't parse; duplicate ids (nodes or
+**Errors** (fix them all): in each other language (`text/<locale>.yaml`), a
+missing translation, a stale one, an unknown token, broken ICU or a map label
+over 28 characters; a file that doesn't parse; duplicate ids (nodes or
 runs); an id
 that isn't camelCase; an unknown name in `after`, `needs`, `unless`, `drops` or
 `echoes`; a tag named like another node; bad `ages`; a kind's `move` out of its

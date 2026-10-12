@@ -92,6 +92,7 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
 
   /** The life to draw (`writtenLife`) and the store to grow new lives from. */
   function setLife(life, store) {
+    storyCache = null;
     W.stopWhat();
     closePop();
     placeAges(life.steps);
@@ -199,7 +200,7 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
         const spot = g.grayLabels[index];
         if (!spot) return '';
         const step = steps[entry.item.stepIndex];
-        return `<button type="button" class="life-alt" data-alt="${escapeHTML(entry.item.key)}" tabindex="-1" style="left:${spot.center.toFixed(1)}px;top:${spot.baseline.toFixed(1)}px"
+        return `<button type="button" class="life-alt" data-copy-ok="verb-heading" data-alt="${escapeHTML(entry.item.key)}" tabindex="-1" style="left:${spot.center.toFixed(1)}px;top:${spot.baseline.toFixed(1)}px"
           aria-label="${escapeHTML(t('opening.alt.label', { choice: spot.text, instead: step.label, age: step.age }))}"><span>${escapeHTML(spot.text)}</span></button>`;
       }).join('')}
       ${S.model.forks.map(index => `<button type="button" class="life-fork" data-step="${index}" data-local-keys tabindex="-1" aria-haspopup="dialog" aria-expanded="false"
@@ -352,6 +353,42 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
     const grew = ahead && !S.aheadBaked;
     if (grew) bakeAhead();
     if (S.baked !== before || grew || !S.marks.length) paintMarks();
+    if (grew) keepStory();
+  }
+
+  // The finished story's drawing is kept (a copy of its three base canvases and what they hold),
+  // so going back to it from a changed life ("Try another choice", "Back to Sam's life") puts it
+  // back in one copy instead of drawing every step again. Copied in a quiet moment.
+  let storyCache = null;
+  const idleTime = globalThis.requestIdleCallback ?? (callback => setTimeout(callback, 200));
+  function keepStory() {
+    const key = layoutKey();
+    if (storyCache?.key === key) return;
+    idleTime(() => {
+      if (S.what || S.baked < END || !S.aheadBaked || S.sizedFor !== key || layoutKey() !== key) return;
+      const copies = [graysCanvas, darkCanvas, marksCanvas].map(canvas => {
+        const copy = document.createElement('canvas');
+        copy.width = canvas.width; copy.height = canvas.height;
+        copy.getContext('2d').drawImage(canvas, 0, 0);
+        return copy;
+      });
+      storyCache = { key, copies, strokes: S.strokes.slice(), marks: S.marks.slice() };
+    }, { timeout: 2000 });
+  }
+  /** The finished story from its copy, when one was kept at this size; false when there is none. */
+  function reuseStory() {
+    if (storyCache?.key !== layoutKey()) return false;
+    [[graysCanvas, gx], [darkCanvas, dx], [marksCanvas, mx]].forEach(([canvas, context], at) => {
+      sizeCanvas(canvas, context, whole());
+      context.save();
+      context.setTransform(1, 0, 0, 1, 0, 0);
+      context.drawImage(storyCache.copies[at], 0, 0);
+      context.restore();
+    });
+    S.sizedFor = storyCache.key;
+    S.baked = END; S.aheadBaked = true;
+    S.strokes = storyCache.strokes.slice(); S.marks = storyCache.marks.slice();
+    return true;
   }
 
   // The traveller: moving, a dot with a soft halo; resting, a slightly larger dot.
@@ -640,7 +677,7 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
   function restore(nextMode = 'ended') {
     W.ghostOut();
     W.stopWhat();
-    clearBase();
+    if (!reuseStory()) clearBase();
     S.frame = finalFrame();
     S.shown = { labels: -1, alts: -1 };
     drawStory();

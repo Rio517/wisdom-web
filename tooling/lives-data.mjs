@@ -2,12 +2,14 @@
 // A Vite plugin that reads src/lessons/choices/lives/ at build time and serves two kinds of module:
 //   virtual:lives/structure      the nodes, runs and baselines without their words (one for every language)
 //   virtual:lives/words/<locale> one language's words: English from the YAML, the others from text/<locale>.yaml
+// Both packed as positional JSON (src/lessons/choices/lives/pack.js).
 // So the browser gets JSON only: no YAML and no YAML parser. In dev, saving a store file reloads the page.
 import { readdirSync, readFileSync, existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { load } from 'js-yaml';
-import { structureOf, wordsOf } from '../src/lessons/choices/lives/engine.js';
+import { structureOf, wordsOf, applyWords } from '../src/lessons/choices/lives/engine.js';
+import { packStructure, packWords } from '../src/lessons/choices/lives/pack.js';
 
 const ROOT = resolve(fileURLToPath(new URL('..', import.meta.url)), 'src/lessons/choices/lives');
 const PREFIX = 'virtual:lives/';
@@ -36,6 +38,33 @@ export function readWords(locale, dir = ROOT) {
   };
 }
 
+/**
+ * The words the page can show, in `locale`: every node's map label; a story line only for a node
+ * a written life tells (grown lives show labels only); a "What if" text only for a node offered as
+ * an alternative. A missing translation is filled from the English (as an ICU message) here, at
+ * build time, so the page loads one language's words and no fallback.
+ */
+export function shippedWords(locale, dir = ROOT) {
+  const files = readStoreFiles(dir);
+  const english = wordsOf(files);
+  const own = readWords(locale, dir);
+  const told = new Set(); const offered = new Set();
+  for (const [path, data] of Object.entries(files)) {
+    if (!/(^|\/)baselines\//.test(path)) continue;
+    for (const step of data?.steps ?? []) { told.add(step.node); for (const alt of step.alts ?? []) offered.add(alt); }
+  }
+  // applyWords fills each field from the English where the translation lacks it.
+  const merged = locale === 'en' ? null : applyWords(Object.fromEntries(Object.entries(files).filter(([path]) => /(^|\/)nodes\//.test(path) || /(^|\/)baselines\//.test(path)).map(([path, data]) => [path, /baselines/.test(path) ? data : data.map(node => ({ id: node.id }))])), own, english);
+  const filled = merged ? wordsOf(merged) : english;
+  const nodes = {};
+  for (const [id, fields] of Object.entries(filled.nodes)) {
+    nodes[id] = { label: fields.label };
+    if (told.has(id) && fields.line) nodes[id].line = fields.line;
+    if (offered.has(id) && fields.if) nodes[id].if = fields.if;
+  }
+  return { ...(locale === 'en' ? {} : { lead: own.lead ?? {} }), nodes, baselines: filled.baselines };
+}
+
 export default function livesData() {
   return {
     name: 'wisdom-lives-data',
@@ -47,7 +76,8 @@ export default function livesData() {
         const path = join(ROOT, folder);
         if (existsSync(path)) for (const name of readdirSync(path)) this.addWatchFile(join(path, name));
       }
-      const data = what === 'structure' ? structureOf(readStoreFiles()) : what.startsWith('words/') ? readWords(what.slice(6)) : null;
+      const structure = packStructure(structureOf(readStoreFiles()));
+      const data = what === 'structure' ? structure : what.startsWith('words/') ? packWords(shippedWords(what.slice(6)), structure) : null;
       if (!data) return null;
       return `export default JSON.parse(${JSON.stringify(JSON.stringify(data))});`;
     },

@@ -664,3 +664,59 @@ test('a grown life never takes, later on, another choice from a fork it passed; 
   });
   assert.ok(check(store).warnings.some(item => /piano at 9 was another choice at 6/.test(item.message)));
 });
+
+test('another language\'s words: ICU with {name} and {gender}, the lead pronoun, and the checker\'s errors', async () => {
+  const { checkWords, fingerprint, loadWords, structureOf, wordsOf, writtenLife, NODE_WORDS } = await import('../src/lessons/choices/lives/engine.js');
+  const { load } = await import('js-yaml');
+  const files = Object.fromEntries(Object.entries(readStore(FIXTURE)).map(([path, text]) => [path, load(text)]));
+  const english = wordsOf(files);
+  const fp = id => fingerprint(english.nodes[id], NODE_WORDS);
+  // Every node in "German" (the English words, made ICU), and one real line with a gender select.
+  const words = { lead: { he: 'Er', she: 'Sie' }, nodes: {}, baselines: {} };
+  for (const [id, fields] of Object.entries(english.nodes)) {
+    words.nodes[id] = { en: fp(id), ...Object.fromEntries(Object.entries(fields).map(([field, text]) => [field, text.replace(/\{(his|him|himself)\}/g, '{gender, select, she {her} other {his}}')])) };
+  }
+  for (const [id, steps] of Object.entries(english.baselines)) {
+    words.baselines[id] = Object.fromEntries(Object.entries(steps).map(([node, fields]) => [node, { en: fingerprint(fields, ['label', 'line']), ...fields }]));
+  }
+  words.nodes.guitar.line = '{name} wählt die Gitarre und übt mit {gender, select, she {ihrer} other {seiner}} Lehrerin.';
+  assert.deepEqual(checkWords(english, words, { locale: 'de', labelMax: 28 }), []);
+  const store = loadWords(structureOf(files), words, { locale: 'de' });
+  const life = writtenLife(store, [...store.baselines.keys()][0]);
+  const guitar = life.steps.find(step => step.id === 'guitar');
+  if (guitar) assert.match(guitar.line, /^(Er|Sie) wählt die Gitarre und übt mit (seiner|ihrer) Lehrerin\.$/);
+  // Missing, stale, an unknown token, broken ICU, a label too long.
+  const broken = structuredClone(words);
+  delete broken.nodes.drums;
+  broken.nodes.guitar.en = 'old';
+  broken.nodes.choir.line = '{name} singt mit {his} Freunden.';
+  broken.nodes.born.line = '{name} wird {gender, select, she {geboren} geboren.';
+  broken.nodes.startsBand.label = 'Gründet zusammen mit Freunden eine richtige Band';
+  const messages = checkWords(english, broken, { locale: 'de', labelMax: 28 }).map(item => `${item.node} ${item.message}`).join('\n');
+  assert.match(messages, /drums de: Missing translation\./);
+  assert.match(messages, /guitar de: Stale translation/);
+  assert.match(messages, /choir de: Unknown token \{his\}/);
+  assert.match(messages, /born de: Broken ICU/);
+  assert.match(messages, /startsBand de: Label .* characters \(at most 28\)/);
+});
+
+test('the store the site ships (packed, one language\'s words) grows the same lives as the YAML', async () => {
+  const { readStoreFiles, readWords, shippedWords } = await import('../tooling/lives-data.mjs');
+  const { packStructure, packWords, unpackStructure, unpackWords } = await import('../src/lessons/choices/lives/pack.js');
+  const { loadWords, structureOf, writtenLife } = await import('../src/lessons/choices/lives/engine.js');
+  const files = readStoreFiles();
+  const packed = JSON.parse(JSON.stringify(packStructure(structureOf(files))));
+  for (const locale of ['en', 'de']) {
+    const full = loadWords(structureOf(files), readWords(locale), { locale, fallback: readWords('en') });
+    const shipped = loadWords(unpackStructure(packed), unpackWords(JSON.parse(JSON.stringify(packWords(shippedWords(locale), packed))), packed), { locale });
+    assert.equal(shipped.nodes.size, full.nodes.size);
+    for (const id of full.baselines.keys()) {
+      const a = writtenLife(full, id); const b = writtenLife(shipped, id);
+      assert.deepEqual(b.steps.map(step => [step.id, step.age, step.y, step.line, step.label, step.alts.map(alt => alt.whatIf)]), a.steps.map(step => [step.id, step.age, step.y, step.line, step.label, step.alts.map(alt => alt.whatIf)]), `${locale} ${id}`);
+    }
+    for (const fork of forksOf(full).slice(0, 40)) {
+      const a = grow(full, { ...fork, seed: 'pack' }); const b = grow(shipped, { ...fork, seed: 'pack' });
+      assert.deepEqual(b.steps.map(step => [step.id, step.age, step.label]), a.steps.map(step => [step.id, step.age, step.label]), `${locale} ${fork.baseline} ${fork.alt}`);
+    }
+  }
+});

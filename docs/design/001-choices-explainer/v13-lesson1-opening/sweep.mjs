@@ -13,8 +13,12 @@
 // - adds: how many of "Choices add up"'s three labels show, and any clash (each other,
 //   the labels that stay, the end card, the map's edge, a pin crossing a dot).
 //
+// The integration round: --site [--locale de] runs every check on the lesson page itself, and the story
+// check adds two reduced-motion passes per life (from the cover, and a link straight to the story;
+// --no-reduced skips them).
+//
 // Usage:
-//   node sweep.mjs [--engine chromium|webkit] [--sizes 1133x744,1440x900,1366x657]
+//   node sweep.mjs [--site] [--locale en|es|de|fr] [--engine chromium|webkit] [--sizes 1133x744,1440x900,1366x657]
 //                  [--lives amara,ana,...] [--paces normal,quick] [--url http://127.0.0.1:4644]
 //                  [--jobs 4] [--no-story] [--no-adds] [--no-labels] [--no-grown] [--all-rows] [--room] [--json out.json]
 // The label check (round 7) runs for the written lives and two changed lives per person; --no-grown skips the changed ones.
@@ -39,9 +43,13 @@ const ENGINE = opt('engine', 'chromium');
 const SIZES = opt('sizes', '1133x744,1440x900,1366x657').split(',').map(text => text.split('x').map(Number));
 const LIVES = opt('lives', 'amara,ana,kai,lena,leo,nora,omar,sam,theo,zoe').split(',');
 const PACES = opt('paces', 'normal,quick').split(',');
-const BASE = opt('url', 'http://127.0.0.1:4644');
+// --site plays the lesson on the site (the dev server on 4600, or the build preview on 4601 with --url),
+// in the language --locale names (en, es, de or fr); without it, the prototype.
+const SITE = flag('site');
+const LOCALE = opt('locale', 'en');
+const BASE = opt('url', SITE ? 'http://127.0.0.1:4600' : 'http://127.0.0.1:4644');
 const JOBS = Number(opt('jobs', '4'));
-const PAGE = `${BASE}/prototype/lesson1-opening/`;
+const PAGE = SITE ? `${BASE}${LOCALE === 'en' ? '' : `/${LOCALE}`}/choices/the-paths-we-make/` : `${BASE}/prototype/lesson1-opening/`;
 
 async function launch() {
   const type = ENGINE === 'webkit' ? webkit : chromium;
@@ -144,7 +152,24 @@ const measureAdds = () => {
   return { shown: chips.length, clashes, log: globalThis.__addsLog ?? null };
 };
 
+// With reduced motion every row lands at once: 'reduced' from the cover (ArrowRight), 'reduced-direct'
+// by a link straight to the story; the list must still fit (the integration round's WebKit finding).
 function storyTask(life, size, pace) {
+  if (pace.startsWith('reduced')) {
+    return {
+      size,
+      contextOptions: { reducedMotion: 'reduce' },
+      run: async page => {
+        await page.goto(`${PAGE}?life=${life}${pace === 'reduced-direct' ? '#paths-life' : ''}`);
+        await ready(page);
+        if (pace === 'reduced') { await page.waitForTimeout(300); await page.keyboard.press('ArrowRight'); }
+        await page.waitForFunction(() => opening.player.state.complete, null, { timeout: 15000 });
+        await page.waitForTimeout(900);
+        const end = await page.evaluate(measureEnd);
+        return { life, size, pace, scroll: 0, bodyScroll: 0, samples: 0, end };
+      },
+    };
+  }
   return {
     size,
     run: async page => {
@@ -397,13 +422,14 @@ if (flag('room')) {
 }
 
 if (!flag('no-story')) {
-  const tasks = SIZES.flatMap(size => LIVES.flatMap(life => PACES.map(pace => storyTask(life, size, pace))));
+  const paces = flag('no-reduced') ? PACES : [...PACES, 'reduced', 'reduced-direct'];
+  const tasks = SIZES.flatMap(size => LIVES.flatMap(life => paces.map(pace => storyTask(life, size, pace))));
   out.story = await pool(browser, tasks);
   console.log('\nstory   size       life   pace    scroll  body  over  out  slack  rows  short  sizes (lines / ages)');
   for (const row of out.story) {
     if (row.failed) { console.log(`FAILED ${row.failed}`); continue; }
     const e = row.end;
-    console.log(`story   ${label(row.size).padEnd(10)} ${row.life.padEnd(6)} ${row.pace.padEnd(7)} ${String(row.scroll).padStart(6)} ${String(row.bodyScroll).padStart(5)} ${String(e.over).padStart(5)} ${String(e.out).padStart(4)} ${String(e.slack).padStart(6)} ${String(e.rows).padStart(5)} ${String(e.short).padStart(6)}  ${e.lineSizes.join(',')} / ${e.ageSizes.join(',')}${row.errors.length ? `  ERRORS ${row.errors.length}` : ''}`);
+    console.log(`story   ${label(row.size).padEnd(10)} ${row.life.padEnd(6)} ${row.pace.padEnd(14)} ${String(row.scroll).padStart(6)} ${String(row.bodyScroll).padStart(5)} ${String(e.over).padStart(5)} ${String(e.out).padStart(4)} ${String(e.slack).padStart(6)} ${String(e.rows).padStart(5)} ${String(e.short).padStart(6)}  ${e.lineSizes.join(',')} / ${e.ageSizes.join(',')}${row.errors.length ? `  ERRORS ${row.errors.length}` : ''}`);
   }
   const bad = out.story.filter(row => row.failed || row.scroll || row.bodyScroll || row.end?.out || row.end?.over);
   console.log(`story: ${out.story.length} runs, ${bad.length} with scroll, overflow or rows out of view`);

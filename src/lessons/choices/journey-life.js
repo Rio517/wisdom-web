@@ -131,6 +131,10 @@ export function createLifeStory({ scene, hooks, onLife, goToLife, rerender }) {
     margin: 4, // px kept free under the last row: rounding, and WebKit's text a few px taller than Chromium's
   };
   let storyPlan = null; // { short: rows shortened at each step }
+  const ageFor = older => Math.max(13, older * 0.82); // the ages' one size, from the older rows'
+  // The plans already made, by life and column size: going back to the story (after a changed
+  // life, or to choose) applies its plan without measuring the rows again.
+  const plans = new Map();
   function fitStory(box) {
     storyPlan = null;
     box.classList.remove('is-two', 'is-fits', 'is-packed');
@@ -140,6 +144,8 @@ export function createLifeStory({ scene, hooks, onLife, goToLife, rerender }) {
     shortened.forEach(row => row.classList.remove('is-short'));
     if (!sideColumn.matches || !box.clientHeight || !rows.length) { box.fitKey = 'unfitted'; return; } // under the map: no fit
     const last = rows.length - 1;
+    const planKey = `${LIFE?.id}:${rows.length}:${box.clientWidth}x${box.clientHeight}`;
+    if (plans.has(planKey)) { applyPlan(box, rows, plans.get(planKey)); return; }
     const room = box.clientHeight - parseFloat(getComputedStyle(box).paddingBottom) - STORY_FIT.margin;
     const gap = parseFloat(getComputedStyle(box).rowGap);
     // A shortened row is one text row: measured on a row like the others, holding the longest label.
@@ -149,7 +155,6 @@ export function createLifeStory({ scene, hooks, onLife, goToLife, rerender }) {
     probe.setAttribute('aria-hidden', 'true');
     probe.innerHTML = `<span class="life-age">${esc(t('lesson.ui.age', { age: 88 }))}</span><span class="life-line"><span class="life-full"></span><span class="life-short">${esc(labels.reduce((a, b) => (b.length > a.length ? b : a), ''))}</span></span>`;
     box.append(probe);
-    const ageFor = older => Math.max(13, older * 0.82);
     const measured = new Map();
     // Every row at `size`, the ages at the size `older` gives them (it sets the age column's width).
     const measure = (size, older) => {
@@ -204,15 +209,20 @@ export function createLifeStory({ scene, hooks, onLife, goToLife, rerender }) {
       }
     }
     probe.remove();
-    box.fitKey = `${box.clientWidth}x${box.clientHeight}:${box.children.length}`;
     if (!found) {
       // A column far too short for this life: the smallest plan, and the newest line kept in view.
       const [newest, older] = STORY_FIT.short.at(-1).at(-1);
       found = { newest, older, keep: 2, tight: true, short: rows.map(() => new Set(rows.map((_, at) => at).filter(at => at <= last - 2 && labels[at]))), extra: 0 };
     } else {
-      box.classList.add('is-fits');
+      found.fits = true;
       lastFit.set(`story:${box.clientWidth}x${box.clientHeight}`, found.newest);
     }
+    plans.set(planKey, found);
+    applyPlan(box, rows, found);
+  }
+  function applyPlan(box, rows, found) {
+    box.fitKey = `${box.clientWidth}x${box.clientHeight}:${box.children.length}`;
+    box.classList.toggle('is-fits', Boolean(found.fits));
     storyPlan = found;
     box.style.setProperty('--fit-size', `${found.newest}px`);
     box.style.setProperty('--fit-old', `${found.older}px`);
@@ -318,10 +328,25 @@ export function createLifeStory({ scene, hooks, onLife, goToLife, rerender }) {
       const here = document.activeElement;
       if (!here || here === document.body || here === $('#narration')) lifeMap.card.querySelector('h2').focus({ preventScroll: true });
       announce(t('opening.end.announce', { name: LIFE.name }));
+      warmChoosing();
     } else if (!state.complete && mode !== 'story') {
       scene.lifeMode('story');
       $('#stage-description').textContent = lifeAlt();
     }
+  }
+  // The list's plan with the choosing hint under it is made in a quiet moment after the story ends
+  // (the hint goes in and out within one task, so nothing shows), so "Change one of his choices"
+  // only applies it.
+  const idle = globalThis.requestIdleCallback ?? (callback => setTimeout(callback, 200));
+  function warmChoosing() {
+    idle(() => {
+      const box = list();
+      if (!box || !onLife() || lifeMode() !== 'ended' || $('.life-hint') || !box.classList.contains('is-fits')) return;
+      addHint();
+      fitStory(box);
+      $('.life-hint')?.remove();
+      fitStory(box);
+    }, { timeout: 2000 });
   }
   // While choosing, a hint under the story; the story is fitted again to make room for it.
   const addHint = () => { if (!$('.life-hint')) $('#beat-extra').insertAdjacentHTML('beforeend', `<p class="life-hint">${esc(t('opening.choose.hint', { name: LIFE.name }))}</p>`); };
@@ -508,6 +533,17 @@ export function createLifeStory({ scene, hooks, onLife, goToLife, rerender }) {
       text.innerHTML = lifeMarkup();
       extra.innerHTML = `<p class="life-control"><button class="quiet-link life-pause" id="life-pause" type="button">${esc(t('lesson.ui.pause'))}</button></p>`;
       const steps = list();
+      // The age column holds this language's longest age ("Age 88", "Alter 88"), in ems of the age's size.
+      const age = steps.querySelector('.life-age');
+      if (age) {
+        const probe = document.createElement('span');
+        probe.className = 'life-age';
+        probe.style.cssText = 'position:absolute;visibility:hidden';
+        probe.textContent = t('lesson.ui.age', { age: 88 });
+        age.after(probe);
+        steps.style.setProperty('--age-em', ((probe.getBoundingClientRect().width + 6) / parseFloat(getComputedStyle(probe).fontSize)).toFixed(3));
+        probe.remove();
+      }
       steps.addEventListener('scroll', () => steps.classList.toggle('is-scrolled', steps.scrollTop > 2), { passive: true });
       fitStory(steps);
       fitObserver.observe(steps);

@@ -1,0 +1,3353 @@
+# French words of the lives store (the schema and the rules are in ../README.md, "Words in other languages").
+# Keyed by node id, and under baselines by person and node where a written life has its own words.
+# Each text is an ICU message with {name} and {gender, select, she {…} other {…}}; `en` is the
+# fingerprint of the English it was translated from (npm run lives:check reports it stale when the English changes).
+# `lead`: the pronoun a line that starts with {name} takes after a story's first line (empty: the subject is dropped).
+lead:
+  he: "Il"
+  she: "Elle"
+nodes:
+  aDanceClass:
+    en: "1rabmo9"
+    label: "Va à un cours de danse"
+    line: "Son papa l’emmène à un cours de danse."
+    if: "sa famille avait choisi un cours de danse"
+  animalShelter:
+    en: "gssp2"
+    label: "Aide au refuge"
+    line: "{name} promène des chiens au refuge pour animaux."
+    if: "{name} avait été bénévole dans un refuge pour animaux"
+  animatesCartoons:
+    en: "1qpaev5"
+    label: "Fait des dessins animés"
+    line: "{name} fait bouger des dessins sur un écran."
+    if: "{name} avait fait bouger des dessins sur un écran"
+  ankleInjury:
+    en: "1omce1s"
+    label: "Se blesse à la cheville"
+    line: "{name} se blesse à la cheville et doit se reposer pendant des mois."
+  appForClub:
+    en: "1hu0tlm"
+    label: "Crée une appli de club"
+    line: "{name} crée une appli pour un club local."
+    if: "{name} avait créé une appli pour un club"
+  applicationsTurnedDown:
+    en: "8v485"
+    label: "Reçoit des refus"
+    line: "Plusieurs employeurs répondent qu’ils ont trouvé quelqu’un d’autre."
+  appliesAgain:
+    en: "z74k4t"
+    label: "Postule une seconde fois"
+    line: "{name} envoie les nouveaux dessins à une école d’art."
+    if: "{name} avait postulé une seconde fois à une école d’art"
+  appliesAtNewspaper:
+    en: "1oyuzjf"
+    label: "Postule dans un journal"
+    line: "{name} postule à un poste de reporter dans un journal."
+    if: "{name} avait postulé dans un journal"
+  appliesForAFlat:
+    en: "1ez7bnn"
+    label: "Postule pour un logement"
+    line: "{name} dépose un dossier pour un appartement dans une rue animée."
+    if: "{name} avait déposé un dossier pour un appartement"
+  appliesForCareCourse:
+    en: "1w4qdbj"
+    label: "Postule à une formation"
+    line: "{name} postule à une place dans une formation en soins."
+    if: "{name} avait postulé à une formation en soins"
+  appliesForCodingJobs:
+    en: "10s0hd"
+    label: "Postule à des emplois"
+    line: "{name} postule à des emplois dans l’informatique."
+    if: "{name} avait postulé à des emplois de programmation"
+  appliesToArtSchool:
+    en: "5pokio"
+    label: "Postule à une école d’art"
+    line: "{name} envoie ses plus beaux dessins à une école d’art."
+    if: "{name} avait postulé à une école d’art"
+  appliesToLab:
+    en: "1ai7sqy"
+    label: "Postule dans un labo"
+    line: "{name} postule pour une place dans un laboratoire de recherche."
+    if: "{name} avait postulé dans un laboratoire de recherche"
+  artClub:
+    en: "1js868x"
+    label: "Rejoint l’atelier d’art"
+    line: "{name} rejoint l’atelier d’art après l’école."
+    if: "{name} avait rejoint l’atelier d’art"
+  artPlaceSecondTry:
+    en: "1ut2ejr"
+    label: "L’école d’art dit oui"
+    line: "Une école d’art lui propose une place."
+  artSchoolSaysNo:
+    en: "1hyu05z"
+    label: "L’école d’art dit non"
+    line: "L’école d’art dit non. Ça fait mal."
+  artShowSpot:
+    en: "yekvab"
+    label: "Un café expose ses tableaux"
+    line: "Le patron d’un café accroche ses tableaux au mur. Quelle chance !"
+  asksAccountant:
+    en: "1tlecu9"
+    label: "Demande un avis d’expert"
+    line: "{name} demande à un comptable, un expert de l’argent, de vérifier les comptes."
+    if: "{name} avait demandé conseil à un comptable"
+  asksChefFriend:
+    en: "rweeo3"
+    label: "Interroge un ami chef"
+    line: "{name} demande à un ami chef ce qu’il faut changer."
+    if: "{name} avait demandé conseil à un ami chef"
+  asksCoachWhy:
+    en: "1akxbgd"
+    label: "Demande quoi améliorer"
+    line: "{name} demande à l’entraîneur sur quoi travailler."
+    if: "{name} avait demandé à l’entraîneur sur quoi travailler"
+  asksForHelp:
+    en: "jr0ep7"
+    label: "Demande de l’aide"
+    line: "{name} demande de l’aide à un ami."
+    if: "{name} avait demandé de l’aide"
+  asksForLoan:
+    en: "5vbe1g"
+    label: "Demande un prêt bancaire"
+    line: "{name} demande un prêt à la banque pour ouvrir une petite boutique."
+    if: "{name} avait demandé un prêt à une banque"
+  asksForNotes:
+    en: "ld35wb"
+    label: "Demande un avis"
+    line: "{name} demande à un lecteur de confiance des remarques honnêtes."
+    if: "{name} avait demandé son avis à un lecteur"
+  asksForReview:
+    en: "ap3m7i"
+    label: "Demande un second avis"
+    line: "{name} demande à un collègue de regarder aussi le code."
+    if: "{name} avait demandé à un collègue de vérifier le code"
+  asksMentorForHelp:
+    en: "1n77lea"
+    label: "Consulte un ingénieur"
+    line: "{name} demande à un ingénieur de la ville de l’aider avec son robot."
+    if: "{name} avait demandé de l’aide à un ingénieur"
+  asksOldBaker:
+    en: "xmpx61"
+    label: "Interroge un boulanger"
+    line: "{name} demande à un vieux boulanger pourquoi la pâte ne lève pas."
+    if: "{name} avait demandé de l’aide à un vieux boulanger"
+  asksOldGardener:
+    en: "16hvjig"
+    label: "Consulte un jardinier"
+    line: "{name} demande conseil à un vieux jardinier du quartier."
+    if: "{name} avait demandé conseil à un vieux jardinier"
+  asksScientistAdvice:
+    en: "y110nh"
+    label: "Demande à un scientifique"
+    line: "{name} demande à un scientifique comment travailler autrement avec la science."
+    if: "{name} avait demandé conseil à un scientifique"
+  asksSeniorNurse:
+    en: "os8l8"
+    label: "Demande à une infirmière"
+    line: "{name} demande à une infirmière expérimentée comment tenir quand il y a beaucoup à faire."
+    if: "{name} avait demandé conseil à une infirmière expérimentée"
+  asksShopsForHelp:
+    en: "1s310j1"
+    label: "Demande l’aide du quartier"
+    line: "{name} demande aux commerçants du coin de donner un coup de main."
+    if: "{name} avait demandé de l’aide aux commerçants"
+  asksTeacherForHelp:
+    en: "9rmnj2"
+    label: "Demande l’aide du prof"
+    line: "{name} demande de l’aide à un enseignant."
+    if: "{name} avait demandé de l’aide à un enseignant"
+  asksTutorForIdeas:
+    en: "1lnkeqs"
+    label: "Demande conseil à un prof"
+    line: "{name} demande à un professeur quels autres cours essayer."
+    if: "{name} avait demandé à un professeur quels autres cours essayer"
+  asksUsersForFeedback:
+    en: "1u084t3"
+    label: "Demande l’avis des gens"
+    line: "{name} demande aux premiers utilisateurs de décrire ce qui a planté."
+    if: "{name} avait demandé aux utilisateurs ce qui avait planté"
+  asksWhatPeopleWant:
+    en: "hhrslh"
+    label: "Demande ce qu’on veut"
+    line: "{name} demande aux voisins ce pour quoi ils paieraient vraiment."
+    if: "{name} avait demandé aux voisins ce qu’ils achèteraient"
+  auditionsAgain:
+    en: "kcv0wl"
+    label: "Passe d’autres auditions"
+    line: "{name} enchaîne audition après audition."
+    if: "{name} avait passé d’autres auditions"
+  auditionsForCollege:
+    en: "1ik31of"
+    label: "Passe une audition"
+    line: "{name} passe une audition pour une école de musique."
+    if: "{name} avait passé une audition pour une école de musique"
+  auditionsForPart:
+    en: "1y9bnkr"
+    label: "Passe une audition"
+    line: "{name} passe une audition pour un rôle dans un nouveau spectacle."
+    if: "{name} avait passé une audition pour un rôle"
+  babysits:
+    en: "1xul084"
+    label: "Commence le baby-sitting"
+    line: "{name} garde les enfants des familles de la rue."
+    if: "{name} avait commencé le baby-sitting"
+  bakeSale:
+    en: "1ssvpe3"
+    label: "Tient un stand de gâteaux"
+    line: "{name} tient un stand de gâteaux à la kermesse de l’école."
+    if: "{name} avait tenu un stand de gâteaux"
+  bakesAtHome:
+    en: "crcr6h"
+    label: "Fait de la pâtisserie"
+    line: "{name} fait une nouvelle pâtisserie le week-end."
+    if: "{name} avait fait de la pâtisserie le week-end"
+  bakesForMoreCafes:
+    en: "1957jte"
+    label: "Fournit d’autres cafés"
+    line: "{name} se met à fournir trois autres cafés de la même rue."
+    if: "{name} avait commencé à fournir d’autres cafés"
+  bandInvite:
+    en: "oppdvj"
+    label: "Un groupe l’invite"
+    line: "Un groupe de musiciens plus âgés lui propose de le rejoindre. Quelle chance !"
+  bandSplits:
+    en: "6adnvv"
+    label: "Le groupe se sépare"
+    line: "Le groupe se sépare."
+  batchStaysUnsold:
+    en: "1ud9udd"
+    label: "Peu de voisins disent oui"
+    line: "Un seul voisin dit oui, et les autres passent leur chemin."
+  becomesEditor:
+    en: "1k4sxnc"
+    label: "Devient {gender, select, she {éditrice} other {éditeur}}"
+    line: "{name} commence comme {gender, select, she {éditrice} other {éditeur}} dans une petite maison d’édition."
+    if: "{name} avait commencé comme {gender, select, she {éditrice} other {éditeur}}"
+  becomesParent:
+    en: "15joi4"
+    label: "Devient parent"
+    line: "{name} devient parent."
+  becomesPersonalTrainer:
+    en: "19kgd2s"
+    label: "Devient coach sportif"
+    line: "{name} aide d’autres personnes à se mettre en forme, c’est son métier."
+    if: "{name} avait choisi de devenir coach sportif"
+  bestFriendMoves:
+    en: "zlohpz"
+    label: "Son meilleur ami déménage"
+    line: "Son meilleur ami déménage très loin."
+  bigCustomer:
+    en: "1gtgyii"
+    label: "Gagne un gros client"
+    line: "Une grande entreprise lui commande du travail. Quelle chance !"
+  bigTrip:
+    en: "ehunba"
+    label: "Part en grand voyage"
+    line: "{name} fait des économies et part en grand voyage."
+    if: "{name} était {gender, select, she {partie} other {parti}} en grand voyage"
+  birdWatching:
+    en: "15rt9f6"
+    label: "Observe les oiseaux"
+    line: "{name} observe les oiseaux par la fenêtre, un carnet à la main."
+    if: "{name} avait observé les oiseaux"
+  bookDeal:
+    en: "1po4b81"
+    label: "Un éditeur dit oui"
+    line: "Un éditeur veut enfin son livre. De la chance et de la patience !"
+  bookshopJob:
+    en: "155fm2o"
+    label: "Travaille en librairie"
+    line: "{name} travaille dans une librairie et trouve à chaque client le bon livre."
+    if: "{name} avait travaillé dans une librairie"
+  born:
+    en: "n01tf2"
+    label: "Naît"
+    line: "{name} naît."
+  borrowsACamera:
+    en: "ejd4tn"
+    label: "Emprunte un appareil photo"
+    line: "{name} emprunte un appareil photo et regarde le monde à travers lui."
+    if: "{name} avait emprunté un appareil photo"
+  borrowsAnOven:
+    en: "1dy7i4o"
+    label: "Emprunte un four"
+    line: "Un voisin lui prête un four pour le week-end."
+    if: "{name} avait emprunté le four d’un voisin"
+  borrowsTools:
+    en: "1fpos2y"
+    label: "Emprunte des outils"
+    line: "Des amis du métier lui prêtent ce qu’il faut pour continuer à travailler."
+    if: "{name} avait emprunté des outils à des amis du métier"
+  breaksAnArm:
+    en: "1g5b3vp"
+    label: "Se casse le bras"
+    line: "{name} se casse le bras et porte un plâtre pendant six semaines."
+  buildsAGreenhouse:
+    en: "1yzrlx"
+    label: "Construit une serre"
+    line: "{name} construit une serre avec de vieilles fenêtres."
+    if: "{name} avait construit une serre"
+  buildsDens:
+    en: "jrcw7n"
+    label: "Construit des cabanes"
+    line: "{name} construit des cabanes avec des coussins et des cartons."
+    if: "{name} avait construit des cabanes"
+  buildsGoKart:
+    en: "1m3gohx"
+    label: "Construit un kart"
+    line: "{name} construit un kart avec de vieilles roues et des planches."
+    if: "{name} avait construit un kart"
+  buildsNewPortfolio:
+    en: "1g5btjy"
+    label: "Prépare de nouveaux dessins"
+    line: "{name} suit un cours pour préparer de nouveaux dessins à montrer, avec un professeur."
+    if: "{name} avait préparé de nouveaux dessins à montrer"
+  buildsOnlineShop:
+    en: "1pkoqr0"
+    label: "Crée une boutique en ligne"
+    line: "{name} crée une boutique en ligne pour une petite entreprise."
+    if: "{name} avait créé une boutique en ligne"
+  buildsPortfolio:
+    en: "160mn3s"
+    label: "Construit un portfolio"
+    line: "{name} réalise trois petits projets pour montrer son travail."
+    if: "{name} avait construit un portfolio"
+  buildsPrototype:
+    en: "1ybpx9s"
+    label: "Construit un prototype"
+    line: "{name} construit un premier prototype d’une invention."
+    if: "{name} avait construit un prototype"
+  buildsRaisedBeds:
+    en: "d604ck"
+    label: "Construit des potagers"
+    line: "{name} construit des bacs de jardin surélevés pour le quartier."
+    if: "{name} avait construit des potagers surélevés"
+  buildsTreehouse:
+    en: "ri8wth"
+    label: "Construit une cabane"
+    line: "{name} construit une cabane dans un arbre avec un voisin, planche par planche."
+    if: "{name} avait construit une cabane dans un arbre"
+  buildsWebsite:
+    en: "pqampx"
+    label: "Crée un site web"
+    line: "{name} crée un site web sur un loisir préféré."
+    if: "{name} avait créé un site web"
+  burnedOut:
+    en: "1pp64tf"
+    label: "Est à bout de forces"
+    line: "Un long hiver difficile au travail l’épuise."
+  businessFails:
+    en: "q03hoq"
+    label: "L’entreprise échoue"
+    line: "Les clients ne viennent plus, et l’entreprise ferme."
+  buysASmallHouse:
+    en: "z63et6"
+    label: "Achète une petite maison"
+    line: "{name} achète une petite maison avec l’argent économisé au fil des ans."
+    if: "{name} avait acheté une petite maison"
+  cafeBuysGreens:
+    en: "tz87kt"
+    label: "Un café achète ses salades"
+    line: "Le cuisinier d’un café commence à lui acheter ses salades toutes les semaines. Quelle chance !"
+  cafeBuysLoaves:
+    en: "17do6fa"
+    label: "Un café achète le pain"
+    line: "Le patron d’un café achète six pains par semaine."
+  cafeJob:
+    en: "zhu2kg"
+    label: "Travaille dans un café"
+    line: "{name} trouve un travail de week-end dans un café."
+    if: "{name} avait trouvé un travail de week-end dans un café"
+  cakeSinks:
+    en: "weef5e"
+    label: "Le gâteau retombe"
+    line: "Son gâteau retombe dans le four, et le jury passe au suivant."
+  campaignsForLibrary:
+    en: "y1jfd3"
+    label: "Se bat pour la bibliothèque"
+    line: "La ville veut fermer sa bibliothèque, alors {name} lance une campagne."
+    if: "{name} avait fait campagne pour sauver la bibliothèque"
+  captainsTheTeam:
+    en: "2p84nf"
+    label: "Devient capitaine"
+    line: "{name} devient capitaine de l’équipe."
+    if: "{name} était devenu{gender, select, she {e} other {}} capitaine de l’équipe"
+  carBreaksDown:
+    en: "18y19yp"
+    label: "La voiture lâche"
+    line: "La vieille voiture tombe en panne pour de bon, loin de la maison."
+  careAssistant:
+    en: "28l4yj"
+    label: "Soigne des personnes âgées"
+    line: "{name} s’occupe de personnes âgées dans une maison de retraite."
+    if: "{name} avait travaillé en maison de retraite"
+  careForAParent:
+    en: "g13syh"
+    label: "S’occupe d’un parent"
+    line: "{name} s’occupe d’un parent qui a besoin de plus d’aide chaque année."
+    if: "{name} s’était occupé{gender, select, she {e} other {}} d’un parent"
+  carpenter:
+    en: "xk83f"
+    label: "Se forme à la menuiserie"
+    line: "{name} se forme à la menuiserie : mesurer deux fois, couper une fois."
+    if: "{name} avait appris la menuiserie"
+  catchesUp:
+    en: "1qvz457"
+    label: "Rattrape son retard"
+    line: "Des amis l’aident à rattraper tout son retard."
+    if: "{name} avait rattrapé son retard grâce à ses amis"
+  caters:
+    en: "8adm85"
+    label: "Cuisine pour des fêtes"
+    line: "{name} cuisine pour des fêtes et des mariages."
+    if: "{name} avait cuisiné pour des fêtes"
+  changesCareers:
+    en: "1035oda"
+    label: "Change de métier"
+    line: "{name} quitte son travail pour se former à un nouveau métier."
+    if: "{name} avait changé de métier"
+  changesCourse:
+    en: "j10dfx"
+    label: "Change de filière"
+    line: "{name} passe dans une autre filière."
+    if: "{name} avait changé de filière"
+  changesMethod:
+    en: "1nv44gc"
+    label: "Change de méthode"
+    line: "{name} change de méthode et essaie un test plus petit."
+    if: "{name} avait changé de méthode"
+  changesTheMenu:
+    en: "wwmacg"
+    label: "Change le menu"
+    line: "{name} change le menu pour des plats sans grand four."
+    if: "{name} avait changé le menu"
+  chefOffer:
+    en: "jyzs6l"
+    label: "Un chef {gender, select, she {la} other {le}} forme"
+    line: "Un chef remarque son travail et lui propose une formation. Quelle chance !"
+  chessClub:
+    en: "undq8x"
+    label: "Rejoint le club d’échecs"
+    line: "{name} rejoint le club d’échecs et apprend comment bouge chaque pièce."
+    if: "{name} avait rejoint le club d’échecs"
+  childminder:
+    en: "afdm1h"
+    label: "Garde des enfants"
+    line: "{name} garde à domicile les enfants d’autres familles."
+    if: "{name} avait gardé les enfants d’autres familles"
+  childrensBookJob:
+    en: "1577yd8"
+    label: "Illustre un album"
+    line: "Un éditeur lui demande d’illustrer un livre pour enfants. Quelle chance !"
+  choir:
+    en: "1qd3j75"
+    label: "Entre dans une chorale"
+    line: "Ses parents l’inscrivent à la chorale."
+    if: "sa famille avait choisi la chorale"
+  choreographs:
+    en: "s3btxd"
+    label: "Crée des chorégraphies"
+    line: "{name} invente des danses que d’autres personnes interprètent."
+    if: "{name} avait inventé des danses pour d’autres"
+  chorusPlace:
+    en: "tr4a3j"
+    label: "Une place dans le chœur"
+    line: "Un metteur en scène lui offre une place dans le chœur."
+  clubFillsUp:
+    en: "muml55"
+    label: "Le club se remplit"
+    line: "Douze personnes viennent, puis quelques-unes de plus chaque semaine."
+  coachKids:
+    en: "5jq2mk"
+    label: "Entraîne des enfants"
+    line: "{name} entraîne une équipe de jeunes enfants."
+    if: "{name} avait entraîné une équipe d’enfants"
+  coachesAClub:
+    en: "9jitiy"
+    label: "Entraîne une équipe de club"
+    line: "{name} prend en charge l’équipe première d’un club local."
+    if: "{name} avait entraîné l’équipe première d’un club"
+  coachesTownTeam:
+    en: "1czx511"
+    label: "Entraîne une équipe"
+    line: "{name} entraîne une équipe de la ville qui joue le dimanche matin."
+    if: "{name} avait entraîné une équipe de la ville"
+  coachingCourse:
+    en: "mkd6cm"
+    label: "Fait une formation de coach"
+    line: "Le week-end, {name} suit une formation d’entraîneur."
+    if: "{name} avait suivi une formation d’entraîneur"
+  codeTeacherSpots:
+    en: "1rv2xoz"
+    label: "Un meilleur ordinateur"
+    line: "Un professeur remarque son projet et lui prête un meilleur ordinateur. Quelle chance !"
+  codingCourse:
+    en: "1x7fm33"
+    label: "Suit un cours de code"
+    line: "{name} apprend à coder dans un cours du soir."
+    if: "{name} avait appris à coder dans un cours du soir"
+  codingJobsSayNo:
+    en: "h0kslf"
+    label: "Les employeurs refusent"
+    line: "Trois employeurs répondent par un refus."
+  collectsRainwater:
+    en: "1lhp4vl"
+    label: "Récupère l’eau de pluie"
+    line: "{name} installe des tonneaux pour recueillir chaque goutte de pluie."
+    if: "{name} avait récupéré l’eau de pluie"
+  collegeSaysNotYet:
+    en: "ulaa5c"
+    label: "L’école dit non"
+    line: "L’école répond : pas cette année."
+  cooksDinner:
+    en: "14iw1uj"
+    label: "Cuisine pour la famille"
+    line: "{name} prépare le dîner pour toute la famille."
+    if: "{name} avait préparé le dîner pour la famille"
+  cooksForFoodBank:
+    en: "1m9485i"
+    label: "Cuisine des repas chauds"
+    line: "{name} prépare des repas chauds pour la banque alimentaire."
+    if: "{name} avait cuisiné pour la banque alimentaire"
+  cooksInHomes:
+    en: "rahmvn"
+    label: "Cuisine chez les gens"
+    line: "{name} cuisine des dîners chez les gens, une table à la fois."
+    if: "{name} avait commencé à cuisiner chez les gens"
+  cooksSchoolLunches:
+    en: "b87yk"
+    label: "Cuisine à la cantine"
+    line: "{name} prépare les repas d’une école entière."
+    if: "{name} avait préparé les repas d’une école"
+  cooksStreetSupper:
+    en: "eaqyy0"
+    label: "Cuisine pour la rue"
+    line: "{name} prépare un long dîner pour toute la rue."
+    if: "{name} avait préparé un dîner pour la rue"
+  cooksWithGardenVeg:
+    en: "h8v014"
+    label: "Cuisine ses légumes"
+    line: "{name} cuisine avec des légumes du jardin."
+    if: "{name} avait cuisiné avec des légumes du jardin"
+  councilNoMoney:
+    en: "yffo0v"
+    label: "La mairie n’a pas d’argent"
+    line: "La mairie dit qu’il n’y a pas d’argent pour un passage piéton."
+  councilSaysNo:
+    en: "5rkxdm"
+    label: "Le conseil dit non"
+    line: "Le conseil municipal dit non à la campagne pour la bibliothèque."
+  courseFull:
+    en: "1ukgq9t"
+    label: "La formation est complète"
+    line: "Une lettre annonce que la formation est complète cette année."
+  coversCouncil:
+    en: "11i8hnm"
+    label: "Suit le conseil municipal"
+    line: "{name} rend compte chaque mois des réunions du conseil municipal."
+    if: "{name} avait suivi le conseil municipal"
+  crossingPainted:
+    en: "78735n"
+    label: "Un passage piéton est peint"
+    line: "La mairie fait peindre un passage piéton, sur la plus fréquentée des deux routes."
+  crunchesForCharity:
+    en: "9rumeo"
+    label: "Fait les comptes d’une asso"
+    line: "{name} aide une association à comprendre ses chiffres."
+    if: "{name} avait aidé une association avec ses chiffres"
+  customerNeverPays:
+    en: "fktmk"
+    label: "Un client ne paie pas"
+    line: "Un gros client ne paie jamais sa facture."
+  customersDryUp:
+    en: "eqpqc5"
+    label: "Les clients se font rares"
+    line: "Toute l’année, beaucoup moins de clients entrent."
+  cutsCosts:
+    en: "1i4815z"
+    label: "Réduit les coûts"
+    line: "{name} réduit les coûts avec soin, le temps que les choses se calment."
+    if: "{name} avait réduit les coûts avec soin"
+  dancesSocially:
+    en: "1xvmmqu"
+    label: "Se met à la salsa"
+    line: "{name} se met à la salsa et danse chaque semaine."
+    if: "{name} s’était mis{gender, select, she {e} other {}} à la salsa"
+  debateTeam:
+    en: "1pck03s"
+    label: "Rejoint l’équipe de débat"
+    line: "{name} rejoint l’équipe de débat et apprend à argumenter avec gentillesse."
+    if: "{name} avait rejoint l’équipe de débat"
+  deliveryRegulars:
+    en: "15pm0os"
+    label: "Des clients fidèles"
+    line: "Des clients fidèles demandent toujours à être livrés par {gender, select, she {elle} other {lui}}."
+  deliveryWork:
+    en: "180awaw"
+    label: "Fait des livraisons"
+    line: "{name} livre des colis et des repas à vélo."
+    if: "{name} avait fait des livraisons"
+  designsCostumes:
+    en: "1pje2zt"
+    label: "Crée des costumes"
+    line: "{name} crée et coud des costumes pour la scène."
+    if: "{name} avait créé des costumes"
+  designsMachines:
+    en: "cctr4n"
+    label: "Conçoit des machines"
+    line: "{name} conçoit des machines pour une usine."
+    if: "{name} avait conçu des machines"
+  designsWebsites:
+    en: "1e86zqd"
+    label: "Conçoit des sites web"
+    line: "{name} conçoit des sites web faciles à lire."
+    if: "{name} avait conçu des sites web"
+  devJob:
+    en: "vj818s"
+    label: "Devient {gender, select, she {programmeuse} other {programmeur}}"
+    line: "{name} devient {gender, select, she {programmeuse} other {programmeur}} et écrit des logiciels."
+    if: "{name} avait trouvé un travail de {gender, select, she {programmeuse} other {programmeur}}"
+  directsAPlay:
+    en: "14vjn68"
+    label: "Met en scène une pièce"
+    line: "{name} met en scène une pièce et la voit prendre vie."
+    if: "{name} avait mis en scène une pièce"
+  directsTownPageant:
+    en: "o19mq9"
+    label: "Met en scène la ville"
+    line: "{name} met en scène une grande pièce en plein air sur l’histoire de la ville."
+    if: "{name} avait mis en scène une pièce sur la ville"
+  discovery:
+    en: "csrzaz"
+    label: "Fait une découverte"
+    line: "Son équipe découvre quelque chose de nouveau. De la chance et du travail !"
+  dramaClub:
+    en: "1csrqjt"
+    label: "Entre au club de théâtre"
+    line: "{name} entre au club de théâtre et trouve sa voix."
+    if: "{name} était entré{gender, select, she {e} other {}} au club de théâtre"
+  dramaSchool:
+    en: "1dzlke2"
+    label: "Va à l’école de théâtre"
+    line: "{name} va à l’école de théâtre."
+    if: "{name} était allé{gender, select, she {e} other {}} à l’école de théâtre"
+  drawsEveryDay:
+    en: "124nvxk"
+    label: "Dessine tous les jours"
+    line: "{name} dessine tous les jours, au dos de chaque cahier."
+    if: "{name} avait dessiné tous les jours"
+  drawsForGames:
+    en: "u5jqoc"
+    label: "Dessine des personnages"
+    line: "{name} dessine des personnages pour un studio de jeux vidéo."
+    if: "{name} avait dessiné des personnages de jeux"
+  drinkingAndDrugs:
+    en: "159sipt"
+    label: "L’alcool et la drogue"
+    line: "L’alcool et la drogue prennent toute la place, et ses concerts s’effondrent."
+  drums:
+    en: "1i98ct7"
+    label: "Choisit la batterie"
+    line: "{name} choisit la batterie."
+    if: "{name} avait choisi la batterie"
+  dryYear:
+    en: "16dw5t0"
+    label: "Le jardin se dessèche"
+    line: "Un été très sec flétrit le jardin."
+  earnsToHelpAtHome:
+    en: "1murm5f"
+    label: "Gagne pour sa famille"
+    line: "{name} accepte de petits boulots pour aider la famille à tenir."
+    if: "{name} avait accepté de petits boulots pour aider la famille"
+  editsVideos:
+    en: "1nhvaqo"
+    label: "Monte des vidéos"
+    line: "{name} monte des vidéos pour des magasins, des groupes et des écoles."
+    if: "{name} avait monté des vidéos pour gagner sa vie"
+  electrician:
+    en: "1lbu0pa"
+    label: "Apprend l’électricité"
+    line: "{name} se forme comme {gender, select, she {électricienne} other {électricien}} et apprend quel fil va où."
+    if: "{name} avait appris le métier d’{gender, select, she {électricienne} other {électricien}}"
+  entersArtContest:
+    en: "1gc1s0i"
+    label: "Va à un concours d’art"
+    line: "{name} envoie un tableau à un concours d’art local."
+    if: "{name} avait participé à un concours d’art"
+  entersCookOff:
+    en: "1a1ta8"
+    label: "Participe à un concours"
+    line: "{name} s’inscrit à un concours de pâtisserie à la mairie."
+    if: "{name} avait participé à un concours de pâtisserie"
+  entersGameJam:
+    en: "74h8xe"
+    label: "Participe à une game jam"
+    line: "{name} crée un jeu en un week-end lors d’une game jam."
+    if: "{name} avait participé à une game jam"
+  entersScienceFair:
+    en: "xmi1c9"
+    label: "Fait un projet de science"
+    line: "{name} prépare un projet pour la fête des sciences de l’école."
+    if: "{name} avait participé à la fête des sciences"
+  entersStoryContest:
+    en: "1hx9wzn"
+    label: "Participe à un concours"
+    line: "{name} envoie une histoire à un concours d’écriture."
+    if: "{name} avait participé à un concours d’histoires"
+  eveningPrintClass:
+    en: "1nqdz3"
+    label: "Suit un cours de gravure"
+    line: "{name} suit un cours du soir de gravure."
+    if: "{name} avait suivi un cours de gravure"
+  exchangeTrip:
+    en: "zmrake"
+    label: "Gagne un séjour d’échange"
+    line: "{name} gagne une place gratuite pour un séjour d’échange. Quelle chance !"
+  experimentFails:
+    en: "1n97kmh"
+    label: "L’expérience échoue"
+    line: "L’expérience échoue. Les résultats ne se répètent pas."
+  failsAnExam:
+    en: "1xi8su9"
+    label: "Rate un grand examen"
+    line: "{name} rate un examen important. Ça fait mal."
+  failsCareExam:
+    en: "n7mpdx"
+    label: "Il manque quelques points"
+    line: "Les résultats de l’examen arrivent : il manque quelques points."
+  failsDrivingTest:
+    en: "19z3vhf"
+    label: "Rate de peu le permis"
+    line: "{name} échoue de peu au permis de conduire."
+  failsTradeTest:
+    en: "1mvl7je"
+    label: "Échoue de peu"
+    line: "{name} n’atteint pas la note pour réussir l’examen."
+  fairSecondPlace:
+    en: "1xlhqx1"
+    label: "Prend la deuxième place"
+    line: "{name} présente le nouveau modèle à une foire et prend la deuxième place."
+  fallsOutWithFriend:
+    en: "1vjta3b"
+    label: "Se brouille avec un ami"
+    line: "{name} se brouille avec son meilleur ami, et ils restent fâchés toute une année."
+  familyFixesThings:
+    en: "1xg3fyu"
+    label: "Répare à la maison"
+    line: "Sa maman répare des choses dans la maison, et {name} tient le tournevis."
+    if: "sa famille avait réparé des choses ensemble à la maison"
+  familyHelpsNeighbours:
+    en: "1v6bxyr"
+    label: "Aide les voisins"
+    line: "Sa grand-mère apporte de la soupe à une voisine, et {name} l’accompagne."
+    if: "sa famille avait apporté de la soupe aux voisins"
+  familyMoves:
+    en: "1296dop"
+    label: "La famille déménage"
+    line: "La famille déménage dans une nouvelle maison, dans une nouvelle ville."
+  familyVolunteers:
+    en: "1ecys76"
+    label: "Aide à la fête de la ville"
+    line: "Sa tante aide à la fête de la ville, et {name} distribue des gâteaux."
+    if: "sa famille avait aidé à la fête de la ville"
+  farmerNetwork:
+    en: "1drt19t"
+    label: "Rejoint des cultivateurs"
+    line: "{name} rejoint d’autres cultivateurs qui partagent graines, outils et conseils."
+    if: "{name} avait rejoint d’autres cultivateurs"
+  farmerOffersLand:
+    en: "130yzsw"
+    label: "Reçoit un champ"
+    line: "Un voisin lui prête un champ à cultiver. Quelle chance !"
+  fillsArtPortfolio:
+    en: "ahu8pq"
+    label: "Remplit un dossier"
+    line: "{name} remplit un grand dossier de dessins et de projets."
+    if: "{name} avait rempli un dossier"
+  filmFestival:
+    en: "1om0yq"
+    label: "Un festival dit oui"
+    line: "Un petit festival projette son film. Quelle chance !"
+  filmsOnPhone:
+    en: "14jrzf8"
+    label: "Filme avec un téléphone"
+    line: "{name} tourne de petits films avec des amis sur un téléphone."
+    if: "{name} avait tourné des films avec des amis"
+  findsCheaperPlace:
+    en: "8r5tkc"
+    label: "Trouve un loyer moins cher"
+    line: "{name} trouve un logement plus petit et moins cher."
+    if: "{name} avait trouvé un logement moins cher"
+  findsOldTools:
+    en: "1yduqu5"
+    label: "Trouve une boîte d’outils"
+    line: "{name} trouve une caisse de vieux outils dans la remise. Quelle chance !"
+  findsSmallerPlace:
+    en: "34qvhv"
+    label: "Trouve un petit chez-soi"
+    line: "{name} trouve un petit logement bien à soi."
+    if: "{name} avait trouvé un petit logement"
+  firstAid:
+    en: "83hftb"
+    label: "Apprend les premiers secours"
+    line: "{name} apprend les premiers secours et s’entraîne sur un mannequin."
+    if: "{name} avait appris les premiers secours"
+  firstOrders:
+    en: "zqxg6t"
+    label: "Premières commandes"
+    line: "Quatre voisins font appel à {gender, select, she {elle} other {lui}} pour les vacances d’été."
+  firstSoloGig:
+    en: "1yjfzq9"
+    label: "Joue en solo au café"
+    line: "{name} s’inscrit pour jouer en solo dans un café du coin."
+    if: "{name} s’était {gender, select, she {inscrite} other {inscrit}} pour jouer en solo"
+  fixesABike:
+    en: "1rum2b6"
+    label: "Répare un vélo"
+    line: "{name} répare un vélo avec une clé empruntée."
+    if: "{name} avait réparé un vélo"
+  fixesComputers:
+    en: "s521cj"
+    label: "Répare des ordinateurs"
+    line: "{name} répare des ordinateurs pour des voisins et de petites entreprises."
+    if: "{name} avait réparé des ordinateurs pour d’autres"
+  fixesOldComputer:
+    en: "3zj5v"
+    label: "Répare un vieil ordinateur"
+    line: "{name} répare un vieil ordinateur trouvé dans le placard de l’école."
+    if: "{name} avait réparé un vieil ordinateur"
+  fixesTheBug:
+    en: "nhhafm"
+    label: "Trouve le bug"
+    line: "{name} reste tard et trouve le bug."
+    if: "{name} avait trouvé le bug"
+  flatFallsThrough:
+    en: "1xnnv96"
+    label: "L’appartement est pris"
+    line: "Le propriétaire donne l’appartement à quelqu’un qui a demandé avant."
+  flatSold:
+    en: "1hbqul9"
+    label: "Doit déménager"
+    line: "Le propriétaire vend l’appartement, et {name} doit partir."
+  floodRuinsHarvest:
+    en: "rdondu"
+    label: "La récolte est emportée"
+    line: "Une crue emporte toute la récolte."
+  focusOnArt:
+    en: "54vzqe"
+    label: "Choisit l’art"
+    line: "{name} choisit l’art comme matière principale."
+    if: "{name} avait choisi l’art comme matière principale"
+  foodWriterPraises:
+    en: "1ygki0y"
+    label: "Un critique passe"
+    line: "Un journaliste culinaire passe et écrit de gentils mots. Quelle chance !"
+  footballClub:
+    en: "1nr6r39"
+    label: "Rejoint un club de foot"
+    line: "Sa maman l’inscrit dans un club de foot."
+    if: "sa famille avait choisi un club de foot"
+  forestSchool:
+    en: "1bi36ru"
+    label: "Fait classe dehors"
+    line: "{name} fait la classe aux enfants dans les bois."
+    if: "{name} avait fait la classe dehors, dans les bois"
+  formsNewBand:
+    en: "1px2kma"
+    label: "Fonde un nouveau groupe"
+    line: "{name} fonde un nouveau groupe avec de nouveaux amis."
+    if: "{name} avait fondé un nouveau groupe"
+  freelanceIllustrator:
+    en: "8npvff"
+    label: "Dessine pour des clients"
+    line: "{name} dessine des images pour des clients, une commande après l’autre."
+    if: "{name} avait dessiné des images pour des clients"
+  freelanceWriting:
+    en: "1di36zd"
+    label: "Écrit en indépendant"
+    line: "{name} écrit des articles pour plusieurs magazines."
+    if: "{name} avait écrit comme pigiste"
+  freelancesCode:
+    en: "1ejeyzd"
+    label: "Code pour des clients"
+    line: "{name} écrit du code pour de petits clients, une mission à la fois."
+    if: "{name} avait écrit du code pour des clients"
+  friendBakeryJob:
+    en: "17ukz24"
+    label: "Travail à la boulangerie"
+    line: "Un vieil ami lui propose un travail dans une boulangerie."
+  friendCoaches:
+    en: "teie0i"
+    label: "Un ami l’aide"
+    line: "Un ami qui chante dans une chorale l’aide à s’entraîner."
+    if: "{name} avait demandé de l’aide à un ami"
+  friendForLife:
+    en: "sawkr3"
+    label: "Rencontre un vrai ami"
+    line: "{name} rencontre un ami pour la vie."
+  friendGardenJob:
+    en: "1lrstui"
+    label: "Travail en pépinière"
+    line: "Un vieil ami lui propose un travail dans une pépinière."
+  friendInvites:
+    en: "n0xzk2"
+    label: "Un ami l’invite"
+    line: "Un ami l’invite à essayer quelque chose de nouveau. Quelle chance !"
+  friendMusicShopJob:
+    en: "yads77"
+    label: "Travail chez un disquaire"
+    line: "Un vieil ami lui propose un travail dans un magasin de musique."
+  friendReadsApplications:
+    en: "1vnf47v"
+    label: "Un ami relit ses lettres"
+    line: "Un ami relit ses candidatures et propose des changements."
+    if: "{name} avait demandé à un ami de relire ses candidatures"
+  friendStudioJob:
+    en: "1mcn72y"
+    label: "Un ami l’engage au studio"
+    line: "Un vieil ami lui propose un travail dans un studio de design."
+  friendWorkshopJob:
+    en: "125d5fk"
+    label: "Travail dans un atelier"
+    line: "Un vieil ami lui propose un travail dans un atelier."
+  fundBacksPlan:
+    en: "1izowz8"
+    label: "Un fonds soutient le plan"
+    line: "Un fonds local pour les nouvelles entreprises soutient le plan plus modeste."
+  fundingEnds:
+    en: "85378v"
+    label: "L’argent vient à manquer"
+    line: "L’argent vient à manquer, et le groupe perd sa salle."
+  gameGoesFar:
+    en: "1w6s8r9"
+    label: "Son jeu se fait connaître"
+    line: "Des amis font découvrir son jeu à leurs amis. Quelle chance !"
+  gentleDanceClass:
+    en: "e04hkr"
+    label: "Anime un cours tout doux"
+    line: "{name} anime un cours de danse tout doux pendant que sa blessure guérit."
+    if: "{name} avait animé un cours de danse tout doux"
+  getsArtSchoolPlace:
+    en: "1sj1h8e"
+    label: "Admis à l’école d’art"
+    line: "Une école d’art lui propose une place. Quelle chance !"
+  getsHelpToStop:
+    en: "1jd8nwc"
+    label: "Demande de l’aide"
+    line: "{name} demande de l’aide pour arrêter, et en reçoit."
+    if: "{name} avait demandé de l’aide pour arrêter"
+  getsIntoMusicCollege:
+    en: "rtjk3"
+    label: "Obtient une place"
+    line: "À la prochaine audition, l’école lui propose une place."
+  getsTheJob:
+    en: "zahcs6"
+    label: "Reçoit une offre"
+    line: "Un employeur lui propose un travail, et {name} accepte."
+  giftedProgramme:
+    en: "1qnjlgf"
+    label: "Tente un programme"
+    line: "{name} pose sa candidature pour un programme scolaire spécial."
+    if: "{name} avait posé sa candidature pour un programme spécial"
+  givenOldCamera:
+    en: "13n224u"
+    label: "Reçoit un vieil appareil"
+    line: "Son grand-père lui donne son vieil appareil photo. Quelle chance !"
+  givenOldPiano:
+    en: "hgv5tk"
+    label: "Reçoit un vieux piano"
+    line: "Un voisin qui déménage lui donne un vieux piano. Quelle chance !"
+  givesMusicLessons:
+    en: "x4zmt2"
+    label: "Donne des cours de musique"
+    line: "{name} donne des cours de musique dans son salon."
+    if: "{name} avait donné des cours de musique"
+  goesBackToStudy:
+    en: "1v0x3a"
+    label: "Reprend ses études"
+    line: "{name} reprend ses études après des années de travail."
+    if: "{name} avait repris ses études"
+  goesOnTour:
+    en: "uox5i"
+    label: "Part en tournée mondiale"
+    line: "{name} part en tournée mondiale. Il y a foule chaque soir."
+    if: "{name} était {gender, select, she {partie} other {parti}} en tournée mondiale"
+  goesSolo:
+    en: "1ddh20x"
+    label: "Joue en solo"
+    line: "{name} joue maintenant {gender, select, she {seule} other {seul}}, avec un tabouret et un micro."
+    if: "{name} avait joué en solo"
+  goesToUniversity:
+    en: "1gf1qma"
+    label: "Va à l’université"
+    line: "{name} entre à l’université."
+    if: "{name} était {gender, select, she {allée} other {allé}} à l’université"
+  grandparentStories:
+    en: "1rzdvo"
+    label: "Écoute des histoires"
+    line: "Ses grands-parents lui racontent des histoires de leur jeunesse."
+    if: "ses grands-parents lui avaient raconté des histoires"
+  growVegetables:
+    en: "tyx7p0"
+    label: "Cultive des légumes"
+    line: "{name} cultive des légumes dans un coin de terre derrière la maison."
+    if: "{name} avait cultivé des légumes"
+  growsAGarden:
+    en: "bj8290"
+    label: "Cultive un jardin"
+    line: "{name} cultive un jardin de fleurs et de légumes."
+    if: "{name} avait cultivé un jardin"
+  growsBeansWithGrandad:
+    en: "4rjms5"
+    label: "Cultive des haricots en pot"
+    line: "Son grand-père lui montre comment faire pousser des haricots dans un pot."
+    if: "son grand-père lui avait montré comment faire pousser des haricots"
+  growsForRestaurants:
+    en: "kg8283"
+    label: "Fournit des restaurants"
+    line: "{name} cultive des herbes et de la salade pour des restaurants du coin."
+    if: "{name} avait cultivé pour des restaurants"
+  growsHardyGreens:
+    en: "r5gepa"
+    label: "Passe aux légumes-feuilles"
+    line: "{name} passe à des légumes-feuilles qui supportent les nuits froides."
+    if: "{name} {gender, select, she {était passée} other {était passé}} à des légumes-feuilles résistants"
+  guitar:
+    en: "40jq1j"
+    label: "Choisit la guitare"
+    line: "{name} choisit la guitare."
+    if: "{name} avait choisi la guitare"
+  handInjury:
+    en: "bsbxqm"
+    label: "Se blesse à la main"
+    line: "{name} se blesse à la main et ne peut pas jouer pendant un an."
+  happyCustomer:
+    en: "1hrseej"
+    label: "Le bouche-à-oreille marche"
+    line: "Un client content parle de l’endroit à tout le monde. De la chance !"
+  helpBake:
+    en: "1m39vhe"
+    label: "Aide à faire un gâteau"
+    line: "{name} remue la pâte avec son papa et a de la farine sur le nez."
+    if: "sa famille {gender, select, she {l’avait laissée} other {l’avait laissé}} aider à faire de la pâtisserie"
+  helpfulNeighbour:
+    en: "fwz8a2"
+    label: "Un voisin aide"
+    line: "Un voisin vient aider {name} juste au bon moment."
+  helpsAtCareHome:
+    en: "hwax2e"
+    label: "Aide en maison de retraite"
+    line: "{name} passe ses samedis à aider dans une maison de retraite."
+    if: "{name} avait passé ses samedis dans une maison de retraite"
+  helpsAtHome:
+    en: "u87v0f"
+    label: "Aide à la maison"
+    line: "{name} aide à la maison pour les repas et les petits travaux."
+    if: "{name} avait aidé à la maison"
+  helpsAtTownFair:
+    en: "1rtei73"
+    label: "Aide aux fêtes de la ville"
+    line: "{name} aide à installer les chaises lors des événements de la ville."
+    if: "{name} avait aidé lors des événements de la ville"
+  helpsInClassroom:
+    en: "153oops"
+    label: "Aide dans une classe"
+    line: "{name} commence à travailler comme aide dans une classe de primaire."
+    if: "{name} avait commencé à travailler dans une classe"
+  helpsInFamilyShop:
+    en: "1ndwd2e"
+    label: "Aide dans une boutique"
+    line: "{name} aide après l’école dans la boutique de son oncle."
+    if: "{name} avait aidé dans la boutique de son oncle"
+  helpsNeighbour:
+    en: "1szg00m"
+    label: "Fait les courses d’un voisin"
+    line: "{name} fait les courses d’un voisin âgé."
+    if: "{name} avait fait les courses d’un voisin âgé"
+  helpsNewPlayers:
+    en: "64jmig"
+    label: "Montre aux nouveaux"
+    line: "{name} montre aux nouveaux joueurs comment fonctionnent les exercices."
+    if: "{name} avait montré les exercices aux nouveaux joueurs"
+  helpsNewcomersSettle:
+    en: "16y4c82"
+    label: "Aide une nouvelle famille"
+    line: "{name} aide une famille récemment arrivée à trouver une école et du travail."
+    if: "{name} avait aidé une nouvelle famille à s’installer"
+  historyLanguages:
+    en: "1r3lw5f"
+    label: "Choisit les langues"
+    line: "{name} choisit l’histoire et les langues à l’école."
+    if: "{name} avait choisi l’histoire et les langues à l’école"
+  hospitalCloses:
+    en: "u79bey"
+    label: "L’hôpital ferme"
+    line: "L’hôpital ferme, et son service disparaît avec lui."
+  hostsPopUp:
+    en: "15c1b0a"
+    label: "Fait un dîner pop-up"
+    line: "{name} prépare un premier menu pour un dîner pop-up d’une soirée."
+    if: "{name} avait organisé un dîner pop-up"
+  illForMonths:
+    en: "nhqr14"
+    label: "Est malade des mois"
+    line: "{name} tombe malade et met des mois à guérir."
+  interpreter:
+    en: "3a3x3q"
+    label: "Devient interprète"
+    line: "{name} aide les gens à se comprendre en travaillant comme interprète."
+    if: "{name} avait travaillé comme interprète"
+  jamsWithFriends:
+    en: "1b5whmp"
+    label: "Joue avec des amis"
+    line: "{name} fait de la musique avec des amis après l’école."
+    if: "{name} avait fait de la musique avec des amis"
+  jobEnds:
+    en: "1sc63kv"
+    label: "Perd son travail"
+    line: "Son travail s’arrête d’un coup."
+  joinsALab:
+    en: "ndwzwz"
+    label: "Fait de la recherche"
+    line: "{name} entre dans un laboratoire de recherche et pose des questions sans réponse."
+    if: "{name} avait rejoint un laboratoire de recherche"
+  joinsAdultChoir:
+    en: "6o2uo4"
+    label: "Rejoint une chorale"
+    line: "{name} rejoint une chorale du coin qui se réunit le mardi."
+    if: "{name} avait rejoint une chorale du quartier"
+  joinsBiggerFirm:
+    en: "gp41ox"
+    label: "Rejoint une grosse société"
+    line: "{name} rejoint une plus grande entreprise, avec une équipe et des horaires réguliers."
+    if: "{name} avait rejoint une plus grande entreprise"
+  joinsBookGroup:
+    en: "1s50bq7"
+    label: "Rejoint un club de lecture"
+    line: "{name} rejoint un club de lecture où l’on débat avec bonne humeur."
+    if: "{name} avait rejoint un club de lecture"
+  joinsChoir:
+    en: "wek2uc"
+    label: "Rejoint la chorale"
+    line: "{name} rejoint la chorale de l’école."
+    if: "{name} avait rejoint la chorale de l’école"
+  joinsDanceBand:
+    en: "b9cc94"
+    label: "Rejoint un petit orchestre"
+    line: "{name} rejoint un petit orchestre qui joue pour des mariages et des bals."
+    if: "{name} avait rejoint un petit orchestre de bal"
+  joinsDanceClass:
+    en: "pnprff"
+    label: "Rejoint un cours de danse"
+    line: "{name} s’inscrit à un cours de danse et adore la musique."
+    if: "{name} s’était inscrit{gender, select, she {e} other {}} à un cours de danse"
+  joinsGameStudio:
+    en: "1apt2og"
+    label: "Rejoint un studio de jeux"
+    line: "{name} rejoint un studio qui crée des jeux."
+    if: "{name} avait rejoint un studio de jeux"
+  joinsHomeCare:
+    en: "sn6dg1"
+    label: "Soigne les gens chez eux"
+    line: "{name} rejoint une équipe qui soigne les gens chez eux."
+    if: "{name} avait rejoint une équipe de soins à domicile"
+  joinsLocalProduction:
+    en: "1xd7lt6"
+    label: "Rejoint un spectacle local"
+    line: "{name} rejoint un petit spectacle local qui cherche des acteurs."
+    if: "{name} avait rejoint un spectacle local"
+  joinsMakerspace:
+    en: "aq0s1q"
+    label: "Rejoint un atelier partagé"
+    line: "{name} rejoint un atelier où les voisins partagent les outils."
+    if: "{name} avait rejoint un atelier partagé"
+  joinsMedicalResearch:
+    en: "1d57nac"
+    label: "Fait de la recherche"
+    line: "{name} rejoint une équipe qui cherche comment aider les patients."
+    if: "{name} avait rejoint une équipe de recherche médicale"
+  joinsScouts:
+    en: "129ixxu"
+    label: "Rejoint les scouts"
+    line: "{name} rejoint les scouts et apprend à faire des nœuds."
+    if: "{name} avait rejoint les scouts"
+  joinsSharedStudio:
+    en: "xvu5q4"
+    label: "Rejoint un atelier partagé"
+    line: "{name} rejoint un atelier partagé avec d’autres artistes."
+    if: "{name} avait rejoint un atelier partagé"
+  joinsSwimClub:
+    en: "krdjw8"
+    label: "Rejoint le club de natation"
+    line: "{name} rejoint le club de natation."
+    if: "{name} avait rejoint le club de natation"
+  joinsTheCast:
+    en: "12ym5kj"
+    label: "Joue dans un spectacle"
+    line: "{name} décroche un rôle dans un nouveau spectacle."
+    if: "{name} avait décroché un rôle dans un spectacle"
+  joinsTouringShow:
+    en: "1k2ecz2"
+    label: "Rejoint une tournée"
+    line: "{name} rejoint un spectacle qui voyage de ville en ville."
+    if: "{name} avait rejoint un spectacle en tournée"
+  joinsTownCouncil:
+    en: "832qrs"
+    label: "Entre au conseil municipal"
+    line: "{name} remporte un siège au conseil municipal."
+    if: "{name} avait rejoint le conseil municipal"
+  joinsWeekendLeague:
+    en: "1d2l39w"
+    label: "Joue au foot le week-end"
+    line: "{name} rejoint une ligue de foot amicale le week-end."
+    if: "{name} avait rejoint une ligue du week-end"
+  joinsWritingGroup:
+    en: "1j1q796"
+    label: "Rejoint un atelier"
+    line: "{name} rejoint un atelier d’écriture où chacun lit les textes des autres."
+    if: "{name} avait rejoint un atelier d’écriture"
+  joinsYouthCouncil:
+    en: "1i8lp9"
+    label: "Entre au conseil des jeunes"
+    line: "{name} entre au conseil des jeunes de la ville et défend les jeunes."
+    if: "{name} avait rejoint le conseil des jeunes"
+  keepsBees:
+    en: "dhv7m8"
+    label: "Élève des abeilles"
+    line: "{name} élève des abeilles et apprend à les connaître."
+    if: "{name} avait élevé des abeilles"
+  keepsEarlyNights:
+    en: "oaah5z"
+    label: "Se couche tôt"
+    line: "{name} se couche tôt, même en tournée."
+    if: "{name} s’était {gender, select, she {couchée} other {couché}} tôt"
+  keepsInTouch:
+    en: "1hif4mh"
+    label: "Garde le contact"
+    line: "{name} écrit chaque semaine à son ami qui habite loin."
+    if: "{name} avait gardé le contact avec un ami lointain"
+  keepsMakingArt:
+    en: "y68h9o"
+    label: "Continue de créer"
+    line: "{name} continue de créer des œuvres sur la table de la cuisine."
+    if: "{name} avait continué à créer"
+  keepsWriting:
+    en: "6rg3lx"
+    label: "Continue d’écrire"
+    line: "{name} continue d’écrire, page après page."
+    if: "{name} avait continué d’écrire"
+  kindLibrarian:
+    en: "rb3tcf"
+    label: "Une bibliothécaire aide"
+    line: "Une bibliothécaire lui garde les meilleures nouveautés. Quelle chance !"
+  kitPaidByShop:
+    en: "11noubt"
+    label: "Un magasin offre les tenues"
+    line: "Un magasin du quartier paie les nouvelles tenues de toute l’équipe."
+  kitchenExperiments:
+    en: "1uc4kus"
+    label: "Fait des expériences"
+    line: "{name} teste à la maison ce qui flotte, pétille et fond."
+    if: "{name} avait fait des expériences à la maison"
+  kneeInjury:
+    en: "rpg63p"
+    label: "Se blesse au genou"
+    line: "Une grave blessure au genou l’arrête pendant des mois."
+  labSaysNo:
+    en: "7ohycp"
+    label: "Le labo refuse"
+    line: "Le laboratoire répond : pas de places cette année."
+  labTechnician:
+    en: "1rlr6s0"
+    label: "Travaille en laboratoire"
+    line: "{name} trouve un emploi en laboratoire et fait des analyses."
+    if: "{name} avait pris un emploi en laboratoire"
+  labelDropsHim:
+    en: "14cff2i"
+    label: "Le label met fin au contrat"
+    line: "La maison de disques met fin à son contrat."
+  landscapeGardener:
+    en: "16v00lw"
+    label: "Devient {gender, select, she {jardinière} other {jardinier}}"
+    line: "{name} travaille comme {gender, select, she {jardinière} other {jardinier}} et fait fleurir les jardins des autres."
+    if: "{name} avait travaillé comme {gender, select, she {jardinière} other {jardinier}}"
+  lastMinutePlace:
+    en: "1hx3ge4"
+    label: "Une place se libère"
+    line: "Une formation en soins infirmiers lui propose une place de dernière minute. Quelle chance !"
+  lateFrost:
+    en: "1jdogkx"
+    label: "Une gelée tardive"
+    line: "Une forte gelée à la fin du printemps noircit les jeunes plants."
+  launchDayBug:
+    en: "1n7lv6h"
+    label: "Le lancement tourne mal"
+    line: "Un bug fait planter son projet le jour du lancement."
+  launchesProject:
+    en: "ybfno2"
+    label: "Lance un projet"
+    line: "{name} lance un projet que d’autres personnes peuvent utiliser."
+    if: "{name} avait lancé un projet pour les autres"
+  leadsATeam:
+    en: "16lj6t0"
+    label: "Dirige une équipe"
+    line: "{name} accepte de diriger une équipe au travail."
+    if: "{name} avait dirigé une équipe"
+  leadsScoutGroup:
+    en: "o3mag4"
+    label: "Dirige un groupe scout"
+    line: "{name} dirige un groupe scout le jeudi soir."
+    if: "{name} avait dirigé un groupe scout"
+  leadsWalkingGroups:
+    en: "7mbxwb"
+    label: "Guide des randonneurs"
+    line: "{name} guide des groupes de randonnée dans les collines."
+    if: "{name} avait guidé des groupes de randonnée"
+  learnsFamilyRecipes:
+    en: "8qv32o"
+    label: "Apprend des recettes"
+    line: "Un parent plus âgé lui apprend les recettes de famille."
+    if: "{name} avait appris les recettes de famille"
+  learnsHardPiece:
+    en: "n02bfj"
+    label: "Apprend un morceau dur"
+    line: "{name} se met à apprendre par cœur un morceau difficile."
+    if: "{name} s’était {gender, select, she {mise} other {mis}} à apprendre un morceau difficile"
+  learnsNewLanguage:
+    en: "11w4w13"
+    label: "Apprend une nouvelle langue"
+    line: "{name} apprend une nouvelle langue, un mot après l’autre."
+    if: "{name} avait appris une nouvelle langue"
+  learnsNewPosition:
+    en: "fu7jl6"
+    label: "Apprend un nouveau poste"
+    line: "{name} demande à l’entraîneur de lui apprendre un autre poste."
+    if: "{name} avait demandé à apprendre un autre poste"
+  learnsSomethingNew:
+    en: "1dwix05"
+    label: "Apprend du nouveau"
+    line: "{name} s’inscrit à un cours dans un domaine tout nouveau."
+    if: "{name} avait appris quelque chose de nouveau"
+  learnsToBudget:
+    en: "4dgt9j"
+    label: "Apprend à faire un budget"
+    line: "{name} apprend à prévoir où va chaque euro."
+    if: "{name} avait appris à faire un budget"
+  learnsToCode:
+    en: "sc7wds"
+    label: "Apprend à coder"
+    line: "{name} apprend à coder avec un ami."
+    if: "{name} avait appris à coder avec un ami"
+  learnsToDrive:
+    en: "p5hku4"
+    label: "Apprend à conduire"
+    line: "{name} apprend à conduire."
+    if: "{name} avait appris à conduire"
+  learnsToPaint:
+    en: "t0tchv"
+    label: "Apprend à peindre"
+    line: "{name} s’inscrit à un cours de peinture."
+    if: "{name} avait appris à peindre"
+  learnsToSew:
+    en: "1n0natk"
+    label: "Apprend à coudre"
+    line: "{name} apprend à coudre sur la vieille machine de sa tante."
+    if: "{name} avait appris à coudre"
+  learnsToSkateboard:
+    en: "15tg0f8"
+    label: "Apprend le skateboard"
+    line: "{name} apprend le skateboard et tombe très souvent."
+    if: "{name} avait appris le skateboard"
+  learnsToSwim:
+    en: "ac1vuy"
+    label: "Apprend à nager"
+    line: "Sa grand-mère l’emmène à des cours de natation."
+    if: "sa famille avait choisi des cours de natation"
+  leavesResearch:
+    en: "1afv3j0"
+    label: "Quitte le laboratoire"
+    line: "{name} décide de quitter le laboratoire et d’essayer autre chose."
+    if: "{name} avait quitté le laboratoire"
+  leftOutOfSquad:
+    en: "19fag34"
+    label: "Pas {gender, select, she {retenue} other {retenu}} cette saison"
+    line: "L’entraîneur ne retient pas {name} dans l’équipe cette saison."
+  lemonadeStall:
+    en: "xf7ccv"
+    label: "Vend de la limonade"
+    line: "{name} tient un stand de limonade dans une rue ensoleillée."
+    if: "{name} avait tenu un stand de limonade"
+  libraryJob:
+    en: "1ei4n7"
+    label: "Travaille à la bibliothèque"
+    line: "{name} travaille à la bibliothèque et connaît chaque rayon."
+    if: "{name} avait travaillé dans une bibliothèque"
+  libraryVisits:
+    en: "y0kl6i"
+    label: "Va à la bibliothèque"
+    line: "Son grand-père l’emmène chaque semaine à la bibliothèque."
+    if: "sa famille {gender, select, she {l’avait emmenée} other {l’avait emmené}} chaque semaine à la bibliothèque"
+  loanRefused:
+    en: "bqklax"
+    label: "La banque dit non"
+    line: "La banque dit non et explique que les chiffres ne collent pas."
+  loavesStayFlat:
+    en: "1afuk5z"
+    label: "Les pains restent plats"
+    line: "Les premiers pains sortent plats et durs comme des pierres."
+  localPrize:
+    en: "98mohl"
+    label: "Remporte un prix"
+    line: "{name} remporte un petit prix pour son entreprise, avec un peu d’argent. De la chance !"
+  localTheatreGroup:
+    en: "24ltzc"
+    label: "Rejoint une troupe locale"
+    line: "{name} rejoint une troupe de théâtre de la région."
+    if: "{name} avait rejoint une troupe de théâtre locale"
+  lonelyInNewPlace:
+    en: "16d7xhi"
+    label: "Pense à son ancien foyer"
+    line: "{name} regrette son ancien chez-soi et se sent {gender, select, she {seule} other {seul}} pendant un temps."
+  looksAfterPet:
+    en: "yc69sh"
+    label: "S’occupe d’un animal"
+    line: "{name} nourrit et brosse l’animal de la famille."
+    if: "{name} {gender, select, she {s’était occupée} other {s’était occupé}} d’un animal"
+  looksAfterYounger:
+    en: "1ncwe42"
+    label: "Garde un frère ou une sœur"
+    line: "{name} aide à garder un petit frère ou une petite sœur."
+    if: "{name} avait aidé à garder un petit frère ou une petite sœur"
+  looksAtStars:
+    en: "1s54kl6"
+    label: "Regarde les étoiles"
+    line: "{name} emprunte un télescope et compte les étoiles."
+    if: "{name} avait emprunté un télescope"
+  looksForAJob:
+    en: "ybuqup"
+    label: "Cherche du travail"
+    line: "{name} se met à chercher du travail."
+    if: "{name} s’était {gender, select, she {mise} other {mis}} à chercher du travail"
+  lostTools:
+    en: "115wkvl"
+    label: "On lui vole ses outils"
+    line: "Quelqu’un s’introduit dans sa camionnette et prend tous les outils."
+  makesAGame:
+    en: "1wdghuy"
+    label: "Crée un jeu simple"
+    line: "{name} crée un jeu simple auquel ses amis peuvent jouer."
+    if: "{name} avait créé un jeu simple"
+  makesGameTrailers:
+    en: "11ts0ks"
+    label: "Monte des bandes-annonces"
+    line: "{name} monte des bandes-annonces passionnantes pour de nouveaux jeux."
+    if: "{name} avait monté des bandes-annonces de jeux"
+  makesMusicOnComputer:
+    en: "1wytt95"
+    label: "Compose sur ordinateur"
+    line: "{name} fait de la musique sur un ordinateur portable dans sa chambre."
+    if: "{name} avait fait de la musique sur un ordinateur portable"
+  makesNewFriends:
+    en: "1y00vc"
+    label: "Se fait de nouveaux amis"
+    line: "{name} s’assoit à côté de quelqu’un de nouveau à la cantine."
+    if: "{name} s’était {gender, select, she {assise} other {assis}} à côté de quelqu’un de nouveau à la cantine"
+  makesShortFilm:
+    en: "ew52ei"
+    label: "Réalise un court métrage"
+    line: "{name} réalise un court métrage avec des amis."
+    if: "{name} avait réalisé un court métrage"
+  makesSmallerPlan:
+    en: "wkue8w"
+    label: "Fait un plan plus petit"
+    line: "{name} établit un plan plus modeste avec un conseiller financier."
+    if: "{name} avait fait un plan plus modeste avec un conseiller"
+  marketRegulars:
+    en: "26bufm"
+    label: "Les habitués reviennent"
+    line: "Quelques clients fidèles passent à la table chaque samedi."
+  marketStall:
+    en: "9l6i50"
+    label: "Vend sur les marchés"
+    line: "{name} vend plutôt sur les marchés, avec une camionnette et une table."
+    if: "{name} avait vendu sur les marchés à la place"
+  mathsClub:
+    en: "1t0is3d"
+    label: "Rejoint le club de maths"
+    line: "{name} rejoint un club où l’on résout des problèmes ensemble."
+    if: "{name} avait rejoint le club de maths"
+  mathsTournament:
+    en: "iou98p"
+    label: "Va à un concours de maths"
+    line: "{name} participe à un concours de maths contre d’autres écoles."
+    if: "{name} avait participé à un concours de maths"
+  mathsTutor:
+    en: "1cx11p0"
+    label: "Prend un prof de maths"
+    line: "{name} prend un professeur particulier pour les passages difficiles."
+    if: "{name} avait pris un professeur particulier de maths"
+  measuresRiverWater:
+    en: "cpif6h"
+    label: "Analyse l’eau de la rivière"
+    line: "{name} analyse l’eau de la rivière pour la mairie."
+    if: "{name} avait analysé l’eau de la rivière pour la mairie"
+  mechanic:
+    en: "s34djz"
+    label: "Se forme à la mécanique"
+    line: "{name} se forme à la mécanique, de l’huile jusqu’aux coudes."
+    if: "{name} avait appris la mécanique"
+  mentorAppears:
+    en: "afhxmj"
+    label: "Trouve un mentor"
+    line: "Un collègue bienveillant {gender, select, she {la} other {le}} prend sous son aile."
+  mentorsSomeone:
+    en: "1ohh8uk"
+    label: "Guide un nouveau venu"
+    line: "{name} aide quelqu’un de nouveau au travail à trouver ses marques."
+    if: "{name} avait aidé quelqu’un de nouveau à trouver ses marques"
+  midwife:
+    en: "7btn72"
+    label: "Devient sage-femme"
+    line: "{name} se forme au métier de sage-femme et aide les bébés à naître."
+    if: "{name} s’était {gender, select, she {formée} other {formé}} au métier de sage-femme"
+  moneyGetsTight:
+    en: "1boetyn"
+    label: "L’argent manque"
+    line: "À la maison, l’argent se fait rare."
+  moreDrivingLessons:
+    en: "k9vpj7"
+    label: "Reprend des leçons"
+    line: "{name} réserve d’autres leçons et s’entraîne avec un proche."
+    if: "{name} avait pris d’autres leçons de conduite"
+  moveAbroad:
+    en: "1l1kcnd"
+    label: "Part vivre à l’étranger"
+    line: "{name} s’installe dans un autre pays."
+    if: "{name} s’était installé{gender, select, she {e} other {}} dans un autre pays"
+  moveForWork:
+    en: "19za0ft"
+    label: "Déménage pour un travail"
+    line: "{name} déménage dans une nouvelle ville pour un nouveau travail."
+    if: "{name} avait déménagé dans une nouvelle ville pour le travail"
+  movesClubTime:
+    en: "1n4xzyq"
+    label: "Passe au samedi"
+    line: "{name} déplace le club au samedi matin à la bibliothèque."
+    if: "{name} avait déplacé le club au samedi matin"
+  movesHome:
+    en: "jgldr0"
+    label: "Retourne chez sa famille"
+    line: "{name} retourne vivre avec sa famille."
+    if: "{name} était {gender, select, she {retournée} other {retourné}} vivre chez sa famille"
+  movesToCountryside:
+    en: "zt5q4f"
+    label: "Part vivre à la campagne"
+    line: "{name} part vivre à la campagne."
+    if: "{name} {gender, select, she {était partie} other {était parti}} vivre à la campagne"
+  movesToDayShifts:
+    en: "1bp6k8f"
+    label: "Passe aux horaires de jour"
+    line: "{name} passe aux horaires de jour pour se reposer."
+    if: "{name} était {gender, select, she {passée} other {passé}} aux horaires de jour"
+  movesToNewCity:
+    en: "1yi01jy"
+    label: "Change de ville"
+    line: "{name} s’installe dans une nouvelle ville pour repartir à zéro."
+    if: "{name} avait déménagé dans une nouvelle ville"
+  movesToOtherWard:
+    en: "pudw3o"
+    label: "Change de service"
+    line: "{name} passe dans un service avec une plus petite équipe."
+    if: "{name} avait changé de service"
+  movesToSchoolHall:
+    en: "o1zcwo"
+    label: "Passe à la salle de l’école"
+    line: "{name} installe le groupe dans la salle de l’école, sans loyer."
+    if: "{name} avait installé le groupe dans la salle de l’école"
+  movesUpAnAgeGroup:
+    en: "1mjhh4e"
+    label: "Monte d’une catégorie"
+    line: "{name} monte d’une catégorie pour s’entraîner avec les plus grands."
+    if: "{name} avait changé de catégorie pour les plus grands"
+  newIdea:
+    en: "1ijfeba"
+    label: "Repart plus petit"
+    line: "{name} réessaie avec une plus petite entreprise, construite sur les demandes des clients."
+    if: "{name} avait recommencé plus petit"
+  newPlayerArrives:
+    en: "11dfwu4"
+    label: "Un nouveau joueur arrive"
+    line: "Un nouveau joueur arrive, et l’entraîneur {gender, select, she {la} other {le}} met sur le banc."
+  newSchool:
+    en: "1154d5p"
+    label: "Change d’école"
+    line: "{name} arrive dans une nouvelle école où personne ne {gender, select, she {la} other {le}} connaît."
+  newSibling:
+    en: "67s8ym"
+    label: "Un bébé arrive"
+    line: "Un petit frère ou une petite sœur arrive pour {name}."
+  newSupervisor:
+    en: "abbimj"
+    label: "Demande à changer d’équipe"
+    line: "{name} demande à rejoindre une équipe plus bienveillante."
+    if: "{name} avait demandé à changer d’équipe"
+  newspaperHiresOther:
+    en: "1kuv5sj"
+    label: "Le poste va à un autre"
+    line: "Le journal donne le poste à quelqu’un d’autre."
+  nobodyComes:
+    en: "1ypbu86"
+    label: "Personne ne vient au début"
+    line: "Il pleut le premier soir, et personne ne vient."
+  notCast:
+    en: "5x46al"
+    label: "Un autre acteur est choisi"
+    line: "Le metteur en scène donne le rôle à quelqu’un d’autre."
+  notOnTheList:
+    en: "ypwri3"
+    label: "N’est pas sur la liste"
+    line: "L’entraîneur lit la liste, et {name} n’y est pas."
+  nurseMentor:
+    en: "fo8xa4"
+    label: "Une infirmière {gender, select, she {la} other {le}} guide"
+    line: "Une infirmière expérimentée {gender, select, she {la} other {le}} prend sous son aile. Quelle chance !"
+  nurseTraining:
+    en: "1o7ft04"
+    label: "Devient {gender, select, she {infirmière} other {infirmier}}"
+    line: "{name} se forme au métier d’{gender, select, she {infirmière} other {infirmier}} et apprend à rester calme."
+    if: "{name} s’était {gender, select, she {formée} other {formé}} au métier d’{gender, select, she {infirmière} other {infirmier}}"
+  nurseryWithFriends:
+    en: "w0jz51"
+    label: "Va à la maternelle"
+    line: "{name} va à la maternelle et joue avec d’autres enfants."
+    if: "sa famille avait choisi la maternelle"
+  offeredTestingJob:
+    en: "1ng0xk7"
+    label: "Reçoit une offre de test"
+    line: "Une entreprise voit ses projets et lui propose un poste pour tester des logiciels."
+  offersHomeworkHelp:
+    en: "18s590d"
+    label: "Propose l’aide aux devoirs"
+    line: "{name} propose gratuitement une aide aux devoirs à la bibliothèque le mercredi."
+    if: "{name} avait proposé de l’aide aux devoirs"
+  offersRepairs:
+    en: "1w883s"
+    label: "Propose des réparations"
+    line: "{name} met un panneau : petites réparations pendant qu’on attend."
+    if: "{name} avait proposé des réparations"
+  offersSomethingNew:
+    en: "1eky5x1"
+    label: "Propose du nouveau"
+    line: "{name} propose quelque chose de nouveau pour ramener des clients."
+    if: "{name} avait proposé quelque chose de nouveau"
+  offersWhatTheyAsked:
+    en: "ttudr2"
+    label: "Propose ce qu’ils veulent"
+    line: "{name} propose de nourrir les animaux et d’arroser les plantes pendant les voyages des voisins."
+    if: "{name} avait proposé ce que les voisins demandaient"
+  officeJob:
+    en: "get92f"
+    label: "Prend un travail de bureau"
+    line: "{name} prend un travail de bureau, avec un bureau près de la fenêtre."
+    if: "{name} avait pris un travail de bureau"
+  oldComputerAtHome:
+    en: "18zudig"
+    label: "Reçoit un vieil ordinateur"
+    line: "Sa tante installe un vieil ordinateur dans l’entrée."
+    if: "sa famille avait installé un vieil ordinateur à la maison"
+  oldFriendJob:
+    en: "12k891"
+    label: "Un ami propose un travail"
+    line: "Un vieil ami lui propose un travail."
+  openBakery:
+    en: "6oddd"
+    label: "Ouvre une boulangerie"
+    line: "{name} ouvre une petite boulangerie avec son nom sur l’enseigne."
+    if: "{name} avait ouvert une petite boulangerie"
+  openingNightTrouble:
+    en: "gcnt4s"
+    label: "La première tourne mal"
+    line: "Le soir de la première, les lumières s’éteignent dès la première scène."
+  opensAShopCafe:
+    en: "17gbs3m"
+    label: "Ouvre un café-boutique"
+    line: "{name} ouvre un petit café à l’intérieur d’une boutique."
+    if: "{name} avait ouvert un café dans une boutique"
+  opensASmallShop:
+    en: "sy4a8y"
+    label: "Ouvre une petite boutique"
+    line: "{name} ouvre une petite boutique dans la rue principale."
+    if: "{name} avait ouvert une petite boutique"
+  opensClub:
+    en: "1yhpmag"
+    label: "Ouvre un club de jeux"
+    line: "{name} ouvre un club de jeux qui se retrouve chaque semaine dans la salle des fêtes du village."
+    if: "{name} avait ouvert un club de jeux"
+  opensGalleryShop:
+    en: "cynn2k"
+    label: "Ouvre une galerie-boutique"
+    line: "{name} ouvre une petite boutique d’art local."
+    if: "{name} avait ouvert une galerie-boutique"
+  opensSportsShop:
+    en: "8yyks6"
+    label: "Ouvre un magasin de sport"
+    line: "{name} ouvre un magasin de chaussures et d’équipement de sport."
+    if: "{name} avait ouvert un magasin de sport"
+  ovenBreaks:
+    en: "v0eb1q"
+    label: "Le four tombe en panne"
+    line: "Le grand four tombe en panne un matin très chargé."
+  ownBusiness:
+    en: "1s97ags"
+    label: "Crée son entreprise"
+    line: "{name} crée sa propre entreprise."
+    if: "{name} avait créé une entreprise"
+  ownSong:
+    en: "14vcu7b"
+    label: "Écrit une chanson"
+    line: "Le groupe écrit sa propre chanson."
+    if: "le groupe de {name} avait écrit sa propre chanson"
+  paintsAMural:
+    en: "13q04ke"
+    label: "Peint une fresque"
+    line: "{name} peint une fresque sur un long mur gris."
+    if: "{name} avait peint une fresque"
+  paintsAtHome:
+    en: "r6tg14"
+    label: "Peinture et colle"
+    line: "Papier, peinture et colle couvrent la table de la cuisine."
+    if: "sa famille avait laissé du papier et de la peinture sur la table de la cuisine"
+  paintsLandscapes:
+    en: "10jkqi2"
+    label: "Peint la campagne"
+    line: "{name} peint les collines et les champs près de la maison."
+    if: "{name} avait peint la campagne"
+  paintsStageSets:
+    en: "1vqk9yt"
+    label: "Peint des décors"
+    line: "{name} peint les décors de spectacles."
+    if: "{name} avait peint des décors de théâtre"
+  paperCloses:
+    en: "7u5azl"
+    label: "Le journal local ferme"
+    line: "Le journal local ferme, et son poste disparaît avec lui."
+  paperRound:
+    en: "dyuvzc"
+    label: "Distribue des journaux"
+    line: "{name} distribue des journaux avant d’aller à l’école."
+    if: "{name} avait distribué des journaux"
+  paramedic:
+    en: "1qgcox6"
+    label: "Devient {gender, select, she {ambulancière} other {ambulancier}}"
+    line: "{name} se forme comme {gender, select, she {ambulancière} other {ambulancier}} et monte dans l’ambulance."
+    if: "{name} s’était {gender, select, she {formée} other {formé}} comme {gender, select, she {ambulancière} other {ambulancier}}"
+  parentIll:
+    en: "16orei5"
+    label: "Son père tombe malade"
+    line: "Son père tombe très malade pour longtemps."
+  parkRanger:
+    en: "50uor"
+    label: "Devient garde-nature"
+    line: "{name} travaille comme garde-nature et aide les visiteurs et la faune."
+    if: "{name} avait travaillé comme garde-nature"
+  partInAShow:
+    en: "136s8iz"
+    label: "Obtient un rôle"
+    line: "Un théâtre lui propose un rôle dans une pièce. Quelle chance !"
+  partTimeJob:
+    en: "oyqq6c"
+    label: "Trouve un job du samedi"
+    line: "{name} trouve un petit job le samedi dans un supermarché."
+    if: "{name} avait trouvé un job le samedi"
+  partialAnswer:
+    en: "f0vz9y"
+    label: "Une réponse partielle"
+    line: "Une partie de la réponse est claire. Le reste est encore une question ouverte."
+  passesCareExam:
+    en: "1xkz1v1"
+    label: "Réussit l’examen"
+    line: "{name} repasse l’examen, et cette fois, c’est réussi."
+  passesDrivingTest:
+    en: "1jrmtqe"
+    label: "Réussit le permis"
+    line: "{name} réussit le permis de conduire à la deuxième tentative."
+  passesTheExam:
+    en: "g470zb"
+    label: "Réussit l’examen"
+    line: "Les résultats arrivent, et {name} a réussi."
+  passesTheExams:
+    en: "g6mdxw"
+    label: "Réussit les examens"
+    line: "{name} réussit les grands examens."
+  passesTradeTest:
+    en: "i1m8so"
+    label: "Obtient le certificat"
+    line: "{name} repasse l’examen et le réussit."
+  pausesStudies:
+    en: "cveoxb"
+    label: "Fait une pause pour aider"
+    line: "{name} met ses études de côté un an pour aider à la maison."
+    if: "{name} avait mis ses études de côté un an pour aider à la maison"
+  paymentsUpFront:
+    en: "1swolop"
+    label: "Demande de payer d’abord"
+    line: "{name} demande aux clients de payer d’abord."
+    if: "{name} avait demandé aux clients de payer d’abord"
+  peerHelper:
+    en: "12pixh7"
+    label: "Aide les nouveaux élèves"
+    line: "{name} aide les élèves plus jeunes à se sentir à l’aise."
+    if: "{name} avait aidé les nouveaux élèves à s’intégrer"
+  photographsWeddings:
+    en: "zh1h5t"
+    label: "Photographie des mariages"
+    line: "{name} photographie des mariages et des anniversaires."
+    if: "{name} avait photographié des mariages"
+  photographsWildPlaces:
+    en: "1gw2aha"
+    label: "Photographie la nature"
+    line: "{name} part à l’aube en randonnée photographier des lieux sauvages."
+    if: "{name} avait photographié des lieux sauvages"
+  physio:
+    en: "1cl1smu"
+    label: "Se forme en kiné"
+    line: "{name} se forme à la kinésithérapie et aide les gens à guérir après une blessure."
+    if: "{name} s’était {gender, select, she {formée} other {formé}} à la kinésithérapie"
+  picksForTeam:
+    en: "1n2u3ta"
+    label: "Entre dans l’équipe"
+    line: "L’entraîneur lit la liste, et {name} y est."
+  pipeBursts:
+    en: "11s51uw"
+    label: "Un tuyau éclate"
+    line: "Un tuyau éclate pendant la nuit et inonde sa cuisine."
+  plansFirstShow:
+    en: "158fkza"
+    label: "Prépare une expo"
+    line: "{name} prépare une première exposition et encadre chaque œuvre."
+    if: "{name} avait préparé une première exposition"
+  plantsEarlyCrop:
+    en: "7vgnio"
+    label: "Sème tôt"
+    line: "{name} sème haricots et pois avec des semaines d’avance, dès que les jours se radoucissent."
+    if: "{name} avait semé tôt"
+  plantsHardierCrops:
+    en: "xc9z4d"
+    label: "Plante des légumes robustes"
+    line: "{name} plante des cultures qui supportent mieux la terre détrempée."
+    if: "{name} avait planté des cultures plus résistantes"
+  plantsTougherPlants:
+    en: "cx9tg5"
+    label: "Plante pour sol sec"
+    line: "{name} plante des herbes et des fleurs qui aiment la terre sèche."
+    if: "{name} avait planté des plantes plus robustes"
+  plantsTrees:
+    en: "1r1uyuf"
+    label: "Plante des arbres"
+    line: "{name} plante des arbres avec un groupe de bénévoles."
+    if: "{name} avait planté des arbres avec des bénévoles"
+  plantsVegPatch:
+    en: "16pyckv"
+    label: "Plante un potager"
+    line: "{name} plante un potager avec les élèves."
+    if: "{name} avait planté un potager avec les élèves"
+  playGigs:
+    en: "lvzsf5"
+    label: "Joue le week-end"
+    line: "{name} joue en concert le week-end."
+    if: "{name} avait joué en concert le week-end"
+  playsAgain:
+    en: "vy1vf"
+    label: "Joue pour des amis"
+    line: "{name} joue une chanson lente pour quelques amis."
+    if: "{name} avait rejoué pour des amis"
+  playsDifferently:
+    en: "1p05vb7"
+    label: "Apprend une autre prise"
+    line: "{name} apprend une nouvelle façon de jouer, avec une autre prise."
+    if: "{name} avait appris une nouvelle façon de jouer"
+  playsHospital:
+    en: "1akf7pv"
+    label: "Joue à l’hôpital"
+    line: "{name} soigne et bande tous les jouets de la maison."
+    if: "{name} avait joué à l’hôpital avec les jouets"
+  playsInShowBand:
+    en: "n5adbg"
+    label: "Joue dans un orchestre"
+    line: "{name} joue dans l’orchestre d’un spectacle."
+    if: "{name} avait joué dans un orchestre de spectacle"
+  playsOutWide:
+    en: "h1cx19"
+    label: "Joue sur le côté"
+    line: "{name} joue sur le côté et court le long de la ligne."
+    if: "{name} avait joué sur le côté"
+  playsOutside:
+    en: "1w7q0of"
+    label: "Joue dehors chaque jour"
+    line: "{name} joue dehors tous les jours, quelle que soit la météo."
+    if: "sa famille {gender, select, she {l’avait envoyée} other {l’avait envoyé}} dehors tous les jours"
+  playsPro:
+    en: "1f9on35"
+    label: "Joue pour un grand club"
+    line: "{name} joue pour un grand club."
+    if: "{name} avait joué pour un grand club"
+  playsWholeGame:
+    en: "d03c3f"
+    label: "De nouveau en pleine forme"
+    line: "{name} est de nouveau en pleine forme et participe à tout."
+  plumber:
+    en: "138wms9"
+    label: "Se forme à la plomberie"
+    line: "{name} se forme à la plomberie et apprend comment les tuyaux amènent l’eau."
+    if: "{name} avait appris la plomberie"
+  pocketMoneyChores:
+    en: "182iqii"
+    label: "Gagne de l’argent de poche"
+    line: "Son père lui donne de l’argent de poche pour de petites corvées."
+    if: "sa famille lui avait donné de l’argent de poche pour des corvées"
+  practisesRecipe:
+    en: "mzdt0x"
+    label: "S’entraîne à la recette"
+    line: "{name} fait le même gâteau tous les soirs pendant un mois."
+    if: "{name} avait répété la recette"
+  practisesTimesTables:
+    en: "1fr8dhn"
+    label: "Révise ses tables"
+    line: "{name} révise ses tables de multiplication dans le bus."
+    if: "{name} avait révisé ses tables de multiplication"
+  practisesWithPro:
+    en: "1m0ex92"
+    label: "Pratique avec un pro"
+    line: "{name} pratique le week-end avec un professionnel expérimenté."
+    if: "{name} avait pratiqué avec un professionnel expérimenté"
+  practisesWithTeacher:
+    en: "1cgootk"
+    label: "S’entraîne chaque semaine"
+    line: "{name} s’entraîne chaque semaine avec un professeur de musique."
+    if: "{name} s’était {gender, select, she {entraînée} other {entraîné}} avec un professeur de musique"
+  programsRobots:
+    en: "12t1lfo"
+    label: "Programme des robots"
+    line: "{name} programme des robots qui travaillent dans une usine."
+    if: "{name} avait programmé des robots d’usine"
+  prototypeBreaks:
+    en: "1mdu2qy"
+    label: "Le prototype casse"
+    line: "Son prototype se brise en deux lors du premier grand test."
+  publishersSayNo:
+    en: "qkkn9p"
+    label: "Les éditeurs refusent"
+    line: "Éditeur après éditeur refuse son livre."
+  puppetShows:
+    en: "ugj8bq"
+    label: "Monte des spectacles"
+    line: "{name} monte des spectacles de marionnettes pour sa famille."
+    if: "{name} avait monté des spectacles de marionnettes"
+  puzzlesAndBlocks:
+    en: "tpqa94"
+    label: "Fait des puzzles"
+    line: "Des puzzles et des cubes en bois couvrent le sol de la maison."
+    if: "sa famille avait rempli la maison de puzzles et de cubes"
+  quitsAClub:
+    en: "1i3uvx2"
+    label: "Quitte un club"
+    line: "{name} quitte un club pour avoir du temps pour ses amis et ses devoirs."
+    if: "{name} avait quitté un club"
+  radioPlay:
+    en: "1h19t9f"
+    label: "Un DJ passe la chanson"
+    line: "Un DJ de radio passe sa chanson. Quelle chance !"
+  rainKeepsGuests:
+    en: "hipbui"
+    label: "La pluie vide la salle"
+    line: "Une grosse pluie éloigne la plupart des invités, et seuls trois viennent."
+  raisesMoney:
+    en: "1khxq50"
+    label: "Collecte des fonds"
+    line: "{name} organise une course pour récolter des fonds pour la bibliothèque municipale."
+    if: "{name} avait récolté de l’argent pour une cause"
+  readNightly:
+    en: "1u6dhdq"
+    label: "Lit chaque soir"
+    line: "{name} cache un livre sous les draps, lampe de poche en main."
+    if: "{name} avait lu chaque soir"
+  readsToYounger:
+    en: "vhttpt"
+    label: "Lit aux plus petits"
+    line: "{name} lit des histoires aux plus jeunes à la bibliothèque."
+    if: "{name} avait lu aux plus jeunes"
+  rebuildsAsCommunityGarden:
+    en: "36gz3c"
+    label: "Crée un jardin partagé"
+    line: "{name} repart de zéro avec un jardin que toute la ville peut partager."
+    if: "{name} avait repris à zéro avec un jardin partagé"
+  rebuildsRobot:
+    en: "1fy9fy5"
+    label: "Reconstruit le robot"
+    line: "{name} reconstruit son robot à partir du châssis."
+    if: "{name} avait reconstruit le robot"
+  recordDeal:
+    en: "fcb51o"
+    label: "Signe chez un label"
+    line: "Une maison de disques lui propose un contrat."
+  recordsAlbum:
+    en: "1xoamwa"
+    label: "Enregistre un album"
+    line: "{name} enregistre un album dans un petit studio."
+    if: "{name} avait enregistré un album"
+  redesignsPrototype:
+    en: "r58d39"
+    label: "Refait le cadre"
+    line: "{name} redessine les plans et construit un nouveau cadre."
+    if: "{name} avait redessiné les plans"
+  refereesMatches:
+    en: "1vb1kfk"
+    label: "Apprend à arbitrer"
+    line: "{name} apprend assez bien les règles pour arbitrer."
+    if: "{name} avait appris à arbitrer"
+  rehearsesAgain:
+    en: "skcisy"
+    label: "Répète encore"
+    line: "{name} répète la scène avec toute la troupe, encore et encore."
+    if: "{name} avait répété la scène encore une fois"
+  relativeLends:
+    en: "msw9ok"
+    label: "Un proche aide"
+    line: "Un proche lui prête de l’argent pour repartir à zéro."
+  rentDoubles:
+    en: "10nogml"
+    label: "Le loyer double"
+    line: "Le loyer double, et les comptes ne tombent plus juste."
+  rentsAllotment:
+    en: "e6u41m"
+    label: "Loue un lopin de terre"
+    line: "{name} loue un petit lopin de terre et cultive de quoi partager."
+    if: "{name} avait loué un lopin de terre"
+  rentsLittleShop:
+    en: "qbdu16"
+    label: "Loue une petite boutique"
+    line: "{name} loue une petite boutique et remplit les étagères."
+    if: "{name} avait loué une petite boutique"
+  repairRegulars:
+    en: "7ga4be"
+    label: "Des habitués viennent"
+    line: "Des voisins apportent chaque semaine leurs objets cassés."
+  repeatsTheWork:
+    en: "18jazt2"
+    label: "Recommence le travail"
+    line: "{name} recommence le travail, pas à pas."
+    if: "{name} avait recommencé le travail"
+  replacesTools:
+    en: "jc041i"
+    label: "Remplace ses outils"
+    line: "{name} remplace les outils un par un."
+    if: "{name} avait remplacé les outils peu à peu"
+  replantsSeedlings:
+    en: "ia73v5"
+    label: "Ressème les graines"
+    line: "{name} sème de nouvelles graines dans un coin ensoleillé."
+    if: "{name} avait ressemé les graines"
+  reportsForPaper:
+    en: "r6hn12"
+    label: "Écrit pour un journal local"
+    line: "{name} raconte l’actualité dans un journal local."
+    if: "{name} avait écrit pour un journal local"
+  reserveSpot:
+    en: "e3kfnj"
+    label: "Entre en équipe de réserve"
+    line: "Une place se libère dans l’équipe de réserve, et {name} la prend."
+  restoresFurniture:
+    en: "1xvqaf4"
+    label: "Restaure de vieux meubles"
+    line: "{name} redonne vie à de vieilles chaises et tables."
+    if: "{name} avait restauré de vieux meubles"
+  restsAndRebuilds:
+    en: "1i77175"
+    label: "Se reconstruit doucement"
+    line: "{name} se repose, puis retrouve sa force, un petit exercice à la fois."
+    if: "{name} avait retrouvé ses forces petit à petit"
+  retakesTheExam:
+    en: "1bm2sym"
+    label: "Repasse l’examen"
+    line: "{name} essaie une nouvelle façon de réviser et repasse l’examen."
+    if: "{name} avait repassé l’examen"
+  retrain:
+    en: "12c5l8a"
+    label: "Apprend un nouveau métier"
+    line: "{name} apprend un nouveau métier en partant de zéro."
+    if: "{name} avait appris un nouveau métier"
+  rewritesTheBook:
+    en: "8gnlag"
+    label: "Réécrit le livre"
+    line: "{name} réécrit son livre dès la première page."
+    if: "{name} avait réécrit le livre"
+  riverCleanup:
+    en: "1g54qut"
+    label: "Nettoie une rivière"
+    line: "{name} aide à nettoyer la rivière avec un groupe de l’école."
+    if: "{name} avait aidé à nettoyer une rivière"
+  robotBreaks:
+    en: "sxquvc"
+    label: "Le robot tombe en panne"
+    line: "Son robot tombe en panne le grand jour."
+  robotContest:
+    en: "mtwwkk"
+    label: "Participe à un concours"
+    line: "{name} participe à un concours de robots."
+    if: "{name} avait participé à un concours de robots"
+  robotPrize:
+    en: "vsh2yg"
+    label: "Le robot gagne un prix"
+    line: "Son robot gagne un prix. De la chance et du bricolage !"
+  roboticsClub:
+    en: "otb53k"
+    label: "Va au club de robotique"
+    line: "{name} rejoint le club de robotique après l’école."
+    if: "{name} avait rejoint le club de robotique"
+  roomOffered:
+    en: "pt2sot"
+    label: "Obtient une salle gratuite"
+    line: "Un commerçant offre une salle gratuite au groupe. Quelle chance !"
+  runsCookingClub:
+    en: "35ub9f"
+    label: "Crée un club de cuisine"
+    line: "{name} crée un club de cuisine après la classe pour les élèves."
+    if: "{name} avait créé un club de cuisine"
+  runsDramaWorkshops:
+    en: "1p7a81w"
+    label: "Anime des ateliers théâtre"
+    line: "{name} anime des ateliers de théâtre à la mairie."
+    if: "{name} avait animé des ateliers de théâtre"
+  runsFoodBank:
+    en: "4b4e0l"
+    label: "Aide à la banque alimentaire"
+    line: "{name} aide à faire tourner une banque alimentaire dans la salle communale."
+    if: "{name} avait aidé à faire tourner une banque alimentaire"
+  runsMathsClub:
+    en: "11pboug"
+    label: "Anime un club de maths"
+    line: "{name} anime un club de maths le samedi pour les enfants."
+    if: "{name} avait animé un club de maths"
+  runsYouthClub:
+    en: "1q0lcdn"
+    label: "Anime un club de jeunes"
+    line: "{name} anime un club de jeunes le vendredi soir."
+    if: "{name} avait animé un club de jeunes"
+  samplesLost:
+    en: "9b3iyz"
+    label: "Un congélateur en panne"
+    line: "Un congélateur en panne abîme un an d’échantillons."
+  saveUp:
+    en: "17zsh16"
+    label: "Travaille et épargne"
+    line: "{name} prend un emploi stable et met de l’argent de côté."
+    if: "{name} avait pris un emploi stable et épargné"
+  savesForSomethingBig:
+    en: "ubhrv0"
+    label: "Épargne pour un grand but"
+    line: "{name} met de l’argent de côté pour un grand projet, un peu chaque mois."
+    if: "{name} avait épargné pour un grand projet"
+  savesInJar:
+    en: "9s6014"
+    label: "Épargne dans un bocal"
+    line: "{name} met des pièces dans un bocal pour s’offrir quelque chose de spécial."
+    if: "{name} avait mis des pièces de côté dans un bocal"
+  savesTheMoney:
+    en: "1eawwom"
+    label: "Met l’argent de côté"
+    line: "{name} met l’argent de côté pour plus tard."
+    if: "{name} avait mis l’argent de côté"
+  saysSorryFirst:
+    en: "uk7vjx"
+    label: "S’excuse en premier"
+    line: "{name} s’excuse en premier et propose de recommencer."
+    if: "{name} s’était {gender, select, she {excusée} other {excusé}} en premier"
+  scholarship:
+    en: "1iw7pg4"
+    label: "Gagne une bourse"
+    line: "{name} gagne une bourse qui paie ses études."
+  schoolBand:
+    en: "1s671tw"
+    label: "Rejoint un groupe scolaire"
+    line: "{name} rejoint le groupe de l’école."
+    if: "{name} avait rejoint le groupe de l’école"
+  schoolPaper:
+    en: "10evs1x"
+    label: "Écrit pour le journal"
+    line: "{name} écrit pour le journal de l’école."
+    if: "{name} avait écrit pour le journal de l’école"
+  schoolPlay:
+    en: "ako2ug"
+    label: "Joue dans la pièce"
+    line: "{name} joue un arbre dans la pièce de théâtre de l’école."
+    if: "{name} avait joué dans une pièce de l’école"
+  schoolTeam:
+    en: "wy92rc"
+    label: "Rejoint l’équipe de l’école"
+    line: "{name} rejoint l’équipe de l’école et ne rate jamais un entraînement."
+    if: "{name} avait rejoint l’équipe de l’école"
+  scienceSubjects:
+    en: "7k3i6l"
+    label: "Choisit les sciences"
+    line: "{name} choisit les matières scientifiques."
+    if: "{name} avait choisi les matières scientifiques"
+  scoutWatches:
+    en: "x6zjfl"
+    label: "Un recruteur {gender, select, she {la} other {le}} repère"
+    line: "Un recruteur vient à un match et {gender, select, she {la} other {le}} remarque. Quelle chance !"
+  secondLanguage:
+    en: "bu2w2"
+    label: "Apprend une langue"
+    line: "{name} commence à apprendre une autre langue."
+    if: "{name} avait commencé une deuxième langue"
+  secondLaunchWorks:
+    en: "1luxky"
+    label: "Le second lancement marche"
+    line: "Le second lancement se passe bien, et des gens commencent à utiliser le projet."
+  seedlingsFade:
+    en: "3keuyi"
+    label: "Les plants s’affaissent"
+    line: "Le rebord de fenêtre reçoit peu de soleil, et les plants s’affaissent."
+  selfPublishes:
+    en: "1x8lrxi"
+    label: "Publie à compte d’auteur"
+    line: "{name} fait imprimer son livre à ses frais et le vend près de chez soi."
+    if: "{name} avait publié le livre à compte d’auteur"
+  sellsAtCraftMarket:
+    en: "1ha3ji2"
+    label: "Vend sur des marchés"
+    line: "{name} vend des objets faits main sur des marchés d’artisanat le week-end."
+    if: "{name} avait vendu de l’artisanat sur des marchés"
+  sellsAtMarket:
+    en: "v76zwx"
+    label: "Prend une table au marché"
+    line: "{name} prend une table au marché du samedi."
+    if: "{name} avait pris une table au marché"
+  sellsOldToys:
+    en: "3im6he"
+    label: "Vend de vieux jouets"
+    line: "{name} vend de vieux jouets et de vieux livres à d’autres enfants."
+    if: "{name} avait vendu de vieux jouets"
+  sellsOnline:
+    en: "1k2t7yq"
+    label: "Vend en ligne"
+    line: "{name} vend en ligne de vieux livres et de vieux disques."
+    if: "{name} avait vendu des choses en ligne"
+  sellsPrintsAtFair:
+    en: "1e0o5uj"
+    label: "Vend ses gravures"
+    line: "{name} vend des cartes et des affiches imprimées à la main un samedi au marché."
+    if: "{name} avait vendu des gravures sur un marché"
+  sellsToolsOnline:
+    en: "13iyy9s"
+    label: "Vend des outils en ligne"
+    line: "{name} vend des outils d’occasion en ligne à des gens très loin."
+    if: "{name} avait vendu des outils d’occasion en ligne"
+  sendsBookOut:
+    en: "1rr26o2"
+    label: "Envoie le livre"
+    line: "{name} glisse ses pages terminées dans une pile d’enveloppes et les poste."
+    if: "{name} avait envoyé son livre à des éditeurs"
+  seniorReviews:
+    en: "j60qow"
+    label: "Un expert l’aide"
+    line: "Un développeur expérimenté lit son code et lui apprend des choses. Quelle chance !"
+  setsUpStall:
+    en: "slm0yc"
+    label: "Monte un stand au marché"
+    line: "{name} monte un stand au marché du week-end."
+    if: "{name} avait monté un stand au marché"
+  sharesAHome:
+    en: "h2f811"
+    label: "Vit en colocation"
+    line: "{name} emménage avec des amis pour partager les frais."
+    if: "{name} avait emménagé avec des amis"
+  shopAssistant:
+    en: "a451ga"
+    label: "Travaille dans un magasin"
+    line: "{name} travaille à la caisse et apprend à connaître les habitués."
+    if: "{name} avait travaillé dans un magasin"
+  shopCloses:
+    en: "1fcej28"
+    label: "La boutique ferme"
+    line: "Des travaux bloquent la rue pendant des mois, et la boutique ferme."
+  shopManager:
+    en: "60jlf8"
+    label: "Dirige le magasin"
+    line: "{name} devient responsable du magasin et garde les clés."
+    if: "{name} avait pris la direction d’un magasin"
+  showCloses:
+    en: "wauii3"
+    label: "Le spectacle s’arrête tôt"
+    line: "Son spectacle s’arrête tôt, et la troupe rentre chez elle."
+  showRunsSmoothly:
+    en: "c2antw"
+    label: "Le spectacle se passe bien"
+    line: "Le lendemain soir, tout le spectacle se passe bien, et la salle applaudit."
+  singsAtHome:
+    en: "16qd2sb"
+    label: "Chante à la maison"
+    line: "La musique résonne dans la maison, et {name} chante avec."
+    if: "sa famille avait rempli la maison de musique"
+  singsAtSchoolConcert:
+    en: "1bdozd5"
+    label: "Chante à un concert"
+    line: "{name} chante un couplet en solo au concert de l’école."
+    if: "{name} avait chanté en solo au concert de l’école"
+  singsForRelatives:
+    en: "65ugx5"
+    label: "Chante pour la famille"
+    line: "{name} chante pour ses proches lors d’une fête de famille."
+    if: "{name} avait chanté pour ses proches"
+  sitsBigExams:
+    en: "ccsn4a"
+    label: "Passe les grands examens"
+    line: "{name} passe les grands examens de sciences de l’école."
+    if: "{name} avait passé les grands examens"
+  sitsCareExam:
+    en: "8d4uz7"
+    label: "Passe un examen de soins"
+    line: "{name} passe un examen pour une qualification en soins."
+    if: "{name} avait passé un examen de soins"
+  sitsTradeTest:
+    en: "1f3d3a8"
+    label: "Passe un examen de métier"
+    line: "{name} passe l’examen pour obtenir un diplôme de métier."
+    if: "{name} avait passé l’examen de métier"
+  slowReturn:
+    en: "df85m2"
+    label: "Reprend doucement"
+    line: "{name} se repose et reprend des forces un peu plus chaque jour."
+    if: "{name} s’était {gender, select, she {reposée} other {reposé}} et avait repris des forces petit à petit"
+  smallBusinessGrows:
+    en: "1fhz9xj"
+    label: "L’entreprise grandit"
+    line: "Les clients en parlent à leurs amis, et la petite entreprise grandit."
+  smallPressYes:
+    en: "14pj8xd"
+    label: "Un petit éditeur dit oui"
+    line: "Une petite maison d’édition dit oui et imprime quelques centaines d’exemplaires."
+  smallShowOpens:
+    en: "1iezndj"
+    label: "La bibliothèque expose"
+    line: "La bibliothèque de la ville expose une petite sélection des nouvelles œuvres."
+  smallerShop:
+    en: "uq69h5"
+    label: "Prend un local plus petit"
+    line: "{name} déménage dans un local plus petit, avec un loyer plus bas."
+    if: "{name} avait déménagé dans un local plus petit"
+  soloGigMishap:
+    en: "1crdlug"
+    label: "Le micro tombe en panne"
+    line: "Au milieu de la première chanson, le micro s’arrête."
+  solvesPuzzlesForFun:
+    en: "krhtcx"
+    label: "Fait des énigmes"
+    line: "{name} résout des énigmes dans le train chaque matin."
+    if: "{name} avait résolu des énigmes pour le plaisir"
+  sowsSeedlings:
+    en: "tvmwf6"
+    label: "Sème à l’intérieur"
+    line: "{name} sème des graines de tomates dans des pots sur le rebord de la fenêtre."
+    if: "{name} avait semé des graines à l’intérieur"
+  sportsPhotographer:
+    en: "w5odvh"
+    label: "Photographie le sport"
+    line: "{name} photographie des matchs pour le journal local."
+    if: "{name} avait photographié des matchs"
+  squadTrials:
+    en: "14u9klb"
+    label: "Va aux sélections"
+    line: "{name} va aux sélections pour une place dans une plus grande équipe."
+    if: "{name} avait passé les sélections"
+  startPiano:
+    en: "1xrgyar"
+    label: "Commence le piano"
+    line: "{name} commence des cours de piano."
+    if: "{name} avait commencé le piano"
+  startsABlog:
+    en: "15vpm67"
+    label: "Lance un blog"
+    line: "{name} lance un blog et écrit sur ce qui l’intéresse."
+    if: "{name} avait lancé un blog"
+  startsABusiness:
+    en: "1cffqbw"
+    label: "Lance son entreprise"
+    line: "{name} monte une petite entreprise dans la chambre libre et répare des objets pour les voisins."
+    if: "{name} avait lancé une petite entreprise"
+  startsAFamily:
+    en: "yxqk7d"
+    label: "Fonde une famille"
+    line: "{name} fonde une famille."
+    if: "{name} avait fondé une famille"
+  startsAgain:
+    en: "qlfz53"
+    label: "Recommence à zéro"
+    line: "{name} recommence le travail depuis le début."
+    if: "{name} avait recommencé le travail"
+  startsApprenticeship:
+    en: "25vc27"
+    label: "Commence un apprentissage"
+    line: "{name} commence un apprentissage et apprend sur le terrain."
+    if: "{name} avait commencé un apprentissage"
+  startsBand:
+    en: "173kkb6"
+    label: "Fonde un groupe"
+    line: "{name} fonde un groupe avec deux amis."
+    if: "{name} avait fondé un groupe"
+  startsBusyWard:
+    en: "10b8zg"
+    label: "Débute dans un service"
+    line: "{name} commence dans un service d’hôpital très chargé."
+    if: "{name} avait débuté dans un service chargé"
+  startsCommunityGarden:
+    en: "1toa5cp"
+    label: "Lance un jardin partagé"
+    line: "{name} lance un jardin partagé sur un terrain vide."
+    if: "{name} avait lancé un jardin partagé"
+  startsDrivingLessons:
+    en: "nyq7rd"
+    label: "Commence l’auto-école"
+    line: "{name} prend ses premières leçons de conduite."
+    if: "{name} avait commencé des leçons de conduite"
+  startsFoodTruck:
+    en: "eectjb"
+    label: "Lance un food truck"
+    line: "{name} lance un food truck et le gare près du marché."
+    if: "{name} avait lancé un food truck"
+  startsInNewRole:
+    en: "mruv2y"
+    label: "Débute à son nouveau poste"
+    line: "L’entraîneur {gender, select, she {la} other {le}} fait débuter au nouveau poste."
+  startsIndieGame:
+    en: "1qk988u"
+    label: "Crée un jeu en solo"
+    line: "{name} crée son propre jeu, lentement et avec soin."
+    if: "{name} avait créé son propre jeu"
+  startsLittleLibrary:
+    en: "6dauar"
+    label: "Crée une boîte à livres"
+    line: "{name} installe une boîte à livres dans sa rue."
+    if: "{name} avait installé une boîte à livres dans sa rue"
+  startsNewHobby:
+    en: "dm9820"
+    label: "Se met à la poterie"
+    line: "{name} se met à la poterie le dimanche après-midi."
+    if: "{name} s’était {gender, select, she {mise} other {mis}} à la poterie"
+  startsNewspaper:
+    en: "1jl6hwu"
+    label: "Lance un journal"
+    line: "{name} lance un journal pour toute l’école."
+    if: "{name} avait lancé un journal d’école"
+  startsPetition:
+    en: "13ao14"
+    label: "Lance une pétition"
+    line: "{name} lance une pétition pour un passage piéton sûr devant l’école."
+    if: "{name} avait lancé une pétition pour un passage piéton sûr"
+  startsSchoolClub:
+    en: "qkiv3d"
+    label: "Crée un club à l’école"
+    line: "{name} crée un club à l’école et trouve douze membres."
+    if: "{name} avait créé un club à l’école"
+  startsTownNewsletter:
+    en: "147nodz"
+    label: "Lance une lettre d’infos"
+    line: "{name} lance une lettre d’information sur la ville."
+    if: "{name} avait lancé une lettre d’information sur la ville"
+  startsViolin:
+    en: "1x3gnzu"
+    label: "Commence le violon"
+    line: "{name} commence le violon."
+    if: "{name} avait commencé le violon"
+  startsWorking:
+    en: "1smj8e4"
+    label: "Commence à travailler"
+    line: "{name} commence un travail à plein temps."
+    if: "{name} avait commencé à travailler"
+  startsYouthTheatre:
+    en: "fgovta"
+    label: "Fonde un théâtre jeunesse"
+    line: "{name} fonde un théâtre pour les enfants de la ville."
+    if: "{name} avait fondé un théâtre pour les jeunes"
+  staysHomeToWrite:
+    en: "ba1c8a"
+    label: "Écrit à la maison"
+    line: "{name} reste à la maison et écrit de nouvelles chansons."
+    if: "{name} était {gender, select, she {restée} other {resté}} à la maison pour écrire"
+  staysNearFamily:
+    en: "1g3keu7"
+    label: "Reste près des siens"
+    line: "{name} refuse un travail lointain pour rester près de sa famille."
+    if: "{name} était {gender, select, she {restée} other {resté}} près de sa famille"
+  staysWithFriend:
+    en: "kddj34"
+    label: "Loge chez un ami"
+    line: "{name} s’installe chez un ami pour un temps."
+    if: "{name} avait emménagé chez un ami pour un temps"
+  stockSoaked:
+    en: "9nrizd"
+    label: "La pluie trempe le stand"
+    line: "Une forte pluie trempe le stand et tout ce qu’il y a dessus."
+  storiesAtBedtime:
+    en: "134tmcu"
+    label: "Écoute des histoires du soir"
+    line: "Sa maman lui lit une histoire chaque soir."
+    if: "sa famille lui avait lu une histoire chaque soir"
+  storyContestMiss:
+    en: "poeor7"
+    label: "Une autre histoire gagne"
+    line: "Le jury choisit une autre histoire et envoie un petit mot à {name}."
+  storyInMagazine:
+    en: "jjc1zg"
+    label: "Son histoire est publiée"
+    line: "Après une réécriture, un petit magazine publie son histoire."
+  strongShoots:
+    en: "8z3clm"
+    label: "De solides pousses sortent"
+    line: "De jeunes pousses vertes sortent de terre, courtes et robustes."
+  studiesAtArtSchool:
+    en: "118yjqj"
+    label: "Étudie en école d’art"
+    line: "{name} étudie l’illustration dans une école d’art."
+    if: "{name} avait étudié dans une école d’art"
+  studiesComputing:
+    en: "o3y6ob"
+    label: "Étudie l’informatique"
+    line: "{name} étudie l’informatique à l’université."
+    if: "{name} avait étudié l’informatique"
+  studiesDesign:
+    en: "zsh738"
+    label: "Étudie le design"
+    line: "{name} étudie le graphisme : affiches, panneaux et couvertures de livres."
+    if: "{name} avait étudié le design"
+  studiesEnvironment:
+    en: "a7g7ju"
+    label: "Étudie la nature"
+    line: "{name} étudie comment tout s’emboîte dans la nature."
+    if: "{name} avait étudié l’environnement"
+  studiesFilm:
+    en: "17uuxiu"
+    label: "Étudie le cinéma"
+    line: "{name} étudie comment on fait les films."
+    if: "{name} avait étudié le cinéma"
+  studiesFoodScience:
+    en: "1ymeqci"
+    label: "Étudie les aliments"
+    line: "{name} étudie pourquoi le pain gonfle et le lait tourne."
+    if: "{name} avait étudié la science des aliments"
+  studiesHardForExams:
+    en: "1osvnav"
+    label: "Révise dur ses examens"
+    line: "{name} révise dur pour les grands examens."
+    if: "{name} avait révisé dur pour les examens"
+  studiesMedicine:
+    en: "1b2d59p"
+    label: "Étudie la médecine"
+    line: "{name} étudie la médecine à l’université."
+    if: "{name} avait étudié la médecine"
+  studiesMusic:
+    en: "1sf9p9o"
+    label: "Étudie la musique"
+    line: "{name} entre dans une école de musique pour étudier."
+    if: "{name} avait étudié la musique"
+  studiesPartTime:
+    en: "dvpa8f"
+    label: "Étudie à temps partiel"
+    line: "{name} étudie à temps partiel, le soir."
+    if: "{name} avait étudié à temps partiel"
+  studiesStatistics:
+    en: "4owp03"
+    label: "Étudie la statistique"
+    line: "{name} étudie la statistique, les maths de ce qui est probable."
+    if: "{name} avait étudié la statistique"
+  studiesWithFriend:
+    en: "1gx7kbg"
+    label: "Révise avec un ami"
+    line: "Avec un ami, {name} se fait réciter les leçons à chaque pause déjeuner."
+    if: "{name} avait révisé avec un ami"
+  studioCloses:
+    en: "1ho9a8u"
+    label: "Le studio ferme"
+    line: "Le studio de jeux ferme, et {name} perd son emploi."
+  studyEngineering:
+    en: "1clzvq0"
+    label: "Étudie l’ingénierie"
+    line: "{name} étudie l’ingénierie : comment fabriquer des choses qui marchent et qui durent."
+    if: "{name} avait étudié l’ingénierie"
+  studyLanguages:
+    en: "nx0912"
+    label: "Étudie les langues"
+    line: "{name} étudie les langues à l’université."
+    if: "{name} avait étudié les langues"
+  studyRoomCloses:
+    en: "5rdlf6"
+    label: "La salle d’étude ferme"
+    line: "La bibliothèque ferme sa salle d’étude pour travaux."
+  studyScience:
+    en: "1g40ccy"
+    label: "Étudie les sciences"
+    line: "{name} étudie les sciences à l’université."
+    if: "{name} avait étudié les sciences à l’université"
+  supervisesStudents:
+    en: "yyf2q4"
+    label: "Guide des étudiants"
+    line: "{name} guide un groupe d’étudiants dans leurs premiers projets."
+    if: "{name} avait guidé de jeunes scientifiques"
+  swimsEveryMorning:
+    en: "4m9dja"
+    label: "Nage chaque matin"
+    line: "{name} nage chaque matin avant le travail."
+    if: "{name} avait nagé chaque matin"
+  switchesInstrument:
+    en: "t7e71w"
+    label: "Essaie un autre instrument"
+    line: "{name} apprend un autre instrument pendant que sa main guérit."
+    if: "{name} avait essayé un autre instrument"
+  switchesSport:
+    en: "1n9u783"
+    label: "Essaie un sport plus doux"
+    line: "{name} essaie la natation, un sport plus doux pour les articulations."
+    if: "{name} avait essayé un sport plus doux"
+  switchesToActing:
+    en: "3udd2e"
+    label: "Passe au théâtre"
+    line: "{name} passe de la danse au théâtre."
+    if: "{name} était passé{gender, select, she {e} other {}} au théâtre"
+  switchesToDrums:
+    en: "1pkv88q"
+    label: "Passe à la batterie"
+    line: "{name} troque le tabouret de piano contre celui de la batterie."
+    if: "{name} était {gender, select, she {passée} other {passé}} du piano à la batterie"
+  takesAYearOff:
+    en: "1rahzte"
+    label: "Prend une année de pause"
+    line: "{name} prend une année de pause pour se reposer et réfléchir."
+    if: "{name} avait pris une année de pause"
+  takesActingClasses:
+    en: "navbv2"
+    label: "Prend des cours de théâtre"
+    line: "{name} s’inscrit à des cours de théâtre le jeudi soir."
+    if: "{name} s’était inscrit{gender, select, she {e} other {}} à des cours de théâtre"
+  takesAdvancedMaths:
+    en: "m72rl8"
+    label: "Fait des maths avancées"
+    line: "{name} s’inscrit à un cours de maths avancées."
+    if: "{name} avait suivi un cours de maths avancées"
+  takesArtSubjects:
+    en: "1z00br3"
+    label: "Choisit l’art et le design"
+    line: "{name} choisit l’art et le design comme matières à l’école."
+    if: "{name} avait choisi l’art et le design"
+  takesBigProject:
+    en: "o4lonq"
+    label: "Prend un gros projet"
+    line: "{name} prend en charge un gros projet au travail."
+    if: "{name} avait pris en charge un gros projet"
+  takesBreakFromSport:
+    en: "w4p799"
+    label: "Fait une pause"
+    line: "{name} fait une pause et regarde ce qu’il y a d’autre."
+    if: "{name} avait fait une pause dans le sport"
+  takesCollegePlace:
+    en: "1m9cqd0"
+    label: "Accepte une place"
+    line: "{name} accepte une place dans une formation après le lycée."
+    if: "{name} avait accepté une place dans une formation après le lycée"
+  takesEditingCourse:
+    en: "1uejlxx"
+    label: "Suit un cours d’édition"
+    line: "{name} suit un cours du soir sur la révision de textes."
+    if: "{name} avait suivi un cours de révision de textes"
+  takesHumanities:
+    en: "1iiv5b"
+    label: "Choisit histoire et langues"
+    line: "{name} choisit l’histoire, la géographie et les langues."
+    if: "{name} avait choisi l’histoire, la géographie et les langues"
+  takesJobNearFamily:
+    en: "6az9nk"
+    label: "Travaille près des siens"
+    line: "{name} prend un travail dans la ville où vit sa famille."
+    if: "{name} avait pris un travail plus près de sa famille"
+  takesOnAVan:
+    en: "19of7dv"
+    label: "Épargne pour un van"
+    line: "{name} épargne pour une camionnette et prend de plus grosses livraisons."
+    if: "{name} avait épargné pour une camionnette"
+  takesPetitionDoors:
+    en: "stm34q"
+    label: "Va de porte en porte"
+    line: "{name} va de porte en porte avec la pétition sur un porte-bloc."
+    if: "{name} avait porté la pétition de porte en porte"
+  takesSchoolLabJob:
+    en: "umhn6s"
+    label: "Prépare les labos d’école"
+    line: "{name} prend un poste où l’on prépare des expériences dans une école."
+    if: "{name} avait pris un poste scientifique dans une école"
+  takesSecondJob:
+    en: "1mlshf7"
+    label: "Prend un deuxième emploi"
+    line: "{name} prend un deuxième emploi le soir, en plus du premier."
+    if: "{name} avait pris un deuxième emploi"
+  takesShortCourse:
+    en: "1jj4r7i"
+    label: "Suit une courte formation"
+    line: "{name} s’inscrit à une courte formation pour aider dans les classes."
+    if: "{name} avait suivi une courte formation"
+  takesSteadyJob:
+    en: "z8f5f8"
+    label: "Prend un emploi stable"
+    line: "{name} prend un emploi stable de programmation dans une grande entreprise."
+    if: "{name} avait pris un emploi stable à la place"
+  takesThingsApart:
+    en: "1ixghoa"
+    label: "Démonte des objets"
+    line: "{name} démonte une vieille radio pour voir l’intérieur."
+    if: "{name} avait démonté des objets pour voir l’intérieur"
+  takesUpNursingPlace:
+    en: "gm0ov9"
+    label: "Accepte la place"
+    line: "{name} accepte la place et commence ses études en soins infirmiers."
+    if: "{name} avait accepté la place en soins infirmiers"
+  takesUpRunning:
+    en: "1fq6xa"
+    label: "Se met à la course"
+    line: "{name} se met à courir, un tour après l’autre."
+    if: "{name} avait commencé à courir"
+  talksItThrough:
+    en: "1bp1ip3"
+    label: "En parle"
+    line: "{name} en parle avec des collègues qui comprennent."
+    if: "{name} en avait parlé avec des collègues"
+  teacherNotices:
+    en: "17nieo9"
+    label: "Un prof voit un talent"
+    line: "Un enseignant remarque ce que {name} sait bien faire."
+  teacherSpotsTalent:
+    en: "1knqai2"
+    label: "Un prof prête des livres"
+    line: "Un professeur remarque son travail et lui propose des livres en plus. Quelle chance !"
+  teachesACraft:
+    en: "17tbf69"
+    label: "Transmet son savoir-faire"
+    line: "{name} enseigne à d’autres un savoir-faire acquis au fil des années."
+    if: "{name} avait transmis son savoir-faire"
+  teachesALanguage:
+    en: "salopf"
+    label: "Enseigne une langue"
+    line: "{name} enseigne une langue à des adultes, le soir."
+    if: "{name} avait enseigné une langue"
+  teachesArt:
+    en: "132z6lo"
+    label: "Enseigne l’art"
+    line: "{name} donne des cours d’art aux enfants et aux adultes."
+    if: "{name} avait donné des cours d’art"
+  teachesAtSchool:
+    en: "1shrrfa"
+    label: "Devient {gender, select, she {enseignante} other {enseignant}}"
+    line: "{name} devient {gender, select, she {enseignante} other {enseignant}} et apprend trente nouveaux prénoms."
+    if: "{name} avait enseigné dans une école"
+  teachesCoding:
+    en: "y16zvf"
+    label: "Enseigne le code"
+    line: "{name} enseigne le code à des enfants."
+    if: "{name} avait enseigné le code à des enfants"
+  teachesCooking:
+    en: "1nw52kx"
+    label: "Enseigne la cuisine"
+    line: "{name} donne des cours de cuisine le soir."
+    if: "{name} avait donné des cours de cuisine"
+  teachesDance:
+    en: "18ywker"
+    label: "Enseigne la danse"
+    line: "{name} enseigne la danse aux enfants le samedi matin."
+    if: "{name} avait enseigné la danse à des enfants"
+  teachesDigitalSkills:
+    en: "k8ekys"
+    label: "Enseigne l’informatique"
+    line: "{name} montre à des voisins âgés comment utiliser un ordinateur."
+    if: "{name} avait montré à des voisins comment utiliser un ordinateur"
+  teachesFirstAid:
+    en: "861nyd"
+    label: "Enseigne le secourisme"
+    line: "{name} enseigne les premiers secours dans les écoles et les clubs."
+    if: "{name} avait enseigné les premiers secours"
+  teachesMusic:
+    en: "1w7i15p"
+    label: "Enseigne la musique"
+    line: "{name} commence à enseigner la musique à des enfants."
+    if: "{name} avait commencé à enseigner la musique"
+  teachesSchoolMusic:
+    en: "1w6yfvd"
+    label: "Enseigne dans une école"
+    line: "{name} enseigne la musique à l’école du quartier."
+    if: "{name} avait enseigné dans une école"
+  teachesScience:
+    en: "1s7pilv"
+    label: "Enseigne les sciences"
+    line: "{name} enseigne les sciences dans une école."
+    if: "{name} avait enseigné les sciences dans une école"
+  teachesTradeSkills:
+    en: "1r7b8sg"
+    label: "Enseigne un métier"
+    line: "{name} enseigne des métiers manuels à l’école professionnelle de la ville."
+    if: "{name} avait enseigné des métiers manuels"
+  teamPhysio:
+    en: "yjl0k4"
+    label: "Est kiné d’une équipe"
+    line: "{name} s’occupe des joueurs d’un club quand ils se blessent."
+    if: "{name} avait pris soin des joueurs d’un club"
+  teamWinsLeague:
+    en: "1p1nzsx"
+    label: "Gagne le championnat"
+    line: "Son équipe gagne le championnat le dernier jour. Un peu de chance aussi !"
+  teamsUpWithPartner:
+    en: "pxcd0j"
+    label: "S’associe avec quelqu’un"
+    line: "{name} s’associe avec quelqu’un pour partager les frais."
+    if: "{name} avait choisi de s’associer avec quelqu’un"
+  timeWithGrandparents:
+    en: "1fzbkgb"
+    label: "Les grands-parents aident"
+    line: "Ses grands-parents s’occupent {gender, select, she {d’elle} other {de lui}} la plupart des après-midi."
+    if: "ses grands-parents s’étaient occupés {gender, select, she {d’elle} other {de lui}} presque tous les jours"
+  townBacksCampaign:
+    en: "1t5kvsm"
+    label: "Les voisins s’y mettent"
+    line: "Des centaines de voisins signent sa pétition. Quelle chance !"
+  tradeCourse:
+    en: "1df45ml"
+    label: "Suit un cours de métier"
+    line: "{name} suit un cours pratique pour apprendre un métier."
+    if: "{name} avait suivi un cours de métier"
+  trainChef:
+    en: "105e6oh"
+    label: "Se forme comme chef"
+    line: "{name} se forme au métier de chef dans une cuisine chaude et bruyante."
+    if: "{name} avait fait une formation de chef"
+  trainsApprentices:
+    en: "ymv1pp"
+    label: "Forme des apprentis"
+    line: "{name} forme de jeunes apprentis et répond à toutes leurs questions."
+    if: "{name} avait formé des apprentis"
+  trainsAsBaker:
+    en: "bdwsvg"
+    label: "Se forme à la boulangerie"
+    line: "{name} apprend le métier de {gender, select, she {boulangère} other {boulanger}} et commence avant l’aube."
+    if: "{name} avait appris le métier de {gender, select, she {boulangère} other {boulanger}}"
+  trainsAsVet:
+    en: "1v8die5"
+    label: "Devient vétérinaire"
+    line: "{name} se forme pour soigner les animaux malades."
+    if: "{name} avait fait des études de vétérinaire"
+  trainsExtraEvening:
+    en: "1p89qkq"
+    label: "Ajoute un entraînement"
+    line: "{name} ajoute chaque semaine une soirée d’entraînement."
+    if: "{name} avait ajouté une soirée d’entraînement"
+  trainsForMarathon:
+    en: "1ga1ygq"
+    label: "S’entraîne pour un marathon"
+    line: "{name} s’entraîne pour un marathon, un peu plus loin chaque semaine."
+    if: "{name} avait préparé un marathon"
+  trainsHard:
+    en: "jglbox"
+    label: "S’entraîne avant l’école"
+    line: "{name} s’entraîne avant l’école, quatre matins par semaine."
+    if: "{name} s’était entraîné{gender, select, she {e} other {}} avant l’école"
+  trainsToTeach:
+    en: "1cr53qh"
+    label: "Se forme à l’enseignement"
+    line: "{name} se forme pour devenir {gender, select, she {enseignante} other {enseignant}}."
+    if: "{name} avait suivi une formation d’enseignant"
+  trainsWithFriend:
+    en: "a30lhz"
+    label: "S’entraîne avec un ami"
+    line: "{name} s’entraîne avec un ami le week-end."
+    if: "{name} avait fait des entraînements avec un ami"
+  translatesBooks:
+    en: "1fxykth"
+    label: "Traduit des livres"
+    line: "{name} traduit des livres d’une langue à une autre."
+    if: "{name} avait traduit des livres"
+  translatesFromHome:
+    en: "r3ikbv"
+    label: "Traduit depuis chez soi"
+    line: "{name} traduit depuis chez soi, avec un chat sur le clavier."
+    if: "{name} avait commencé à traduire depuis chez soi"
+  travelsForAYear:
+    en: "axd37k"
+    label: "Voyage pendant un an"
+    line: "{name} voyage pendant un an avec un seul petit sac à dos."
+    if: "{name} avait voyagé pendant un an"
+  triesADifferentShow:
+    en: "1f1vnuh"
+    label: "Tente un autre spectacle"
+    line: "{name} retourne passer une audition pour un autre spectacle."
+    if: "{name} avait passé une audition pour un autre spectacle"
+  triesAgain:
+    en: "uajeg4"
+    label: "Réessaie avec les voisins"
+    line: "{name} frappe aux portes et réessaie avec les voisins."
+    if: "{name} avait réessayé avec les voisins"
+  triesClimbing:
+    en: "149x0hv"
+    label: "Essaie l’escalade"
+    line: "{name} essaie le mur d’escalade et adore la vue."
+    if: "{name} avait essayé l’escalade"
+  triesFirstIdea:
+    en: "1gfvqg9"
+    label: "Teste une première idée"
+    line: "{name} propose de laver les voitures des voisins contre un petit prix."
+    if: "{name} avait testé une première idée d’entreprise"
+  triesForDanceCompany:
+    en: "zbsgfc"
+    label: "Tente une troupe de danse"
+    line: "{name} tente sa chance pour une place dans une troupe de danse jeunesse."
+    if: "{name} avait tenté sa chance dans une troupe de danse"
+  triesForSide:
+    en: "ou3k2n"
+    label: "Va à une journée d’essai"
+    line: "{name} va à la journée d’essai d’un club, en espérant une place."
+    if: "{name} avait passé une journée d’essai dans un club"
+  triesNewExperiment:
+    en: "kcz2d9"
+    label: "Teste une nouvelle idée"
+    line: "{name} monte une expérience pour tester une nouvelle idée."
+    if: "{name} avait monté une nouvelle expérience"
+  triesOutForTeam:
+    en: "1cnqcdp"
+    label: "Passe une sélection"
+    line: "{name} passe une sélection pour une équipe et attend la liste."
+    if: "{name} avait passé une sélection pour une équipe"
+  triesPottery:
+    en: "1bd662d"
+    label: "Essaie la poterie"
+    line: "{name} essaie la poterie et se couvre de boue."
+    if: "{name} avait essayé la poterie"
+  triesSourdough:
+    en: "14967b9"
+    label: "Essaie le pain au levain"
+    line: "{name} essaie de faire du pain au levain en partant de zéro."
+    if: "{name} avait essayé le pain au levain"
+  tryGymnastics:
+    en: "z5zktn"
+    label: "Essaie la gymnastique"
+    line: "{name} essaie la gymnastique. Dans la salle, on fait des roues partout."
+    if: "{name} avait essayé la gymnastique"
+  twoLanguagesHome:
+    en: "193o88o"
+    label: "Entend deux langues"
+    line: "{name} entend deux langues à la maison."
+    if: "sa famille avait parlé deux langues à la maison"
+  unkindSupervisor:
+    en: "2l06xn"
+    label: "A un chef sévère"
+    line: "Son chef est dur et dit rarement bravo."
+  vetAssistant:
+    en: "7pmaz4"
+    label: "Aide chez le vétérinaire"
+    line: "{name} aide le samedi dans un cabinet vétérinaire."
+    if: "{name} avait aidé chez le vétérinaire"
+  visitsLonelyNeighbours:
+    en: "13r212q"
+    label: "Rend visite aux voisins"
+    line: "{name} rend visite à des voisins âgés qui vivent seuls."
+    if: "{name} avait rendu visite à des voisins âgés"
+  voiceActing:
+    en: "14t56cn"
+    label: "Double des dessins animés"
+    line: "{name} enregistre des voix pour des dessins animés."
+    if: "{name} avait enregistré des voix de dessins animés"
+  volunteerClinic:
+    en: "a50j0h"
+    label: "Aide chez le médecin"
+    line: "{name} aide le samedi dans un cabinet médical du quartier."
+    if: "{name} avait aidé dans un cabinet médical du quartier"
+  volunteersLocally:
+    en: "wvpjn2"
+    label: "Fait du bénévolat"
+    line: "{name} fait du bénévolat dans le quartier chaque semaine."
+    if: "{name} avait fait du bénévolat dans son quartier"
+  waitingListPlace:
+    en: "pkusao"
+    label: "Va sur liste d’attente"
+    line: "La formation {gender, select, she {la} other {le}} met sur une liste d’attente pour les places."
+  wardShortStaffed:
+    en: "7m6sej"
+    label: "Manque de personnel"
+    line: "Trop peu de personnel, et les journées sont longues."
+  watchesChildPerform:
+    en: "3zrzat"
+    label: "Applaudit son enfant"
+    line: "{name} regarde son enfant jouer sur scène."
+  websiteForShop:
+    en: "115lu42"
+    label: "Crée un site de boutique"
+    line: "{name} crée un site web pour une petite boutique du quartier."
+    if: "{name} avait créé un site web pour une boutique"
+  welcomesNeighbours:
+    en: "1vpmlvz"
+    label: "Accueille les voisins"
+    line: "{name} accueille les nouveaux voisins avec un plat."
+    if: "{name} avait accueilli les nouveaux voisins"
+  wildlifeSpotted:
+    en: "11lg0ex"
+    label: "Un oiseau rare passe"
+    line: "Un oiseau rare fait son nid dans le jardin de l’école. Quelle chance !"
+  winsCookOff:
+    en: "1xbddds"
+    label: "Gagne un ruban bleu"
+    line: "Au concours suivant, le jury lui remet un ruban bleu."
+  winsCoursePlace:
+    en: "zsz3d8"
+    label: "Gagne une place au cours"
+    line: "{name} gagne une place gratuite dans un cours du soir. Quelle chance !"
+  winsRegionalMedal:
+    en: "1p4r5rx"
+    label: "Gagne une médaille"
+    line: "Après des mois d’entraînement, {name} gagne une médaille aux jeux régionaux."
+  winsSportsCamp:
+    en: "1h2zyif"
+    label: "Gagne une place au camp"
+    line: "{name} gagne une semaine gratuite dans un camp sportif d’été. Quelle chance !"
+  woodwork:
+    en: "1n83pr3"
+    label: "Travaille le bois"
+    line: "{name} fabrique un tabouret à l’atelier bois."
+    if: "{name} avait travaillé le bois"
+  workRuined:
+    en: "1kqzek2"
+    label: "La pluie abîme son travail"
+    line: "La pluie s’infiltre et abîme un an de son travail."
+  worksAndStudies:
+    en: "10icpe6"
+    label: "Travaille et étudie"
+    line: "{name} travaille la journée et étudie le soir."
+    if: "{name} avait travaillé et étudié à temps partiel"
+  worksAsDoctor:
+    en: "1xnsa2o"
+    label: "Travaille comme médecin"
+    line: "{name} commence à travailler comme médecin."
+    if: "{name} avait commencé à travailler comme médecin"
+  worksBackstage:
+    en: "92clvw"
+    label: "Travaille en coulisses"
+    line: "{name} travaille en coulisses avec les lumières, les accessoires et les rideaux."
+    if: "{name} avait travaillé en coulisses"
+  worksFewerHours:
+    en: "15vrcn9"
+    label: "Travaille moins"
+    line: "{name} travaille moins d’heures pour mieux se reposer et profiter de la vie."
+    if: "{name} avait travaillé moins d’heures"
+  worksFromHome:
+    en: "ae8m8c"
+    label: "Travaille à la maison"
+    line: "{name} programme depuis la maison, avec un chat sur le clavier."
+    if: "{name} avait commencé à travailler à la maison"
+  worksInKitchen:
+    en: "1pvyhuk"
+    label: "Travaille en cuisine"
+    line: "{name} travaille dans la cuisine d’un restaurant animé."
+    if: "{name} avait travaillé dans une cuisine de restaurant"
+  worksInPrintShop:
+    en: "dndu79"
+    label: "Travaille en imprimerie"
+    line: "{name} travaille dans une imprimerie, entre papier et encre."
+    if: "{name} avait travaillé dans une imprimerie"
+  worksOnBridge:
+    en: "1x6h71j"
+    label: "Travaille sur un pont"
+    line: "{name} travaille sur un nouveau pont et le traverse en premier."
+    if: "{name} avait travaillé sur un nouveau pont"
+  worksOnFarm:
+    en: "ymwcrx"
+    label: "Travaille dans une ferme"
+    line: "{name} travaille dans une ferme pendant les vacances."
+    if: "{name} avait travaillé dans une ferme"
+  worksWithClassmate:
+    en: "11lgqi1"
+    label: "Travaille avec un camarade"
+    line: "Avec un camarade de classe, {name} reprend les passages difficiles."
+    if: "{name} avait retravaillé les passages difficiles avec un camarade"
+  worksWithData:
+    en: "170t86f"
+    label: "Travaille avec des données"
+    line: "{name} trouve un travail avec des chiffres et des ordinateurs."
+    if: "{name} avait trouvé un travail avec des données"
+  writesABook:
+    en: "h493e7"
+    label: "Écrit un livre"
+    line: "{name} écrit un livre entier."
+    if: "{name} avait écrit un livre"
+  writesAColumn:
+    en: "1tntyqp"
+    label: "Écrit une chronique"
+    line: "{name} écrit chaque semaine une chronique sur la vie en ville."
+    if: "{name} avait écrit une chronique"
+  writesAPaper:
+    en: "15i28fz"
+    label: "Rédige les résultats"
+    line: "{name} rédige les résultats pour les autres scientifiques."
+    if: "{name} avait rédigé les résultats"
+  writesAScript:
+    en: "28jcbu"
+    label: "Écrit un scénario"
+    line: "{name} écrit un scénario, puis entend des acteurs le lire à voix haute."
+    if: "{name} avait écrit un scénario"
+  writesForOthers:
+    en: "wadmsl"
+    label: "Écrit pour les autres"
+    line: "{name} écrit des chansons que d’autres chantent."
+    if: "{name} avait écrit des chansons pour d’autres personnes"
+  writesFromHome:
+    en: "1r2ym2a"
+    label: "Écrit de chez {gender, select, she {elle} other {lui}}"
+    line: "{name} écrit de chez {gender, select, she {elle} other {lui}}, avec un chat sur le clavier."
+    if: "{name} avait commencé à écrire de chez {gender, select, she {elle} other {lui}}"
+  writesHealthLeaflets:
+    en: "118g9wk"
+    label: "Écrit des notices santé"
+    line: "{name} écrit des notices claires pour que les patients comprennent leurs médicaments."
+    if: "{name} avait écrit des notices de santé"
+  writesLifeStory:
+    en: "h906qe"
+    label: "Écrit sa vie"
+    line: "{name} met par écrit l’histoire de sa vie jusqu’ici."
+    if: "{name} avait écrit l’histoire de sa vie"
+  writesMusicForShows:
+    en: "tckbni"
+    label: "Compose pour la scène"
+    line: "{name} compose de la musique pour des spectacles et des films."
+    if: "{name} avait composé de la musique pour des spectacles"
+  writesPictureBooks:
+    en: "37p7w2"
+    label: "Écrit des albums"
+    line: "{name} écrit des albums illustrés pour les petits."
+    if: "{name} avait écrit des albums illustrés"
+  writesRecipeBook:
+    en: "8cc0sj"
+    label: "Écrit un livre de cuisine"
+    line: "{name} écrit ses recettes pour en faire un livre."
+    if: "{name} avait écrit un livre de recettes"
+  writesSpeeches:
+    en: "1sj9pqi"
+    label: "Écrit des discours"
+    line: "{name} écrit des discours pour le conseil municipal."
+    if: "{name} avait écrit des discours pour le conseil municipal"
+  writesStories:
+    en: "aagj6p"
+    label: "Écrit des histoires"
+    line: "{name} remplit un cahier d’histoires."
+    if: "{name} avait écrit des histoires"
+  youthAcademy:
+    en: "kaf98t"
+    label: "Va au centre de formation"
+    line: "{name} s’entraîne après l’école au centre de formation d’un grand club."
+    if: "{name} avait rejoint un centre de formation"
+baselines:
+  amara:
+    writesABook:
+      en: "1qc3bj5"
+      line: "Elle écrit un livre entier le soir."
+    publishersSayNo:
+      en: "17hbpzd"
+      line: "Dix éditeurs disent non à son livre."
+    smallPressYes:
+      en: "155smcl"
+      line: "Une petite maison d’édition dit oui et imprime quelques centaines d’exemplaires."
+    moveAbroad:
+      en: "vyafg6"
+      line: "Elle s’installe dans le pays qu’elle a visité à quatorze ans."
+    bookDeal:
+      en: "18nj5w6"
+      line: "Une plus grande maison d’édition remarque son livre, paru chez la petite. Quelle chance !"
+    joinsBookGroup:
+      en: "1dnok1o"
+      line: "Elle rejoint un club de lecture et ne parle jamais de ses propres écrits."
+  ana:
+    chefOffer:
+      en: "xkhsed"
+      label: "Un boulanger l’embauche"
+      line: "Un boulanger voit son travail et lui propose de la former. Quelle chance !"
+    trainsAsBaker:
+      en: "kcatgc"
+      line: "{name} apprend le métier et commence à travailler avant l’aube."
+    triesSourdough:
+      en: "1eqcqfy"
+      line: "Elle essaie de faire du pain au levain à partir de zéro."
+    asksOldBaker:
+      en: "14vkhe8"
+      line: "Elle demande à un vieux boulanger pourquoi la pâte ne lève pas."
+    worksInKitchen:
+      en: "s2uwk3"
+      line: "Elle cuit le pain d’un restaurant très fréquenté, avant l’ouverture."
+    openBakery:
+      en: "14tb3s0"
+      label: "Ouvre sa boulangerie"
+      line: "Elle ouvre sa petite boulangerie."
+    happyCustomer:
+      en: "1wstju0"
+      line: "Le bouche-à-oreille fonctionne, et la file s’allonge. Quelle chance !"
+    caters:
+      en: "szlgro"
+      label: "Cuisine pour des mariages"
+      line: "La boulangerie d’Ana prépare aussi des gâteaux pour des mariages et des fêtes."
+    teachesCooking:
+      en: "1bjrp18"
+      line: "Elle apprend aux enfants à pétrir la pâte, et la farine vole partout."
+  kai:
+    rebuildsAsCommunityGarden:
+      en: "1ef3zln"
+      line: "Des voisins l’aident à transformer le terrain boueux en jardin pour tous."
+    forestSchool:
+      en: "dhot50"
+      line: "{name} lance quelque chose de nouveau : des classes en plein air pour les enfants."
+  lena:
+    puzzlesAndBlocks:
+      en: "ih0g33"
+      line: "Des cubes et des puzzles envahissent le sol de la maison."
+    mathsTournament:
+      en: "1um0x7r"
+      line: "{name} participe à un concours de maths contre d’autres écoles."
+    studiesStatistics:
+      en: "1hf2f77"
+      label: "Passe aux statistiques"
+      line: "Elle passe aux statistiques, les maths de ce qui est probable."
+    oldFriendJob:
+      en: "1ot6n7c"
+      line: "Un vieil ami lui demande de diriger une équipe de données. Quelle chance !"
+    learnsSomethingNew:
+      en: "1j8mjq0"
+      label: "Apprend le violoncelle"
+      line: "Elle se met au violoncelle, une note grinçante après l’autre."
+  leo:
+    partInAShow:
+      en: "10wajoo"
+      line: "Un théâtre lui propose un rôle dansé dans un spectacle. Quelle chance !"
+    teachesDance:
+      en: "fmsl5m"
+      line: "{name} apprend aux enfants à danser le samedi matin."
+    startsYouthTheatre:
+      en: "s45lv4"
+      line: "{name} fonde un théâtre pour les jeunes acteurs de la ville."
+    fundingEnds:
+      en: "rn0al2"
+      line: "L’argent manque, et le théâtre de jeunes perd sa salle."
+    directsAPlay:
+      en: "15fh7rb"
+      line: "Des élèves du théâtre de jeunes, devenus grands, jouent dans une pièce qu’il met en scène."
+  nora:
+    trainsHard:
+      en: "1dge5x3"
+      line: "{name} s’entraîne à l’aube, quatre matins par semaine."
+    scoutWatches:
+      en: "fkvvgf"
+      line: "Un recruteur la regarde marquer. Quelle chance !"
+    winsRegionalMedal:
+      en: "1ihmhp6"
+      line: "Elle remporte une médaille aux jeux régionaux."
+    restsAndRebuilds:
+      en: "sw2pvq"
+      line: "Un kiné l’aide à se reconstruire, un petit exercice après l’autre."
+    playsWholeGame:
+      en: "1bzqf55"
+      line: "Elle joue un match entier avec l’équipe, jusqu’au coup de sifflet final."
+    trainsForMarathon:
+      en: "17qzqhv"
+      line: "Elle s’entraîne pour un marathon, lentement et prudemment."
+    mentorsSomeone:
+      en: "1yxtyro"
+      label: "Guide une jeune joueuse"
+      line: "Elle aide une jeune joueuse à revenir après une blessure au genou."
+  omar:
+    familyFixesThings:
+      en: "pdi9u6"
+      line: "Sa maman répare des choses dans la maison, et {name} tient le tournevis."
+    sitsTradeTest:
+      en: "1epd1m6"
+      line: "Il passe l’examen d’électricien."
+    failsTradeTest:
+      en: "e3vtbm"
+      line: "Il échoue de peu à l’examen."
+    practisesWithPro:
+      en: "8386t2"
+      line: "Il s’exerce le week-end avec un électricien plus expérimenté."
+    passesTradeTest:
+      en: "vn5c60"
+      line: "Il repasse l’examen et le réussit."
+    borrowsTools:
+      en: "18lzqkf"
+      line: "Des amis du métier lui prêtent ce qu’il faut pour continuer à travailler."
+    businessFails:
+      en: "1alosib"
+      line: "Les grosses commandes s’arrêtent, et l’entreprise n’a plus d’argent."
+    asksForHelp:
+      en: "uajuuz"
+      line: "Il demande à un ancien client de l’aider à trouver du travail."
+    worksFewerHours:
+      en: "pgyagl"
+      line: "Il travaille moins d’heures. C’est son enfant qui tient le tournevis maintenant."
+  sam:
+    ownSong:
+      en: "1n8x3l3"
+      label: "Enregistre une chanson"
+      line: "Les trois membres du groupe enregistrent une première chanson."
+    bandSplits:
+      en: "1vq6n92"
+      line: "Les deux amis partent. Il se retrouve seul."
+    formsNewBand:
+      en: "8fvfkx"
+      line: "Il fonde un nouveau groupe avec trois autres musiciens."
+    radioPlay:
+      en: "46t0h9"
+      line: "Un DJ de radio passe l’une de ses chansons. Quelle chance !"
+    recordDeal:
+      en: "cw6q52"
+      line: "Un label de musique signe le groupe."
+    goesOnTour:
+      en: "cre071"
+      line: "Il part en tournée mondiale."
+    drinkingAndDrugs:
+      en: "1lxcm8v"
+      line: "L’alcool et la drogue prennent toute la place. Les concerts tournent mal."
+    labelDropsHim:
+      en: "exjiid"
+      label: "Le label lâche le groupe"
+      line: "Le label lâche le groupe. Il perd son appartement."
+    asksForHelp:
+      en: "had1og"
+      line: "Un ami l’héberge. Il demande de l’aide."
+    givesMusicLessons:
+      en: "1b1istj"
+      label: "Enseigne la guitare"
+      line: "Il enseigne la guitare et écrit de nouvelles chansons."
+    becomesParent:
+      en: "8r873j"
+      label: "A deux enfants"
+      line: "Il a deux enfants formidables."
+    watchesChildPerform:
+      en: "18h4k04"
+      label: "Regarde sa fille chanter"
+      line: "Il regarde sa fille chanter sur scène."
+  theo:
+    startsBusyWard:
+      en: "b27grw"
+      line: "Il commence à travailler dans un service d’hôpital très chargé."
+    wardShortStaffed:
+      en: "i8idmh"
+      line: "Trop peu de personnel, et les journées s’étirent."
+    asksSeniorNurse:
+      en: "jchdj0"
+      line: "Il demande à une infirmière expérimentée comment faire face quand tout s’accélère."
+    movesToOtherWard:
+      en: "1lg1ht2"
+      line: "Il passe au service de pédiatrie, avec une plus petite équipe."
+  zoe:
+    artSchoolSaysNo:
+      en: "d0rwvy"
+      line: "La réponse arrive : non. Ça fait mal."
+    writesPictureBooks:
+      en: "oc6dpn"
+      label: "Écrit son propre livre"
+      line: "Elle écrit et illustre son propre album jeunesse."

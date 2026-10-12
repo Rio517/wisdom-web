@@ -148,6 +148,9 @@
 @media (prefers-reduced-motion: reduce) {
   .life-fork::before { animation: none; }
   .life-label, .life-alt { transition: none; }
+  /* The fitted lists are measured in the frame their size changes: the 0.001 ms transition
+     below would hold WebKit's layout back a frame, and the fit would read the old line breaks. */
+  .life-steps, .life-steps *, #whatif-list, #whatif-list * { transition-property: none !important; }
   .life-end.is-arriving { animation: none; }
 }
 

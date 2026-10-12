@@ -1,7 +1,8 @@
 // The lives store on the site: the structure and the page's language's words,
 // already parsed at build time (tooling/lives-data.mjs), loaded on Lesson 1 only,
 // after the first paint. No YAML reaches the browser.
-import { loadWords, check } from './engine.js';
+import { unpackStructure, unpackWords } from './pack.js';
+import { loadWords } from './engine.js';
 
 const WORDS = {
   en: () => import('virtual:lives/words/en'),
@@ -10,17 +11,11 @@ const WORDS = {
   fr: () => import('virtual:lives/words/fr'),
 };
 
-/** The store in `locale` (English where a translation is missing). */
+/** The store in `locale`. */
 export async function openLives(locale = 'en') {
   const own = WORDS[locale] ?? WORDS.en;
-  const [{ default: structure }, { default: words }, english] = await Promise.all([
-    import('virtual:lives/structure'), own(), locale === 'en' ? null : WORDS.en(),
-  ]);
-  const store = loadWords(structure, words, { locale: WORDS[locale] ? locale : 'en', fallback: english?.default ?? null });
-  // On the dev server the store is checked too, so a broken edit shows in the console.
-  if (import.meta.env?.DEV && !store.words) {
-    const { errors } = check(store);
-    if (errors.length) console.info(`The lives store has ${errors.length} problems: npm run lives:check`);
-  }
+  // A missing translation was filled from the English at build time, so one language's words do.
+  const [{ default: packed }, { default: words }] = await Promise.all([import('virtual:lives/structure'), own()]);
+  const store = loadWords(unpackStructure(packed), unpackWords(words, packed), { locale: WORDS[locale] ? locale : 'en' });
   return store;
 }

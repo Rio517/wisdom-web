@@ -8,7 +8,8 @@
 import { readdirSync, readFileSync, existsSync } from 'node:fs';
 import { join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { check, variety, coverage, forksOf, grow, lifeText, rng } from '../src/lessons/choices/lives/engine.js';
+import { check, checkWords, variety, coverage, forksOf, grow, lifeText, rng, wordsOf, WORD_LABEL_MAX } from '../src/lessons/choices/lives/engine.js';
+import { load } from 'js-yaml';
 import { loadStore } from '../src/lessons/choices/lives/yaml.js';
 
 const root = resolve(fileURLToPath(new URL('..', import.meta.url)));
@@ -34,8 +35,22 @@ function readStore(dir) {
 }
 
 const started = performance.now();
-const store = loadStore(readStore(storeDir));
+const files = readStore(storeDir);
+const store = loadStore(files);
 const { errors, warnings } = check(store, { lives: 20 });
+// The other languages' words (text/<locale>.yaml): each missing, stale, with an unknown token,
+// broken ICU or a map label over its language's limit is an error.
+const english = wordsOf(Object.fromEntries(Object.entries(files).map(([path, text]) => [path, load(text)])));
+const languages = [];
+const textDir = join(storeDir, 'text');
+for (const name of existsSync(textDir) ? readdirSync(textDir).filter(file => /^[a-z]{2}\.ya?ml$/.test(file)).sort() : []) {
+  const locale = name.slice(0, 2);
+  const labelMax = WORD_LABEL_MAX[locale] ?? WORD_LABEL_MAX.other;
+  let found;
+  try { found = checkWords(english, load(readFileSync(join(textDir, name), 'utf8')) ?? {}, { locale, labelMax }); } catch (problem) { found = [{ file: `text/${name}`, message: `${locale}: Can't read the file: ${problem.message}` }]; }
+  errors.push(...found);
+  languages.push(`${locale} ${found.length ? `${found.length} error${found.length === 1 ? '' : 's'}` : '0 errors'} (labels at most ${labelMax} characters)`);
+}
 const out = [];
 const pad = (value, width) => String(value).padEnd(width);
 const padStart = (value, width) => String(value).padStart(width);
@@ -47,6 +62,7 @@ const nodeFiles = store.files.filter(file => file.kind === 'nodes');
 out.push(`Lives store: ${relative(root, storeDir) || '.'}`);
 out.push(`  ${store.nodes.size} nodes in ${nodeFiles.length} files; ${store.runs.size} run${store.runs.size === 1 ? '' : 's'}; ${store.baselines.size} baseline${store.baselines.size === 1 ? '' : 's'} (${[...store.baselines.keys()].join(', ')})`);
 out.push('');
+if (languages.length) out.push(`Languages: en 22-character labels; ${languages.join('; ')}`);
 out.push(errors.length ? `Errors (${errors.length})` : 'Errors: none');
 for (const item of errors) out.push(`  ${where(item)}: ${item.message}`);
 out.push(warnings.length ? `Warnings (${warnings.length})` : 'Warnings: none');

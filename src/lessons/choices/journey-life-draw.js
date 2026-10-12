@@ -487,5 +487,5 @@ function leaderHTML(item) {
 export function labelHTML(item, className, extra = '') {
   if (!item) return '';
   const small = item.size !== CHOSEN_SIZE ? `;font-size:${item.size}px` : '';
-  return `<span class="life-label ${className}" style="left:${item.left.toFixed(1)}px;top:${item.baseline.toFixed(1)}px${small}"${extra}>${escapeHTML(item.text)}${leaderHTML(item)}</span>`;
+  return `<span class="life-label ${className}" data-copy-ok="verb-heading" style="left:${item.left.toFixed(1)}px;top:${item.baseline.toFixed(1)}px${small}"${extra}>${escapeHTML(item.text)}${leaderHTML(item)}</span>`;
 }

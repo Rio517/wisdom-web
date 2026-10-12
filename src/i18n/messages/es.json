@@ -732,7 +732,7 @@
   "opening.choose.hint": "Elige una decisión gris en el mapa, o un punto con un círculo, para ver una vida que {name} podría haber vivido.",
   "opening.end.announce": "Una vida, un camino. Cada línea gris es una vida que {name} podría haber vivido.",
   "opening.end.another": "Ver otra vida",
-  "opening.end.change": "{pronoun, select, she {Cambiar una de sus decisiones} other {Cambiar una de sus decisiones}}",
+  "opening.end.change": "{pronoun, select, she {Cambiar una decisión} other {Cambiar una decisión}}",
   "opening.end.gray": "Cada línea gris es una vida que {name} podría haber vivido.",
   "opening.end.heading": "Una vida, un camino.",
   "opening.fork.label": "{age} años, {choice}: otras opciones aquí",

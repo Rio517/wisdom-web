@@ -8,6 +8,11 @@ import { IntlMessageFormat } from 'intl-messageformat';
 export const TOKENS = ['name', 'his', 'him', 'himself'];
 export const KINDS = ['start', 'choice', 'lucky', 'setback', 'event'];
 export const LABEL_MAX = 22;
+/**
+ * A map label's limit in each other language (characters, for a he and a she): set from the map's
+ * measured fit (design 001 v13, the integration round), at most 28.
+ */
+export const WORD_LABEL_MAX = { de: 28, fr: 28, es: 28, other: 28 };
 export const LINE_MAX_WORDS = 12;
 export const END_AGES = [38, 45];
 export const STEP_COUNT = [12, 17];
