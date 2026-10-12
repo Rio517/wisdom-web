@@ -53,7 +53,7 @@ steps:
     age: 27
     label: Opens her own bakery
     line: "She opens a small bakery of her own."
-    alts: [startsFoodTruck, caters]
+    alts: [startsFoodTruck, hostsPopUp]
     echoes: [trainsAsBaker, worksInKitchen]
   - node: happyCustomer
     age: 31

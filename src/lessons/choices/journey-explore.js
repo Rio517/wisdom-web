@@ -3,16 +3,12 @@ import { timelinePositionForAge } from '../../engine/lab-settings.js';
 import { canvasBitmap } from '../../engine/path-presentation.js';
 import { tween, ease, prefersReducedMotion } from './journey-motion.js';
 import { t } from '../../i18n/runtime.js';
+import { FOREST, SAGE, MIST, CLAY, SUN } from './journey-colors.js';
 
 export const LIFE_START = 3;
 export const LIFE_END = 70;
 const LOOKAHEAD = 4;
-const FOREST = '#285442';
-const SAGE = '#8daa91';
-const MIST = '#c5cec8';
 const PREVIEW = '#376f9a';
-const CLAY = '#9a5f3e';
-const SUN = '#e0a93b';
 const isSurprise = node => node.kind === 'lucky' || node.kind === 'roadblock';
 
 function gapFor(age) {

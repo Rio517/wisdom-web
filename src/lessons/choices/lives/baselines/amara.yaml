@@ -43,7 +43,7 @@ steps:
   - node: sendsBookOut
     age: 28
     run: bookSmallPress
-    alts: [joinsWritingGroup, startsABlog]
+    alts: [entersStoryContest, startsABlog]
     echoes: [writesABook]
   - node: publishersSayNo
     age: 28
@@ -53,7 +53,6 @@ steps:
     age: 29
     run: bookSmallPress
     move: 1
-    alts: [rewritesTheBook]
   - node: rewritesTheBook
     age: 30
     run: bookSmallPress

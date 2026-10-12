@@ -1,18 +1,24 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { CHAPTERS, FRAGMENT_ALIASES, LEARNED, beatList, renderJourneyReading } from '../src/lessons/choices/journey-story.js';
+import { CHAPTERS, FRAGMENT_ALIASES, LEARNED, beatList, chaptersFor, renderJourneyReading } from '../src/lessons/choices/journey-story.js';
+import { readStoreFiles } from '../tooling/lives-data.mjs';
+import { loadStore } from '../src/lessons/choices/lives/engine.js';
+import { writtenLife } from '../src/lessons/choices/lives/engine.js';
 import { t as runtimeT } from '../src/i18n/runtime.js';
 
 test('the journey keeps the approved order: big picture, hike, compounding, explore, takeaways', () => {
   assert.deepEqual(CHAPTERS.map(chapter => chapter.id), ['paths', 'hike', 'skills', 'explore', 'wrap']);
 });
 
+// "Many paths" tells one life from the lives store: Sam's, as the static reading does.
+const sam = writtenLife(loadStore(readStoreFiles()), 'sam');
+
 test('every beat has a stable unique fragment, a heading, text and a picture description', () => {
-  const beats = beatList();
+  const beats = beatList(chaptersFor(runtimeT, sam));
   const fragments = beats.map(item => item.fragment);
   assert.equal(new Set(fragments).size, fragments.length);
   for (const { beat } of beats) {
-    assert.ok(beat.heading && beat.body.length, beat.id);
+    assert.ok(beat.heading && (beat.body.length || beat.steps?.length), beat.id);
     assert.ok(beat.alt, `${beat.id} describes its picture`);
   }
 });
@@ -63,4 +69,20 @@ test('the static reading renders every heading and escapes content', () => {
 test('Lesson 1 no longer has the ten-afternoon game, in the journey or its text version', () => {
   assert.ok(!beatList().some(item => item.beat.game || item.chapter.id === 'play'));
   assert.doesNotMatch(renderJourneyReading(), /afternoon/i);
+});
+
+test('"Many paths" is the cover, one life and "Choices add up"; old links land on the beat that holds their words', () => {
+  assert.deepEqual(CHAPTERS[0].beats.map(beat => beat.id), ['cover', 'life', 'adds']);
+  assert.equal(FRAGMENT_ALIASES['paths-many'], 'paths-life');
+  assert.equal(FRAGMENT_ALIASES['paths-travel'], 'paths-life');
+  assert.equal(FRAGMENT_ALIASES['paths-outside'], 'paths-adds');
+});
+
+test('the text version tells the life step by step, then how to change a choice, then the picture, then "Choices add up"', () => {
+  const html = renderJourneyReading({ t: runtimeT, life: sam });
+  const life = html.slice(html.indexOf('id="read-life"'), html.indexOf('id="read-adds"'));
+  assert.match(life, /<ol class="reading-steps"><li><strong>Age 0<\/strong> Sam is born\.<\/li>/);
+  assert.match(life, /<li>Many paths still ahead\.<\/li><\/ol><p>On the page you can change one of Sam’s choices/);
+  assert.ok(life.indexOf('reading-visual') > life.indexOf('On the page'), 'the picture comes after the sentence');
+  assert.match(html.slice(html.indexOf('id="read-adds"')), /Choir led to guitar/);
 });

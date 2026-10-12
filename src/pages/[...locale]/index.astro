@@ -122,7 +122,7 @@ for (let i = 2; i < stops.length; i += 1) trail += ` S ${stops[i].x - third} ${i
 
     const figure = document.querySelector('.hero-map');
     if (figure) {
-      const scene = createPathsScene(figure, { labels: false });
+      const scene = createPathsScene(figure);
       let token = createToken();
       const play = async () => {
         token.cancel();

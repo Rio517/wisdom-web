@@ -2,15 +2,18 @@
 // (lesson.*, reading.*, explore.*); chaptersFor(t) joins the two. The live page
 // and the static reading (build-time and no-JavaScript) render from the same
 // records. Editable English draft: docs/content/choices-journey.md.
+// "Many paths" tells one life from the lives store (design 001 v13): its beats'
+// words name that person, so chaptersFor takes the life on screen (Sam's in the
+// static reading, which has no script).
 import { t as runtimeT } from '../../i18n/runtime.js';
 import { CHOICE_BANDS, bandChoices, EXAMPLE_CHAINS, STEPS, stepLabel } from './journey-choices.js';
+import { addsNamed } from './journey-life-player.js';
 
 const STRUCTURE = [
   { id: 'paths', beats: [
     { id: 'cover', body: 2, next: true, ownKicker: true },
-    { id: 'many', body: 1 },
-    { id: 'travel', body: 2 },
-    { id: 'outside', body: 2, next: true },
+    { id: 'life', body: 0, life: true },
+    { id: 'adds', body: 0, adds: true },
   ] },
   { id: 'hike', beats: [
     { id: 'plan', body: 2 },
@@ -36,8 +39,31 @@ const STRUCTURE = [
 
 const range = count => Array.from({ length: count }, (_, i) => i + 1);
 
-/** The lesson's chapters and beats in the language of `t`. */
-export function chaptersFor(t = runtimeT) {
+/** The words of a beat that tell the life on screen (`life`, a written or played life), or none without one. */
+function lifeWords(beat, t, life) {
+  if (beat.life) {
+    return {
+      body: [],
+      alt: life ? t('lesson.beat.life.alt', { name: life.name, end: life.end }) : '',
+      steps: life ? [...life.steps.map(step => ({ age: step.age, line: step.line })), { close: true, line: t('lesson.beat.life.close') }] : [],
+      change: life ? t('opening.reading.change', { name: life.name, pronoun: life.pronoun }) : '',
+    };
+  }
+  if (beat.adds) {
+    if (!life) return { body: [], alt: '' };
+    // Sam's own words, or words that fit any life.
+    const body = [life.id === 'sam' ? t('lesson.beat.adds.body1') : t('opening.adds.body', { name: life.name, pronoun: life.pronoun })];
+    const [choice, luck, notHis] = addsNamed(life).map(item => life.steps[item.step].label);
+    const alt = choice && luck && notHis
+      ? t('opening.adds.alt', { name: life.name, pronoun: life.pronoun, choice, luck, notHis })
+      : t('opening.adds.altShort', { name: life.name });
+    return { body, alt };
+  }
+  return null;
+}
+
+/** The lesson's chapters and beats in the language of `t`, "Many paths" told for `life` (see lifeWords). */
+export function chaptersFor(t = runtimeT, life = null) {
   return STRUCTURE.map(chapter => ({
     id: chapter.id,
     title: t(`lesson.chapter.${chapter.id}`),
@@ -48,9 +74,10 @@ export function chaptersFor(t = runtimeT) {
         id: beat.id,
         kicker: t(beat.ownKicker ? `${key}.kicker` : `lesson.chapter.${chapter.id}.kicker`),
         heading: t(`${key}.heading`),
-        body: range(beat.body).map(n => t(`${key}.body${n}`)),
-        alt: t(`${key}.alt`),
+        body: range(beat.body ?? 0).map(n => t(`${key}.body${n}`)),
+        alt: beat.life || beat.adds ? '' : beat.id === 'takeaways' ? (life ? t(`${key}.alt`, { name: life.name, end: life.end }) : '') : t(`${key}.alt`),
       };
+      if (beat.life || beat.adds) Object.assign(record, lifeWords(beat, t, life), { [beat.life ? 'life' : 'adds']: true });
       if (beat.next) record.next = t(`${key}.next`);
       if (beat.choice) {
         record.choice = {
@@ -91,7 +118,11 @@ export function learnedFor(t = runtimeT) {
 export const LEARNED = learnedFor();
 
 /** Fragments of beats that were merged or removed, so old links land on the beat that holds their words or comes next. */
-export const FRAGMENT_ALIASES = { 'skills-slow': 'skills-fork', 'skills-transfer': 'skills-builds', 'play-game': 'explore-explore' };
+export const FRAGMENT_ALIASES = {
+  'skills-slow': 'skills-fork', 'skills-transfer': 'skills-builds', 'play-game': 'explore-explore',
+  // The opening's one life replaced the field, the traveller and the closed ways (design 001 v13).
+  'paths-many': 'paths-life', 'paths-travel': 'paths-life', 'paths-outside': 'paths-adds',
+};
 
 export function beatList(chapters = CHAPTERS) {
   return chapters.flatMap((chapter, chapterIndex) => chapter.beats.map((beat, beatIndex) => ({
@@ -105,6 +136,11 @@ const escapeHTML = value => String(value)
 function readingBeat(beat, { t, learned }) {
   const parts = [`<section class="reading-beat" id="read-${beat.id}">`, `<h3>${escapeHTML(beat.heading)}</h3>`];
   for (const paragraph of beat.body) parts.push(`<p>${escapeHTML(paragraph)}</p>`);
+  // The life, step by step as the story tells it, then how to change a choice, then the picture.
+  if (beat.life) {
+    parts.push(`<ol class="reading-steps">${beat.steps.map(step => `<li>${step.close ? '' : `<strong>${escapeHTML(t('lesson.ui.age', { age: step.age }))}</strong> `}${escapeHTML(step.line)}</li>`).join('')}</ol>`);
+    if (beat.change) parts.push(`<p>${escapeHTML(beat.change)}</p>`);
+  }
   if (beat.alt) parts.push(`<p class="reading-visual"><span>${escapeHTML(t('reading.picture'))}</span> ${escapeHTML(beat.alt)}</p>`);
   if (beat.choice) {
     parts.push(`<p><strong>${escapeHTML(beat.choice.prompt)}</strong></p><dl class="reading-choices">`);
@@ -151,10 +187,13 @@ function readingBeat(beat, { t, learned }) {
   return parts.join('');
 }
 
-/** The whole lesson as semantic HTML in the language of `t`. */
-export function renderJourneyReading({ t = runtimeT } = {}) {
+/** One beat of the reading (the live page puts the life on screen into "Many paths" with it). */
+export const renderReadingBeat = (beat, t = runtimeT) => readingBeat(beat, { t, learned: learnedFor(t) });
+
+/** The whole lesson as semantic HTML in the language of `t`, "Many paths" told for `life`. */
+export function renderJourneyReading({ t = runtimeT, life = null } = {}) {
   const learned = learnedFor(t);
-  const chapters = chaptersFor(t).map(chapter => `<section class="reading-chapter" aria-labelledby="read-chapter-${chapter.id}">
+  const chapters = chaptersFor(t, life).map(chapter => `<section class="reading-chapter" aria-labelledby="read-chapter-${chapter.id}">
 <h2 id="read-chapter-${chapter.id}">${escapeHTML(chapter.title)}</h2>
 ${chapter.beats.map(beat => readingBeat(beat, { t, learned })).join('\n')}
 </section>`);

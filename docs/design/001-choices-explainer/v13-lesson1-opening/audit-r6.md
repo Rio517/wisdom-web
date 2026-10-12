@@ -82,4 +82,4 @@ The lead's 40-life samples before the engine fixes (pass 1's grown lives) and af
 
 ## Sources
 
-The audit's working files (each pass's input text and tables) were kept outside the repository; this page is the record. The engine rules are in `prototype/lesson1-opening/lives/engine.js` (`GROW`, `grow`, `runAfter`, `check`), described in [the store's README](../../../../prototype/lesson1-opening/lives/README.md).
+The audit's working files (each pass's input text and tables) were kept outside the repository; this page is the record. The engine rules are in `src/lessons/choices/lives/engine.js` (moved from `prototype/lesson1-opening/lives/` in the integration round) (`GROW`, `grow`, `runAfter`, `check`), described in [the store's README](../../../../src/lessons/choices/lives/README.md).

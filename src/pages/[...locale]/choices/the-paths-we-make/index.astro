@@ -3,6 +3,7 @@ import '../../../../lessons/choices/journey.css';
 import BaseLayout from '../../../../layouts/BaseLayout.astro';
 import SiteNav from '../../../../components/SiteNav.astro';
 import { renderJourneyReading } from '../../../../lessons/choices/journey-story.js';
+import { writtenLifeIn } from '../../../../lessons/choices/lives/build.js';
 import { UI, href } from '../../../../data/site.js';
 import { getTranslator } from '../../../../i18n/index.js';
 import { localeStaticPaths } from '../../../../i18n/config.js';
@@ -10,7 +11,7 @@ import { localeStaticPaths } from '../../../../i18n/config.js';
 export const getStaticPaths = localeStaticPaths;
 const { locale } = Astro.props;
 const t = getTranslator(locale);
-const reading = renderJourneyReading({ t });
+const reading = renderJourneyReading({ t, life: writtenLifeIn(locale) });
 ---
 <BaseLayout title={t('lesson.ui.title')} description={t('lessonPage.description')} locale={locale} clientMessages>
   <a class="skip-link" href="#narration">{t('lesson.ui.skipToStory')}</a>
@@ -35,11 +36,9 @@ const reading = renderJourneyReading({ t });
       <div class="scene scene-paths" id="scene-paths" data-scene="paths">
         <div class="map-stack">
           <canvas id="map-base" aria-hidden="true"></canvas>
-          <canvas id="map-today" aria-hidden="true"></canvas>
           <canvas id="map-fx" aria-hidden="true"></canvas>
           <div class="map-callouts" id="map-callouts" aria-hidden="true"></div>
         </div>
-        <div class="map-key" id="map-key" hidden aria-hidden="true"><span><i class="k-taken"></i>{t('lesson.ui.keyTaken')}</span><span><i class="k-untaken"></i>{t('lesson.ui.keyUntaken')}</span><span><i class="k-possible"></i>{t('lesson.ui.keyPossible')}</span></div>
       </div>
       <div class="scene scene-hike" id="scene-hike" data-scene="hike" hidden></div>
       <div class="scene scene-skills" id="scene-skills" data-scene="skills" hidden></div>

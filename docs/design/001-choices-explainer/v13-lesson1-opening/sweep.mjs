@@ -247,11 +247,12 @@ function labelsTask(item, size) {
 async function grownCases() {
   const { readdirSync, readFileSync } = await import('node:fs');
   const { fileURLToPath } = await import('node:url');
-  const engine = await import('../../../../prototype/lesson1-opening/lives/engine.js');
-  const dir = fileURLToPath(new URL('../../../../prototype/lesson1-opening/lives/', import.meta.url));
+  const engine = await import('../../../../src/lessons/choices/lives/engine.js');
+  const { loadStore } = await import('../../../../src/lessons/choices/lives/yaml.js');
+  const dir = fileURLToPath(new URL('../../../../src/lessons/choices/lives/', import.meta.url));
   const files = {};
   for (const folder of ['nodes', 'runs', 'baselines']) for (const name of readdirSync(dir + folder)) files[`${folder}/${name}`] = readFileSync(dir + folder + '/' + name, 'utf8');
-  const store = engine.loadStore(files);
+  const store = loadStore(files);
   const cases = [];
   for (const life of LIVES) {
     const forks = engine.forksOf(store).filter(fork => fork.baseline === life);

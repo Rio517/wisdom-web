@@ -3,6 +3,7 @@ import tailwindcss from '@tailwindcss/vite';
 import { PORTS, assertProjectPort, assertLocalhost } from './tooling/ports.js';
 import { LOCALES, DEFAULT_LOCALE } from './src/i18n/config.js';
 import dialectoInContext from './tooling/dialecto-in-context.mjs';
+import livesData from './tooling/lives-data.mjs';
 
 /** Refuse to run the site outside 4600–4699 on 127.0.0.1. */
 function portGuard() {
@@ -27,7 +28,7 @@ export default defineConfig({
   // English at the root, other languages under /es/, /de/, /fr/ (see src/i18n/config.js).
   i18n: { locales: LOCALES, defaultLocale: DEFAULT_LOCALE, routing: { prefixDefaultLocale: false } },
   vite: {
-    plugins: [tailwindcss()],
+    plugins: [tailwindcss(), livesData()],
     // Also answer to *.ts.net names: a tailnet-only proxy in front of these loopback servers.
     server: { strictPort: true, allowedHosts: ['.ts.net'] },
     preview: { strictPort: true, allowedHosts: ['.ts.net'] },

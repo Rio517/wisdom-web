@@ -33,7 +33,7 @@ steps:
   - node: plantsEarlyCrop
     age: 21
     run: earlyFrostSwitch
-    alts: [rentsAllotment, buildsAGreenhouse]
+    alts: [studiesEnvironment, buildsAGreenhouse]
     echoes: [landscapeGardener]
   - node: lateFrost
     age: 21

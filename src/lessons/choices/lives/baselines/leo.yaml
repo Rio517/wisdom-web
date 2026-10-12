@@ -40,7 +40,7 @@ steps:
     age: 20
     run: danceToTeaching
     line: "{name} teaches children to move on Saturday mornings."
-    alts: [runsDramaWorkshops, switchesToActing, choreographs]
+    alts: [physio, switchesToActing, choreographs]
     echoes: [gentleDanceClass]
   - node: startsYouthTheatre
     age: 25

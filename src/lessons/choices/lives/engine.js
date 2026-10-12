@@ -2,7 +2,8 @@
 // in this folder), checks it, and grows a new life from any fork of a written
 // one. Pure: no DOM. Used by the opening, the tree page and `npm run lives:check`.
 // It reads no YAML itself: `yaml.js` parses the files (Node, the tree page), and
-// the site ships the store already parsed (`data.js`), so no parser reaches the browser.
+// the site ships the store already parsed (tooling/lives-data.mjs), so no parser reaches the browser.
+import { IntlMessageFormat } from 'intl-messageformat';
 
 export const TOKENS = ['name', 'his', 'him', 'himself'];
 export const KINDS = ['start', 'choice', 'lucky', 'setback', 'event'];
@@ -339,18 +340,158 @@ const FORMS = {
   he: { his: 'his', him: 'him', himself: 'himself', lead: 'He' },
   she: { his: 'her', him: 'her', himself: 'herself', lead: 'She' },
 };
-export const personOf = baseline => ({ name: baseline?.name ?? '', pronoun: baseline?.pronoun === 'she' ? 'she' : 'he' });
+/**
+ * Who a life is about: name and pronoun, and for a store in another language
+ * (`store.words`, see `applyWords`) its locale and lead pronouns.
+ */
+export const personOf = (baseline, store = null) => ({
+  name: baseline?.name ?? '', pronoun: baseline?.pronoun === 'she' ? 'she' : 'he', words: store?.words ?? null,
+});
+const formats = new Map();
+/** An ICU message of another language's store texts, formatted once per text. */
+function icu(text, locale, values) {
+  let format = formats.get(`${locale}\u0001${text}`);
+  if (!format) { format = new IntlMessageFormat(text, locale); formats.set(`${locale}\u0001${text}`, format); }
+  return String(format.format(values));
+}
 /**
  * A store text for a person. `lead`: a `{name}` that starts it becomes He or
  * She (every story line after the first). `capital`: the first letter is
  * capitalized (lines and labels; not the `if` inside "What if …?").
+ * English texts use the tokens {name}, {his}, {him}, {himself}; another
+ * language's are ICU messages with {name} and {gender, select, she {…} other {…}},
+ * and its lead pronouns come with its texts (Spanish drops the subject).
  */
 export function say(text, person, { lead = false, capital = true } = {}) {
   if (typeof text !== 'string') return '';
-  const forms = FORMS[person?.pronoun] ?? FORMS.he;
-  let out = lead ? text.replace(/^\{name\}/, forms.lead) : text;
-  out = out.replace(/\{(name|his|him|himself)\}/g, (_, token) => (token === 'name' ? person.name : forms[token]));
+  let out;
+  if (person?.words && person.words.locale !== 'en') {
+    const { locale, lead: pronouns = {} } = person.words;
+    let source = text;
+    if (lead && /^\{name\}/.test(source)) source = `${pronouns[person.pronoun] ?? ''}${source.slice(6)}`.replace(/^\s+/, '');
+    out = icu(source, locale, { name: person.name, gender: person.pronoun });
+  } else {
+    const forms = FORMS[person?.pronoun] ?? FORMS.he;
+    out = lead ? text.replace(/^\{name\}/, forms.lead) : text;
+    out = out.replace(/\{(name|his|him|himself)\}/g, (_, token) => (token === 'name' ? person.name : forms[token]));
+  }
   return capital ? out.charAt(0).toUpperCase() + out.slice(1) : out;
+}
+
+// ——— The store's words in each language ———
+/** The fields of a node, and of a baseline step, that carry words. */
+export const NODE_WORDS = ['label', 'line', 'if'];
+export const STEP_WORDS = ['label', 'line'];
+/** A fingerprint of the English a translation came from (its fields, in order). */
+export const fingerprint = (entry, fields) => hashString(fields.map(field => entry?.[field] ?? '').join('\u0001')).toString(36);
+/**
+ * The words of a store, apart from its structure: `{ nodes: { id: { label, line, if } },
+ * baselines: { id: { node: { label, line } } } }` (a baseline step's own words, keyed by its node).
+ * `files` are parsed store files (path → data), as `loadStore` takes them.
+ */
+export function wordsOf(files) {
+  const words = { nodes: {}, baselines: {} };
+  for (const [path, data] of Object.entries(files)) {
+    if (/(^|\/)runs\//.test(path) || !data) continue;
+    if (/(^|\/)baselines\//.test(path)) {
+      const own = {};
+      for (const step of list(data.steps)) {
+        const fields = Object.fromEntries(STEP_WORDS.filter(field => typeof step?.[field] === 'string').map(field => [field, step[field]]));
+        if (Object.keys(fields).length) own[step.node] = fields;
+      }
+      if (Object.keys(own).length) words.baselines[data.id ?? fileName(path).replace(/\.ya?ml$/, '')] = own;
+    } else {
+      for (const node of list(data)) words.nodes[node?.id] = Object.fromEntries(NODE_WORDS.filter(field => typeof node?.[field] === 'string').map(field => [field, node[field]]));
+    }
+  }
+  return words;
+}
+/** The store's files without their words (what the site ships once for every language; run names are the tree page's only). */
+export function structureOf(files) {
+  const out = {};
+  const strip = (object, fields) => Object.fromEntries(Object.entries(object ?? {}).filter(([key]) => !fields.includes(key)));
+  for (const [path, data] of Object.entries(files)) {
+    if (/(^|\/)runs\//.test(path)) out[path] = list(data).map(run => strip(run, ['label']));
+    else if (/(^|\/)baselines\//.test(path)) out[path] = { ...data, steps: list(data?.steps).map(step => strip(step, STEP_WORDS)) };
+    else out[path] = list(data).map(node => strip(node, NODE_WORDS));
+  }
+  return out;
+}
+/**
+ * Put `words` (as `wordsOf` gives them, or a translation: the same shape, with `lead`)
+ * into structure files. A missing translation falls back to `fallback` (English).
+ */
+export function applyWords(files, words, fallback = null) {
+  const out = {};
+  // An English text standing in for a missing translation is made an ICU message too.
+  const asICU = text => text.replace(/\{(his|him|himself)\}/g, (_, token) => `{gender, select, she {${FORMS.she[token]}} other {${FORMS.he[token]}}}`);
+  const pick = (own, base, fields) => {
+    const merged = {};
+    for (const field of fields) {
+      const text = typeof own?.[field] === 'string' ? own[field] : typeof base?.[field] === 'string' ? asICU(base[field]) : null;
+      if (text !== null) merged[field] = text;
+    }
+    return merged;
+  };
+  for (const [path, data] of Object.entries(files)) {
+    if (/(^|\/)runs\//.test(path)) out[path] = data;
+    else if (/(^|\/)baselines\//.test(path)) {
+      const id = data?.id;
+      out[path] = { ...data, steps: list(data?.steps).map(step => ({ ...step, ...pick(words.baselines?.[id]?.[step.node], fallback?.baselines?.[id]?.[step.node], STEP_WORDS) })) };
+    } else out[path] = list(data).map(node => ({ ...node, ...pick(words.nodes?.[node.id], fallback?.nodes?.[node.id], NODE_WORDS) }));
+  }
+  return out;
+}
+/** Read the store in a language: structure files, its words, and for another language its locale and lead pronouns. */
+export function loadWords(files, words, { locale = 'en', fallback = null } = {}) {
+  const store = loadStore(applyWords(files, words, fallback));
+  store.words = locale === 'en' ? null : { locale, lead: words.lead ?? {} };
+  return store;
+}
+/** Every variable an ICU message uses (its argument names), or throws when it doesn't parse. */
+function icuArguments(text, locale) {
+  const found = new Set();
+  const walk = elements => {
+    for (const element of elements) {
+      if (element.type !== 0 && typeof element.value === 'string') found.add(element.value);
+      if (element.options) for (const option of Object.values(element.options)) walk(option.value);
+    }
+  };
+  walk(new IntlMessageFormat(text, locale).getAst());
+  return found;
+}
+/**
+ * Check a translation of the store's words against the English: each text missing,
+ * stale (its English changed since: the fingerprint `en` differs), with an unknown
+ * variable, broken ICU, or a map label over `labelMax` characters (for a he and a she).
+ */
+export function checkWords(english, words, { locale, labelMax }) {
+  const errors = [];
+  const error = (where, message) => errors.push({ ...where, message: `${locale}: ${message}` });
+  const one = (where, field, text, own) => {
+    if (typeof text !== 'string' || !text.trim()) { error(where, `Missing translation of ${field}.`); return; }
+    let names;
+    try { names = icuArguments(text, locale); } catch (problem) { error(where, `Broken ICU in ${field}: ${problem.message} ("${text}").`); return; }
+    for (const name of names) if (name !== 'name' && name !== 'gender') error(where, `Unknown token {${name}} in ${field}: use {name} and {gender, select, she {…} other {…}}.`);
+    if (field === 'label') {
+      for (const pronoun of ['he', 'she']) {
+        const shown = say(text, { name: own ?? 'Sam', pronoun, words: { locale, lead: words.lead ?? {} } });
+        if (shown.length > labelMax) { error(where, `Label "${shown}" is ${shown.length} characters (at most ${labelMax}).`); break; }
+      }
+    }
+  };
+  const entries = [
+    ...Object.entries(english.nodes).map(([id, fields]) => ({ where: { node: id, file: `text/${locale}.yaml` }, fields, have: words.nodes?.[id], names: NODE_WORDS })),
+    ...Object.entries(english.baselines).flatMap(([id, steps]) => Object.entries(steps).map(([node, fields]) => ({ where: { baseline: id, node, file: `text/${locale}.yaml` }, fields, have: words.baselines?.[id]?.[node], names: STEP_WORDS }))),
+  ];
+  for (const { where, fields, have, names } of entries) {
+    if (!have) { error(where, 'Missing translation.'); continue; }
+    if (have.en !== fingerprint(fields, names)) error(where, `Stale translation: the English changed since (${have.en ?? 'no fingerprint'} → ${fingerprint(fields, names)}).`);
+    for (const field of names) if (typeof fields[field] === 'string') one(where, field, have[field]);
+    for (const field of Object.keys(have)) if (field !== 'en' && !(field in fields)) error(where, `"${field}" has no English to translate.`);
+  }
+  for (const id of Object.keys(words.nodes ?? {})) if (!(id in english.nodes)) error({ node: id, file: `text/${locale}.yaml` }, 'A translation of a node the store no longer has.');
+  return errors;
 }
 
 // ——— Heights ———
@@ -447,7 +588,7 @@ function othersAt(store, node, path, age, random) {
 export function writtenLife(store, id) {
   const baseline = typeof id === 'string' ? store.baselines.get(id) : id;
   if (!baseline) return null;
-  const person = personOf(baseline);
+  const person = personOf(baseline, store);
   const { path, take } = historyPath();
   const steps = [];
   for (const written of baseline.steps) {
@@ -639,7 +780,7 @@ export function grow(store, { baseline, forkIndex, alt, seed = '' }) {
   const forkStep = base.steps[forkIndex];
   const altNode = store.nodes.get(alt);
   if (!forkStep || !altNode) return null;
-  const person = personOf(base);
+  const person = personOf(base, store);
   const random = rng(`${base.id}:${forkIndex}:${alt}:${seed}`);
   const { path, take } = historyPath();
   const steps = [];

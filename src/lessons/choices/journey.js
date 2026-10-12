@@ -1,4 +1,4 @@
-import { CHAPTERS, FRAGMENT_ALIASES, beatList } from './journey-story.js';
+import { CHAPTERS, FRAGMENT_ALIASES, beatList, chaptersFor, renderReadingBeat } from './journey-story.js';
 import { t } from '../../i18n/runtime.js';
 import { ICONS } from './journey-icons.js';
 import { createToken, prefersReducedMotion, wait } from './journey-motion.js';
@@ -7,6 +7,7 @@ import { createHikeScene } from './journey-hike.js';
 import { createSkillsScene } from './journey-skills.js';
 import { createExploreScene } from './journey-explore.js';
 import { createSortBoard } from './journey-sort.js';
+import { createLifeStory } from './journey-life.js';
 import { watchField } from '../../components/stage-field.js';
 
 const beats = beatList();
@@ -24,10 +25,14 @@ const roots = {
   skills: $('#scene-skills'),
   explore: $('#scene-explore'),
 };
+// "Many paths" tells one life (journey-life.js): a changed life tells the narration as it grows.
+const hooks = { onPick: () => {}, onStep: () => {}, onDone: () => {}, onLeave: () => {} };
 const scenes = {
   // A softer right-hand end than the lab's 0.04: beside the narration panel
   // the line ends otherwise stand in a straight wall (as on the home stage).
-  paths: createPathsScene(roots.paths, { edgeFade: 0.24 }),
+  paths: createPathsScene(roots.paths, { edgeFade: 0.24, life: {
+    onPick: info => hooks.onPick(info), onStep: (node, position) => hooks.onStep(node, position), onDone: run => hooks.onDone(run), onLeave: () => hooks.onLeave(),
+  } }),
   hike: createHikeScene(roots.hike),
   skills: createSkillsScene(roots.skills),
   explore: createExploreScene(roots.explore),
@@ -70,6 +75,12 @@ function setCover(state) {
   if (state) journeyRoot.dataset.cover = state;
   else delete journeyRoot.dataset.cover;
   if (state === 'true') {
+    // Back to the cover: the column slides out as the card opens (its arrival's fill would hold it).
+    const column = $('#narration');
+    if (column?.classList.contains('is-arriving')) {
+      column.classList.remove('is-arriving');
+      if (!prefersReducedMotion()) column.animate([{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'translateX(40px)' }], { duration: 180, easing: 'cubic-bezier(.2, .7, .2, 1)' });
+    }
     cover.classList.remove('is-lifted');
     cover.getAnimations({ subtree: true }).forEach(animation => animation.cancel());
   }
@@ -163,6 +174,10 @@ const sortBoard = createSortBoard(scenes.hike.sortBoard, {
 function renderNarration(item, { animate }) {
   const { beat, chapter, beatIndex } = item;
   const body = $('#narration-body');
+  body.getAnimations().forEach(animation => animation.cancel());
+  body.dataset.beat = beat.id;
+  body.classList.remove('whatif');
+  journeyRoot.dataset.beat = beat.id;
   $('#beat-kicker').textContent = chapter.beats.length > 1
     ? t('lesson.ui.kickerStep', { kicker: beat.kicker, step: beatIndex + 1, total: chapter.beats.length })
     : beat.kicker;
@@ -171,6 +186,7 @@ function renderNarration(item, { animate }) {
     + (beat.note ? `<p class="beat-note">${escapeHTML(beat.note)}</p>` : '');
   const extra = $('#beat-extra');
   extra.innerHTML = '';
+  if (beat.life) life.render($('#beat-text'), extra);
   if (beat.choice) extra.innerHTML = renderChoice(item);
   if (beat.sort) extra.innerHTML = renderSortProgress(item);
   if (beat.closer) {
@@ -207,23 +223,43 @@ function renderControls(item) {
   next.dataset.emphasis = String(index === 0);
 }
 
+// ——— The life the story tells (design 001 v13) ———
+const LIFE_BEAT = beats.findIndex(item => item.beat.id === 'life');
+const onLife = () => beats[index]?.beat.id === 'life';
+const life = createLifeStory({
+  scene: scenes.paths,
+  hooks,
+  onLife,
+  goToLife: () => { tellLife(); go(LIFE_BEAT, { animate: false, autoplay: true, focus: 'next', history: 'push' }); },
+  rerender: () => renderNarration(beats[index], { animate: false }),
+});
+/** Put the life on screen into the words of "Many paths" and the takeaways. */
+function tellLife() {
+  if (!life.life) return;
+  const told = chaptersFor(t, life.life).flatMap(chapter => chapter.beats);
+  for (const item of beats) {
+    if (!['life', 'adds', 'takeaways'].includes(item.beat.id)) continue;
+    const fresh = told.find(beat => beat.id === item.beat.id);
+    Object.assign(item.beat, { body: fresh.body, alt: fresh.alt, steps: fresh.steps, change: fresh.change });
+  }
+}
+const needsLife = beatId => ['life', 'adds', 'takeaways'].includes(beatId);
+
 // ——— Stage ———
-async function switchRoot(target, { zoomFrom = null } = {}) {
+async function switchRoot(target) {
   const incoming = roots[target];
   if (visibleRoot === incoming) return;
   const outgoing = visibleRoot;
   visibleRoot = incoming;
   const reduced = prefersReducedMotion();
   if (outgoing && !reduced) {
-    const zoom = zoomFrom && outgoing === roots.paths ? scenes.paths.todayScreenPoint() : null;
-    if (zoom) outgoing.style.transformOrigin = `${zoom.x}px ${zoom.y}px`;
-    outgoing.classList.add(zoom ? 'zoom-leaving' : 'is-leaving');
+    outgoing.classList.add('is-leaving');
     const leaving = outgoing;
     setTimeout(() => {
-      leaving.classList.remove('zoom-leaving', 'is-leaving');
+      leaving.classList.remove('is-leaving');
       if (visibleRoot !== leaving) leaving.hidden = true;
-    }, zoom ? 700 : 380);
-    await new Promise(resolve => setTimeout(resolve, zoom ? 380 : 160));
+    }, 380);
+    await new Promise(resolve => setTimeout(resolve, 160));
   } else if (outgoing) {
     outgoing.hidden = true;
   }
@@ -233,8 +269,38 @@ async function switchRoot(target, { zoomFrom = null } = {}) {
   if (!reduced) { void incoming.offsetWidth; incoming.classList.add('is-entering'); }
 }
 
-async function go(target, { animate = true, focus = 'none', history = 'replace' } = {}) {
+/**
+ * "Choices add up" → the hike: the field fades (0–320 ms) with the chips and the
+ * old words, the route holds alone (320–700 ms), then the route fades while the
+ * hike and its words arrive (700–1220 ms). No zoom.
+ */
+async function arriveAtHike(item, run, focus) {
+  const body = $('#narration-body');
+  const reduced = prefersReducedMotion();
+  if (!reduced) {
+    scenes.paths.fadeField(320);
+    body.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 300, easing: 'ease-in', fill: 'forwards' });
+    if (!(await wait(700, run))) return;
+    scenes.paths.fadeRoute(300);
+  }
+  renderNarration(item, { animate: true });
+  if (focus === 'next' && !$('#next').hidden) $('#next').focus({ preventScroll: true });
+  roots.hike.hidden = false;
+  scenes.hike.show(item.beat.id, { animate: false, token: run });
+  const leaving = roots.paths;
+  visibleRoot = roots.hike;
+  if (reduced) { leaving.hidden = true; scenes.paths.restore(); return; }
+  roots.hike.classList.remove('is-entering');
+  void roots.hike.offsetWidth;
+  roots.hike.classList.add('is-entering');
+  if (!(await wait(300, run))) return;
+  if (visibleRoot !== leaving) { leaving.hidden = true; scenes.paths.restore(); scenes.paths.hide(); }
+}
+
+async function go(target, { animate = true, focus = 'none', history = 'replace', autoplay = false } = {}) {
   target = Math.max(0, Math.min(beats.length - 1, target));
+  // The life's steps need the store: on the cover it is read after the first paint, long before it is needed.
+  if (!life.life && needsLife(beats[target].beat.id)) { await life.ensureLife(); tellLife(); }
   const previous = beats[index];
   const previousIndex = index;
   index = target;
@@ -242,9 +308,11 @@ async function go(target, { animate = true, focus = 'none', history = 'replace' 
   token.cancel();
   token = createToken();
   const run = token;
+  life.player.stop();
   const item = beats[target];
   const sequential = animate && target === previousIndex + 1 && rootFor(previous.chapter.id) === rootFor(item.chapter.id) && previous.chapter === item.chapter;
   const leavingCover = sequential && previous.beat.id === 'cover' && Boolean(journeyRoot.dataset.cover);
+  const toHike = animate && target === previousIndex + 1 && previous.beat.id === 'adds' && item.beat.id === 'plan';
   if (item.beat.id === 'cover') setCover('true');
   else if (!leavingCover) setCover(null);
   const fragment = `#${item.fragment}`;
@@ -256,46 +324,60 @@ async function go(target, { animate = true, focus = 'none', history = 'replace' 
   const lessonTitle = t('lesson.ui.title');
   document.title = titleHeading === lessonTitle ? `${lessonTitle} · ${t('site.name')}` : `${titleHeading} · ${lessonTitle}`;
   updateTrail(item.chapterIndex);
-  renderNarration(item, { animate });
+  if (!toHike) renderNarration(item, { animate });
   renderControls(item);
   $('#stage-description').textContent = item.beat.alt ?? '';
   $('#announcer').textContent = t('lesson.ui.announce', { chapter: item.chapter.title, step: item.beatIndex + 1, total: item.chapter.beats.length, heading: item.beat.heading });
+  // During the story → and Space belong to it, so focus waits on the narration rather than on Next.
+  const focusNext = focus === 'next' && item.beat.id !== 'life';
   if (focus === 'heading') (journeyRoot.dataset.cover ? $('#cover-heading') : $('#beat-heading')).focus({ preventScroll: true });
-  if (focus === 'next' && !leavingCover && !$('#next').hidden) $('#next').focus({ preventScroll: true });
+  if (focusNext && !leavingCover && !toHike && !$('#next').hidden) $('#next').focus({ preventScroll: true });
+  if (focus === 'next' && item.beat.id === 'life' && !leavingCover) $('#narration').focus({ preventScroll: true });
 
   const rootId = rootFor(item.chapter.id);
-  const zoom = animate && previous.chapter.id === 'paths' && previous.beat.id === 'outside' && item.chapter.id === 'hike' && item.beatIndex === 0;
-  const changing = visibleRoot !== roots[rootId];
   const scene = scenes[rootId];
-  if (changing) {
+  if (toHike) { await arriveAtHike(item, run, focus); return; }
+  if (visibleRoot !== roots[rootId]) {
     if (rootId === 'paths' || rootId === 'hike' || rootId === 'skills') {
       // Prepare the final state before it fades in.
       roots[rootId].hidden = false;
       scene.show(item.beat.id, { animate: false, token: run });
       if (visibleRoot) roots[rootId].hidden = true;
     }
-    await switchRoot(rootId, { zoomFrom: zoom });
+    await switchRoot(rootId);
     if (run.cancelled) return;
     if (rootId === 'skills' && item.beat.id === 'fork' && animate) scene.show('fork', { animate: true, token: run });
     if (rootId === 'explore') scene.show();
   } else if (leavingCover) {
-    // Full width while the paths grow; the narration arrives once they have.
+    // Full width while the paths grow; then the narration slides in over the map's right part (the
+    // stage keeps its box beside it, so the field is never re-fitted), then the story starts.
     setCover('leaving');
     liftCover();
+    life.player.reset();
     if (!(await wait(320, run))) return;
     await scene.show(item.beat.id, { from: 'cover', animate: true, token: run });
     if (run.cancelled) return;
     setCover(null);
+    // Nothing changed size, so this repaints nothing; it only places the life if it wasn't yet.
+    scenes.paths.settle();
     const narration = $('#narration');
     if (!prefersReducedMotion()) {
       narration.classList.remove('is-arriving');
       void narration.offsetWidth;
       narration.classList.add('is-arriving');
     }
-    if (focus === 'next' && !$('#next').hidden) $('#next').focus({ preventScroll: true });
+    if (focus === 'next') narration.focus({ preventScroll: true });
+    // The story starts once the column has landed (journey.css: 140 ms + 440 ms).
+    if (!(await wait(prefersReducedMotion() ? 0 : 580, run))) return;
+    scenes.paths.beginStory(prefersReducedMotion() ? 0 : 600);
+    life.player.play();
+    return;
   } else {
     scene.show(item.beat.id, { from: sequential ? previous.beat.id : null, animate: sequential, token: run });
     if (item.beat.id === 'cover') coverField.snapshot();
+  }
+  if (item.beat.id === 'life') {
+    if (autoplay) { life.player.reset(); if (!(await wait(200, run))) return; life.player.play(); } else life.player.showAll();
   }
   const board = scenes.hike.sortBoard;
   board.hidden = item.beat.id !== 'sort';
@@ -312,7 +394,10 @@ async function go(target, { animate = true, focus = 'none', history = 'replace' 
 }
 
 // ——— Events ———
-$('#next').addEventListener('click', () => go(index + 1, { focus: 'next' }));
+$('#next').addEventListener('click', () => {
+  if (onLife() && life.player.land()) return; // the first Next lands the story; the next one moves on
+  go(index + 1, { focus: 'next' });
+});
 cover.querySelector('[data-cover-begin]').addEventListener('click', () => go(1, { focus: 'next' }));
 $('#back').addEventListener('click', () => go(index - 1, { animate: false, focus: index - 1 === 0 ? 'heading' : 'none' }));
 $('#chapter-list').addEventListener('click', event => {
@@ -326,6 +411,7 @@ $('#beat-dots').addEventListener('click', event => {
   if (button) go(Number(button.dataset.beat), { animate: false, focus: 'heading' });
 });
 $('#beat-extra').addEventListener('click', event => {
+  if (onLife()) { life.extraClick(event); return; }
   const choiceButton = event.target.closest('[data-choice]');
   const item = beats[index];
   if (choiceButton) {
@@ -339,11 +425,15 @@ $('#beat-extra').addEventListener('click', event => {
   if (end?.dataset.end === 'restart') { choices.clear(); sorted.clear(); go(0, { animate: false, focus: 'heading', history: 'push' }); }
   if (end?.dataset.end === 'explore') go(beats.findIndex(entry => entry.beat.explore), { animate: false, focus: 'heading', history: 'push' });
 });
+// A click or tap on the map or the lines plays the next step of the story.
+$('#stage').addEventListener('click', event => life.tap(event));
+$('#beat-text').addEventListener('click', event => life.tap(event));
 
 document.addEventListener('keydown', event => {
   if (event.defaultPrevented || event.altKey || event.metaKey || event.ctrlKey) return;
   if ($('#reading-dialog').open) return;
   if (event.target.closest?.('input, textarea, select, [contenteditable="true"], [data-local-keys]')) return;
+  if (life.key(event)) return;
   if (event.key === 'ArrowRight' && index < beats.length - 1) { event.preventDefault(); go(index + 1); }
   if (event.key === 'ArrowLeft' && index > 0) { event.preventDefault(); go(index - 1, { animate: false, focus: index - 1 === 0 ? 'heading' : 'none' }); }
 });
@@ -374,10 +464,32 @@ window.addEventListener('popstate', () => {
 });
 
 const dialog = $('#reading-dialog');
-$('#open-reading').addEventListener('click', () => dialog.showModal());
+// The text version tells the life on screen (the page was built with Sam's).
+$('#open-reading').addEventListener('click', async () => {
+  await life.ensureLife();
+  tellLife();
+  for (const id of ['life', 'adds', 'takeaways']) {
+    const old = dialog.querySelector(`#read-${id}`);
+    const beat = beats.find(item => item.beat.id === id)?.beat;
+    if (old && beat) old.outerHTML = renderReadingBeat(beat, t);
+  }
+  if (onLife() && life.player.state.playing && life.player.state.started) life.player.toggle(); // the story waits behind the text
+  dialog.showModal();
+});
 dialog.querySelector('[data-close]').addEventListener('click', () => dialog.close());
+
+// A hook for the review captures and the sweep.
+globalThis.opening = {
+  get player() { return life.player; }, go, beats, scenes, storeReady: life.storeReady,
+  pickChoice: life.pickChoice, startChoosing: life.startChoosing, backToLife: life.backToLife, tryAgain: life.tryAgain, playLife: life.playLife, nextLife: life.nextLife,
+  picks: () => scenes.paths.life.picks(),
+  get life() { return life.life; },
+  get store() { return life.store; },
+  get index() { return index; },
+};
 
 // ——— Start ———
 const initial = Math.max(0, beatForHash(location.hash));
 index = initial;
-go(initial, { animate: false });
+// A review address's changed life (`?life=sam&fork=3&alt=drums&seed=…`) opens on the finished story with that life grown.
+go(initial, { animate: false }).then(() => life.openAsked());
