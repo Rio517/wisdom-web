@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createLifeTree, LIFE_END, LIFE_START } from '../src/lessons/choices/journey-explore.js';
-import { CHOICE_BANDS, labelsForFork, bandFor, bandChoices, mapStory, STORY_COUNT, STORY_SHAPE } from '../src/lessons/choices/journey-choices.js';
+import { CHOICE_BANDS, labelsForFork, bandFor, bandChoices } from '../src/lessons/choices/journey-choices.js';
 import { getTranslator } from '../src/i18n/index.js';
 import { LOCALES } from '../src/i18n/config.js';
 
@@ -104,16 +104,3 @@ test('forks draw the same choices in every language, only the words differ', () 
   }
 });
 
-test('map stories: twenty complete sets, each internally distinct in every language', () => {
-  assert.ok(STORY_COUNT >= 20);
-  for (const locale of LOCALES) {
-    const t = getTranslator(locale);
-    for (let index = 0; index < STORY_COUNT; index += 1) {
-      const story = mapStory(index, t);
-      for (const [part, count] of Object.entries(STORY_SHAPE)) assert.equal(story[part].length, count);
-      const all = Object.values(story).flat();
-      assert.equal(new Set(all).size, all.length, `${locale}: ${all.join(', ')}`);
-      assert.ok(all.every(label => !label.startsWith('map.story')), `${locale} story ${index + 1} is complete`);
-    }
-  }
-});

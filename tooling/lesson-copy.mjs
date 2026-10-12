@@ -4,7 +4,7 @@
 //   node tooling/lesson-copy.mjs de         → prints the German copy to stdout
 import { writeFileSync } from 'node:fs';
 import { chaptersFor, learnedFor } from '../src/lessons/choices/journey-story.js';
-import { CHOICE_BANDS, CLOSED_REASONS, STORY_COUNT, bandChoices, mapStory } from '../src/lessons/choices/journey-choices.js';
+import { CHOICE_BANDS, CLOSED_REASONS, bandChoices } from '../src/lessons/choices/journey-choices.js';
 import { getTranslator } from '../src/i18n/index.js';
 import { loadWords, writtenLife } from '../src/lessons/choices/lives/engine.js';
 import { readStoreFiles, readWords } from './lives-data.mjs';
@@ -53,15 +53,6 @@ for (const chapter of chaptersFor(t, sam)) {
       add('');
     }
     if (beat.takeaways) { for (const item of beat.takeaways) add(`- **${item.heading}** ${item.text}`); add(''); }
-    if (beat.id === 'travel') {
-      add('#### Map story sets (one picked at random per visit)', '');
-      add('Taken choices sit on the dark route; not-taken ones on gray branches. Two related future groups sit on connected branches, one in the top half and one in the bottom half: the first step, then two ways on.', '');
-      for (let index = 0; index < STORY_COUNT; index += 1) {
-        const story = mapStory(index, t);
-        add(`${index + 1}. **Taken:** ${story.taken.join(' → ')} · **Not taken:** ${story.untaken.join(', ')} · **Builds on it:** ${story.build[0]} → ${story.build[1]} / ${story.build[2]} · **Something new:** ${story.fresh[0]} → ${story.fresh[1]} / ${story.fresh[2]}`);
-      }
-      add('');
-    }
     if (beat.explore) {
       add('#### Example choices by age', '');
       let from = 3;

@@ -60,10 +60,8 @@ h1, h2, h3, h4 { font-family: var(--font-field); font-weight: 500; }
 .scene { @apply absolute inset-0; }
 .scene.is-entering { animation: scene-in 520ms cubic-bezier(.2,.7,.2,1) both; }
 .scene.is-leaving { animation: scene-out 380ms ease-in both; pointer-events: none; }
-.scene.zoom-leaving { animation: zoom-out 700ms cubic-bezier(.5,0,.75,.2) both; pointer-events: none; }
 @keyframes scene-in { from { opacity: 0; transform: scale(.985); } to { opacity: 1; transform: none; } }
 @keyframes scene-out { from { opacity: 1; } to { opacity: 0; } }
-@keyframes zoom-out { from { opacity: 1; transform: scale(1); } to { opacity: 0; transform: scale(4.2); } }
 
 .narration { @apply relative flex min-h-0 flex-col; padding: 12px 34px 20px 38px; outline: none; }
 .narration-body { @apply min-h-0 flex-1 overflow-y-auto; padding: 18px 4px 12px 0; scrollbar-width: thin; }
@@ -149,21 +147,9 @@ h1, h2, h3, h4 { font-family: var(--font-field); font-weight: 500; }
 .map-stack { @apply relative min-h-0 flex-1; margin: 18px 22px 0; }
 .map-stack canvas { @apply absolute inset-0 block h-full w-full; }
 #map-base { transition: opacity 700ms ease; }
-#map-today { opacity: 0; transition: opacity 700ms ease; }
-.map-stack[data-state="today"] #map-today { opacity: 1; }
-.map-stack[data-state="today"] #map-base { opacity: 0; }
 .map-stack[data-grow="hidden"] #map-base { clip-path: inset(0 100% 0 0); }
 .map-stack[data-grow="growing"] #map-base { clip-path: inset(0 0 0 0); transition: clip-path 2.2s cubic-bezier(.35,.1,.25,1), opacity 700ms; }
 .map-callouts { @apply pointer-events-none absolute inset-0; }
-.callout { @apply absolute text-[15px] font-medium leading-tight; color: var(--color-ink); animation: callout-in 500ms cubic-bezier(.2,.7,.2,1) both; }
-.callout span { @apply block rounded-lg px-2.5 py-1.5; background: #fbfbf8e8; white-space: nowrap; }
-.callout[data-tone="gray"] span { color: var(--color-quiet); }
-.callout[data-tone="green"] span { color: var(--color-forest); }
-.callout[data-tone="clay"] span { color: var(--color-clay); }
-.callout[data-tone="today"] span { background: var(--color-forest); color: white; }
-.callout::before { content: ""; position: absolute; background: currentColor; opacity: .5; }
-.callout[data-leader="down"]::before { left: 18px; top: 100%; width: 1.5px; height: var(--leader, 26px); }
-.callout[data-leader="up"]::before { left: 18px; bottom: 100%; width: 1.5px; height: var(--leader, 26px); }
 @keyframes callout-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 /* ——— Cover (design 002 v02 · A): the question over a faint field, full width; Begin grows the paths ——— */
 .cover-stage { display: none; }
@@ -196,7 +182,7 @@ h1, h2, h3, h4 { font-family: var(--font-field); font-weight: 500; }
 @keyframes narration-in { from { opacity: 0; transform: translateX(28px); } to { opacity: 1; transform: none; } }
 .stage-note { @apply m-0 px-6 pb-4 pt-2 text-[15px]; color: var(--color-quiet); }
 
-/* ——— Map chips and key ——— */
+/* ——— Map chips ("Choices add up") ——— */
 .map-chip { position: absolute; pointer-events: none; animation: callout-in 460ms cubic-bezier(.2,.7,.2,1) both; }
 .map-chip span { display: block; border-radius: 99px; padding: 5px 11px; font: 600 15px/1.2 var(--font-guide); white-space: nowrap; }
 .map-chip i { position: absolute; top: 100%; width: 1.5px; opacity: .55; }
@@ -208,12 +194,6 @@ h1, h2, h3, h4 { font-family: var(--font-field); font-weight: 500; }
 .map-chip[data-tone="possible"] i { background: var(--color-sage); }
 .map-chip[data-tone="closed"] span { background: #fbf2ec; color: var(--color-clay); border: 1px dashed #c9a58f; }
 .map-chip[data-tone="closed"] i { background: var(--color-clay); }
-.map-key { @apply flex flex-wrap gap-x-5 gap-y-1 px-6 pb-4 pt-1 text-[15px]; color: var(--color-quiet); }
-.map-key span { @apply inline-flex items-center gap-2; }
-.map-key i { display: inline-block; width: 24px; border-top: 3px solid; }
-.map-key .k-taken { border-color: var(--color-forest); }
-.map-key .k-untaken { border-color: var(--color-mist); }
-.map-key .k-possible { border-color: var(--color-sage); }
 
 /* ——— Explore ——— */
 .explore-stage { position: absolute; inset: 0; }

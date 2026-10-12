@@ -1,6 +1,6 @@
-// Example choices for the life-path explorer and the life map's story sets.
+// Example choices for the life-path explorer.
 // Structure lives here; the words live in the message catalogs
-// (explore.choice.*, explore.closed.*, map.story*). They illustrate the kinds of
+// (explore.choice.*, explore.closed.*). They illustrate the kinds of
 // decisions people make at different ages—not a plan, a ranking of lives, or a
 // prediction of what follows.
 import { t as runtimeT } from '../../i18n/runtime.js';
@@ -187,21 +187,4 @@ export function closedReason(age, key, t = runtimeT) {
   const group = age < 19 ? 'young' : 'adult';
   const list = CLOSED_REASONS[group];
   return t(`explore.closed.${group}.${list[Math.floor(hash(`${key}:reason`) * list.length)]}`);
-}
-
-/**
- * Story sets for the life map in chapter 1; one is picked at random per
- * visit. `taken` sit on the travelled route (early, loosely related),
- * `untaken` on gray branches, and the two future groups sit on connected
- * branches: `build` grows from what was already started, `fresh` starts
- * something new. Each group is [first step, one way on, another way on].
- */
-export const STORY_COUNT = 20;
-export const STORY_SHAPE = { taken: 2, untaken: 3, build: 3, fresh: 3 };
-
-export function mapStory(index, t = runtimeT) {
-  const n = String(index + 1).padStart(2, '0');
-  return Object.fromEntries(Object.entries(STORY_SHAPE).map(([part, count]) => [
-    part, Array.from({ length: count }, (_, i) => t(`map.story${n}.${part}${i + 1}`)),
-  ]));
 }
