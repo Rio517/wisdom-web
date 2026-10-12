@@ -230,9 +230,13 @@ export function createLifeStory({ scene, hooks, onLife, goToLife, rerender }) {
     box.classList.toggle('is-two', found.older !== found.newest);
     box.classList.toggle('is-packed', Boolean(found.tight));
     if (found.extra > 0 && found.extra < Infinity) box.style.setProperty('--fit-gap', `${Math.min(found.newest * 0.9, found.extra).toFixed(2)}px`);
-    // Mid-story (the column resized): the rows shown take this plan's state for the newest of them.
+    // Mid-story or after it (the column resized, or settled after a direct link): the rows shown take
+    // this plan's state for the newest of them, which rows are older as well as which are shortened.
     const shown = rows.filter(row => !row.classList.contains('is-pending')).length;
-    if (shown) shortenFor(shown - 1);
+    if (shown) {
+      rows.forEach((row, at) => row.classList.toggle('is-past', at <= shown - 1 - found.keep));
+      shortenFor(shown - 1);
+    }
   }
   // A step's plan: its oldest rows shortened (only ever older rows, and only as a line arrives).
   const shortenFor = newest => {

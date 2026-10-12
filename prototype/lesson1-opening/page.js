@@ -507,7 +507,11 @@ function run() {
     if (found.extra > 0 && found.extra < Infinity) box.style.setProperty('--fit-gap', `${Math.min(found.newest * 0.9, found.extra).toFixed(2)}px`);
     // Mid-story (the column resized): the rows shown take this plan's state for the newest of them.
     const shown = rows.filter(row => !row.classList.contains('is-pending')).length;
-    if (shown) shortenFor(shown - 1);
+    if (shown) {
+      // Which rows are older follows this plan too (a refit after a direct link once kept the old plan's).
+      rows.forEach((row, at) => row.classList.toggle('is-past', at <= shown - 1 - found.keep));
+      shortenFor(shown - 1);
+    }
   }
   // A step's plan: its oldest rows shortened (only ever older rows, and only as a line arrives).
   const shortenFor = newest => {
