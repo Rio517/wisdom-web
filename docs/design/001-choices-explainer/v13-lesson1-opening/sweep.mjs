@@ -24,6 +24,11 @@
 // The label check (round 7) runs for the written lives and two changed lives per person; --no-grown skips the changed ones.
 // --room also prints the column's room at each size (box, kicker, heading, dots, Back/Next).
 // --label-wider 8 makes the labels' font 8% wider (measured and drawn), so the label check holds for wider fonts than the VM's.
+// The what-if check (the wording round) finishes changed lives, three alternatives per written life
+// (the earliest fork, the second and one 60% in) by a direct link and by clicks, plus a reduced-motion
+// pass by direct link, and measures the finished list at rest: its newest row and closing note whole
+// inside the box, the list at rest (scrolled to its end if it must scroll), the buttons in at most two
+// rows, and whether it had to scroll. --no-whatif skips it.
 // --bar-taller 24 makes the end card's bar 24 px taller (a check that the map leaves room for its measured height).
 // --budget (Chromium only) measures, for each life and size, the layouts each arriving line forces
 // (stepping through the story while paused) and, with the processor slowed 4x, the longest
@@ -280,6 +285,77 @@ function labelsTask(item, size) {
   };
 }
 // Two changed lives per person: an early fork and a later one, each with its first choice and a fixed seed.
+async function whatifCases() {
+  const { readdirSync, readFileSync } = await import('node:fs');
+  const { fileURLToPath } = await import('node:url');
+  const engine = await import('../../../../src/lessons/choices/lives/engine.js');
+  const { loadStore } = await import('../../../../src/lessons/choices/lives/yaml.js');
+  const dir = fileURLToPath(new URL('../../../../src/lessons/choices/lives/', import.meta.url));
+  const files = {};
+  for (const folder of ['nodes', 'runs', 'baselines']) for (const name of readdirSync(dir + folder)) files[`${folder}/${name}`] = readFileSync(dir + folder + '/' + name, 'utf8');
+  const store = loadStore(files);
+  const cases = [];
+  for (const life of LIVES) {
+    const forks = engine.forksOf(store).filter(fork => fork.baseline === life);
+    const at = [...new Set(forks.map(fork => fork.forkIndex))];
+    [...new Set([at[0], at[1], at[Math.floor(at.length * 0.6)]])].forEach((forkIndex, k) => {
+      const fork = forks.find(item => item.forkIndex === forkIndex);
+      if (!fork) return;
+      const item = { life, fork: forkIndex, alt: fork.alt, seed: `r7${k}` };
+      cases.push({ ...item, route: 'link' }, { ...item, route: 'clicks' });
+      if (k === 0) cases.push({ ...item, route: 'reduced' });
+    });
+  }
+  return cases;
+}
+
+// A changed life, finished and at rest: its newest row and note inside the list, the buttons' rows.
+function whatifTask(item, size) {
+  return {
+    size, item,
+    contextOptions: item.route === 'reduced' ? { reducedMotion: 'reduce' } : {},
+    run: async page => {
+      const query = item.route === 'clicks' ? `?life=${item.life}&pace=quick` : `?life=${item.life}&pace=quick&fork=${item.fork}&alt=${item.alt}&seed=${item.seed}`;
+      await page.goto(`${PAGE}${query}#paths-life`);
+      await ready(page);
+      await page.waitForFunction(() => globalThis.opening?.life);
+      if (item.route === 'clicks') {
+        await page.waitForTimeout(600);
+        await page.evaluate(() => opening.player.showAll());
+        await page.waitForTimeout(1200);
+        const picked = await page.evaluate(({ alt, fork, seed }) => {
+          const pick = opening.picks().find(x => x.id === alt && x.stepIndex === fork) ?? opening.picks().find(x => x.id === alt);
+          if (!pick) return false;
+          opening.pickChoice(pick.key, { seed });
+          return true;
+        }, item);
+        if (!picked) return { size, item, whatif: null };
+      }
+      await page.waitForFunction(() => { const note = document.querySelector('#whatif-list .whatif-note'); return note && !note.classList.contains('is-pending'); }, null, { timeout: 90000 });
+      await page.waitForTimeout(1800);
+      const measure = () => {
+        const box = document.getElementById('whatif-list');
+        const b = box.getBoundingClientRect();
+        const rows = [...box.children];
+        const fade = box.classList.contains('is-scrolled') ? 28 : 0;
+        const inside = r => r.top >= b.top + fade - 0.5 && r.bottom <= b.bottom + 0.5;
+        const buttons = [...document.querySelectorAll('.whatif-actions button')];
+        const side = matchMedia('(min-width: 990px)').matches;
+        return {
+          rows: rows.length, folded: rows.filter(row => row.classList.contains('is-folded')).length,
+          newest: inside(rows.at(-2).getBoundingClientRect()), note: inside(rows.at(-1).getBoundingClientRect()),
+          scrolls: box.scrollHeight > box.clientHeight, top: box.scrollTop, end: box.scrollHeight - box.clientHeight,
+          buttonRows: side ? new Set(buttons.map(button => Math.round(button.getBoundingClientRect().top))).size : 0,
+        };
+      };
+      const first = await page.evaluate(measure);
+      await page.waitForTimeout(400);
+      const second = await page.evaluate(measure);
+      return { size, item, whatif: { ...second, rest: Math.abs(first.top - second.top) < 1 && (!second.scrolls || second.end - second.top <= 1) } };
+    },
+  };
+}
+
 async function grownCases() {
   const { readdirSync, readFileSync } = await import('node:fs');
   const { fileURLToPath } = await import('node:url');
@@ -474,7 +550,23 @@ if (!flag('no-labels')) {
   console.log(`labels: ${out.labels.reduce((sum, row) => sum + (row.labels?.labels ?? 0), 0)} labels checked; at 13 px (the last resort): ${small.reduce((sum, row) => sum + row.labels.small, 0)}${small.length ? ` (${small.map(row => `${row.item.life}${row.item.alt ? ` ${row.item.fork}:${row.item.alt}` : ''} at ${label(row.size)}`).join(', ')})` : ''}`);
 }
 
-const errorCount = [...out.story, ...out.adds, ...out.room, ...out.labels].reduce((sum, row) => sum + (row.errors?.length ?? 0), 0);
+if (!flag('no-whatif')) {
+  const items = await whatifCases();
+  out.whatif = await pool(browser, SIZES.flatMap(size => items.map(item => whatifTask(item, size))));
+  console.log('\nwhatif  size       life   change                    route    rows  folded  newest  note  rest  scrolls  buttons');
+  const wrong = row => row.failed || !row.whatif || !row.whatif.newest || !row.whatif.note || !row.whatif.rest || row.whatif.buttonRows > 2;
+  for (const row of out.whatif) {
+    if (row.failed) { console.log(`FAILED whatif: ${row.failed}`); continue; }
+    const w = row.whatif;
+    if (!w) { console.log(`whatif  ${label(row.size).padEnd(10)} ${row.item.life.padEnd(6)} ${row.item.alt}: no such alternative`); continue; }
+    if (wrong(row) || w.scrolls || flag('all-rows')) console.log(`whatif  ${label(row.size).padEnd(10)} ${row.item.life.padEnd(6)} ${`${row.item.fork}:${row.item.alt}`.padEnd(24)}  ${row.item.route.padEnd(7)} ${String(w.rows).padStart(5)} ${String(w.folded).padStart(7)}  ${(w.newest ? 'ok' : 'CUT').padStart(6)}  ${(w.note ? 'ok' : 'CUT').padStart(4)}  ${(w.rest ? 'ok' : 'NO').padStart(4)}  ${(w.scrolls ? 'yes' : '-').padStart(7)}  ${String(w.buttonRows).padStart(7)}${row.errors.length ? `  ERRORS ${row.errors.length}` : ''}`);
+  }
+  const bad = out.whatif.filter(wrong);
+  const common = out.whatif.filter(row => row.whatif?.scrolls && ['1440x900', '1280x800', '1920x1080'].includes(label(row.size)));
+  console.log(`whatif: ${out.whatif.length} finished what-ifs, ${bad.length} with the newest row or the note out of view, not at rest, or buttons over two rows; ${out.whatif.filter(row => row.whatif?.scrolls).length} scroll (${common.length} at 1440x900, 1280x800 or 1920x1080)`);
+}
+
+const errorCount = [...out.story, ...out.adds, ...out.room, ...out.labels, ...(out.whatif ?? [])].reduce((sum, row) => sum + (row.errors?.length ?? 0), 0);
 console.log(`console errors: ${errorCount}`);
 if (opt('json')) writeFileSync(opt('json'), JSON.stringify(out, null, 1));
 await browser.close();

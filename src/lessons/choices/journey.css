@@ -620,7 +620,15 @@ dialog::backdrop { background: #23302d66; }
   /* The column sets their size, never their rows: so each try while fitting lays out the list alone. */
   .narration-body[data-beat="life"] .life-steps, .narration-body[data-beat="life"] .timeline { contain: strict; }
   .narration-body.whatif .timeline.is-scrolled { mask-image: linear-gradient(to bottom, transparent, #000 28px); }
-  .narration-body.whatif #beat-heading { font-size: clamp(26px, 2.2vw, 36px); margin-bottom: 8px; }
+  .narration-body.whatif #beat-heading { font-size: clamp(26px, 2.2vw, 36px); margin-bottom: 6px; }
+  .narration-body.whatif .whatif-same { margin-bottom: 2px; }
+  .narration-body.whatif .timeline { padding-top: 2px; scroll-padding-top: 2px; }
+  .whatif-actions { margin-top: 10px; }
+  /* A what-if gives its rows the room a short screen gives the story: no kicker, and the beat dots
+     beside Back and Next in one row (still 48px buttons). */
+  .narration-body.whatif #beat-kicker { display: none; }
+  .narration:has(> .narration-body.whatif) .narration-controls { grid-template-columns: auto minmax(0, 1fr); align-items: center; column-gap: 8px; padding-top: 10px; }
+  .narration:has(> .narration-body.whatif) .nav-buttons { justify-content: flex-end; }
   /* A narrow column: the three what-if buttons take two rows, not three. */
   @container (max-width: 330px) {
     .whatif-actions { gap: 6px; margin-top: 10px; }
@@ -752,11 +760,19 @@ dialog::backdrop { background: #23302d66; }
 .whatif .timeline-step:hover { background: transparent; }
 .whatif .timeline li.whatif-note { margin: 6px 0 0; font-size: 15px; line-height: 1.4; color: var(--color-quiet); }
 /* Only a new life too long for its column (is-tight): older rows close up as it grows. */
-.whatif .timeline li.is-folded .timeline-step { min-height: calc(var(--size) * 1.4); font-size: calc(var(--size) * .9); }
-.whatif .timeline li.is-folded .timeline-age { width: calc(var(--size) * 1.3); height: calc(var(--size) * 1.3); font-size: calc(var(--size) * .72); }
-.whatif .timeline li.is-folded .timeline-kind { padding: 0 5px; }
+.whatif .timeline.is-tight { gap: 0; }
+.whatif .timeline li.is-folded .timeline-step { min-height: calc(var(--size) * 1.12); font-size: calc(var(--size) * .9); }
+.whatif .timeline li.is-folded .timeline-step { padding-block: 0; }
+.whatif .timeline li.is-folded .timeline-label { line-height: 1.12; }
+.whatif .timeline li.is-folded .timeline-age { width: calc(var(--size) * 1.1); height: calc(var(--size) * 1.1); font-size: calc(var(--size) * .68); }
+.whatif .timeline li.is-folded .timeline-kind { padding: 0 5px; line-height: 1.12; }
 .whatif-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
-.whatif-actions .solid-pill, .whatif-actions .pill-button { min-height: 44px; }
+.whatif-actions .solid-pill, .whatif-actions .pill-button { min-height: 44px; white-space: nowrap; }
+/* A tight column (fitButtons): smaller buttons, so the three keep to two rows; still 44px tall. */
+.whatif-actions.is-tight { gap: 6px; margin-top: 8px; }
+.whatif-actions.is-tight :is(.solid-pill, .pill-button) { padding: 0 10px; font-size: 14px; }
+.whatif-actions.is-tighter { gap: 4px; }
+.whatif-actions.is-tighter :is(.solid-pill, .pill-button) { padding: 0 8px; font-size: 13px; }
 
 /* ——— The cover to the story: the stage keeps its box ———
    Beside the narration, the cover, the story and "Choices add up" keep the stage at full width and

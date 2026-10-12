@@ -254,15 +254,16 @@ export function createLifeStory({ scene, hooks, onLife, goToLife, rerender }) {
       const box = document.getElementById('whatif-list') ?? list();
       // Not fitted yet (a what-if, fitted in a task of its own), or unchanged since: nothing to do.
       if (!box?.fitKey || box.fitKey === `${box.clientWidth}x${box.clientHeight}:${box.children.length}`) return;
-      if (box.id === 'whatif-list') fitList(box, WHAT_FIT); else fitStory(box);
+      if (box.id === 'whatif-list') fitWhatAll(box); else fitStory(box);
     });
   });
   fitObserver.observe(document.getElementById('narration-body'));
   // If a list still has to scroll in its column, the newest line stays in view.
-  const keepInView = (element, box = list()) => {
-    if (!box || box.scrollHeight <= box.clientHeight + 1) return;
-    const bottom = element.offsetTop + element.offsetHeight - box.offsetTop;
-    if (bottom > box.scrollTop + box.clientHeight) box.scrollTo({ top: bottom - box.clientHeight + 4, behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
+  // (Measured from the boxes: a list's `contain: strict` makes it its rows' offsetParent.)
+  const keepInView = (element, box = list(), behavior = prefersReducedMotion() ? 'auto' : 'smooth') => {
+    if (!box || box.scrollHeight <= box.clientHeight) return;
+    const bottom = element.getBoundingClientRect().bottom - box.getBoundingClientRect().top + box.scrollTop;
+    if (bottom > box.scrollTop + box.clientHeight) box.scrollTo({ top: Math.min(box.scrollHeight - box.clientHeight, bottom - box.clientHeight + 4), behavior });
   };
   // The story never needs to scroll unless its column is far too short (no plan fits).
   const keepStoryInView = element => { if (!list()?.classList.contains('is-fits')) keepInView(element); };
@@ -419,7 +420,7 @@ export function createLifeStory({ scene, hooks, onLife, goToLife, rerender }) {
     $('#beat-heading').textContent = heading;
     // The note closes the list once the new life has grown, as "Many paths still ahead" closes the story.
     $('#beat-text').innerHTML = `<p class="whatif-same">${esc(t('opening.whatif.same', { name: LIFE.name, age }))}</p><ol class="timeline" id="whatif-list">${nodes.map(whatRow).join('')}<li class="whatif-note is-pending">${esc(t('opening.whatif.note', { name: LIFE.name }))}</li></ol>`;
-    $('#beat-extra').innerHTML = `<div class="whatif-actions"><button type="button" class="solid-pill" data-whatif="retry">${esc(t('opening.whatif.tryAgain'))}</button>
+    $('#beat-extra').innerHTML = `<div class="whatif-actions" id="whatif-actions"><button type="button" class="solid-pill" data-whatif="retry">${esc(t('opening.whatif.tryAgain'))}</button>
       <button type="button" class="pill-button" data-whatif="again">${esc(t('opening.whatif.again'))}</button>
       <button type="button" class="pill-button" data-whatif="back">${esc(t('opening.whatif.back', { name: LIFE.name }))}</button></div>`;
     const timeline = $('#whatif-list');
@@ -437,8 +438,36 @@ export function createLifeStory({ scene, hooks, onLife, goToLife, rerender }) {
       (target === 'again' ? $('[data-whatif="retry"]') : $('#beat-heading'))?.focus({ preventScroll: true });
     }));
   };
-  // A what-if's list is fitted once, before its first row shows.
-  const fitWhat = timeline => { if (timeline.isConnected && !timeline.fitKey) fitList(timeline, WHAT_FIT); };
+  // A what-if's list is fitted once, before its first row shows (and again when its column changes).
+  const fitWhat = timeline => { if (timeline.isConnected && !timeline.fitKey) fitWhatAll(timeline); };
+  // The buttons first, as they set the list's room: at most two rows beside the stage. A tight
+  // column takes smaller buttons, then the first one's short words ("Try again"), then smaller type.
+  function fitButtons() {
+    const bar = document.getElementById('whatif-actions');
+    if (!bar) return;
+    const retry = bar.querySelector('[data-whatif="retry"]');
+    const rows = () => new Set([...bar.children].map(button => button.offsetTop)).size;
+    bar.classList.remove('is-tight', 'is-tighter');
+    retry.textContent = t('opening.whatif.tryAgain');
+    if (!sideColumn.matches || rows() <= 2) return;
+    bar.classList.add('is-tight');
+    if (rows() > 2) retry.textContent = t('opening.whatif.tryAgainShort');
+    if (rows() > 2) bar.classList.add('is-tighter');
+  }
+  function fitWhatAll(timeline) {
+    fitButtons();
+    fitList(timeline, WHAT_FIT);
+    const rows = [...timeline.children];
+    const shown = rows.findLastIndex(row => !row.classList.contains('is-pending'));
+    if (shown >= 0) { foldWhat(shown); restWhat(timeline, 'auto'); }
+  }
+  // A finished life rests with its newest row and the note in view: scrolled to its end (under the
+  // top fade) if its column is too short even with every older row folded.
+  function restWhat(timeline, behavior) {
+    if (timeline.lastElementChild.classList.contains('is-pending')) return;
+    keepInView(timeline.lastElementChild, timeline, behavior);
+    if (behavior === 'auto') timeline.classList.toggle('is-scrolled', timeline.scrollTop > 2);
+  }
   // The picked choice is dated at the person's own age for that step; the rest at their own ages.
   hooks.onStep = (node, position) => {
     const row = $('#whatif-list')?.children[position];
@@ -461,7 +490,7 @@ export function createLifeStory({ scene, hooks, onLife, goToLife, rerender }) {
       fitWhat(note.parentElement);
       note.classList.remove('is-pending');
       foldWhat(note.parentElement.children.length - 1);
-      keepInView(note, note.parentElement);
+      restWhat(note.parentElement);
     }
     scene.restAtEnd();
   };
@@ -470,7 +499,7 @@ export function createLifeStory({ scene, hooks, onLife, goToLife, rerender }) {
     const box = $('#whatif-list');
     if (!box?.classList.contains('is-tight')) return;
     const rows = [...box.children];
-    const over = () => box.scrollHeight > box.clientHeight + 1;
+    const over = () => box.scrollHeight > box.clientHeight;
     for (let other = 0; other < newest - 2 && over(); other += 1) rows[other].classList.add('is-folded');
     for (let other = Math.max(0, newest - 2); other < newest && over(); other += 1) rows[other].classList.add('is-folded');
   }
