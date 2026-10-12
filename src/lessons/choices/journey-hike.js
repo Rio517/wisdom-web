@@ -40,8 +40,10 @@ const HOME = 22;
 // (map units): both kept where they were before the trail went over the hill.
 const TURN = 355.4 / MAIN_LENGTH;
 const BRIDGE_GAP = 10.7;
-// Practice walks: out along the trail and back, each a little farther (fractions of the way to halfway).
-const PRACTICE_REACH = [0.3, 0.5, 0.7];
+// Practice walks: from where the pair stands, out across the meadow by the trailhead and back, each a
+// little farther (fractions of the way). The second reaches the big rock, the landmark its card names.
+const practicePath = ({ x, y }) => `M${n1(x)} ${n1(y)} C ${n1(x + 60)} ${n1(y + 36)}, 268 722, 344 724 S 498 720, 566 704`;
+const PRACTICE_REACH = [0.4, 0.72, 1];
 
 const TREE_SPOTS = [
   [196, 548, 1], [226, 532, .9], [258, 556, 1.1], [300, 520, .95], [338, 540, 1], [372, 510, 1.05], [520, 488, .9], [556, 470, 1],
@@ -399,6 +401,8 @@ export function createHikeScene(root) {
   const tracks = new Map([[main, pathTrack(MAIN)], [altPath, pathTrack(ALT)]]);
   const pointOn = (path, fraction) => tracks.get(path).point(fraction);
   const home = HOME / mainLength;
+  const meadow = {}; // the practice walks' way: not drawn, only walked
+  tracks.set(meadow, pathTrack(practicePath(pointOn(main, home))));
   const homePoint = pointOn(main, home);
   // Where the trail goes over the green hill's crest, and where it comes back into view on the far
   // side (map units along it). Between the two it is behind the hill.
@@ -614,10 +618,10 @@ export function createHikeScene(root) {
   const practised = (shown, fresh = -1) => root.dispatchEvent(new CustomEvent('hike-practised', { detail: { shown, fresh } }));
 
   let learned = [];
-  function renderLearned(ids, fresh = []) {
+  function renderLearned(ids, fresh = [], arrival = 'is-new') {
     learned = ids;
     learnedEl.innerHTML = ids.length
-      ? ids.map(id => `<li class="${fresh.includes(id) ? 'is-new' : ''}">${ICONS[LEARNED[id].icon === 'rest' ? 'restSmall' : LEARNED[id].icon]}${LEARNED[id].label}</li>`).join('')
+      ? ids.map(id => `<li class="${fresh.includes(id) ? arrival : ''}">${ICONS[LEARNED[id].icon === 'rest' ? 'restSmall' : LEARNED[id].icon]}${LEARNED[id].label}</li>`).join('')
       : `<li class="learned-empty" style="background:none;padding:0;color:#5a6961">${tx('hike.learnedEmpty')}</li>`;
   }
   function renderBottles(count, fill) {
@@ -710,15 +714,15 @@ export function createHikeScene(root) {
       renderBottles(4, 1);
       const order = ['map', 'landmarks', 'rest'];
       practised(0);
-      // Three short walks from the trailhead. At the far end of each, its card arrives beside the
-      // story; back home, what he practised goes into the backpack.
+      // Three short walks across the meadow. At the far end of each, its card arrives beside the
+      // story; back home, what he practised joins the backpack quietly (the card had the flourish).
       for (let index = 0; index < order.length; index += 1) {
-        const far = home + (TURN - home) * PRACTICE_REACH[index];
-        const duration = 620 + 380 * index;
-        if (!(await walk({ path: main, length: mainLength, from: home, to: far, duration, token }))) return;
+        const far = PRACTICE_REACH[index];
+        const duration = 700 + 320 * index;
+        if (!(await walk({ path: meadow, from: 0, to: far, duration, token }))) return;
         practised(index + 1, index);
-        if (!(await walk({ path: main, length: mainLength, from: far, to: home, duration, token, facing: -1 }))) return;
-        renderLearned(['water', ...order.slice(0, index + 1)], [order[index]]);
+        if (!(await walk({ path: meadow, from: far, to: 0, duration, token, facing: -1 }))) return;
+        renderLearned(['water', ...order.slice(0, index + 1)], [order[index]], 'is-added');
         if (!(await wait(260, token))) return;
       }
       place(main, home, 1);

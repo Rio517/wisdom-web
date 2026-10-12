@@ -82,10 +82,10 @@ Picture: The walkers return to the trailhead. The backpack gains a new card, cal
 
 ### Practice builds on practice.
 
-Over the next few weeks, they take short walks near home. Each walk starts from what he learned on the last one.
+Over the next few weeks, they take short walks near home. Each walk starts from what Alfredo learned on the last one.
 
 - **Reading the map.** He finds where they are on the map, then picks the way.
-- **Spotting landmarks.** Landmarks are things you can see from far away, like a big rock.
+- **Spotting landmarks.** Landmarks are things you see from far away, like a big rock.
 - **Resting before you’re tired.** They stop for a drink before their legs get heavy.
 
 Backpack adds: Reading the map · Spotting landmarks · Resting before you’re tired

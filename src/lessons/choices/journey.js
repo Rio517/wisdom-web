@@ -178,12 +178,26 @@ const sortBoard = createSortBoard(scenes.hike.sortBoard, {
   },
 });
 
+// The hike's practice cards show whole beside the map: where the story column is too short for
+// them, the step tightens one notch at a time (journey.css) and stops at the first that fits.
+const TIGHT = ['is-tight', 'is-tighter', 'is-tightest'];
+function fitPractised() {
+  const body = $('#narration-body');
+  body.classList.remove(...TIGHT);
+  if (!body.querySelector('#practised')) return;
+  for (const notch of TIGHT) {
+    if (body.scrollHeight <= body.clientHeight) break;
+    body.classList.add(notch);
+  }
+}
+new ResizeObserver(fitPractised).observe($('#narration-body'));
+
 function renderNarration(item, { animate }) {
   const { beat, chapter, beatIndex } = item;
   const body = $('#narration-body');
   body.getAnimations().forEach(animation => animation.cancel());
   body.dataset.beat = beat.id;
-  body.classList.remove('whatif');
+  body.classList.remove('whatif', ...TIGHT);
   journeyRoot.dataset.beat = beat.id;
   $('#beat-kicker').textContent = chapter.beats.length > 1
     ? t('lesson.ui.kickerStep', { kicker: beat.kicker, step: beatIndex + 1, total: chapter.beats.length })
@@ -198,6 +212,7 @@ function renderNarration(item, { animate }) {
   if (beat.sort) extra.innerHTML = renderSortProgress(item);
   if (beat.practised) {
     extra.innerHTML = `<ul class="practised" id="practised">${beat.practised.map(card => `<li><strong>${ICONS[LEARNED[card.id].icon === 'rest' ? 'restSmall' : LEARNED[card.id].icon]}${escapeHTML(LEARNED[card.id].label)}</strong><span>${escapeHTML(card.text)}</span></li>`).join('')}</ul>`;
+    fitPractised();
   }
   if (beat.closer) {
     extra.insertAdjacentHTML('beforeend', `<details class="closer"><summary>${escapeHTML(beat.closer.heading)}</summary>${beat.closer.body.map(text => `<p>${escapeHTML(text)}</p>`).join('')}</details>`);

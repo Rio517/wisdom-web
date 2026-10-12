@@ -156,8 +156,30 @@ h1, h2, h3, h4 { font-family: var(--font-field); font-weight: 500; }
 .practised span { @apply mt-1 block text-[15px]; line-height: 1.32; font-family: var(--font-guide); color: var(--color-ink); }
 .practised li.is-pending { opacity: 0; }
 .practised li.is-new { animation: learned-in 700ms cubic-bezier(.3,1.4,.5,1) both; }
-/* Under the map (upright tablets) the three sit side by side. */
-@media (max-width: 989px) { .practised { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; } }
+/* Under the map (upright tablets) the three sit side by side, and the step gives its kicker to them. */
+@media (max-width: 989px) {
+  .practised { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 12px; }
+  .practised li { padding-block: 7px; }
+  .narration-body[data-beat="practice"] #beat-kicker { display: none; }
+  .narration-body[data-beat="practice"] .beat-text p { margin-bottom: 0; }
+}
+/* Beside the map the three must show whole. Where the column is too short for them (journey.js
+   tries each step in turn and stops at the first that fits), the step gives up its kicker and the
+   spare space, then some heading size, then the last of the gaps. */
+@media (min-width: 990px) {
+  .narration-body.is-tight #beat-kicker { display: none; }
+  .narration-body.is-tight #beat-heading { margin-bottom: 14px; }
+  .narration-body.is-tight .beat-text p { margin-bottom: 0; }
+  .narration-body.is-tight .practised { @apply gap-1; margin-top: 12px; }
+  .narration-body.is-tight .practised li { padding-block: 7px; }
+  .narration-body.is-tighter #beat-heading { font-size: clamp(24px, 2vw, 28px); }
+  .narration-body.is-tightest #beat-heading { margin-bottom: 10px; }
+  .narration-body.is-tightest .practised { margin-top: 8px; }
+  .narration-body.is-tightest .practised li { padding-block: 6px; }
+}
+@media (min-width: 1400px) {
+  .practised span { font-size: 16px; }
+}
 @media (min-width: 1400px) and (min-height: 940px) {
   .practised { @apply mt-5 gap-2; }
   .practised li { @apply rounded-2xl px-4 py-3; }
@@ -374,6 +396,7 @@ h1, h2, h3, h4 { font-family: var(--font-field); font-weight: 500; }
 .learned li { @apply flex items-center gap-3 rounded-xl px-3 py-1.5 text-[16px] font-semibold leading-tight; min-height: 46px; background: #28544214; color: var(--color-forest); }
 .learned li svg { width: 26px; height: 26px; flex: none; }
 .learned li.is-new { animation: learned-in 700ms cubic-bezier(.3,1.4,.5,1) both; }
+.learned li.is-added { animation: text-in 420ms cubic-bezier(.2,.7,.2,1) both; }
 @keyframes learned-in { 0% { opacity: 0; transform: translateY(-10px) scale(.9); background: var(--color-sun-soft); } 60% { background: var(--color-sun-soft); } 100% { opacity: 1; transform: none; } }
 .learned-empty { @apply m-0 text-[16px]; color: var(--color-quiet); }
 
@@ -680,21 +703,15 @@ dialog::backdrop { background: #23302d66; }
 /* The Pause link takes a short row; its 44px target reaches over the gap around it. */
 .life-pause { position: relative; min-height: 30px; }
 .life-pause::after { content: ""; position: absolute; inset: -7px -4px; }
-/* Short screens: during the story the key hint gives its two rows to the lines. */
+/* Short screens: the key hint gives its two rows to the story's lines and the hike's cards, on
+   every step, so Next keeps one place through the lesson. */
 @media (min-width: 990px) and (max-height: 820px) {
-  .journey:has(.narration-body[data-beat="life"]) .key-hint { display: none; }
-  .journey:has(.narration-body[data-beat="practice"]) .key-hint { display: none; }
+  .key-hint { display: none; }
   /* and a what-if gives its kicker to the new life's rows. */
   .narration-body.whatif #beat-kicker { display: none; }
   /* The story gives its rows more room too: no kicker, a one-line heading, and the beat dots beside
      Back and Next in one row (still 48px buttons). */
   .narration-body[data-beat="life"]:not(.whatif) #beat-kicker { display: none; }
-  /* The hike's practice step holds three cards under its words: the same room is made for them. */
-  .narration-body[data-beat="practice"] #beat-kicker { display: none; }
-  .narration-body[data-beat="practice"] #beat-heading { font-size: clamp(24px, 2vw, 28px); margin-bottom: 10px; }
-  .narration-body[data-beat="practice"] .beat-text p { margin-bottom: 0; }
-  .practised { @apply mt-2 gap-1; }
-  .practised li { padding-block: 7px; }
   .narration-body[data-beat="life"]:not(.whatif) #beat-heading { font-size: clamp(24px, 2vw, 28px); margin-bottom: 10px; }
   .narration:has(> .narration-body[data-beat="life"]) .narration-controls { grid-template-columns: minmax(0, auto) auto; justify-content: space-between; align-items: center; column-gap: 12px; padding-top: 10px; }
   .narration:has(> .narration-body[data-beat="life"]) .nav-buttons { justify-content: flex-end; }
@@ -875,7 +892,6 @@ dialog::backdrop { background: #23302d66; }
   .narration-body[data-beat="life"] .life-line { font-size: 16.5px; line-height: 1.28; }
   /* During the story the key hint gives its rows to the lines. */
   .journey:has(.narration-body[data-beat="life"]) .key-hint { display: none; }
-  .journey:has(.narration-body[data-beat="practice"]) .key-hint { display: none; }
   /* A picked life's events in two columns too, with its note and buttons on one row. */
   .narration-body.whatif .timeline { display: block; columns: 2; column-gap: 24px; padding-top: 2px; }
   .narration-body.whatif .timeline li { break-inside: avoid; }
