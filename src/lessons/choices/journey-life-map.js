@@ -127,7 +127,7 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
     // Born) and no label goes in it.
     // Its height is the bar's own, measured in the page's language (German's text can take a line more
     // than English's), so the life is laid out clear of it whatever the words.
-    const measuredBar = r.width < 800 ? cardSize('explore-end life-end is-bar').h : 0;
+    const measuredBar = r.width < 800 ? cardSize(barClass()).h : 0;
     const BAR_HEIGHT = Math.max(BAR - 10, measuredBar);
     // The band runs from the map's top to 4 px under the bar (which sits 12 px down): 100 px for English's 83 px bar.
     const bar = r.width < 800 ? Math.max(BAR, 12 + measuredBar + 4) : 0;
@@ -508,7 +508,7 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
     closePop();
     openFork = fork;
     fork.setAttribute('aria-expanded', 'true');
-    const title = t('opening.fork.title', { age: step.age, choice: step.label });
+    const title = t('opening.fork.title', { age: step.age });
     pop.setAttribute('aria-label', title);
     pop.innerHTML = `<p class="life-pop-title">${escapeHTML(title)}</p><div class="life-chips">${S.model.picks.filter(item => item.stepIndex === stepIndex)
       .map(item => `<button type="button" class="life-chip" data-alt="${escapeHTML(item.key)}">${escapeHTML(item.label)}</button>`).join('')}</div>`;
@@ -597,10 +597,14 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
     probe.className = className;
     probe.style.cssText = 'visibility:hidden';
     overlay.append(probe); // laid out in the map's visible part, as the card itself is
-    const size = { w: probe.offsetWidth, h: probe.offsetHeight };
+    const size = { w: probe.offsetWidth, h: probe.offsetHeight, over: probe.scrollWidth > probe.clientWidth + 1 };
     probe.remove();
     return size;
   }
+  // The bar's shape: text and buttons in one row, or the buttons under the text when the row would not
+  // fit their words (a narrow map, a longer language).
+  const BAR_CLASS = 'explore-end life-end is-bar';
+  const barClass = () => (cardSize(BAR_CLASS).over ? `${BAR_CLASS} is-stack` : BAR_CLASS);
   if (typeof ResizeObserver === 'function') {
     // On the next frame, so the move isn't made while the observer is still delivering.
     let queued = false;
@@ -619,7 +623,7 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
     const g = geometry();
     const r = rect();
     card.hidden = false;
-    card.classList.remove('is-bar');
+    card.classList.remove('is-bar', 'is-stack');
     card.style.cssText = 'visibility:hidden';
     const { w: width, h: height } = cardSize('explore-end life-end');
     const close = (box, others) => others.some(other => box.left < other.right + 6 && box.right > other.left - 6 && box.top < other.bottom + 6 && box.bottom > other.top - 6);
@@ -646,8 +650,9 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
       return;
     }
     // A stage too small for a card gets a bar across the map's empty top, or else its foot.
-    card.classList.add('is-bar');
-    const barSize = cardSize('explore-end life-end is-bar');
+    const shape = barClass();
+    card.className = shape;
+    const barSize = cardSize(shape);
     const barHeight = barSize.h;
     const bar = top => ({ left: 12, right: r.width - 12, top, bottom: top + barHeight });
     // When neither is clear (a label a few px too close), the one that covers the fewest labels and dots.

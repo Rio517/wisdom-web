@@ -715,6 +715,9 @@ dialog::backdrop { background: #23302d66; }
 .life-end.is-bar p { margin: 0; font-size: 15px; line-height: 1.35; }
 .life-end.is-bar .end-buttons { grid-row: 1 / span 2; grid-column: 2; margin: 0; flex-wrap: nowrap; }
 .life-end.is-bar .end-buttons button { white-space: nowrap; }
+/* Too narrow for one row: the buttons go under the text (journey-life-map.js barClass). */
+.life-end.is-bar.is-stack { grid-template-columns: minmax(0, 1fr); }
+.life-end.is-bar.is-stack .end-buttons { grid-row: auto; grid-column: 1; margin-top: 8px; flex-wrap: wrap; }
 /* The bar's text takes the free width before it wraps: the buttons sit closer and a little narrower. */
 .life-end.is-bar .end-buttons { gap: 6px; }
 .life-end.is-bar .end-buttons :is(.solid-pill, .pill-button) { padding: 0 14px; }

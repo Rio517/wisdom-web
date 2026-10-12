@@ -82,7 +82,7 @@ test('the text version tells the life step by step, then how to change a choice,
   const html = renderJourneyReading({ t: runtimeT, life: sam });
   const life = html.slice(html.indexOf('id="read-life"'), html.indexOf('id="read-adds"'));
   assert.match(life, /<ol class="reading-steps"><li><strong>Age 0<\/strong> Sam is born\.<\/li>/);
-  assert.match(life, /<li>Many paths still ahead\.<\/li><\/ol><p>On the page you can change one of Sam’s choices/);
-  assert.ok(life.indexOf('reading-visual') > life.indexOf('On the page'), 'the picture comes after the sentence');
-  assert.match(html.slice(html.indexOf('id="read-adds"')), /Choir led to guitar/);
+  assert.match(life, /<li>Many paths are still ahead\.<\/li><\/ol><p>In the lesson, you can change one of Sam’s choices/);
+  assert.ok(life.indexOf('reading-visual') > life.indexOf('In the lesson'), 'the picture comes after the sentence');
+  assert.match(html.slice(html.indexOf('id="read-adds"')), /Choir led Sam to the guitar/);
 });

@@ -12,11 +12,11 @@ A guided lesson for readers aged eight and up. The people and places are made up
 
 Your choices shape where a life can go. So do things nobody chooses, the lucky ones and the unlucky ones.
 
-First, one whole life in half a minute. Then a hike, and a girl with two paths.
+First we watch one whole life in half a minute. Then we go on a hike and meet a girl with two paths.
 
 Picture: A single dot marks the beginning of a life.
 
-### Many paths. Here’s one.
+### One of many paths
 
 The story of Sam, one line a step (the lives store, src/lessons/choices/lives/; another life plays on a return visit or after “Watch another life”):
 
@@ -37,17 +37,17 @@ The story of Sam, one line a step (the lives store, src/lessons/choices/lives/; 
 - **Age 33** He has two great kids.
 - **Age 36** He teaches music at the local school.
 - **Age 41** He watches his daughter sing on stage.
-- Many paths still ahead.
+- Many paths are still ahead.
 
-On the page you can change one of Sam’s choices and watch his path change.
+In the lesson, you can change one of Sam’s choices and watch his path change.
 
-Picture: One life grows along an age line from birth to 41, one fork at a time, with gray lines leaving every fork for the choices Sam didn’t make. Luck lifts the path and setbacks drop it. Light green paths carry on past 41.
+Picture: The map shows one life along a line of ages, from birth to age 41. The path grows one fork at a time. At every fork, gray lines show the choices Sam didn’t make. Luck lifts the path, and setbacks push it down. Light green paths carry on past age 41.
 
 ### Choices add up.
 
-Choir led to guitar, guitar to a band, the band to a song. Luck lifted Sam’s path. A hard year pushed it down. Not everything was his to choose. Now let’s look at choices over just a few days.
+Choir led Sam to the guitar. The guitar led to a band, and the band recorded a song. Luck lifted his path, and a hard year pushed it down. Some things were not his choice. Now let’s look at choices over just a few days.
 
-Picture: Sam’s whole route, with three labels: His choice on “Picks guitar”, Luck on “A DJ plays the song”, Not his choice on “The band splits”.
+Picture: The map shows Sam’s whole path with three labels. “Picks guitar” is labelled His choice. “A DJ plays the song” is labelled Luck. “The band splits” is labelled Not his choice.
 
 ## The hike
 
@@ -199,7 +199,7 @@ Your choices matter. They’re just not the whole story. Lots of paths are still
 - **Learning builds on learning.** What you know gives the next thing a place to start. Sometimes that works even for something new.
 - **Not everything is yours to choose.** Some surprises are storms. Some are lucky breaks. Either way, you can pause, ask for help and choose your next step.
 
-Picture: The life map comes back: Sam’s whole route, with light green paths still open past 41.
+Picture: The life map comes back. It shows Sam’s whole path, and light green paths are still open past age 41.
 
 ## Editorial notes
 
