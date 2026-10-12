@@ -28,7 +28,8 @@
 // (the earliest fork, the second and one 60% in) by a direct link and by clicks, plus a reduced-motion
 // pass by direct link, and measures the finished list at rest: its newest row and closing note whole
 // inside the box, the list at rest (scrolled to its end if it must scroll), the buttons in at most two
-// rows, and whether it had to scroll. --no-whatif skips it.
+// rows, the beat dots at least 12 px from the Back label, folded rows' age circles at least 3 px
+// apart, and whether it had to scroll. --no-whatif skips it.
 // --bar-taller 24 makes the end card's bar 24 px taller (a check that the map leaves room for its measured height).
 // --budget (Chromium only) measures, for each life and size, the layouts each arriving line forces
 // (stepping through the story while paused) and, with the processor slowed 4x, the longest
@@ -341,7 +342,17 @@ function whatifTask(item, size) {
         const inside = r => r.top >= b.top + fade - 0.5 && r.bottom <= b.bottom + 0.5;
         const buttons = [...document.querySelectorAll('.whatif-actions button')];
         const side = matchMedia('(min-width: 990px)').matches;
+        // The beat dots and the Back label never meet: the label's left edge minus the last dot shown.
+        const dots = document.getElementById('beat-dots').getBoundingClientRect();
+        const shownDots = [...document.querySelectorAll('#beat-dots button')].map(dot => dot.getBoundingClientRect()).filter(dot => dot.left < dots.right - 1);
+        const range = document.createRange(); range.selectNodeContents(document.getElementById('back'));
+        const back = range.getBoundingClientRect();
+        const sameRow = shownDots.length && Math.abs((shownDots.at(-1).top + shownDots.at(-1).bottom) / 2 - (back.top + back.bottom) / 2) < 20;
+        // Folded rows' age circles keep apart.
+        const ages = rows.slice(0, -1).map(row => row.querySelector('.timeline-age').getBoundingClientRect()).filter(age => age.bottom > b.top && age.top < b.bottom);
+        const circleGap = ages.length > 1 ? Math.min(...ages.slice(1).map((age, k) => age.top - ages[k].bottom)) : 99;
         return {
+          dotsGap: sameRow ? Math.round(back.left - Math.min(shownDots.at(-1).right, dots.right)) : 99, circleGap: Math.round(circleGap * 10) / 10,
           rows: rows.length, folded: rows.filter(row => row.classList.contains('is-folded')).length,
           newest: inside(rows.at(-2).getBoundingClientRect()), note: inside(rows.at(-1).getBoundingClientRect()),
           scrolls: box.scrollHeight > box.clientHeight, top: box.scrollTop, end: box.scrollHeight - box.clientHeight,
@@ -553,17 +564,17 @@ if (!flag('no-labels')) {
 if (!flag('no-whatif')) {
   const items = await whatifCases();
   out.whatif = await pool(browser, SIZES.flatMap(size => items.map(item => whatifTask(item, size))));
-  console.log('\nwhatif  size       life   change                    route    rows  folded  newest  note  rest  scrolls  buttons');
-  const wrong = row => row.failed || !row.whatif || !row.whatif.newest || !row.whatif.note || !row.whatif.rest || row.whatif.buttonRows > 2;
+  console.log('\nwhatif  size       life   change                    route    rows  folded  newest  note  rest  scrolls  buttons  dots-gap  circle-gap');
+  const wrong = row => row.failed || !row.whatif || !row.whatif.newest || !row.whatif.note || !row.whatif.rest || row.whatif.buttonRows > 2 || row.whatif.dotsGap < 12 || row.whatif.circleGap < 2.9;
   for (const row of out.whatif) {
     if (row.failed) { console.log(`FAILED whatif: ${row.failed}`); continue; }
     const w = row.whatif;
     if (!w) { console.log(`whatif  ${label(row.size).padEnd(10)} ${row.item.life.padEnd(6)} ${row.item.alt}: no such alternative`); continue; }
-    if (wrong(row) || w.scrolls || flag('all-rows')) console.log(`whatif  ${label(row.size).padEnd(10)} ${row.item.life.padEnd(6)} ${`${row.item.fork}:${row.item.alt}`.padEnd(24)}  ${row.item.route.padEnd(7)} ${String(w.rows).padStart(5)} ${String(w.folded).padStart(7)}  ${(w.newest ? 'ok' : 'CUT').padStart(6)}  ${(w.note ? 'ok' : 'CUT').padStart(4)}  ${(w.rest ? 'ok' : 'NO').padStart(4)}  ${(w.scrolls ? 'yes' : '-').padStart(7)}  ${String(w.buttonRows).padStart(7)}${row.errors.length ? `  ERRORS ${row.errors.length}` : ''}`);
+    if (wrong(row) || w.scrolls || flag('all-rows')) console.log(`whatif  ${label(row.size).padEnd(10)} ${row.item.life.padEnd(6)} ${`${row.item.fork}:${row.item.alt}`.padEnd(24)}  ${row.item.route.padEnd(7)} ${String(w.rows).padStart(5)} ${String(w.folded).padStart(7)}  ${(w.newest ? 'ok' : 'CUT').padStart(6)}  ${(w.note ? 'ok' : 'CUT').padStart(4)}  ${(w.rest ? 'ok' : 'NO').padStart(4)}  ${(w.scrolls ? 'yes' : '-').padStart(7)}  ${String(w.buttonRows).padStart(7)}  ${String(w.dotsGap).padStart(8)}  ${String(w.circleGap).padStart(10)}${row.errors.length ? `  ERRORS ${row.errors.length}` : ''}`);
   }
   const bad = out.whatif.filter(wrong);
   const common = out.whatif.filter(row => row.whatif?.scrolls && ['1440x900', '1280x800', '1920x1080'].includes(label(row.size)));
-  console.log(`whatif: ${out.whatif.length} finished what-ifs, ${bad.length} with the newest row or the note out of view, not at rest, or buttons over two rows; ${out.whatif.filter(row => row.whatif?.scrolls).length} scroll (${common.length} at 1440x900, 1280x800 or 1920x1080)`);
+  console.log(`whatif: ${out.whatif.length} finished what-ifs, ${bad.length} with the newest row or the note out of view, not at rest, buttons over two rows, the dots within 12 px of Back or age circles under 3 px apart; ${out.whatif.filter(row => row.whatif?.scrolls).length} scroll (${common.length} at 1440x900, 1280x800 or 1920x1080)`);
 }
 
 const errorCount = [...out.story, ...out.adds, ...out.room, ...out.labels, ...(out.whatif ?? [])].reduce((sum, row) => sum + (row.errors?.length ?? 0), 0);

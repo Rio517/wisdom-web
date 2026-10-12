@@ -82,6 +82,16 @@ h1, h2, h3, h4 { font-family: var(--font-field); font-weight: 500; }
 .beat-dots button[aria-current="step"]::after { width: 22px; background: var(--color-forest); }
 .beat-dots button[data-seen="true"]:not([aria-current])::after { background: var(--color-sage); }
 .nav-buttons { @apply flex items-center justify-between gap-3; }
+/* Dots beside Back and Next in one row (a what-if, a short screen): the dots give way first, closing
+   up and then dropping off the end, so they never run under the Back label. */
+@media (min-width: 990px) {
+  .narration:has(> .narration-body.whatif) .beat-dots { min-width: 0; overflow: hidden; gap: 4px; }
+  .narration:has(> .narration-body.whatif) .beat-dots button { flex: 0 1 26px; min-width: 14px; }
+}
+@media (min-width: 990px) and (max-height: 820px) {
+  .narration:has(> .narration-body[data-beat="life"]) .beat-dots { min-width: 0; overflow: hidden; gap: 4px; }
+  .narration:has(> .narration-body[data-beat="life"]) .beat-dots button { flex: 0 1 26px; min-width: 14px; }
+}
 .back-button { @apply min-h-12 rounded-full border-0 bg-transparent px-4; color: var(--color-forest); }
 .back-button:disabled { opacity: .35; cursor: default; }
 .next-button {
@@ -627,7 +637,7 @@ dialog::backdrop { background: #23302d66; }
   /* A what-if gives its rows the room a short screen gives the story: no kicker, and the beat dots
      beside Back and Next in one row (still 48px buttons). */
   .narration-body.whatif #beat-kicker { display: none; }
-  .narration:has(> .narration-body.whatif) .narration-controls { grid-template-columns: auto minmax(0, 1fr); align-items: center; column-gap: 8px; padding-top: 10px; }
+  .narration:has(> .narration-body.whatif) .narration-controls { grid-template-columns: minmax(0, auto) auto; justify-content: space-between; align-items: center; column-gap: 12px; padding-top: 10px; }
   .narration:has(> .narration-body.whatif) .nav-buttons { justify-content: flex-end; }
   /* A narrow column: the three what-if buttons take two rows, not three. */
   @container (max-width: 330px) {
@@ -657,7 +667,7 @@ dialog::backdrop { background: #23302d66; }
      Back and Next in one row (still 48px buttons). */
   .narration-body[data-beat="life"]:not(.whatif) #beat-kicker { display: none; }
   .narration-body[data-beat="life"]:not(.whatif) #beat-heading { font-size: clamp(24px, 2vw, 28px); margin-bottom: 10px; }
-  .narration:has(> .narration-body[data-beat="life"]) .narration-controls { grid-template-columns: auto minmax(0, 1fr); align-items: center; column-gap: 8px; padding-top: 10px; }
+  .narration:has(> .narration-body[data-beat="life"]) .narration-controls { grid-template-columns: minmax(0, auto) auto; justify-content: space-between; align-items: center; column-gap: 12px; padding-top: 10px; }
   .narration:has(> .narration-body[data-beat="life"]) .nav-buttons { justify-content: flex-end; }
 }
 
@@ -762,10 +772,10 @@ dialog::backdrop { background: #23302d66; }
 /* Only a new life too long for its column (is-tight): older rows close up as it grows. */
 .whatif .timeline.is-tight { --size: 14px; gap: 0; }
 .whatif .timeline.is-tight li.whatif-note { margin-top: 4px; font-size: 14px; line-height: 1.32; }
-.whatif .timeline li.is-folded .timeline-step { min-height: calc(var(--size) * 1.12); font-size: calc(var(--size) * .9); }
+.whatif .timeline li.is-folded .timeline-step { min-height: calc(var(--size) * .93 + 3px); font-size: calc(var(--size) * .9); }
 .whatif .timeline li.is-folded .timeline-step { padding-block: 0; }
 .whatif .timeline li.is-folded .timeline-label { line-height: 1.12; }
-.whatif .timeline li.is-folded .timeline-age { width: calc(var(--size) * 1.1); height: calc(var(--size) * 1.1); font-size: calc(var(--size) * .68); }
+.whatif .timeline li.is-folded .timeline-age { width: calc(var(--size) * .93); height: calc(var(--size) * .93); font-size: calc(var(--size) * .64); }
 .whatif .timeline li.is-folded .timeline-kind { padding: 0 5px; line-height: 1.12; }
 .whatif-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
 .whatif-actions .solid-pill, .whatif-actions .pill-button { min-height: 44px; white-space: nowrap; }
