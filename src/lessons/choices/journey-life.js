@@ -78,9 +78,12 @@ export function createLifeStory({ scene, hooks, onLife, goToLife, rerender }) {
     // tries: the size this list fitted at last time (else the middle), then a guess in proportion
     // to the rows' height there, then beside the guess; halving what is left only if need be.
     // (scrollHeight never reads less than the box, so the rows' own height is measured.)
+    // scrollHeight is a whole number, so a row half a pixel past the box's edge is asked for too.
+    const whole = () => box.scrollHeight <= box.clientHeight
+      && box.lastElementChild.getBoundingClientRect().bottom <= box.getBoundingClientRect().bottom + 0.25;
     const tried = new Map();
     const fits = size => {
-      if (!tried.has(size)) { box.style.setProperty('--fit-size', `${size}px`); tried.set(size, box.scrollHeight <= box.clientHeight); }
+      if (!tried.has(size)) { box.style.setProperty('--fit-size', `${size}px`); tried.set(size, whole()); }
       return tried.get(size);
     };
     const snap = size => Math.min(max, Math.max(min, Math.floor(size * 2) / 2));
@@ -104,7 +107,7 @@ export function createLifeStory({ scene, hooks, onLife, goToLife, rerender }) {
       box.classList.add('is-tight');
       const closeUp = () => [0.75, 0.5, 0.25, 0].some(pack => {
         box.style.setProperty('--pack', pack);
-        return box.scrollHeight <= box.clientHeight;
+        return whole();
       });
       if (!closeUp()) { box.style.setProperty('--tight-size', `${min - 1}px`); closeUp(); }
       box.fitKey = `${box.clientWidth}x${box.clientHeight}:${box.children.length}`;
