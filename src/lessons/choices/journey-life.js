@@ -258,6 +258,15 @@ export function createLifeStory({ scene, hooks, onLife, goToLife, rerender }) {
     });
   });
   fitObserver.observe(document.getElementById('narration-body'));
+  // A font arriving late changes the rows' heights with the column unchanged: the plans made with
+  // the old metrics go, and the list on screen fits again.
+  document.fonts?.addEventListener('loadingdone', () => {
+    plans.clear();
+    lastFit.clear();
+    const box = document.getElementById('whatif-list') ?? list();
+    if (!box?.fitKey) return;
+    if (box.id === 'whatif-list') fitWhatAll(box); else fitStory(box);
+  });
   // If a list still has to scroll in its column, the newest line stays in view.
   // (Measured from the boxes: a list's `contain: strict` makes it its rows' offsetParent.)
   const keepInView = (element, box = list(), behavior = prefersReducedMotion() ? 'auto' : 'smooth') => {
