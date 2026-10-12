@@ -21,7 +21,7 @@
 
 - id: tryGymnastics
   label: Tries gymnastics
-  line: "{name} tries gymnastics. Cartwheels fill the hall."
+  line: "{name} tries gymnastics and learns to do cartwheels."
   if: "{name} had tried gymnastics"
   kind: choice
   ages: [5, 11]
@@ -53,7 +53,7 @@
 
 - id: winsSportsCamp
   label: Wins a camp place
-  line: "{name} wins a free week at a summer sports camp. Luck!"
+  line: "{name} wins a free week at a summer sports camp."
   kind: lucky
   ages: [8, 15]
   tags: [sport, club]
@@ -88,7 +88,7 @@
 
 - id: scoutWatches
   label: A scout spots {him}
-  line: "A scout comes to a match and notices {him}. Luck!"
+  line: "Luckily, a scout comes to a match and notices {him}."
   kind: lucky
   ages: [12, 18]
   after: [tryout, team]
@@ -144,7 +144,7 @@
 
 - id: teamWinsLeague
   label: Wins the league
-  line: "{his} team wins the league on the last day. Luck helps!"
+  line: "Luckily, {his} team wins the league on the last day."
   kind: lucky
   ages: [10, 24]
   after: [team]
@@ -154,7 +154,7 @@
 
 - id: kitPaidByShop
   label: A shop pays for kit
-  line: "A local shop pays for the whole team's new kit."
+  line: "Luckily, a local shop pays for the whole team's new kit."
   kind: lucky
   ages: [8, 20]
   after: [team]
@@ -180,6 +180,7 @@
   after: [leftOutOfSquad, notOnTheList]
   tags: [sport, helped]
   within: 2
+  withinYears: 2
 
 - id: trainsWithFriend
   label: Trains with a friend
@@ -225,11 +226,12 @@
 
 - id: takesBreakFromSport
   label: Takes a break
-  line: "{name} takes a break and sees what else is out there."
+  line: "{name} takes a break and tries other things."
   if: "{name} had taken a break from sport"
   kind: choice
   ages: [14, 35]
   after: [team, club, training]
+  needs: [sport]
   tags: [sport]
 
 - id: coachKids
@@ -251,9 +253,9 @@
   tags: [sport, coaching, study]
 
 - id: coachesAClub
-  label: Coaches a club side
-  line: "{name} takes charge of a local club's first team."
-  if: "{name} had coached a club's first team"
+  label: "Coaches a club team"
+  line: "{name} coaches the main team of a local club."
+  if: "{name} had coached a local club's main team"
   kind: choice
   ages: [24, 60]
   after: [coachingCourse]
@@ -287,7 +289,7 @@
 
 - id: becomesPersonalTrainer
   label: Works as a trainer
-  line: "{name} helps other people get fit for a living."
+  line: "{name} works as a trainer, helping people get fit."
   if: "{name} had become a fitness trainer"
   kind: choice
   ages: [20, 55]
@@ -365,8 +367,8 @@
   within: 1
 
 - id: reserveSpot
-  label: A reserve-team place
-  line: "A spot opens on the reserve team, and {name} takes it."
+  label: "A second-team place"
+  line: "A place opens on the club's second team, and {name} takes it."
   kind: event
   ages: [12, 55]
   after: [trainsExtraEvening]
@@ -375,9 +377,9 @@
   move: 1
 
 - id: playsOutWide
-  label: Plays out wide
-  line: "{name} plays out wide, running up and down the side."
-  if: "{name} had played out wide"
+  label: "Plays down the side"
+  line: "{name} plays near the edge of the pitch, running up and down."
+  if: "{name} had played down the side"
   kind: choice
   ages: [11, 40]
   after: [team, football]
@@ -403,6 +405,7 @@
   after: [newPlayerArrives]
   tags: [sport, helped, position]
   within: 1
+  withinYears: 2
 
 - id: startsInNewRole
   label: Starts in a new role
@@ -431,9 +434,10 @@
   line: "{name} moves up to train with an older age group."
   if: "{name} had moved up an age group"
   kind: choice
-  ages: [11, 30]
+  ages: [11, 19]
   after: [startsInNewRole, reserveSpot, playsWholeGame, restsAndRebuilds, picksForTeam]
   tags: [sport, team]
+  within: 2
 
 - id: helpsNewPlayers
   label: Shows new players

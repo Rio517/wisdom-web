@@ -22,11 +22,11 @@ steps:
   - node: chefOffer
     age: 17
     label: A baker takes her on
-    line: "A baker sees her work and offers to train her. Luck!"
+    line: "Luckily, a baker sees her work and offers to train her."
     echoes: [cafeJob]
   - node: trainsAsBaker
     age: 18
-    line: "{name} learns the trade and starts work before dawn."
+    line: "{name} trains in a bakery and starts work before dawn."
     alts: [trainChef, goesToUniversity]
     echoes: [chefOffer]
   - node: triesSourdough
@@ -57,7 +57,7 @@ steps:
     echoes: [trainsAsBaker, worksInKitchen]
   - node: happyCustomer
     age: 31
-    line: "Word spreads, and the queue grows. Luck!"
+    line: "Luckily, people tell their friends, and the queue grows."
     move: 1
   - node: rentDoubles
     age: 34
@@ -68,10 +68,10 @@ steps:
   - node: caters
     age: 38
     label: Cooks for weddings
-    line: "Ana's bakery bakes for weddings and parties too."
+    line: "Her bakery bakes for weddings and parties too."
     echoes: [openBakery]
   - node: teachesCooking
     age: 41
-    line: "She teaches children to knead dough, flour and all."
+    line: "She teaches children to knead dough, and flour goes everywhere."
     move: 1
     echoes: [helpBake]

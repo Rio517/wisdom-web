@@ -37,7 +37,7 @@
 
 - id: guitar
   label: Picks guitar
-  line: "{name} picks guitar."
+  line: "{name} picks the guitar."
   if: "{name} had picked guitar"
   kind: choice
   ages: [7, 16]
@@ -46,14 +46,14 @@
 - id: drums
   label: Picks drums
   line: "{name} picks drums."
-  if: "{name} had picked drums"
+  if: "{name} had picked the drums"
   kind: choice
   ages: [7, 16]
   tags: [music, instrument, drumming]
 
 - id: givenOldPiano
   label: Gets an old piano
-  line: "A neighbour who is moving gives {him} an old piano. Luck!"
+  line: "A neighbour who is moving gives {him} an old piano."
   kind: lucky
   ages: [6, 14]
   unless: [piano]
@@ -89,7 +89,7 @@
   tags: [music, instrument, drumming]
 
 - id: jamsWithFriends
-  label: Jams with friends
+  label: "Plays with friends"
   line: "{name} makes music with friends after school."
   if: "{name} had made music with friends"
   kind: choice
@@ -110,7 +110,7 @@
 
 - id: bandInvite
   label: A band invites {him}
-  line: "An older band asks {him} to join. Luck!"
+  line: "Luckily, an older band asks {him} to join."
   kind: lucky
   ages: [12, 22]
   after: [instrument, sings]
@@ -119,9 +119,9 @@
   move: 1
 
 - id: playGigs
-  label: Plays weekend gigs
-  line: "{name} plays gigs at weekends."
-  if: "{name} had played weekend gigs"
+  label: "Plays weekend shows"
+  line: "{name} plays shows at weekends."
+  if: "{name} had played weekend shows"
   kind: choice
   ages: [14, 30]
   after: [band, jamming, ensemble]
@@ -130,15 +130,15 @@
 - id: ownSong
   label: Writes a song
   line: "The band writes its own song."
-  if: "{name}'s band had written its own song"
+  if: "{his} band had written its own song"
   kind: choice
   ages: [13, 25]
   after: [band]
-  tags: [music, songs]
+  tags: [music, songs, band]
 
 - id: radioPlay
   label: A DJ plays the song
-  line: "A radio DJ plays {his} song. Luck!"
+  line: "Luckily, a radio DJ plays {his} song."
   kind: lucky
   ages: [15, 40]
   after: [songs]
@@ -147,7 +147,7 @@
 
 - id: recordDeal
   label: Signs a record deal
-  line: "A record label offers {him} a deal."
+  line: "A record company offers {him} a deal."
   kind: event
   ages: [17, 40]
   after: [radioPlay]
@@ -167,7 +167,7 @@
 
 - id: goesOnTour
   label: Goes on a world tour
-  line: "{name} goes on a world tour. Big crowds every night."
+  line: "{name} goes on a world tour and plays to big crowds."
   if: "{name} had gone on a world tour"
   kind: choice
   ages: [18, 40]
@@ -205,10 +205,11 @@
   after: [substance]
   tags: [helped]
   within: 1
+  withinYears: 2
 
 - id: labelDropsHim
-  label: The label drops {him}
-  line: "The record label drops {him}."
+  label: "The record deal ends"
+  line: "The record company stops working with {him}."
   kind: setback
   ages: [19, 43]
   after: [drinkingAndDrugs]
@@ -217,9 +218,9 @@
   move: -2
 
 - id: keepsEarlyNights
-  label: Keeps early nights
-  line: "{name} keeps early nights, even on tour."
-  if: "{name} had kept early nights"
+  label: "Goes to bed early"
+  line: "{name} goes to bed early, even on tour."
+  if: "{name} had gone to bed early"
   kind: choice
   ages: [18, 40]
   after: [fame]
@@ -241,6 +242,7 @@
   ages: [16, 45]
   after: [band]
   tags: [music]
+  within: 3
   drops: [band]
   move: -2
 
@@ -295,9 +297,9 @@
   within: 2
 
 - id: goesSolo
-  label: Plays solo gigs
+  label: "Plays alone on stage"
   line: "{name} plays alone now, with a stool and one microphone."
-  if: "{name} had gone solo"
+  if: "{name} had started playing alone"
   kind: choice
   ages: [16, 45]
   after: [bandSplits]
@@ -383,6 +385,7 @@
   after: [handInjury]
   tags: [music, helped]
   within: 1
+  withinYears: 2
 
 - id: playsAgain
   label: Plays for friends
@@ -407,7 +410,7 @@
 
 - id: collegeSaysNotYet
   label: The college says no
-  line: "The college writes back: not this year."
+  line: "The college writes back to say no this year."
   kind: setback
   ages: [16, 31]
   after: [auditionsForCollege]
@@ -424,6 +427,7 @@
   after: [collegeSaysNotYet]
   tags: [music, practice, helped]
   within: 1
+  withinYears: 2
 
 - id: getsIntoMusicCollege
   label: Gets a college place
@@ -436,9 +440,9 @@
   move: 2
 
 - id: firstSoloGig
-  label: Plays a solo gig
+  label: "Plays a show alone"
   line: "{name} signs up to play alone at a local café."
-  if: "{name} had signed up to play a solo gig"
+  if: "{name} had signed up to play alone at a café"
   kind: choice
   ages: [15, 50]
   after: [guitar, piano, strings, sings]
@@ -464,6 +468,7 @@
   after: [soloGigMishap]
   tags: [music, helped]
   within: 1
+  withinYears: 2
 
 - id: joinsDanceBand
   label: Joins a dance band

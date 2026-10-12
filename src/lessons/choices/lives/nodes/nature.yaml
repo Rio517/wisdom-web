@@ -116,7 +116,7 @@
 - id: plantsHardierCrops
   label: Plants for wet ground
   line: "{name} plants crops that cope better with wet ground."
-  if: "{name} had planted hardier crops"
+  if: "{name} had planted crops for wet ground"
   kind: choice
   ages: [20, 60]
   after: [floodRuinsHarvest]
@@ -132,6 +132,7 @@
   after: [floodRuinsHarvest, dryYear]
   tags: [nature, helped, grower]
   within: 2
+  withinYears: 2
 
 - id: rebuildsAsCommunityGarden
   label: Starts a shared garden
@@ -155,7 +156,7 @@
 
 - id: wildlifeSpotted
   label: A rare bird visits
-  line: "A rare bird nests in the school garden. Luck!"
+  line: "Luckily, a rare bird nests in the school garden."
   kind: lucky
   ages: [6, 16]
   after: [animals, outdoors, garden]
@@ -164,7 +165,7 @@
 
 - id: farmerOffersLand
   label: Gets a field to use
-  line: "A neighbour offers {him} a field to use. Luck!"
+  line: "Luckily, a neighbour offers {him} a field to use."
   kind: lucky
   ages: [20, 60]
   after: [grower]
@@ -323,6 +324,7 @@
   after: [seedlingsFade]
   tags: [nature, helped]
   within: 1
+  withinYears: 2
 
 - id: replantsSeedlings
   label: Plants the seeds again
@@ -376,7 +378,7 @@
 
 - id: cafeBuysGreens
   label: A café buys greens
-  line: "A café cook starts buying from {him} every week. Luck!"
+  line: "Luckily, a café cook starts buying from {him} every week."
   kind: lucky
   ages: [16, 56]
   after: [growsHardyGreens]

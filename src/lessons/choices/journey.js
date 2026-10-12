@@ -461,6 +461,8 @@ function revealInNarration(element) {
 window.addEventListener('popstate', () => {
   const target = beatForHash(location.hash);
   if (target >= 0 && target !== index) go(target, { animate: false, focus: 'heading' });
+  // An old link to the beat already shown (#paths-travel on the life) still takes the beat's own address.
+  else if (target === index && location.hash !== `#${beats[index].fragment}`) window.history.replaceState(null, '', `#${beats[index].fragment}`);
 });
 
 const dialog = $('#reading-dialog');

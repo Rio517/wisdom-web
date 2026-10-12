@@ -36,7 +36,7 @@ steps:
     echoes: [focusOnArt]
   - node: artSchoolSaysNo
     age: 19
-    line: "The answer comes back: no. It stings."
+    line: "The answer is no, and it stings."
     run: artSchoolNewRoute
   - node: eveningPrintClass
     age: 19

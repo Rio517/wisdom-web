@@ -5,7 +5,7 @@
 // the site ships the store already parsed (tooling/lives-data.mjs), so no parser reaches the browser.
 import { IntlMessageFormat } from 'intl-messageformat';
 
-export const TOKENS = ['name', 'his', 'him', 'himself'];
+export const TOKENS = ['name', 'he', 'his', 'him', 'himself'];
 export const KINDS = ['start', 'choice', 'lucky', 'setback', 'event'];
 export const LABEL_MAX = 22;
 /**
@@ -105,6 +105,7 @@ function normalNode(raw, file, index) {
     tags: list(object.tags).map(String),
     drops: list(object.drops).map(String),
     within: Number.isFinite(object.within) ? object.within : 0,
+    withinYears: Number.isFinite(object.withinYears) ? object.withinYears : WITHIN_YEARS, // and at most this many years back
     move: Number.isFinite(object.move) ? object.move : 0,
     by: object.by ?? null,
     weight: Number.isFinite(object.weight) ? object.weight : 1,
@@ -271,7 +272,7 @@ export function takeStep(path, node, age) {
 
 // A `within` match: among the last N steps, and at most WITHIN_YEARS before (when the ages are known).
 const recent = (node, path, giver, age) => giver >= path.count - node.within
-  && (path.ages[giver] === undefined || age === undefined || age - path.ages[giver] <= WITHIN_YEARS);
+  && (path.ages[giver] === undefined || age === undefined || age - path.ages[giver] <= node.withinYears);
 /**
  * Why `node` can't be the next step of `path` at `age`, or null when it can.
  * A node happens at most once in a life.
@@ -291,7 +292,7 @@ export function blocked(node, path, age) {
       if (!node.within || recent(node, path, givers[givers.length - 1], age)) return null;
     }
     return any
-      ? { rule: 'within', text: `none of [${node.after.join(', ')}] is among the last ${node.within} step${node.within === 1 ? '' : 's'} and at most ${WITHIN_YEARS} years before (within)` }
+      ? { rule: 'within', text: `none of [${node.after.join(', ')}] is among the last ${node.within} step${node.within === 1 ? '' : 's'} and at most ${node.withinYears} years before (within)` }
       : { rule: 'after', text: `none of [${node.after.join(', ')}] is on the path (after)` };
   }
   return null;
@@ -342,8 +343,8 @@ function echoesOf(node, path, echoes) {
 
 // ——— Words ———
 const FORMS = {
-  he: { his: 'his', him: 'him', himself: 'himself', lead: 'He' },
-  she: { his: 'her', him: 'her', himself: 'herself', lead: 'She' },
+  he: { he: 'he', his: 'his', him: 'him', himself: 'himself', lead: 'He' },
+  she: { he: 'she', his: 'her', him: 'her', himself: 'herself', lead: 'She' },
 };
 /**
  * Who a life is about: name and pronoun, and for a store in another language
@@ -378,7 +379,7 @@ export function say(text, person, { lead = false, capital = true } = {}) {
   } else {
     const forms = FORMS[person?.pronoun] ?? FORMS.he;
     out = lead ? text.replace(/^\{name\}/, forms.lead) : text;
-    out = out.replace(/\{(name|his|him|himself)\}/g, (_, token) => (token === 'name' ? person.name : forms[token]));
+    out = out.replace(/\{(name|he|his|him|himself)\}/g, (_, token) => (token === 'name' ? person.name : forms[token]));
   }
   return capital ? out.charAt(0).toUpperCase() + out.slice(1) : out;
 }
@@ -429,7 +430,7 @@ export function structureOf(files) {
 export function applyWords(files, words, fallback = null) {
   const out = {};
   // An English text standing in for a missing translation is made an ICU message too.
-  const asICU = text => text.replace(/\{(his|him|himself)\}/g, (_, token) => `{gender, select, she {${FORMS.she[token]}} other {${FORMS.he[token]}}}`);
+  const asICU = text => text.replace(/\{(he|his|him|himself)\}/g, (_, token) => `{gender, select, she {${FORMS.she[token]}} other {${FORMS.he[token]}}}`);
   const pick = (own, base, fields) => {
     const merged = {};
     for (const field of fields) {
@@ -1044,12 +1045,12 @@ export function check(store, { lives = 0 } = {}) {
   const words = (where, field, text, { label = false, line = false } = {}) => {
     if (text === undefined || text === null) return;
     if (typeof text !== 'string') { error(where, `"${field}" must be quoted text.`); return; }
-    for (const match of text.matchAll(/\{([^}]*)\}/g)) if (!TOKENS.includes(match[1])) error(where, `Unknown token {${match[1]}} in ${field}: use {name}, {his}, {him} or {himself}.`);
+    for (const match of text.matchAll(/\{([^}]*)\}/g)) if (!TOKENS.includes(match[1])) error(where, `Unknown token {${match[1]}} in ${field}: use {name}, {he}, {his}, {him} or {himself}.`);
     if (YOU.test(text)) error(where, `${field} speaks to the reader ("you"): tell it about the person.`);
     if (label && text.length > LABEL_MAX) error(where, `Label "${text}" is ${text.length} characters (at most ${LABEL_MAX}).`);
     if (line && WORDS(text) > LINE_MAX_WORDS) error(where, `Line "${text}" is ${WORDS(text)} words (at most ${LINE_MAX_WORDS}).`);
     if (line && /^\{name\}['’]s\b/.test(text)) error(where, `Line starts with {name}'s, which reads "He's" after the first line: start with {his}.`);
-    if (/[.!?]\s+\{(his|him|himself)\}/.test(text)) error(where, `A sentence in ${field} starts with {his}, {him} or {himself}, which stays lower case: reword it.`);
+    if (/[.!?]\s+\{(he|his|him|himself)\}/.test(text)) error(where, `A sentence in ${field} starts with {his}, {him} or {himself}, which stays lower case: reword it.`);
   };
 
   // Nodes

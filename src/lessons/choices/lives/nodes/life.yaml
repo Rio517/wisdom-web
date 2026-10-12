@@ -11,7 +11,7 @@
 - id: nurseryWithFriends
   label: Goes to nursery
   line: "{name} goes to nursery and plays with other children."
-  if: "{his} family had picked nursery"
+  if: "{his} family had sent {him} to nursery"
   kind: choice
   by: family
   ages: [3, 6]
@@ -79,6 +79,7 @@
   after: [setback]
   tags: [helped]
   within: 2
+  withinYears: 2
 
 - id: giftedProgramme
   label: Tries for a programme
@@ -99,7 +100,7 @@
 
 - id: failsAnExam
   label: Fails a big exam
-  line: "{name} fails a big exam. It hurts."
+  line: "{name} fails a big exam, and it hurts."
   kind: setback
   ages: [15, 22]
   after: [exams, study]
@@ -120,7 +121,7 @@
 - id: changesCourse
   label: Changes course
   line: "{name} switches to a different course."
-  if: "{name} had changed course"
+  if: "{name} had switched to a different course"
   kind: choice
   ages: [16, 26]
   after: [failsAnExam]
@@ -265,7 +266,7 @@
 
 - id: leadsATeam
   label: Leads a team
-  line: "{name} steps up to lead a team at work."
+  line: "{name} becomes the leader of a team at work."
   if: "{name} had led a team"
   kind: choice
   ages: [26, 60]
@@ -314,7 +315,7 @@
 
 - id: friendInvites
   label: A friend invites {him}
-  line: "A friend invites {him} to try something new. Luck!"
+  line: "Luckily, a friend invites {him} to try something new."
   kind: lucky
   ages: [7, 16]
   move: 1
@@ -322,14 +323,14 @@
 
 - id: friendForLife
   label: Meets a true friend
-  line: "{name} meets a friend for life."
+  line: "Luckily, {name} meets a friend for life."
   kind: lucky
   ages: [9, 60]
   move: 1
   weight: 0.25
 - id: teacherNotices
   label: A teacher sees talent
-  line: "A teacher notices what {name} is good at."
+  line: "Luckily, a teacher notices what {name} is good at."
   kind: lucky
   ages: [8, 18]
   move: 1
@@ -337,7 +338,7 @@
 
 - id: oldFriendJob
   label: A friend offers a job
-  line: "An old friend offers {him} a job."
+  line: "Luckily, an old friend offers {him} a job."
   kind: lucky
   ages: [25, 60]
   after: [job]
@@ -347,8 +348,8 @@
   weight: 0.4
 
 - id: mentorAppears
-  label: A mentor appears
-  line: "A kind colleague takes {him} under his wing."
+  label: Finds a helper at work
+  line: "Luckily, a kind person at work shows {him} how things are done."
   kind: lucky
   ages: [20, 55]
   after: [job]
@@ -448,6 +449,7 @@
   after: [setback]
   tags: [helped]
   within: 2
+  withinYears: 2
 
 - id: movesHome
   label: Moves back home
@@ -495,6 +497,7 @@
   after: [illForMonths, breaksAnArm]
   tags: [helped]
   within: 1
+  withinYears: 2
 
 - id: findsCheaperPlace
   label: Finds a cheaper place
@@ -511,7 +514,7 @@
 
 - id: winsCoursePlace
   label: Wins a course place
-  line: "{name} wins a free place on an evening course. Luck!"
+  line: "{name} wins a free place on an evening course."
   kind: lucky
   ages: [20, 60]
   tags: [study]
@@ -528,8 +531,8 @@
   weight: 0.4
 
 - id: fallsOutWithFriend
-  label: Has a big falling-out
-  line: "{name} and {his} best friend fall out for a whole year."
+  label: "Argues with a friend"
+  line: "{name} and {his} best friend argue and stop talking for a year."
   kind: setback
   ages: [9, 25]
   move: -1
@@ -563,8 +566,8 @@
   weight: 0.4
 
 - id: carBreaksDown
-  label: The car gives up
-  line: "The old car breaks down for good, far from home."
+  label: "The car breaks down"
+  line: "The old car breaks down far from home and cannot be fixed."
   kind: setback
   ages: [18, 70]
   after: [driving]
@@ -602,6 +605,7 @@
   after: [applicationsTurnedDown]
   tags: [helped]
   within: 1
+  withinYears: 2
 
 - id: getsTheJob
   label: Is offered a job
@@ -683,6 +687,7 @@
   after: [flatFallsThrough]
   tags: [home, helped]
   within: 1
+  withinYears: 2
 
 - id: findsSmallerPlace
   label: Finds a small place
@@ -727,7 +732,7 @@
 
 - id: friendMusicShopJob
   label: Job at a music shop
-  line: "An old friend offers {him} a job at a music shop."
+  line: "Luckily, an old friend offers {him} a job at a music shop."
   kind: lucky
   ages: [25, 60]
   after: [music]
@@ -738,7 +743,7 @@
 
 - id: friendBakeryJob
   label: Job at a bakery
-  line: "An old friend offers {him} a job at a bakery."
+  line: "Luckily, an old friend offers {him} a job at a bakery."
   kind: lucky
   ages: [25, 60]
   after: [food]
@@ -749,7 +754,7 @@
 
 - id: friendWorkshopJob
   label: Job in a workshop
-  line: "An old friend offers {him} a job in a workshop."
+  line: "Luckily, an old friend offers {him} a job in a workshop."
   kind: lucky
   ages: [25, 60]
   after: [making]
@@ -760,7 +765,7 @@
 
 - id: friendStudioJob
   label: Job at a design studio
-  line: "An old friend offers {him} a job at a design studio."
+  line: "Luckily, an old friend offers {him} a job at a design studio."
   kind: lucky
   ages: [25, 60]
   after: [art]
@@ -771,7 +776,7 @@
 
 - id: friendGardenJob
   label: Job at a plant nursery
-  line: "An old friend offers {him} a job at a plant nursery."
+  line: "Luckily, an old friend offers {him} a job at a plant nursery."
   kind: lucky
   ages: [25, 60]
   after: [nature]

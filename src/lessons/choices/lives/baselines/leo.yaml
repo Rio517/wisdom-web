@@ -21,7 +21,7 @@ steps:
     echoes: [schoolPlay]
   - node: partInAShow
     age: 15
-    line: "A theatre offers {him} a dancing part in a show. Luck!"
+    line: "Luckily, a theatre offers {him} a dancing part in a show."
     echoes: [aDanceClass, dramaClub]
   - node: triesForDanceCompany
     age: 18
@@ -39,7 +39,7 @@ steps:
   - node: teachesDance
     age: 20
     run: danceToTeaching
-    line: "{name} teaches children to move on Saturday mornings."
+    line: "{name} teaches dancing to children on Saturday mornings."
     alts: [physio, switchesToActing, choreographs]
     echoes: [gentleDanceClass]
   - node: startsYouthTheatre
@@ -59,7 +59,7 @@ steps:
     alts: [movesToSchoolHall, localTheatreGroup]
   - node: directsAPlay
     age: 36
-    line: "Grown-up pupils of the youth theatre star in a play he directs."
+    line: "Children from his youth theatre grow up and star in his play."
     echoes: [startsYouthTheatre]
   - node: runsDramaWorkshops
     age: 41

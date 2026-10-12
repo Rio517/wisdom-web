@@ -80,17 +80,17 @@ nodes:
     label: "La escuela dice que sí"
     line: "Una escuela de arte le ofrece una plaza."
   artSchoolSaysNo:
-    en: "1hyu05z"
+    en: "m3biwc"
     label: "La escuela dice que no"
-    line: "La escuela de arte dice que no. Duele."
+    line: "La escuela de arte dice que no, y eso duele."
   artShowSpot:
-    en: "yekvab"
+    en: "6utz1r"
     label: "Un café cuelga su obra"
-    line: "El dueño de un café cuelga sus cuadros en la pared. ¡Qué suerte!"
+    line: "Por suerte, el dueño de un café cuelga sus cuadros en la pared."
   asksAccountant:
-    en: "1tlecu9"
+    en: "1k7w1dq"
     label: "Pide consejo a un experto"
-    line: "{name} le pide a un contador, un experto en dinero, que revise las cuentas."
+    line: "{name} le pide a un contador, un experto en dinero, que revise los números."
     if: "{name} hubiera pedido consejo a un contador"
   asksChefFriend:
     en: "rweeo3"
@@ -148,9 +148,9 @@ nodes:
     line: "{name} pregunta a una enfermera con experiencia cómo sobrellevar los días de mucho trabajo."
     if: "{name} hubiera pedido consejo a una enfermera con experiencia"
   asksShopsForHelp:
-    en: "1s310j1"
+    en: "1oojagt"
     label: "Pide ayuda a las tiendas"
-    line: "{name} pide a las tiendas del lugar que colaboren."
+    line: "{name} pide a las tiendas del lugar que ayuden a pagar."
     if: "{name} hubiera pedido ayuda a las tiendas"
   asksTeacherForHelp:
     en: "9rmnj2"
@@ -203,22 +203,22 @@ nodes:
     line: "{name} hornea algo nuevo cada fin de semana."
     if: "{name} hubiera horneado los fines de semana"
   bakesForMoreCafes:
-    en: "1957jte"
+    en: "zd5z7i"
     label: "Hornea para más cafés"
     line: "{name} empieza a hornear para otras tres cafeterías de la misma calle."
     if: "{name} hubiera empezado a hornear para más cafeterías"
   bandInvite:
-    en: "oppdvj"
+    en: "vfdc2h"
     label: "Una banda {gender, select, she {la} other {lo}} invita"
-    line: "Una banda más veterana le pide que se una. ¡Qué suerte!"
+    line: "Por suerte, una banda más veterana le pide que se una."
   bandSplits:
     en: "6adnvv"
     label: "La banda se separa"
     line: "La banda se separa."
   batchStaysUnsold:
-    en: "1ud9udd"
+    en: "468mh0"
     label: "Pocos vecinos dicen que sí"
-    line: "Solo un vecino dice que sí, y los demás siguen de largo."
+    line: "Solo un vecino dice que sí, y los demás dicen que no."
   becomesEditor:
     en: "1k4sxnc"
     label: "Se hace {gender, select, she {editora} other {editor}}"
@@ -229,18 +229,18 @@ nodes:
     label: "Se convierte en {gender, select, she {madre} other {padre}}"
     line: "{name} se convierte en {gender, select, she {madre} other {padre}}."
   becomesPersonalTrainer:
-    en: "19kgd2s"
+    en: "ol7yoa"
     label: "Trabaja como {gender, select, she {entrenadora} other {entrenador}}"
-    line: "{name} ayuda a otras personas a ponerse en forma como trabajo."
+    line: "{name} trabaja como {gender, select, she {entrenadora} other {entrenador}} y ayuda a la gente a ponerse en forma."
     if: "{name} se hubiera hecho {gender, select, she {entrenadora} other {entrenador}} personal"
   bestFriendMoves:
     en: "zlohpz"
     label: "Su mejor amigo se muda"
     line: "Su mejor amigo se muda muy lejos."
   bigCustomer:
-    en: "1gtgyii"
+    en: "oehkl8"
     label: "Gana un gran cliente"
-    line: "Una gran empresa se convierte en su cliente. ¡Suerte!"
+    line: "Por suerte, una gran empresa se convierte en su cliente."
   bigTrip:
     en: "ehunba"
     label: "Hace un gran viaje"
@@ -252,9 +252,9 @@ nodes:
     line: "{name} observa pájaros desde la ventana con un cuaderno."
     if: "{name} hubiera observado pájaros"
   bookDeal:
-    en: "1po4b81"
+    en: "17wznhn"
     label: "Una editorial dice que sí"
-    line: "Por fin una editorial quiere su libro. ¡Suerte y paciencia!"
+    line: "Por fin, una editorial quiere su libro."
   bookshopJob:
     en: "155fm2o"
     label: "Trabaja en una librería"
@@ -275,9 +275,9 @@ nodes:
     line: "Un vecino le presta un horno para el fin de semana."
     if: "{name} hubiera pedido prestado el horno de un vecino"
   borrowsTools:
-    en: "1fpos2y"
-    label: "Pide herramientas"
-    line: "Amigos del oficio le prestan lo necesario para seguir trabajando."
+    en: "3jogc0"
+    label: "Pide herramientas prestadas"
+    line: "Otros trabajadores le prestan herramientas para que pueda seguir trabajando."
     if: "{name} hubiera pedido prestadas herramientas a amigos del oficio"
   breaksAnArm:
     en: "1g5b3vp"
@@ -299,25 +299,25 @@ nodes:
     line: "{name} construye un kart con ruedas viejas y tablas."
     if: "{name} hubiera construido un kart"
   buildsNewPortfolio:
-    en: "1g5btjy"
-    label: "Arma un nuevo portafolio"
-    line: "{name} toma una clase para armar un nuevo portafolio con un maestro."
-    if: "{name} hubiera armado un nuevo portafolio"
+    en: "1k6xlj0"
+    label: "Hace nuevos dibujos"
+    line: "{name} se apunta a una clase y llena una carpeta nueva de dibujos."
+    if: "{name} hubiera hecho una carpeta nueva de dibujos"
   buildsOnlineShop:
     en: "1pkoqr0"
     label: "Crea una tienda en línea"
     line: "{name} crea una tienda en línea para un negocio pequeño."
     if: "{name} hubiera creado una tienda en línea"
   buildsPortfolio:
-    en: "160mn3s"
-    label: "Arma un portafolio"
-    line: "{name} arma tres proyectos pequeños para mostrar su trabajo."
-    if: "{name} hubiera armado un portafolio"
+    en: "orj87w"
+    label: "Hace tres programas"
+    line: "{name} hace tres programas pequeños para mostrar lo que sabe hacer."
+    if: "{name} hubiera hecho tres programas pequeños"
   buildsPrototype:
-    en: "1ybpx9s"
-    label: "Construye un prototipo"
-    line: "{name} construye un primer prototipo de un invento."
-    if: "{name} hubiera construido un prototipo"
+    en: "w9cljz"
+    label: "Hace un modelo de prueba"
+    line: "{name} hace un primer modelo de prueba de un invento."
+    if: "{name} hubiera hecho un modelo de prueba"
   buildsRaisedBeds:
     en: "d604ck"
     label: "Hace jardineras altas"
@@ -347,9 +347,9 @@ nodes:
     line: "{name} compra una casa pequeña con dinero ahorrado durante años."
     if: "{name} hubiera comprado una casa pequeña"
   cafeBuysGreens:
-    en: "tz87kt"
+    en: "s034lh"
     label: "Un café le compra verdura"
-    line: "El cocinero de un café empieza a comprarle verdura todas las semanas. ¡Qué suerte!"
+    line: "Por suerte, el cocinero de un café empieza a comprarle verdura todas las semanas."
   cafeBuysLoaves:
     en: "17do6fa"
     label: "Una cafetería compra pan"
@@ -374,9 +374,9 @@ nodes:
     line: "{name} se convierte en {gender, select, she {capitana} other {capitán}} del equipo."
     if: "{name} se hubiera convertido en {gender, select, she {capitana} other {capitán}} del equipo"
   carBreaksDown:
-    en: "18y19yp"
-    label: "El auto se rinde"
-    line: "El viejo auto se descompone para siempre, lejos de casa."
+    en: "1c7nmnh"
+    label: "El auto se descompone"
+    line: "El viejo auto se descompone lejos de casa y no tiene arreglo."
   careAssistant:
     en: "28l4yj"
     label: "Trabaja cuidando mayores"
@@ -388,9 +388,9 @@ nodes:
     line: "{name} cuida a un padre o una madre que necesita más ayuda cada año."
     if: "{name} hubiera cuidado a un padre o una madre"
   carpenter:
-    en: "xk83f"
+    en: "67roc7"
     label: "Aprende carpintería"
-    line: "{name} aprende carpintería: mide dos veces y corta una."
+    line: "{name} estudia carpintería y aprende a medir con cuidado."
     if: "{name} hubiera aprendido carpintería"
   catchesUp:
     en: "1qvz457"
@@ -408,10 +408,10 @@ nodes:
     line: "{name} deja su trabajo para formarse en otro oficio."
     if: "{name} hubiera cambiado de profesión"
   changesCourse:
-    en: "j10dfx"
+    en: "ck7lj1"
     label: "Cambia de curso"
     line: "{name} se cambia a otro curso."
-    if: "{name} hubiera cambiado de curso"
+    if: "{name} se hubiera cambiado a otro curso"
   changesMethod:
     en: "1nv44gc"
     label: "Cambia el método"
@@ -423,9 +423,9 @@ nodes:
     line: "{name} cambia el menú por platos que no necesitan un horno grande."
     if: "{name} hubiera cambiado el menú"
   chefOffer:
-    en: "jyzs6l"
+    en: "1r25wph"
     label: "Un chef le enseña"
-    line: "Un chef ve su trabajo y le ofrece enseñarle el oficio. ¡Qué suerte!"
+    line: "Por suerte, un chef ve su trabajo y le ofrece enseñarle."
   chessClub:
     en: "undq8x"
     label: "Entra al club de ajedrez"
@@ -437,9 +437,9 @@ nodes:
     line: "{name} cuida en casa a los hijos de otras personas."
     if: "{name} hubiera cuidado a los hijos de otras personas"
   childrensBookJob:
-    en: "1577yd8"
+    en: "geya5c"
     label: "Ilustra un libro infantil"
-    line: "Una editorial le pide ilustrar un libro para niños. ¡Qué suerte!"
+    line: "Por suerte, una editorial le pide ilustrar un libro para niños."
   choir:
     en: "1qd3j75"
     label: "Entra en un coro"
@@ -455,19 +455,19 @@ nodes:
     label: "Un lugar en el coro"
     line: "Un director le ofrece un lugar en el coro."
   clubFillsUp:
-    en: "muml55"
+    en: "1bospic"
     label: "El club se llena"
-    line: "Llegan doce personas, y cada semana unas cuantas más."
+    line: "Llegan doce personas, y cada semana se suman unas cuantas más."
   coachKids:
     en: "5jq2mk"
     label: "Entrena un equipo infantil"
     line: "{name} entrena a un equipo de niños pequeños."
     if: "{name} hubiera entrenado a un equipo infantil"
   coachesAClub:
-    en: "9jitiy"
+    en: "1ryn7s1"
     label: "Entrena a un club local"
-    line: "{name} se hace cargo del primer equipo de un club local."
-    if: "{name} hubiera dirigido al primer equipo de un club"
+    line: "{name} entrena al equipo principal de un club local."
+    if: "{name} hubiera entrenado al equipo principal de un club local"
   coachesTownTeam:
     en: "1czx511"
     label: "Entrena un equipo"
@@ -479,9 +479,9 @@ nodes:
     line: "{name} hace un curso de entrenador los fines de semana."
     if: "{name} hubiera hecho un curso de entrenador"
   codeTeacherSpots:
-    en: "1rv2xoz"
-    label: "Una mejor computadora"
-    line: "Un profesor nota su proyecto y le presta una computadora mejor. ¡Suerte!"
+    en: "1nabits"
+    label: "Recibe una computadora mejor"
+    line: "Un profesor se fija en su proyecto y le presta una computadora mejor."
   codingCourse:
     en: "1x7fm33"
     label: "Aprende a programar"
@@ -497,9 +497,9 @@ nodes:
     line: "{name} coloca barriles para recoger cada gota de lluvia."
     if: "{name} hubiera recogido agua de lluvia"
   collegeSaysNotYet:
-    en: "ulaa5c"
-    label: "La escuela dice que no"
-    line: "La escuela responde: este año no."
+    en: "53y8am"
+    label: "La universidad dice que no"
+    line: "La universidad responde que este año no."
   cooksDinner:
     en: "14iw1uj"
     label: "Cocina para la familia"
@@ -543,10 +543,10 @@ nodes:
     label: "El curso está lleno"
     line: "Una carta dice que el curso está lleno este año."
   coversCouncil:
-    en: "11i8hnm"
-    label: "Cubre el concejo"
+    en: "x361e3"
+    label: "Informa sobre el concejo"
     line: "{name} informa cada mes sobre las reuniones del concejo municipal."
-    if: "{name} hubiera cubierto el concejo municipal"
+    if: "{name} hubiera informado sobre el concejo municipal"
   crossingPainted:
     en: "78735n"
     label: "Pintan un paso peatonal"
@@ -619,13 +619,13 @@ nodes:
     line: "{name} dirige una gran obra al aire libre sobre la historia del pueblo."
     if: "{name} hubiera dirigido una obra sobre el pueblo"
   discovery:
-    en: "csrzaz"
+    en: "kbzauo"
     label: "Hace un descubrimiento"
-    line: "Su equipo descubre algo nuevo. ¡Suerte y mucho trabajo!"
+    line: "Por suerte, su equipo descubre algo nuevo."
   dramaClub:
-    en: "1csrqjt"
+    en: "i96ktj"
     label: "Entra al club de teatro"
-    line: "{name} entra al club de teatro y encuentra su voz."
+    line: "{name} entra al club de teatro y aprende a expresarse con confianza."
     if: "{name} hubiera entrado al club de teatro"
   dramaSchool:
     en: "1dzlke2"
@@ -647,7 +647,7 @@ nodes:
     label: "El alcohol y las drogas"
     line: "El alcohol y las drogas se apoderan de todo, y sus conciertos se desmoronan."
   drums:
-    en: "1i98ct7"
+    en: "ur3pme"
     label: "Elige la batería"
     line: "{name} elige la batería."
     if: "{name} hubiera elegido la batería"
@@ -681,10 +681,10 @@ nodes:
     line: "{name} participa en un concurso de repostería en el ayuntamiento."
     if: "{name} hubiera participado en un concurso de repostería"
   entersGameJam:
-    en: "74h8xe"
-    label: "Participa en un game jam"
-    line: "{name} crea un juego en un fin de semana en un game jam."
-    if: "{name} hubiera participado en un game jam"
+    en: "tsck6t"
+    label: "Va a un concurso de juegos"
+    line: "{name} crea un juego en un fin de semana en un concurso para crear juegos."
+    if: "{name} hubiera participado en un concurso de juegos"
   entersScienceFair:
     en: "xmi1c9"
     label: "Va a la feria de ciencias"
@@ -701,37 +701,37 @@ nodes:
     line: "{name} toma una clase nocturna de grabado."
     if: "{name} hubiera tomado una clase de grabado"
   exchangeTrip:
-    en: "zmrake"
+    en: "4jduno"
     label: "Gana un viaje de intercambio"
-    line: "{name} gana una plaza gratis en un viaje de intercambio. ¡Qué suerte!"
+    line: "{name} gana una plaza gratis en un viaje de intercambio."
   experimentFails:
-    en: "1n97kmh"
+    en: "1sa817o"
     label: "El experimento falla"
-    line: "El experimento falla. Los resultados no se repiten."
+    line: "{name} repite el experimento y obtiene un resultado distinto."
   failsAnExam:
-    en: "1xi8su9"
+    en: "3yxbk1"
     label: "Reprueba un examen"
-    line: "{name} reprueba un examen importante. Duele."
+    line: "{name} reprueba un examen importante, y le duele."
   failsCareExam:
     en: "n7mpdx"
     label: "No aprueba por poco"
-    line: "Llegan los resultados del examen: faltan unos pocos puntos."
+    line: "Le faltan unos pocos puntos para aprobar el examen."
   failsDrivingTest:
     en: "19z3vhf"
     label: "No aprueba el examen"
     line: "{name} no aprueba el examen de manejo."
   failsTradeTest:
-    en: "1mvl7je"
-    label: "Casi lo logra"
+    en: "11m9wm5"
+    label: "Reprueba por poco"
     line: "{name} no alcanza el puntaje para aprobar el examen."
   fairSecondPlace:
     en: "1xlhqx1"
     label: "Queda en segundo lugar"
     line: "{name} presenta el nuevo diseño en una feria y queda en segundo lugar."
   fallsOutWithFriend:
-    en: "1vjta3b"
-    label: "Tiene una gran pelea"
-    line: "{name} se pelea con su mejor amigo durante todo un año."
+    en: "1wergee"
+    label: "Discute con un amigo"
+    line: "{name} discute con su mejor amigo, y dejan de hablarse durante un año."
   familyFixesThings:
     en: "1xg3fyu"
     label: "Arregla cosas en casa"
@@ -757,18 +757,18 @@ nodes:
     line: "{name} se une a otros cultivadores que comparten semillas, herramientas y consejos."
     if: "{name} se hubiera unido a otros cultivadores"
   farmerOffersLand:
-    en: "130yzsw"
+    en: "1kdnmjk"
     label: "Le prestan un campo"
-    line: "Un vecino le ofrece un campo para usar. ¡Qué suerte!"
+    line: "Por suerte, un vecino le ofrece un campo para usar."
   fillsArtPortfolio:
-    en: "ahu8pq"
-    label: "Llena un portafolio"
+    en: "31dzr3"
+    label: "Llena una carpeta grande"
     line: "{name} llena una carpeta grande con dibujos y diseños."
-    if: "{name} hubiera llenado un portafolio"
+    if: "{name} hubiera llenado una carpeta grande de dibujos"
   filmFestival:
-    en: "1om0yq"
+    en: "1hwqqcs"
     label: "Su película va a un festival"
-    line: "Un pequeño festival muestra su película. ¡Qué suerte!"
+    line: "Por suerte, un pequeño festival muestra su película."
   filmsOnPhone:
     en: "14jrzf8"
     label: "Hace películas con el móvil"
@@ -780,9 +780,9 @@ nodes:
     line: "{name} encuentra un lugar más pequeño y barato para vivir."
     if: "{name} hubiera encontrado un lugar más barato para vivir"
   findsOldTools:
-    en: "1yduqu5"
+    en: "5pyumx"
     label: "Encuentra herramientas"
-    line: "{name} encuentra en el cobertizo una caja de herramientas viejas. ¡Suerte!"
+    line: "Por suerte, {name} encuentra en el cobertizo una caja de herramientas viejas."
   findsSmallerPlace:
     en: "34qvhv"
     label: "Encuentra un lugar propio"
@@ -798,10 +798,10 @@ nodes:
     label: "Llegan los primeros pedidos"
     line: "Cuatro vecinos {gender, select, she {la} other {lo}} contratan para las vacaciones de verano."
   firstSoloGig:
-    en: "1yjfzq9"
+    en: "1ojinpx"
     label: "Toca en un café"
     line: "{name} se apunta para tocar en solitario en un café del barrio."
-    if: "{name} se hubiera apuntado a tocar en solitario"
+    if: "{name} se hubiera apuntado a tocar en solitario en un café"
   fixesABike:
     en: "1rum2b6"
     label: "Arregla una bicicleta"
@@ -818,10 +818,10 @@ nodes:
     line: "{name} repara una computadora vieja del armario de la escuela."
     if: "{name} hubiera reparado una computadora vieja"
   fixesTheBug:
-    en: "nhhafm"
-    label: "Encuentra el error"
-    line: "{name} se queda hasta tarde y encuentra el error."
-    if: "{name} hubiera encontrado el error"
+    en: "lz7snu"
+    label: "Arregla el código"
+    line: "{name} se queda hasta tarde y arregla el código."
+    if: "{name} se hubiera quedado hasta tarde a arreglar el código"
   flatFallsThrough:
     en: "1xnnv96"
     label: "El apartamento se va"
@@ -840,9 +840,9 @@ nodes:
     line: "{name} elige el arte como materia principal."
     if: "{name} hubiera elegido el arte como materia principal"
   foodWriterPraises:
-    en: "1ygki0y"
+    en: "yoefu5"
     label: "Un crítico visita"
-    line: "Un crítico gastronómico visita el lugar y escribe palabras amables. ¡Qué suerte!"
+    line: "Por suerte, un crítico gastronómico visita el lugar y escribe palabras amables."
   footballClub:
     en: "1nr6r39"
     label: "Entra a un club de fútbol"
@@ -859,79 +859,79 @@ nodes:
     line: "{name} forma una banda nueva con amigos nuevos."
     if: "{name} hubiera formado una banda nueva"
   freelanceIllustrator:
-    en: "8npvff"
+    en: "1cxfrtb"
     label: "Dibuja para clientes"
     line: "{name} dibuja para clientes, un encargo tras otro."
     if: "{name} hubiera dibujado para clientes"
   freelanceWriting:
-    en: "1di36zd"
-    label: "Escribe por encargo"
+    en: "a3xfiu"
+    label: "Escribe para revistas"
     line: "{name} escribe artículos para varias revistas."
-    if: "{name} hubiera escrito como freelance"
+    if: "{name} hubiera escrito para revistas"
   freelancesCode:
-    en: "1ejeyzd"
-    label: "Programa para clientes"
-    line: "{name} programa para clientes pequeños, un trabajo a la vez."
-    if: "{name} hubiera programado para clientes"
+    en: "1k8r54o"
+    label: "Programa para empresas"
+    line: "{name} programa para pequeñas empresas, un trabajo a la vez."
+    if: "{name} hubiera programado para pequeñas empresas"
   friendBakeryJob:
-    en: "17ukz24"
-    label: "Trabajo en una panadería"
-    line: "Un viejo amigo le ofrece un trabajo en una panadería."
+    en: "hyds61"
+    label: "Trabaja en una panadería"
+    line: "Por suerte, un viejo amigo le ofrece un trabajo en una panadería."
   friendCoaches:
     en: "teie0i"
     label: "Un amigo {gender, select, she {la} other {lo}} ayuda"
     line: "Un amigo que canta en un coro {gender, select, she {la} other {lo}} ayuda a practicar."
     if: "{name} hubiera pedido ayuda a un amigo"
   friendForLife:
-    en: "sawkr3"
+    en: "14ffu7k"
     label: "Conoce a un gran amigo"
-    line: "{name} conoce a un amigo para toda la vida."
+    line: "Por suerte, {name} conoce a un amigo para toda la vida."
   friendGardenJob:
-    en: "1lrstui"
-    label: "Trabajo en un vivero"
-    line: "Un viejo amigo le ofrece un trabajo en un vivero."
+    en: "yvc9ux"
+    label: "Trabaja en un vivero"
+    line: "Por suerte, un viejo amigo le ofrece un trabajo en un vivero."
   friendInvites:
-    en: "n0xzk2"
+    en: "17468ob"
     label: "Un amigo le invita"
-    line: "Un amigo le invita a probar algo nuevo. ¡Suerte!"
+    line: "Por suerte, un amigo le propone probar algo nuevo."
   friendMusicShopJob:
-    en: "yads77"
-    label: "Trabajo en tienda de música"
-    line: "Un viejo amigo le ofrece un trabajo en una tienda de música."
+    en: "1nhx1hd"
+    label: "Vende instrumentos"
+    line: "Por suerte, un viejo amigo le ofrece un trabajo en una tienda de música."
   friendReadsApplications:
     en: "1vnf47v"
     label: "Un amigo las revisa"
     line: "Un amigo revisa sus solicitudes y sugiere cambios."
     if: "{name} hubiera pedido a un amigo que revisara sus solicitudes"
   friendStudioJob:
-    en: "1mcn72y"
+    en: "1qqrf1r"
     label: "Trabaja en un estudio"
-    line: "Un viejo amigo le ofrece un trabajo en un estudio de diseño."
+    line: "Por suerte, un viejo amigo le ofrece un trabajo en un estudio de diseño."
   friendWorkshopJob:
-    en: "125d5fk"
-    label: "Trabajo en un taller"
-    line: "Un viejo amigo le ofrece un trabajo en un taller."
+    en: "iv46se"
+    label: "Trabaja en un taller"
+    line: "Por suerte, un viejo amigo le ofrece un trabajo en un taller."
   fundBacksPlan:
-    en: "1izowz8"
-    label: "Un fondo apoya el plan"
-    line: "Un fondo local para nuevos negocios apoya el plan más pequeño."
+    en: "10d48gi"
+    label: "Un grupo local ayuda"
+    line: "Un grupo local que ayuda a los negocios nuevos paga el plan más pequeño."
   fundingEnds:
     en: "85378v"
     label: "Se acaba el dinero"
     line: "Se acaba el dinero y el grupo pierde su sala."
   gameGoesFar:
-    en: "1w6s8r9"
+    en: "13zce37"
     label: "Su juego se populariza"
-    line: "Unos amigos comparten su juego con otros amigos. ¡Suerte!"
+    line: "Por suerte, unos amigos comparten su juego con otros amigos."
   gentleDanceClass:
     en: "e04hkr"
     label: "Da una clase suave"
     line: "{name} da una clase de baile suave mientras sana su lesión."
     if: "{name} hubiera dado una clase de baile suave"
   getsArtSchoolPlace:
-    en: "1sj1h8e"
+    en: "9s2zz3"
     label: "Entra a la escuela de arte"
-    line: "Una escuela de arte le ofrece una plaza. ¡Qué suerte!"
+    line: "Por suerte, una escuela de arte le ofrece una plaza."
   getsHelpToStop:
     en: "1jd8nwc"
     label: "Pide ayuda para parar"
@@ -951,13 +951,13 @@ nodes:
     line: "{name} solicita entrar a un programa escolar especial."
     if: "{name} hubiera solicitado entrar a un programa especial"
   givenOldCamera:
-    en: "13n224u"
+    en: "5z60ji"
     label: "Recibe una cámara vieja"
-    line: "Su abuelo le regala su vieja cámara. ¡Qué suerte!"
+    line: "Su abuelo le regala su cámara vieja."
   givenOldPiano:
-    en: "hgv5tk"
+    en: "15apcg0"
     label: "Recibe un piano viejo"
-    line: "Un vecino que se muda le regala un piano viejo. ¡Qué suerte!"
+    line: "Un vecino que se muda le regala un piano viejo."
   givesMusicLessons:
     en: "x4zmt2"
     label: "Da clases de música"
@@ -969,15 +969,15 @@ nodes:
     line: "{name} vuelve a estudiar después de años de trabajo."
     if: "{name} hubiera vuelto a estudiar"
   goesOnTour:
-    en: "uox5i"
+    en: "1n5x18s"
     label: "Sale de gira mundial"
-    line: "{name} sale de gira por el mundo. Hay mucha gente cada noche."
+    line: "{name} sale de gira por el mundo y toca ante grandes multitudes."
     if: "{name} hubiera salido de gira por el mundo"
   goesSolo:
-    en: "1ddh20x"
-    label: "Toca en solitario"
+    en: "1f0tqxj"
+    label: "Toca {gender, select, she {sola} other {solo}} en escena"
     line: "{name} toca ahora {gender, select, she {sola} other {solo}}, con un taburete y un micrófono."
-    if: "{name} hubiera tocado en solitario"
+    if: "{name} hubiera empezado a tocar {gender, select, she {sola} other {solo}}"
   goesToUniversity:
     en: "1gf1qma"
     label: "Va a la universidad"
@@ -1014,7 +1014,7 @@ nodes:
     line: "{name} cambia a verduras de hoja que aguantan las noches frías."
     if: "{name} hubiera cambiado a verduras resistentes"
   guitar:
-    en: "40jq1j"
+    en: "1i8o1zw"
     label: "Elige la guitarra"
     line: "{name} elige la guitarra."
     if: "{name} hubiera elegido la guitarra"
@@ -1023,9 +1023,9 @@ nodes:
     label: "Se lastima la mano"
     line: "{name} se lastima la mano y no puede tocar durante un año."
   happyCustomer:
-    en: "1hrseej"
+    en: "1ab8kjt"
     label: "Se corre la voz"
-    line: "Un cliente contento le cuenta a todos sobre el lugar. ¡Suerte!"
+    line: "Por suerte, un cliente contento le cuenta a todos sobre el lugar."
   helpBake:
     en: "1m39vhe"
     label: "Ayuda a hornear"
@@ -1085,21 +1085,21 @@ nodes:
     label: "El hospital cierra"
     line: "El hospital cierra, y su planta desaparece con él."
   hostsPopUp:
-    en: "15c1b0a"
-    label: "Organiza una cena pop-up"
-    line: "{name} prepara un primer menú para una cena pop-up de una sola noche."
-    if: "{name} hubiera organizado una cena pop-up"
+    en: "13r88ms"
+    label: "Cocina para invitados"
+    line: "{name} cocina una gran cena para invitados una noche."
+    if: "{name} hubiera cocinado una gran cena para invitados"
   illForMonths:
     en: "nhqr14"
     label: "Pasa meses {gender, select, she {enferma} other {enfermo}}"
     line: "{name} se enferma y tarda meses en recuperarse."
   interpreter:
-    en: "3a3x3q"
+    en: "183e5vx"
     label: "Se hace intérprete"
     line: "{name} trabaja como intérprete y ayuda a las personas a entenderse."
     if: "{name} hubiera trabajado como intérprete"
   jamsWithFriends:
-    en: "1b5whmp"
+    en: "wf2afs"
     label: "Toca con amigos"
     line: "{name} toca música con amigos después de la escuela."
     if: "{name} hubiera tocado música con amigos"
@@ -1158,10 +1158,10 @@ nodes:
     line: "{name} se une a un pequeño show local que necesita elenco."
     if: "{name} se hubiera unido a un show local"
   joinsMakerspace:
-    en: "aq0s1q"
+    en: "1f9jng3"
     label: "Se une a un taller"
     line: "{name} se une a un taller donde los vecinos comparten herramientas."
-    if: "{name} se hubiera unido a un taller compartido"
+    if: "{name} se hubiera unido a un taller de herramientas"
   joinsMedicalResearch:
     en: "1d57nac"
     label: "Investiga en medicina"
@@ -1193,9 +1193,9 @@ nodes:
     line: "{name} se une a un espectáculo que viaja de pueblo en pueblo."
     if: "{name} se hubiera unido a una gira"
   joinsTownCouncil:
-    en: "832qrs"
+    en: "1dylgbh"
     label: "Entra al concejo municipal"
-    line: "{name} gana un puesto en el concejo municipal."
+    line: "{name} es {gender, select, she {elegida} other {elegido}} para el concejo municipal."
     if: "{name} hubiera entrado al concejo municipal"
   joinsWeekendLeague:
     en: "1d2l39w"
@@ -1218,7 +1218,7 @@ nodes:
     line: "{name} cría abejas y aprende cómo viven."
     if: "{name} hubiera criado abejas"
   keepsEarlyNights:
-    en: "oaah5z"
+    en: "176qkds"
     label: "Se acuesta temprano"
     line: "{name} se acuesta temprano, incluso de gira."
     if: "{name} se hubiera acostado temprano"
@@ -1238,13 +1238,13 @@ nodes:
     line: "{name} sigue escribiendo, página tras página."
     if: "{name} hubiera seguido escribiendo"
   kindLibrarian:
-    en: "rb3tcf"
+    en: "f6djyt"
     label: "Una bibliotecaria ayuda"
-    line: "Una bibliotecaria le guarda los mejores libros nuevos. ¡Qué suerte!"
+    line: "Por suerte, una bibliotecaria le guarda los mejores libros nuevos."
   kitPaidByShop:
-    en: "11noubt"
+    en: "wcp8tw"
     label: "Una tienda paga el uniforme"
-    line: "Una tienda del barrio paga el uniforme nuevo de todo el equipo."
+    line: "Por suerte, una tienda del barrio paga el uniforme nuevo de todo el equipo."
   kitchenExperiments:
     en: "1uc4kus"
     label: "Hace experimentos"
@@ -1255,44 +1255,44 @@ nodes:
     label: "Se lastima la rodilla"
     line: "Una lesión grave de rodilla {gender, select, she {la} other {lo}} detiene por meses."
   labSaysNo:
-    en: "7ohycp"
+    en: "1endrp0"
     label: "El laboratorio dice que no"
-    line: "El laboratorio responde: este año no hay lugares."
+    line: "El laboratorio responde que este año no tiene lugares."
   labTechnician:
     en: "1rlr6s0"
     label: "Trabaja en un laboratorio"
     line: "{name} consigue un empleo en un laboratorio, haciendo pruebas."
     if: "{name} hubiera conseguido un empleo en un laboratorio"
   labelDropsHim:
-    en: "14cff2i"
-    label: "Pierde el contrato"
-    line: "La discográfica pone fin a su contrato."
+    en: "19yx1lf"
+    label: "Termina el contrato"
+    line: "La discográfica deja de trabajar con {gender, select, she {ella} other {él}}."
   landscapeGardener:
     en: "16v00lw"
     label: "Trabaja como {gender, select, she {jardinera} other {jardinero}}"
     line: "{name} trabaja como {gender, select, she {jardinera} other {jardinero}} y hace florecer los jardines de otras personas."
     if: "{name} hubiera trabajado como {gender, select, she {jardinera} other {jardinero}}"
   lastMinutePlace:
-    en: "1hx3ge4"
+    en: "1ovtzsx"
     label: "Se abre una plaza"
-    line: "Un curso de enfermería le ofrece una plaza de última hora. ¡Suerte!"
+    line: "Por suerte, un curso de enfermería tiene una plaza libre, y {gender, select, she {ella} other {él}} la consigue."
   lateFrost:
     en: "1jdogkx"
     label: "Una helada tardía"
     line: "Una fuerte helada a finales de primavera ennegrece las plantas jóvenes."
   launchDayBug:
-    en: "1n7lv6h"
-    label: "El lanzamiento sale mal"
-    line: "Un error hace fallar su proyecto el día del lanzamiento."
+    en: "te1u4h"
+    label: "El sitio web falla"
+    line: "Su nuevo sitio web falla el día en que lo muestra a todos."
   launchesProject:
-    en: "ybfno2"
-    label: "Lanza un proyecto"
-    line: "{name} lanza un proyecto para que otras personas lo usen."
-    if: "{name} hubiera lanzado un proyecto para otros"
+    en: "1hs3adb"
+    label: "Comparte un proyecto"
+    line: "{name} comparte un proyecto para que otras personas lo usen."
+    if: "{name} hubiera compartido un proyecto con otros"
   leadsATeam:
-    en: "16lj6t0"
+    en: "n12way"
     label: "Dirige un equipo"
-    line: "{name} da un paso adelante y dirige un equipo en el trabajo."
+    line: "{name} pasa a dirigir un equipo en el trabajo."
     if: "{name} hubiera dirigido un equipo"
   leadsScoutGroup:
     en: "o3mag4"
@@ -1330,9 +1330,9 @@ nodes:
     line: "{name} se inscribe en una clase de algo totalmente nuevo."
     if: "{name} hubiera aprendido algo nuevo"
   learnsToBudget:
-    en: "4dgt9j"
+    en: "1bgr2c9"
     label: "Aprende a presupuestar"
-    line: "{name} aprende a planear en qué se gasta su dinero."
+    line: "{name} aprende a planear cómo gasta su dinero."
     if: "{name} hubiera aprendido a hacer un presupuesto"
   learnsToCode:
     en: "sc7wds"
@@ -1389,17 +1389,17 @@ nodes:
     line: "Su abuelo {gender, select, she {la} other {lo}} lleva todas las semanas a la biblioteca."
     if: "su familia {gender, select, she {la} other {lo}} hubiera llevado todas las semanas a la biblioteca"
   loanRefused:
-    en: "bqklax"
+    en: "hlg3y7"
     label: "El banco dice que no"
-    line: "El banco dice que no y explica que las cuentas no cuadran."
+    line: "El banco dice que no porque el plan cuesta más de lo que gana."
   loavesStayFlat:
     en: "1afuk5z"
     label: "Los panes quedan planos"
     line: "Los primeros panes salen planos y duros como piedras."
   localPrize:
-    en: "98mohl"
+    en: "14qdhuo"
     label: "Gana un premio"
-    line: "{name} gana un premio para pequeños negocios, con un poco de dinero. ¡Suerte!"
+    line: "Por suerte, {name} gana un premio para pequeños negocios y algo de dinero."
   localTheatreGroup:
     en: "24ltzc"
     label: "Se une a un grupo de teatro"
@@ -1439,10 +1439,10 @@ nodes:
     line: "{name} crea un juego sencillo para que jueguen sus amigos."
     if: "{name} hubiera creado un juego sencillo"
   makesGameTrailers:
-    en: "11ts0ks"
-    label: "Hace tráileres de juegos"
-    line: "{name} edita tráileres emocionantes para juegos nuevos."
-    if: "{name} hubiera editado tráileres de juegos"
+    en: "1emqkp6"
+    label: "Hace videos de juegos"
+    line: "{name} hace cortometrajes que muestran juegos nuevos."
+    if: "{name} hubiera hecho videos de juegos"
   makesMusicOnComputer:
     en: "1wytt95"
     label: "Hace música en laptop"
@@ -1459,9 +1459,9 @@ nodes:
     line: "{name} hace un cortometraje con amigos."
     if: "{name} hubiera hecho un cortometraje"
   makesSmallerPlan:
-    en: "wkue8w"
+    en: "t7442n"
     label: "Hace un plan más pequeño"
-    line: "{name} elabora un plan más pequeño con un asesor financiero."
+    line: "{name} hace un plan más pequeño con un asesor de dinero."
     if: "{name} hubiera hecho un plan más pequeño con un asesor"
   marketRegulars:
     en: "26bufm"
@@ -1473,9 +1473,9 @@ nodes:
     line: "{name} vende en mercados, con una furgoneta y una mesa."
     if: "{name} hubiera vendido en mercados"
   mathsClub:
-    en: "1t0is3d"
+    en: "i27hdq"
     label: "Entra al club de mates"
-    line: "{name} entra a un club para resolver problemas en equipo."
+    line: "{name} entra a un club y resuelve acertijos con otros niños."
     if: "{name} hubiera entrado al club de matemáticas"
   mathsTournament:
     en: "iou98p"
@@ -1498,14 +1498,14 @@ nodes:
     line: "{name} aprende mecánica, con aceite hasta los codos."
     if: "{name} hubiera aprendido mecánica"
   mentorAppears:
-    en: "afhxmj"
-    label: "Aparece un mentor"
-    line: "Un compañero de trabajo amable le echa una mano y le enseña."
+    en: "gw7xem"
+    label: "Recibe ayuda en el trabajo"
+    line: "Por suerte, una persona amable del trabajo le enseña cómo se hacen las cosas."
   mentorsSomeone:
-    en: "1ohh8uk"
+    en: "ii3uu3"
     label: "Guía a quien empieza"
-    line: "{name} ayuda a alguien nuevo en el trabajo a orientarse."
-    if: "{name} hubiera ayudado a alguien nuevo a orientarse"
+    line: "{name} ayuda a alguien nuevo en el trabajo a aprender el oficio."
+    if: "{name} hubiera ayudado a alguien nuevo en el trabajo"
   midwife:
     en: "7btn72"
     label: "Se forma como {gender, select, she {matrona} other {matrón}}"
@@ -1561,9 +1561,9 @@ nodes:
     line: "{name} pasa a una planta con un equipo más pequeño."
     if: "{name} hubiera cambiado de planta"
   movesToSchoolHall:
-    en: "o1zcwo"
+    en: "1dy5sck"
     label: "Usa el salón escolar"
-    line: "{name} lleva al grupo al salón de la escuela, sin pagar alquiler."
+    line: "{name} lleva al grupo al salón de la escuela sin pagar nada."
     if: "{name} hubiera llevado al grupo al salón de la escuela"
   movesUpAnAgeGroup:
     en: "1mjhh4e"
@@ -1571,9 +1571,9 @@ nodes:
     line: "{name} sube de categoría para entrenar con un grupo de mayor edad."
     if: "{name} hubiera subido de categoría"
   newIdea:
-    en: "1ijfeba"
+    en: "j17na1"
     label: "Prueba con algo más pequeño"
-    line: "{name} lo intenta de nuevo con un negocio más pequeño, basado en lo que piden los clientes."
+    line: "{name} empieza un negocio más pequeño y hace los trabajos que piden los clientes."
     if: "{name} hubiera empezado con algo más pequeño"
   newPlayerArrives:
     en: "11dfwu4"
@@ -1609,19 +1609,19 @@ nodes:
     label: "No está en la lista"
     line: "El entrenador lee la lista, y {name} no está en ella."
   nurseMentor:
-    en: "fo8xa4"
+    en: "oc83wt"
     label: "Una enfermera le guía"
-    line: "Una enfermera con experiencia {gender, select, she {la} other {lo}} toma bajo su ala. ¡Suerte!"
+    line: "Por suerte, una enfermera con experiencia dedica tiempo a enseñarle el oficio."
   nurseTraining:
     en: "1o7ft04"
     label: "Se forma como {gender, select, she {enfermera} other {enfermero}}"
     line: "{name} estudia enfermería y aprende a mantener la calma."
     if: "{name} hubiera estudiado enfermería"
   nurseryWithFriends:
-    en: "w0jz51"
+    en: "1ayzvut"
     label: "Va al jardín de infancia"
     line: "{name} va al jardín de infancia y juega con otros niños."
-    if: "su familia hubiera elegido el jardín de infancia"
+    if: "su familia {gender, select, she {la} other {lo}} hubiera enviado al jardín de infancia"
   offeredTestingJob:
     en: "1ng0xk7"
     label: "Recibe oferta de pruebas"
@@ -1632,9 +1632,9 @@ nodes:
     line: "{name} ofrece ayuda gratis con las tareas en la biblioteca los miércoles."
     if: "{name} hubiera ofrecido ayuda con las tareas"
   offersRepairs:
-    en: "1w883s"
-    label: "Ofrece reparaciones"
-    line: "{name} pone un letrero: pequeñas reparaciones mientras la gente espera."
+    en: "155bqiz"
+    label: "Ofrece arreglos rápidos"
+    line: "{name} pone un letrero que ofrece pequeñas reparaciones mientras la gente espera."
     if: "{name} hubiera ofrecido reparaciones"
   offersSomethingNew:
     en: "1eky5x1"
@@ -1657,9 +1657,9 @@ nodes:
     line: "Su tía instala una computadora vieja en el pasillo."
     if: "su familia hubiera puesto una computadora vieja en casa"
   oldFriendJob:
-    en: "12k891"
+    en: "1vpr7dv"
     label: "Un amigo ofrece trabajo"
-    line: "Un viejo amigo le ofrece un trabajo."
+    line: "Por suerte, un viejo amigo le ofrece un trabajo."
   openBakery:
     en: "6oddd"
     label: "Abre una panadería"
@@ -1704,12 +1704,12 @@ nodes:
     line: "{name} abre un negocio propio."
     if: "{name} hubiera abierto un negocio"
   ownSong:
-    en: "14vcu7b"
+    en: "5c5mhh"
     label: "Escribe una canción"
     line: "La banda escribe su propia canción."
-    if: "la banda de {name} hubiera escrito su propia canción"
+    if: "su banda hubiera escrito su propia canción"
   paintsAMural:
-    en: "13q04ke"
+    en: "iwbwxx"
     label: "Pinta un mural"
     line: "{name} pinta un mural en una larga pared gris."
     if: "{name} hubiera pintado un mural"
@@ -1743,31 +1743,31 @@ nodes:
     line: "{name} se forma como {gender, select, she {paramédica} other {paramédico}} y viaja en la ambulancia."
     if: "{name} se hubiera formado como {gender, select, she {paramédica} other {paramédico}}"
   parentIll:
-    en: "16orei5"
+    en: "1mcinrr"
     label: "Su papá se enferma"
-    line: "Su papá pasa mucho tiempo muy enfermo."
+    line: "Su papá se enferma y sigue enfermo mucho tiempo."
   parkRanger:
     en: "50uor"
     label: "Trabaja de guardaparques"
     line: "{name} trabaja como guardaparques y ayuda a los visitantes y a la fauna."
     if: "{name} hubiera trabajado como guardaparques"
   partInAShow:
-    en: "136s8iz"
+    en: "uovci9"
     label: "Consigue un papel"
-    line: "Un teatro le ofrece un papel en una obra. ¡Qué suerte!"
+    line: "Por suerte, un teatro le ofrece un papel en una obra."
   partTimeJob:
     en: "oyqq6c"
     label: "Trabaja los sábados"
     line: "{name} consigue un trabajo los sábados en el supermercado."
     if: "{name} hubiera conseguido un trabajo de sábados"
   partialAnswer:
-    en: "f0vz9y"
+    en: "i7wuvl"
     label: "Una respuesta parcial"
-    line: "Una parte de la respuesta está clara. El resto sigue abierto."
+    line: "La nueva prueba responde una parte de su pregunta."
   passesCareExam:
-    en: "1xkz1v1"
+    en: "1pzbxuy"
     label: "Aprueba el examen"
-    line: "{name} repite el examen, y los resultados dicen: aprobado."
+    line: "{name} repite el examen y aprueba."
   passesDrivingTest:
     en: "1jrmtqe"
     label: "Aprueba el examen"
@@ -1833,10 +1833,10 @@ nodes:
     line: "{name} siembra habas y guisantes unas semanas antes, en cuanto el tiempo se templa."
     if: "{name} hubiera sembrado temprano"
   plantsHardierCrops:
-    en: "xc9z4d"
+    en: "xettsq"
     label: "Planta para suelo húmedo"
     line: "{name} planta cultivos que aguantan mejor el suelo encharcado."
-    if: "{name} hubiera plantado cultivos más resistentes"
+    if: "{name} hubiera plantado cultivos para suelo húmedo"
   plantsTougherPlants:
     en: "cx9tg5"
     label: "Planta para suelo seco"
@@ -1853,7 +1853,7 @@ nodes:
     line: "{name} planta una huerta con los alumnos."
     if: "{name} hubiera plantado una huerta con los alumnos"
   playGigs:
-    en: "lvzsf5"
+    en: "gbjdfu"
     label: "Toca los fines de semana"
     line: "{name} da conciertos los fines de semana."
     if: "{name} hubiera dado conciertos los fines de semana"
@@ -1878,9 +1878,9 @@ nodes:
     line: "{name} toca en la banda de un espectáculo."
     if: "{name} hubiera tocado en una banda de espectáculos"
   playsOutWide:
-    en: "h1cx19"
+    en: "ktztyn"
     label: "Juega por la banda"
-    line: "{name} juega por la banda, corriendo de un lado a otro."
+    line: "{name} juega cerca del borde de la cancha, corriendo de un lado a otro."
     if: "{name} hubiera jugado por la banda"
   playsOutside:
     en: "1w7q0of"
@@ -1917,10 +1917,10 @@ nodes:
     line: "{name} practica las tablas de multiplicar en el autobús."
     if: "{name} hubiera practicado las tablas de multiplicar"
   practisesWithPro:
-    en: "1m0ex92"
-    label: "Practica con un profesional"
-    line: "{name} practica los fines de semana con un profesional con experiencia."
-    if: "{name} hubiera practicado con un profesional experimentado"
+    en: "sevkm9"
+    label: "Aprende de un experto"
+    line: "{name} practica los fines de semana con una persona experta en el oficio."
+    if: "{name} hubiera practicado con una persona experta"
   practisesWithTeacher:
     en: "1cgootk"
     label: "Practica cada semana"
@@ -1932,9 +1932,9 @@ nodes:
     line: "{name} programa robots que trabajan en una fábrica."
     if: "{name} hubiera programado robots de fábrica"
   prototypeBreaks:
-    en: "1mdu2qy"
-    label: "El prototipo se rompe"
-    line: "Su prototipo se parte por la mitad en la primera gran prueba."
+    en: "sua2o6"
+    label: "El modelo se rompe"
+    line: "Su modelo se parte por la mitad en la primera gran prueba."
   publishersSayNo:
     en: "qkkn9p"
     label: "Las editoriales dicen que no"
@@ -1955,9 +1955,9 @@ nodes:
     line: "{name} deja un club para tener tiempo para sus amigos y la tarea."
     if: "{name} hubiera dejado un club"
   radioPlay:
-    en: "1h19t9f"
+    en: "1nu5qw9"
     label: "Un DJ pone la canción"
-    line: "Un DJ de radio pone su canción. ¡Qué suerte!"
+    line: "Por suerte, un DJ de radio pone su canción."
   rainKeepsGuests:
     en: "hipbui"
     label: "La lluvia vacía la sala"
@@ -1988,7 +1988,7 @@ nodes:
     line: "{name} reconstruye su robot desde la estructura."
     if: "{name} hubiera reconstruido el robot"
   recordDeal:
-    en: "fcb51o"
+    en: "15dxwqa"
     label: "Firma con una discográfica"
     line: "Una discográfica le ofrece un contrato."
   recordsAlbum:
@@ -2016,9 +2016,9 @@ nodes:
     label: "Un familiar ayuda"
     line: "Un familiar le presta dinero para empezar de nuevo."
   rentDoubles:
-    en: "10nogml"
+    en: "25epg"
     label: "El alquiler se duplica"
-    line: "El alquiler se duplica y las cuentas dejan de salir."
+    line: "El alquiler se duplica, y la tienda no puede pagarlo."
   rentsAllotment:
     en: "e6u41m"
     label: "Alquila un huerto"
@@ -2054,14 +2054,14 @@ nodes:
     line: "{name} cuenta las noticias en un periódico local."
     if: "{name} hubiera trabajado en un periódico local"
   reserveSpot:
-    en: "e3kfnj"
-    label: "Entra como reserva"
-    line: "Se libera un lugar en el equipo de reservas, y {name} lo toma."
+    en: "1mejm3u"
+    label: "Entra al segundo equipo"
+    line: "Se libera un lugar en el segundo equipo del club, y {name} lo toma."
   restoresFurniture:
-    en: "1xvqaf4"
-    label: "Restaura muebles viejos"
-    line: "{name} devuelve la vida a sillas y mesas viejas."
-    if: "{name} hubiera restaurado muebles viejos"
+    en: "1tx3qlm"
+    label: "Arregla muebles viejos"
+    line: "{name} arregla sillas y mesas viejas para que parezcan nuevas."
+    if: "{name} hubiera arreglado muebles viejos"
   restsAndRebuilds:
     en: "1i77175"
     label: "Se recupera poco a poco"
@@ -2097,18 +2097,18 @@ nodes:
     line: "{name} participa en un concurso de robots."
     if: "{name} hubiera participado en un concurso de robots"
   robotPrize:
-    en: "vsh2yg"
+    en: "1g1l798"
     label: "El robot gana un premio"
-    line: "Su robot gana un premio. ¡Suerte y manos a la obra!"
+    line: "Por suerte, su robot gana un premio en una feria de ciencias."
   roboticsClub:
     en: "otb53k"
     label: "Entra al club de robótica"
     line: "{name} se une al club de robótica después de la escuela."
     if: "{name} se hubiera unido al club de robótica"
   roomOffered:
-    en: "pt2sot"
+    en: "1u9a3s8"
     label: "Consigue una sala gratis"
-    line: "Una tienda ofrece al grupo una sala gratis. ¡Suerte!"
+    line: "Una tienda ofrece al grupo una sala gratis."
   runsCookingClub:
     en: "35ub9f"
     label: "Crea un club de cocina"
@@ -2164,9 +2164,9 @@ nodes:
     line: "{name} pide perdón primero y propone empezar de nuevo."
     if: "{name} hubiera pedido perdón primero"
   scholarship:
-    en: "1iw7pg4"
+    en: "n4lkby"
     label: "Gana una beca"
-    line: "{name} gana una beca que paga sus estudios."
+    line: "Por suerte, {name} gana una beca que paga sus estudios."
   schoolBand:
     en: "1s671tw"
     label: "Entra a la banda escolar"
@@ -2188,23 +2188,23 @@ nodes:
     line: "{name} entra al equipo de la escuela y nunca falta a un entrenamiento."
     if: "{name} hubiera entrado al equipo de la escuela"
   scienceSubjects:
-    en: "7k3i6l"
+    en: "1ghrz8"
     label: "Elige las ciencias"
     line: "{name} elige las materias de ciencias."
     if: "{name} hubiera elegido las materias de ciencias"
   scoutWatches:
-    en: "x6zjfl"
+    en: "1xdlspd"
     label: "{gender, select, she {La} other {Lo}} descubre un ojeador"
-    line: "Un ojeador va a un partido y se fija en {gender, select, she {ella} other {él}}. ¡Suerte!"
+    line: "Por suerte, un cazatalentos va a un partido y se fija en {gender, select, she {ella} other {él}}."
   secondLanguage:
     en: "bu2w2"
     label: "Empieza otro idioma"
     line: "{name} empieza a aprender otro idioma."
     if: "{name} hubiera empezado un segundo idioma"
   secondLaunchWorks:
-    en: "1luxky"
+    en: "1yj22o3"
     label: "El segundo intento sale bien"
-    line: "El segundo lanzamiento sale bien y la gente empieza a usar el proyecto."
+    line: "El segundo intento sale bien, y la gente empieza a usarlo."
   seedlingsFade:
     en: "3keuyi"
     label: "Las plántulas se doblan"
@@ -2250,9 +2250,9 @@ nodes:
     line: "{name} mete sus páginas terminadas en un montón de sobres y las manda por correo."
     if: "{name} hubiera enviado su libro a editoriales"
   seniorReviews:
-    en: "j60qow"
+    en: "usp5c"
     label: "Recibe ayuda experta"
-    line: "Un programador con experiencia lee su código y le enseña. ¡Suerte!"
+    line: "Por suerte, un programador con experiencia lee su código y le enseña."
   setsUpStall:
     en: "slm0yc"
     label: "Instala un puesto"
@@ -2282,9 +2282,9 @@ nodes:
     label: "El show cierra pronto"
     line: "Su espectáculo cierra antes de tiempo y el elenco se va a casa."
   showRunsSmoothly:
-    en: "c2antw"
+    en: "ca0rc6"
     label: "La función sale bien"
-    line: "A la noche siguiente, todo el espectáculo sale bien y la sala aplaude."
+    line: "A la noche siguiente, toda la función sale bien, y el público aplaude."
   singsAtHome:
     en: "16qd2sb"
     label: "Canta en casa"
@@ -2325,8 +2325,8 @@ nodes:
     label: "El negocio crece"
     line: "Los clientes traen a sus amigos y el negocio pequeño crece."
   smallPressYes:
-    en: "14pj8xd"
-    label: "Una editorial pequeña acepta"
+    en: "1z4clr"
+    label: "El libro se imprime"
     line: "Una editorial pequeña dice que sí e imprime unos cientos de ejemplares."
   smallShowOpens:
     en: "1iezndj"
@@ -2387,9 +2387,9 @@ nodes:
     line: "{name} empieza el trabajo otra vez desde cero."
     if: "{name} hubiera empezado el trabajo de nuevo"
   startsApprenticeship:
-    en: "25vc27"
+    en: "g19igw"
     label: "Empieza como aprendiz"
-    line: "{name} entra como aprendiz y aprende el oficio trabajando."
+    line: "{name} entra como aprendiz y aprende trabajando con personas expertas."
     if: "{name} hubiera empezado un aprendizaje"
   startsBand:
     en: "173kkb6"
@@ -2517,9 +2517,9 @@ nodes:
     line: "{name} estudia informática en la universidad."
     if: "{name} hubiera estudiado informática"
   studiesDesign:
-    en: "zsh738"
+    en: "1kxn9yu"
     label: "Estudia diseño"
-    line: "{name} estudia diseño gráfico: carteles, letreros y portadas de libros."
+    line: "{name} estudia cómo diseñar carteles, letreros y portadas de libros."
     if: "{name} hubiera estudiado diseño"
   studiesEnvironment:
     en: "a7g7ju"
@@ -2532,7 +2532,7 @@ nodes:
     line: "{name} estudia cómo se hacen las películas."
     if: "{name} hubiera estudiado cine"
   studiesFoodScience:
-    en: "1ymeqci"
+    en: "1bxcj6v"
     label: "Estudia los alimentos"
     line: "{name} estudia por qué sube el pan y se corta la leche."
     if: "{name} hubiera estudiado ciencia de los alimentos"
@@ -2571,9 +2571,9 @@ nodes:
     label: "El estudio cierra"
     line: "El estudio de juegos cierra y {name} pierde su trabajo."
   studyEngineering:
-    en: "1clzvq0"
+    en: "1g9km4u"
     label: "Estudia ingeniería"
-    line: "{name} estudia ingeniería: cómo hacer cosas que funcionan y duran."
+    line: "{name} estudia cómo construir cosas que funcionan y duran."
     if: "{name} hubiera estudiado ingeniería"
   studyLanguages:
     en: "nx0912"
@@ -2645,9 +2645,9 @@ nodes:
     line: "{name} asume un gran proyecto en el trabajo."
     if: "{name} hubiera asumido un gran proyecto"
   takesBreakFromSport:
-    en: "w4p799"
+    en: "d1w4te"
     label: "Hace una pausa"
-    line: "{name} hace una pausa y mira qué más hay por ahí."
+    line: "{name} hace una pausa y prueba otras cosas."
     if: "{name} hubiera hecho una pausa en el deporte"
   takesCollegePlace:
     en: "1m9cqd0"
@@ -2660,8 +2660,8 @@ nodes:
     line: "{name} toma un curso nocturno de edición."
     if: "{name} hubiera tomado un curso de edición"
   takesHumanities:
-    en: "1iiv5b"
-    label: "Elige humanidades"
+    en: "k7xfiv"
+    label: "Elige historia y más"
     line: "{name} elige historia, geografía e idiomas."
     if: "{name} hubiera elegido historia, geografía e idiomas"
   takesJobNearFamily:
@@ -2685,9 +2685,9 @@ nodes:
     line: "{name} toma un trabajo preparando experimentos en una escuela."
     if: "{name} hubiera tomado un trabajo de ciencias en una escuela"
   takesSecondJob:
-    en: "1mlshf7"
+    en: "q3tpye"
     label: "Toma un segundo trabajo"
-    line: "{name} toma un segundo trabajo por las noches, además del primero."
+    line: "{name} toma un segundo trabajo por las noches."
     if: "{name} hubiera tomado un segundo trabajo"
   takesShortCourse:
     en: "1jj4r7i"
@@ -2720,17 +2720,17 @@ nodes:
     line: "{name} lo habla con compañeros que lo entienden."
     if: "{name} lo hubiera hablado con compañeros"
   teacherNotices:
-    en: "17nieo9"
+    en: "1tmh9vv"
     label: "Un maestro ve su talento"
-    line: "Un maestro se da cuenta de lo que {name} hace bien."
+    line: "Por suerte, un maestro se da cuenta de lo que {name} hace bien."
   teacherSpotsTalent:
-    en: "1knqai2"
+    en: "14lzycg"
     label: "Una maestra le presta libros"
-    line: "Una maestra se fija en su trabajo y le presta más libros. ¡Suerte!"
+    line: "Una maestra se fija en su trabajo y le presta más libros."
   teachesACraft:
-    en: "17tbf69"
+    en: "1rahtmu"
     label: "Enseña su oficio"
-    line: "{name} enseña a otros un oficio aprendido durante muchos años."
+    line: "{name} enseña a otras personas algo que practica desde hace años."
     if: "{name} hubiera enseñado su oficio a otros"
   teachesALanguage:
     en: "salopf"
@@ -2798,9 +2798,9 @@ nodes:
     line: "{name} cuida a los jugadores de un club cuando se lesionan."
     if: "{name} hubiera cuidado a los jugadores de un club"
   teamWinsLeague:
-    en: "1p1nzsx"
+    en: "v67pp9"
     label: "Gana la liga"
-    line: "Su equipo gana la liga en la última jornada. ¡La suerte ayuda!"
+    line: "Por suerte, su equipo gana la liga en la última jornada."
   teamsUpWithPartner:
     en: "pxcd0j"
     label: "Se asocia con alguien"
@@ -2812,9 +2812,9 @@ nodes:
     line: "Sus abuelos {gender, select, she {la} other {lo}} cuidan casi todas las tardes."
     if: "sus abuelos {gender, select, she {la} other {lo}} hubieran cuidado casi todos los días"
   townBacksCampaign:
-    en: "1t5kvsm"
+    en: "o5doxz"
     label: "Los vecinos se suman"
-    line: "Cientos de vecinos firman su petición. ¡Qué suerte!"
+    line: "Por suerte, cientos de vecinos firman su carta al ayuntamiento."
   tradeCourse:
     en: "1df45ml"
     label: "Hace un curso de oficio"
@@ -2931,9 +2931,9 @@ nodes:
     line: "{name} intenta hacer pan de masa madre desde cero."
     if: "{name} hubiera probado el pan de masa madre"
   tryGymnastics:
-    en: "z5zktn"
+    en: "2s6278"
     label: "Prueba la gimnasia"
-    line: "{name} prueba la gimnasia. El gimnasio se llena de volteretas."
+    line: "{name} prueba la gimnasia y aprende a hacer volteretas."
     if: "{name} hubiera probado la gimnasia"
   twoLanguagesHome:
     en: "193o88o"
@@ -2974,9 +2974,9 @@ nodes:
     label: "Entra en lista de espera"
     line: "El curso {gender, select, she {la} other {lo}} pone en una lista de espera para las plazas."
   wardShortStaffed:
-    en: "7m6sej"
+    en: "ckccng"
     label: "Falta personal"
-    line: "Hay muy poco personal, y los días se hacen largos."
+    line: "Hay muy poco personal de enfermería, y los días se hacen largos."
   watchesChildPerform:
     en: "3zrzat"
     label: "Aplaude a su hijo"
@@ -2992,25 +2992,25 @@ nodes:
     line: "{name} da la bienvenida a los vecinos nuevos con un plato de comida."
     if: "{name} hubiera recibido a los vecinos nuevos"
   wildlifeSpotted:
-    en: "11lg0ex"
+    en: "16aot3"
     label: "Llega un ave rara"
-    line: "Un ave rara anida en el huerto de la escuela. ¡Qué suerte!"
+    line: "Por suerte, un ave rara anida en el huerto de la escuela."
   winsCookOff:
     en: "1xbddds"
     label: "Gana el primer premio"
     line: "En el siguiente concurso, el jurado le da el primer premio."
   winsCoursePlace:
-    en: "zsz3d8"
+    en: "viog93"
     label: "Gana un lugar en un curso"
-    line: "{name} gana un cupo gratis en un curso nocturno. ¡Suerte!"
+    line: "{name} gana un cupo gratis en un curso nocturno."
   winsRegionalMedal:
     en: "1p4r5rx"
     label: "Gana una medalla"
     line: "Tras meses de entrenamiento, {name} gana una medalla en los juegos regionales."
   winsSportsCamp:
-    en: "1h2zyif"
+    en: "177qruf"
     label: "Gana plaza en un campamento"
-    line: "{name} gana una semana gratis en un campamento deportivo de verano. ¡Suerte!"
+    line: "{name} gana una semana gratis en un campamento deportivo de verano."
   woodwork:
     en: "1n83pr3"
     label: "Trabaja la madera"
@@ -3081,10 +3081,10 @@ nodes:
     line: "{name} escribe un libro entero."
     if: "{name} hubiera escrito un libro"
   writesAColumn:
-    en: "1tntyqp"
-    label: "Escribe una columna"
-    line: "{name} escribe una columna semanal sobre la vida del pueblo."
-    if: "{name} hubiera escrito una columna"
+    en: "1gue1jd"
+    label: "Escribe una nota semanal"
+    line: "{name} escribe cada semana una nota en el periódico sobre la vida del pueblo."
+    if: "{name} hubiera escrito una nota semanal en el periódico"
   writesAPaper:
     en: "15i28fz"
     label: "Escribe los resultados"
@@ -3154,25 +3154,25 @@ baselines:
       en: "17hbpzd"
       line: "Diez editoriales dicen que no a su libro."
     smallPressYes:
-      en: "155smcl"
+      en: "sxhh15"
       line: "Una editorial pequeña dice que sí e imprime unos cientos de ejemplares."
     moveAbroad:
       en: "vyafg6"
       line: "Se muda al país que visitó a los catorce años."
     bookDeal:
-      en: "18nj5w6"
-      line: "Una editorial más grande se fija en el libro que sacó la editorial pequeña. ¡Suerte!"
+      en: "n9ob1p"
+      line: "Por suerte, una editorial más grande se fija en su libro."
     joinsBookGroup:
       en: "1dnok1o"
       line: "Se une a un club de lectura y nunca habla de los libros que escribe."
   ana:
     chefOffer:
-      en: "xkhsed"
-      label: "Un panadero le enseña"
-      line: "Un panadero ve su trabajo y le ofrece enseñarle el oficio. ¡Suerte!"
+      en: "1gt2zsx"
+      label: "Una panadera le enseña"
+      line: "Por suerte, una panadera ve su trabajo y le ofrece enseñarle el oficio."
     trainsAsBaker:
-      en: "kcatgc"
-      line: "{name} aprende el oficio y empieza a trabajar antes del amanecer."
+      en: "1b1um6o"
+      line: "{name} aprende en una panadería y empieza a trabajar antes del amanecer."
     triesSourdough:
       en: "1eqcqfy"
       line: "Intenta hacer pan de masa madre desde cero."
@@ -3187,22 +3187,22 @@ baselines:
       label: "Abre su propia panadería"
       line: "Abre una pequeña panadería propia."
     happyCustomer:
-      en: "1wstju0"
-      line: "Corre la voz, y la fila crece. ¡Suerte!"
+      en: "1oz2ueu"
+      line: "Por suerte, la gente se lo cuenta a sus amigos, y la fila crece."
     caters:
-      en: "szlgro"
+      en: "uea9qc"
       label: "Hornea para bodas"
-      line: "La panadería de Ana también hornea para bodas y fiestas."
+      line: "Su panadería también hornea para bodas y fiestas."
     teachesCooking:
-      en: "1bjrp18"
-      line: "Enseña a los niños a amasar, con harina y todo."
+      en: "pjza3d"
+      line: "Enseña a los niños a amasar, y la harina vuela por todas partes."
   kai:
     rebuildsAsCommunityGarden:
       en: "1ef3zln"
       line: "Los vecinos lo ayudan a convertir el terreno enlodado en un jardín para todos."
     forestSchool:
-      en: "dhot50"
-      line: "{name} empieza algo nuevo: clases al aire libre para niños."
+      en: "1a48ksw"
+      line: "{name} empieza clases al aire libre para niños."
   lena:
     puzzlesAndBlocks:
       en: "ih0g33"
@@ -3215,18 +3215,18 @@ baselines:
       label: "Cambia a estadística"
       line: "Cambia a estadística, las matemáticas de lo probable."
     oldFriendJob:
-      en: "1ot6n7c"
-      line: "Un viejo amigo le pide que dirija un equipo de datos. ¡Suerte!"
+      en: "ytenzp"
+      line: "Por suerte, un amigo le pide que dirija un equipo que estudia números."
     learnsSomethingNew:
       en: "1j8mjq0"
       label: "Aprende violonchelo"
       line: "Empieza con el violonchelo, una nota chirriante tras otra."
   leo:
     partInAShow:
-      en: "10wajoo"
-      line: "Un teatro le ofrece un papel de baile en un espectáculo. ¡Suerte!"
+      en: "1ouu0fp"
+      line: "Por suerte, un teatro le ofrece un papel de baile en un espectáculo."
     teachesDance:
-      en: "fmsl5m"
+      en: "10o1ad6"
       line: "{name} enseña a bailar a los niños los sábados por la mañana."
     startsYouthTheatre:
       en: "s45lv4"
@@ -3235,24 +3235,24 @@ baselines:
       en: "rn0al2"
       line: "Se acaba el dinero, y el teatro juvenil pierde su sala."
     directsAPlay:
-      en: "15fh7rb"
-      line: "Antiguos alumnos del teatro juvenil, ya adultos, protagonizan una obra que él dirige."
+      en: "1u0kqog"
+      line: "Los niños de su teatro juvenil crecen y protagonizan una obra que él dirige."
   nora:
     trainsHard:
       en: "1dge5x3"
       line: "{name} entrena al amanecer, cuatro mañanas a la semana."
     scoutWatches:
-      en: "fkvvgf"
-      line: "Un ojeador la ve marcar. ¡Suerte!"
+      en: "qh4gb0"
+      line: "Por suerte, un cazatalentos de un club grande la ve marcar."
     winsRegionalMedal:
       en: "1ihmhp6"
       line: "Gana una medalla en los juegos regionales."
     restsAndRebuilds:
-      en: "sw2pvq"
-      line: "Un fisioterapeuta la ayuda a recuperarse, un pequeño ejercicio a la vez."
+      en: "1dda2y5"
+      line: "Un fisioterapeuta la ayuda a recuperar la fuerza, con un ejercicio a la vez."
     playsWholeGame:
-      en: "1bzqf55"
-      line: "Juega un partido entero con el equipo, hasta el último pitido."
+      en: "xkmcaa"
+      line: "Juega otra vez un partido entero, hasta el final."
     trainsForMarathon:
       en: "17qzqhv"
       line: "Entrena para un maratón, despacio y con cuidado."
@@ -3277,8 +3277,8 @@ baselines:
       en: "vn5c60"
       line: "Repite el examen y lo aprueba."
     borrowsTools:
-      en: "18lzqkf"
-      line: "Amigos del oficio le prestan lo que necesita para seguir trabajando."
+      en: "flte5e"
+      line: "Otros electricistas le prestan lo que necesita para que pueda seguir trabajando."
     businessFails:
       en: "1alosib"
       line: "Los grandes pedidos se acaban, y el negocio se queda sin dinero."
@@ -3286,38 +3286,38 @@ baselines:
       en: "uajuuz"
       line: "Le pide ayuda a un antiguo cliente para encontrar trabajo."
     worksFewerHours:
-      en: "pgyagl"
-      line: "Trabaja menos horas. Ahora su hijo sostiene el destornillador."
+      en: "1ogqw7u"
+      line: "Trabaja menos horas, y ahora su hijo sostiene el destornillador."
   sam:
     ownSong:
       en: "1n8x3l3"
       label: "Graba una canción"
       line: "Los tres compañeros de la banda graban su primera canción."
     bandSplits:
-      en: "1vq6n92"
-      line: "Los dos amigos se van. Se queda solo."
+      en: "168ps5"
+      line: "Los dos amigos se van, y se queda solo."
     formsNewBand:
       en: "8fvfkx"
       line: "Forma una banda nueva con otros tres."
     radioPlay:
-      en: "46t0h9"
-      line: "Un DJ de radio pone una de sus canciones. ¡Suerte!"
+      en: "1pi9nel"
+      line: "Por suerte, un DJ de radio pone una de sus canciones."
     recordDeal:
-      en: "cw6q52"
-      line: "Un sello discográfico ficha a la banda."
+      en: "vz84gb"
+      line: "Una discográfica le ofrece un contrato a la banda."
     goesOnTour:
       en: "cre071"
       line: "Se va de gira por el mundo."
     drinkingAndDrugs:
-      en: "1lxcm8v"
-      line: "El alcohol y las drogas lo invaden todo. Los conciertos salen mal."
+      en: "fvdrm7"
+      line: "El alcohol y las drogas lo invaden todo, y sus conciertos salen mal."
     labelDropsHim:
-      en: "exjiid"
-      label: "El sello deja a la banda"
-      line: "El sello deja a la banda. Pierde su apartamento."
+      en: "ljh9ue"
+      label: "Termina el contrato"
+      line: "La discográfica termina el contrato, y pierde su apartamento."
     asksForHelp:
-      en: "had1og"
-      line: "Un amigo lo acoge. Pide ayuda."
+      en: "txlfk5"
+      line: "Pide ayuda, y un amigo lo acoge en su casa."
     givesMusicLessons:
       en: "1b1istj"
       label: "Enseña guitarra"
@@ -3335,8 +3335,8 @@ baselines:
       en: "b27grw"
       line: "Empieza a trabajar en una planta de hospital donde hay muchísimo trabajo."
     wardShortStaffed:
-      en: "i8idmh"
-      line: "Hay poco personal, y los días se alargan."
+      en: "qi4uym"
+      line: "Hay muy poco personal de enfermería, y los días se hacen largos."
     asksSeniorNurse:
       en: "jchdj0"
       line: "Le pregunta a una enfermera con experiencia cómo arreglárselas cuando hay mucho trabajo."
@@ -3345,8 +3345,8 @@ baselines:
       line: "Se traslada a la planta de niños, con un equipo más pequeño."
   zoe:
     artSchoolSaysNo:
-      en: "d0rwvy"
-      line: "Llega la respuesta: no. Duele."
+      en: "132wp0g"
+      line: "La respuesta es no, y eso duele."
     writesPictureBooks:
       en: "oc6dpn"
       label: "Escribe su propio libro"

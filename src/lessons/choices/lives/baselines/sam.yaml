@@ -27,7 +27,7 @@ steps:
   - node: bandSplits
     age: 16
     run: newBand
-    line: "Both friends quit. He is on his own."
+    line: "Both friends quit, and he is on his own."
     move: -1
   - node: formsNewBand
     age: 17
@@ -36,11 +36,11 @@ steps:
   - node: radioPlay
     age: 18
     run: newBand
-    line: "A radio DJ plays one of his songs. Luck!"
+    line: "Luckily, a radio DJ plays one of his songs."
     move: 2
   - node: recordDeal
     age: 20
-    line: "A record label signs the band."
+    line: "A record company offers the band a deal."
     echoes: [radioPlay, ownSong]
   - node: goesOnTour
     age: 22
@@ -48,16 +48,16 @@ steps:
     alts: [staysHomeToWrite, savesTheMoney]
   - node: drinkingAndDrugs
     age: 24
-    line: "Drinking and drugs take over. Shows fall apart."
+    line: "Drinking and drugs take over, and his shows fall apart."
     move: -1
   - node: labelDropsHim
     age: 25
-    label: Label drops the band
-    line: "The label drops the band. He loses his flat."
+    label: The record deal ends
+    line: "The record company ends the deal, and he loses his flat."
     move: -3
   - node: asksForHelp
     age: 26
-    line: "A friend takes him in. He asks for help."
+    line: "He asks for help, and a friend lets him stay."
     move: 1
     alts: [movesHome, officeJob]
   - node: givesMusicLessons

@@ -81,8 +81,8 @@
 
 - id: mentorsSomeone
   label: Guides a beginner
-  line: "{name} helps someone new at work find their feet."
-  if: "{name} had helped someone new find their feet"
+  line: "{name} helps someone new at work learn the job."
+  if: "{name} had helped someone new at work"
   kind: choice
   ages: [24, 65]
   after: [job]
@@ -91,7 +91,7 @@
 
 - id: teachesACraft
   label: Teaches {his} craft
-  line: "{name} teaches others a craft learned over many years."
+  line: "{name} teaches other people a skill {he} has practised for years."
   if: "{name} had taught others {his} craft"
   kind: choice
   ages: [28, 70]
@@ -148,7 +148,7 @@
 
 - id: townBacksCampaign
   label: Neighbours join in
-  line: "Hundreds of neighbours sign {his} petition. Luck helps!"
+  line: "Luckily, hundreds of neighbours sign {his} letter to the town."
   kind: lucky
   ages: [25, 65]
   after: [campaign]
@@ -174,18 +174,19 @@
   move: -2
 
 - id: asksShopsForHelp
-  label: Asks shops to chip in
-  line: "{name} asks local shops to chip in."
+  label: "Asks shops for help"
+  line: "{name} asks local shops to help pay."
   if: "{name} had asked local shops for help"
   kind: choice
   ages: [24, 65]
   after: [fundingEnds]
   tags: [community, helped]
   within: 2
+  withinYears: 2
 
 - id: movesToSchoolHall
   label: Uses the school hall
-  line: "{name} moves the group to the school hall, rent-free."
+  line: "{name} moves the group to the school hall for free."
   if: "{name} had moved the group to the school hall"
   kind: choice
   ages: [24, 65]
@@ -195,7 +196,7 @@
 
 - id: roomOffered
   label: Gets a free room
-  line: "A shop owner offers the group a free room. Luck!"
+  line: "A shop owner offers the group a free room."
   kind: lucky
   ages: [22, 65]
   after: [youthGroup]
@@ -204,7 +205,7 @@
 
 - id: joinsTownCouncil
   label: Joins the town council
-  line: "{name} wins a seat on the town council."
+  line: "{name} gets voted onto the town council."
   if: "{name} had joined the town council"
   kind: choice
   ages: [28, 65]
@@ -326,6 +327,7 @@
   after: [councilNoMoney]
   tags: [community, helped]
   within: 1
+  withinYears: 2
 
 - id: crossingPainted
   label: A crossing is painted
@@ -370,7 +372,7 @@
 
 - id: clubFillsUp
   label: The club fills up
-  line: "Twelve people come, then a few more each week."
+  line: "Twelve people come, and a few more join each week."
   kind: event
   ages: [14, 67]
   after: [movesClubTime]

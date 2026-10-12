@@ -38,7 +38,7 @@
 
 - id: kindLibrarian
   label: A librarian helps out
-  line: "A librarian saves the best new books for {him}. Luck!"
+  line: "Luckily, a librarian saves the best new books for {him}."
   kind: lucky
   ages: [6, 14]
   tags: [words, reading, library]
@@ -98,7 +98,7 @@
 
 - id: exchangeTrip
   label: Wins an exchange trip
-  line: "{name} wins a free place on an exchange trip. Luck!"
+  line: "{name} wins a free place on an exchange trip."
   kind: lucky
   ages: [12, 18]
   after: [schoolPaper, reading, languages]
@@ -125,7 +125,7 @@
 
 - id: interpreter
   label: Becomes an interpreter
-  line: "{name} helps people understand each other as an interpreter."
+  line: "{name} works as an interpreter and helps people understand each other."
   if: "{name} had worked as an interpreter"
   kind: choice
   ages: [20, 55]
@@ -200,7 +200,7 @@
 
 - id: bookDeal
   label: A publisher says yes
-  line: "A publisher wants {his} book at last. Luck and patience!"
+  line: "At last, a publisher wants {his} book."
   kind: lucky
   ages: [20, 66]
   after: [keepsWriting, rewritesTheBook, selfPublishes, smallPressYes]
@@ -228,9 +228,9 @@
   move: -2
 
 - id: freelanceWriting
-  label: Writes freelance
+  label: "Writes for magazines"
   line: "{name} writes articles for several magazines."
-  if: "{name} had written freelance"
+  if: "{name} had written for magazines"
   kind: choice
   ages: [20, 62]
   after: [paperCloses]
@@ -343,8 +343,8 @@
   inRun: true
 
 - id: smallPressYes
-  label: A small press says yes
-  line: "A small press says yes and prints a few hundred copies."
+  label: The book gets printed
+  line: "A small publisher says yes and prints a few hundred copies."
   kind: event
   ages: [18, 66]
   after: [rewritesTheBook]
@@ -382,6 +382,7 @@
   after: [storyContestMiss]
   tags: [words, writing, helped]
   within: 1
+  withinYears: 2
 
 - id: storyInMagazine
   label: Story gets printed
@@ -435,7 +436,7 @@
   within: 1
 
 - id: takesHumanities
-  label: Takes the humanities
+  label: "Takes history and more"
   line: "{name} takes history, geography and languages."
   if: "{name} had taken history, geography and languages"
   kind: choice
@@ -465,9 +466,9 @@
   weight: 0.8
 
 - id: coversCouncil
-  label: Covers the council
+  label: "Reports on the council"
   line: "{name} reports on the town council's meetings every month."
-  if: "{name} had covered the council"
+  if: "{name} had reported on the council"
   kind: choice
   ages: [19, 60]
   after: [reportsForPaper]
@@ -475,9 +476,9 @@
   tags: [words, journalism]
 
 - id: writesAColumn
-  label: Writes a column
-  line: "{name} writes a weekly column about life in the town."
-  if: "{name} had written a column"
+  label: "Writes a weekly piece"
+  line: "{name} writes a weekly newspaper piece about life in the town."
+  if: "{name} had written a weekly newspaper piece"
   kind: choice
   ages: [20, 62]
   after: [reportsForPaper]

@@ -61,7 +61,7 @@ steps:
     move: 1
   - node: oldFriendJob
     age: 34
-    line: "An old friend asks her to lead a data team. Luck!"
+    line: "Luckily, a friend asks her to lead a team that studies numbers."
     echoes: [worksWithData, codingCourse]
   - node: runsMathsClub
     age: 38

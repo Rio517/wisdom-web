@@ -15,7 +15,7 @@ export function packStructure(files) {
   for (const [, nodes] of nodeFiles) for (const node of list(nodes)) name(node.id);
   const nodes = nodeFiles.flatMap(([, items]) => list(items).map(node => [
     KINDS.indexOf(node.kind ?? 'choice'), ...(node.ages ?? [0, -1]), ...LISTS.map(field => list(node[field]).map(name)),
-    node.within ?? 0, node.move ?? 0, node.weight ?? 1, node.by === 'family' ? 1 : 0, node.inRun ? 1 : 0,
+    node.within ?? 0, node.move ?? 0, node.weight ?? 1, node.by === 'family' ? 1 : 0, node.inRun ? 1 : 0, ...(node.withinYears !== undefined ? [node.withinYears] : []),
   ]));
   const areas = nodeFiles.map(([path, items]) => [path.split('/').pop().replace(/\.ya?ml$/, ''), list(items).length]);
   const runs = Object.entries(files).filter(([path]) => /(^|\/)runs\//.test(path)).sort(([a], [b]) => a.localeCompare(b))
@@ -39,10 +39,11 @@ export function unpackStructure(packed) {
   let index = 0;
   for (const [area, count] of areas) {
     files[`nodes/${area}.yaml`] = nodes.slice(index, index + count).map((row, k) => {
-      const [kind, lo, hi, after, tags, unless, needs, drops, within, move, weight, family, inRun] = row;
+      const [kind, lo, hi, after, tags, unless, needs, drops, within, move, weight, family, inRun, withinYears] = row;
       const node = { id: names[index + k], kind: KINDS[kind], ages: [lo, hi], after: after.map(i => names[i]), tags: tags.map(i => names[i]), unless: unless.map(i => names[i]), needs: needs.map(i => names[i]), drops: drops.map(i => names[i]), within, move, weight };
       if (family) node.by = 'family';
       if (inRun) node.inRun = true;
+      if (withinYears !== undefined) node.withinYears = withinYears;
       return node;
     });
     index += count;

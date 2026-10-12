@@ -61,7 +61,7 @@
 
 - id: lastMinutePlace
   label: A place opens up
-  line: "A nursing course offers {him} a late place. Luck!"
+  line: "Luckily, a nursing course has a spare place, and {he} gets it."
   kind: lucky
   ages: [16, 26]
   after: [clinic]
@@ -79,7 +79,7 @@
   tags: [caring, nurse, job, study]
 - id: nurseMentor
   label: A nurse guides {him}
-  line: "A senior nurse takes {him} under her wing. Luck!"
+  line: "Luckily, a senior nurse takes time to teach {him} the job."
   kind: lucky
   ages: [20, 45]
   after: [nurse]
@@ -126,7 +126,7 @@
 
 - id: parentIll
   label: "{his} dad falls ill"
-  line: "{his} dad becomes very ill for a long time."
+  line: "{his} dad falls ill and stays ill for a long time."
   kind: setback
   ages: [8, 45]
   tags: [caring, illness]
@@ -152,6 +152,7 @@
   after: [parentIll]
   tags: [caring, carer]
   within: 2
+  withinYears: 2
 
 - id: burnedOut
   label: Gets worn out
@@ -181,6 +182,7 @@
   after: [burnedOut]
   tags: [caring, helped]
   within: 2
+  withinYears: 2
 
 - id: physio
   label: Trains as a physio
@@ -286,10 +288,11 @@
   after: [failsCareExam]
   tags: [caring, study, helped]
   within: 1
+  withinYears: 2
 
 - id: passesCareExam
   label: Passes the care exam
-  line: "{name} sits the exam again, and the results say pass."
+  line: "{name} sits the exam again and passes."
   kind: event
   ages: [17, 57]
   after: [studiesWithFriend]
@@ -311,7 +314,7 @@
 
 - id: wardShortStaffed
   label: The ward runs short
-  line: "Too few staff, and the days run long."
+  line: "There are too few nurses, and the days run long."
   kind: setback
   ages: [18, 56]
   after: [startsBusyWard]
@@ -328,6 +331,7 @@
   after: [wardShortStaffed]
   tags: [caring, helped]
   within: 1
+  withinYears: 2
 
 - id: movesToOtherWard
   label: Moves to another ward

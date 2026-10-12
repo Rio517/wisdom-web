@@ -36,7 +36,7 @@
 
 - id: dramaClub
   label: Joins the drama club
-  line: "{name} joins the drama club and finds {his} voice."
+  line: "{name} joins the drama club and learns to speak up."
   if: "{name} had joined the drama club"
   kind: choice
   ages: [10, 15]
@@ -52,7 +52,7 @@
 
 - id: partInAShow
   label: Gets a part in a show
-  line: "A theatre offers {him} a part in a show. Luck!"
+  line: "Luckily, a theatre offers {him} a part in a show."
   kind: lucky
   ages: [12, 30]
   after: [dance, drama]
@@ -185,7 +185,7 @@
 
 - id: filmFestival
   label: Film festival says yes
-  line: "A small festival shows {his} film. Luck!"
+  line: "Luckily, a small festival shows {his} film."
   kind: lucky
   ages: [16, 40]
   after: [film]
@@ -360,7 +360,7 @@
 
 - id: showRunsSmoothly
   label: The show runs smoothly
-  line: "The next night, the whole show runs through, and the hall claps."
+  line: "The next night, the whole show goes well, and the audience claps."
   kind: event
   ages: [12, 60]
   after: [rehearsesAgain]

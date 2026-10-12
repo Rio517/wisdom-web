@@ -44,7 +44,7 @@ steps:
     age: 23
   - node: borrowsTools
     age: 24
-    line: "Friends in the trade lend {him} what is needed to keep working."
+    line: "Other electricians lend him what he needs so he can keep working."
     move: 1
     alts: [replacesTools]
   - node: ownBusiness
@@ -72,5 +72,5 @@ steps:
     echoes: [startsApprenticeship, practisesWithPro]
   - node: worksFewerHours
     age: 43
-    line: "He works fewer hours. His child holds the screwdriver now."
+    line: "He works fewer hours, and his child holds the screwdriver now."
     echoes: [familyFixesThings]

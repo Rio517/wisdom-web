@@ -22,7 +22,7 @@ steps:
     echoes: [schoolTeam]
   - node: scoutWatches
     age: 13
-    line: "A scout watches her score. Luck!"
+    line: "Luckily, a scout from a big club watches her score."
     echoes: [trainsHard]
   - node: youthAcademy
     age: 14
@@ -43,12 +43,12 @@ steps:
   - node: restsAndRebuilds
     age: 18
     run: backFromInjury
-    line: "A physio helps her rebuild, one small exercise at a time."
+    line: "A physio helps her grow strong again, one exercise at a time."
     move: 1
   - node: playsWholeGame
     age: 19
     run: backFromInjury
-    line: "She plays a whole game for the squad, to the last whistle."
+    line: "She plays a whole game again, right to the end."
     echoes: [restsAndRebuilds]
   - node: coachKids
     age: 20

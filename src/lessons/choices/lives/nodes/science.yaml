@@ -20,7 +20,7 @@
 
 - id: mathsClub
   label: Joins the maths club
-  line: "{name} joins a club to solve problems together."
+  line: "{name} joins a club and solves puzzles with other children."
   if: "{name} had joined the maths club"
   kind: choice
   ages: [7, 12]
@@ -78,7 +78,7 @@
 
 - id: teacherSpotsTalent
   label: A teacher lends books
-  line: "A teacher spots {his} work and offers extra books. Luck!"
+  line: "A teacher spots {his} work and lends {him} extra books."
   kind: lucky
   ages: [10, 17]
   after: [tournament, maths, chess]
@@ -87,7 +87,7 @@
 
 - id: scienceSubjects
   label: Takes the sciences
-  line: "{name} takes the science subjects."
+  line: "{name} chooses science subjects at school."
   if: "{name} had taken the science subjects"
   kind: choice
   ages: [14, 18]
@@ -98,7 +98,7 @@
 
 - id: scholarship
   label: Wins a scholarship
-  line: "{name} wins a scholarship that pays for {his} studies."
+  line: "Luckily, {name} wins a scholarship that pays for {his} studies."
   kind: lucky
   ages: [16, 20]
   after: [sciences]
@@ -183,6 +183,7 @@
   after: [unkindSupervisor]
   tags: [science, helped]
   within: 2
+  withinYears: 2
 
 - id: samplesLost
   label: A freezer breaks down
@@ -205,7 +206,7 @@
 
 - id: discovery
   label: Makes a discovery
-  line: "{his} team discovers something new. Luck and hard work!"
+  line: "{his} team gets lucky and discovers something new."
   kind: lucky
   ages: [24, 50]
   after: [research, newSupervisor, lab]
@@ -315,6 +316,7 @@
   after: [failsAnExam]
   tags: [science, helped]
   within: 1
+  withinYears: 2
 
 - id: passesTheExam
   label: Passes the exam
@@ -347,6 +349,7 @@
   after: [failsAnExam]
   tags: [science, helped]
   within: 1
+  withinYears: 2
 
 # Runs: a new experiment, a failed try, a new method, a partial answer.
 
@@ -362,7 +365,7 @@
 
 - id: experimentFails
   label: The experiment fails
-  line: "The experiment fails. The results will not repeat."
+  line: "{name} runs the experiment again and gets a different result."
   kind: setback
   ages: [14, 56]
   after: [experiments]
@@ -383,7 +386,7 @@
 
 - id: partialAnswer
   label: A partial answer
-  line: "One part of the answer is clear. The rest stays open."
+  line: "The new test answers one part of {his} question."
   kind: event
   ages: [14, 60]
   after: [changesMethod]
@@ -406,7 +409,7 @@
 
 - id: labSaysNo
   label: The lab says no
-  line: "The lab writes back: no places this year."
+  line: "The lab writes back to say it has no places this year."
   kind: setback
   ages: [20, 52]
   after: [labApplication]
@@ -423,6 +426,7 @@
   after: [labSaysNo]
   tags: [science, helped]
   within: 1
+  withinYears: 2
 
 - id: takesSchoolLabJob
   label: Sets up school labs

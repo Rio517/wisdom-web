@@ -60,7 +60,7 @@ steps:
   - node: smallPressYes
     age: 30
     run: bookSmallPress
-    line: "A small press says yes and prints a few hundred copies."
+    line: "A small publisher says yes and prints a few hundred copies."
     echoes: [rewritesTheBook]
   - node: moveAbroad
     age: 33
@@ -69,7 +69,7 @@ steps:
     echoes: [exchangeTrip]
   - node: bookDeal
     age: 38
-    line: "A bigger publisher spots her small-press book. Luck!"
+    line: "Luckily, a bigger publisher spots her book."
     move: 2
     echoes: [smallPressYes, writesABook]
   - node: joinsBookGroup

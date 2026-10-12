@@ -56,6 +56,7 @@ asks for an instrument or singing.
   tags: [music, band]         # what this gives the life (a node's own id always counts too)
   drops: []                   # tags this takes away (a band that splits drops `band`)
   within: 0                   # if set, one `after` match must be among the last N steps and at most 4 years before (help soon after a setback)
+  withinYears: 2              # optional: with `within`, the match is at most this many years back (default 4)
   move: 0                     # events only: how this changes how things are going, -3 … +3 (up is better)
   by: family                  # optional: someone else chose it (children under about 8)
   weight: 1                   # optional: how often it comes up when a life grows (default 1)
@@ -88,7 +89,7 @@ so a node can say `after: [setback]` with `within: 1` for "right after a hard
 time".
 
 **Words.** Third person, present tense, the narrator's voice (the
-`wisdom-voice` skill). Tokens: `{name}`, `{his}` (his/her), `{him}` (him/her),
+`wisdom-voice` skill). Tokens: `{name}`, `{he}` (he/she, mid-sentence), `{his}` (his/her), `{him}` (him/her),
 `{himself}`. The subject of a line is `{name}` or someone or something else
 ("A radio DJ plays {his} song."). A `{name}` that starts a line becomes He or
 She after the first line of a story; anywhere else it stays the name, so write

@@ -62,7 +62,7 @@
 
 - id: learnsToBudget
   label: Learns to budget
-  line: "{name} learns to plan where every pound goes."
+  line: "{name} learns to plan how {he} spends {his} money."
   if: "{name} had learned to budget"
   kind: choice
   ages: [14, 30]
@@ -126,7 +126,7 @@
 
 - id: happyCustomer
   label: Word gets around
-  line: "A happy customer tells everybody about the place. Luck!"
+  line: "Luckily, a happy customer tells everybody about the place."
   kind: lucky
   ages: [18, 55]
   after: [owner]
@@ -135,7 +135,7 @@
 
 - id: localPrize
   label: Wins a business prize
-  line: "{name} wins a small business prize with some money. Luck!"
+  line: "Luckily, {name} wins a small business prize and some money."
   kind: lucky
   ages: [20, 55]
   after: [owner, business]
@@ -183,13 +183,14 @@
 
 - id: asksAccountant
   label: Asks for expert advice
-  line: "{name} asks an accountant, a money expert, to check the books."
+  line: "{name} asks an accountant, a money expert, to check the numbers."
   if: "{name} had asked an accountant for advice"
   kind: choice
   ages: [22, 60]
   after: [customersDryUp, customerNeverPays]
   tags: [money, helped]
   within: 2
+  withinYears: 2
 
 - id: paymentsUpFront
   label: Asks for payment first
@@ -210,10 +211,11 @@
   after: [moneyGetsTight]
   tags: [money, earns]
   within: 2
+  withinYears: 2
 
 - id: takesSecondJob
   label: Takes a second job
-  line: "{name} takes a second job in the evenings, besides the first."
+  line: "{name} takes a second job in the evenings."
   if: "{name} had taken a second job"
   kind: choice
   ages: [20, 60]
@@ -312,7 +314,7 @@
 
 - id: batchStaysUnsold
   label: Few neighbours say yes
-  line: "Only one neighbour says yes, and the rest wave {him} on."
+  line: "Only one neighbour says yes, and the others say no."
   kind: setback
   ages: [14, 50]
   after: [idea]
@@ -329,6 +331,7 @@
   after: [batchStaysUnsold]
   tags: [money, helped]
   within: 1
+  withinYears: 2
 
 - id: offersWhatTheyAsked
   label: Offers what they asked
@@ -366,7 +369,7 @@
 
 - id: loanRefused
   label: The bank says no
-  line: "The bank says no, and explains that the sums do not fit."
+  line: "The bank says no because the plan costs more than it earns."
   kind: setback
   ages: [20, 55]
   after: [loan]
@@ -376,17 +379,18 @@
 
 - id: makesSmallerPlan
   label: Makes a smaller plan
-  line: "{name} draws up a smaller plan with a money adviser."
+  line: "{name} makes a smaller plan with a money adviser."
   if: "{name} had made a smaller plan with an adviser"
   kind: choice
   ages: [20, 56]
   after: [loanRefused]
   tags: [money, helped]
   within: 1
+  withinYears: 2
 
 - id: fundBacksPlan
-  label: A fund backs the plan
-  line: "A local fund for new businesses backs the smaller plan."
+  label: "A local group helps"
+  line: "A local group that helps new businesses pays for the smaller plan."
   kind: event
   ages: [20, 57]
   after: [makesSmallerPlan]

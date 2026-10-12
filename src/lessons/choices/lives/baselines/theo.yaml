@@ -40,7 +40,7 @@ steps:
   - node: wardShortStaffed
     age: 21
     run: busyWard
-    line: "Too few staff, and the days run long."
+    line: "There are too few nurses, and the days run long."
   - node: asksSeniorNurse
     age: 22
     run: busyWard

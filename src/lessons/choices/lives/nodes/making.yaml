@@ -28,7 +28,7 @@
 
 - id: findsOldTools
   label: Finds a box of tools
-  line: "{name} finds a box of old tools in the shed. Luck!"
+  line: "Luckily, {name} finds a box of old tools in the shed."
   kind: lucky
   ages: [8, 15]
   tags: [making, fixing]
@@ -109,7 +109,7 @@
 
 - id: robotPrize
   label: The robot wins a prize
-  line: "{his} robot wins a prize. Luck and tinkering!"
+  line: "Luckily, {his} robot wins a prize at a science fair."
   kind: lucky
   ages: [11, 21]
   after: [robotContest]
@@ -120,7 +120,7 @@
 
 - id: studyEngineering
   label: Studies engineering
-  line: "{name} studies engineering: how to make things that work and last."
+  line: "{name} studies how to build things that work and last."
   if: "{name} had studied engineering"
   kind: choice
   ages: [16, 23]
@@ -130,7 +130,7 @@
 
 - id: startsApprenticeship
   label: Becomes an apprentice
-  line: "{name} starts an apprenticeship and learns on the job."
+  line: "{name} becomes an apprentice and learns by working with experts."
   if: "{name} had started an apprenticeship"
   kind: choice
   ages: [16, 26]
@@ -149,7 +149,7 @@
 
 - id: carpenter
   label: Trains as a carpenter
-  line: "{name} trains as a carpenter, measuring twice and cutting once."
+  line: "{name} trains as a carpenter and learns to measure with care."
   if: "{name} had trained as a carpenter"
   kind: choice
   ages: [16, 40]
@@ -188,7 +188,7 @@
   tags: [making, owner, business]
 - id: bigCustomer
   label: Wins a big customer
-  line: "A big company becomes {his} customer. Luck!"
+  line: "Luckily, a big company becomes {his} customer."
   kind: lucky
   ages: [22, 55]
   after: [owner]
@@ -207,7 +207,7 @@
 
 - id: newIdea
   label: Starts smaller
-  line: "{name} tries again with a smaller business, built on customer requests."
+  line: "{name} starts a smaller business and does the jobs customers ask for."
   if: "{name} had started a smaller business"
   kind: choice
   ages: [22, 58]
@@ -240,7 +240,7 @@
   line: "Someone breaks into {his} van and takes all the tools."
   kind: setback
   ages: [20, 60]
-  after: [qualified, owner]
+  after: [qualified, trade]
   tags: [making]
   move: -1
 
@@ -256,13 +256,14 @@
 
 - id: borrowsTools
   label: Borrows tools
-  line: "Friends in the trade lend {him} what is needed to keep working."
+  line: "Other workers lend {him} tools so {he} can keep working."
   if: "{name} had borrowed tools from friends in the trade"
   kind: choice
   ages: [20, 60]
   after: [lostTools]
   tags: [making, helped]
   within: 2
+  withinYears: 2
 
 - id: trainsApprentices
   label: Trains apprentices
@@ -292,18 +293,18 @@
   tags: [making, job]
 
 - id: restoresFurniture
-  label: Restores old furniture
-  line: "{name} brings old chairs and tables back to life."
-  if: "{name} had restored old furniture"
+  label: "Mends old furniture"
+  line: "{name} mends old chairs and tables so they look new again."
+  if: "{name} had mended old furniture"
   kind: choice
   ages: [20, 70]
   after: [wood, carpenter]
   tags: [making, building]
 
 - id: joinsMakerspace
-  label: "Joins a makers' space"
+  label: "Joins a tool workshop"
   line: "{name} joins a workshop where neighbours share tools."
-  if: "{name} had joined a makers' space"
+  if: "{name} had joined a tool workshop"
   kind: choice
   ages: [20, 60]
   tags: [making, building, community]
@@ -321,9 +322,9 @@
 # Run: a prototype breaks, a redesign, a fair (partial win).
 
 - id: buildsPrototype
-  label: Builds a prototype
-  line: "{name} builds a first prototype of an invention."
-  if: "{name} had built a prototype"
+  label: "Builds a test model"
+  line: "{name} builds a first test model of an invention."
+  if: "{name} had built a test model"
   kind: choice
   ages: [12, 45]
   after: [roboticsClub, woodwork, fixing, takesThingsApart, restoresFurniture, joinsMakerspace]
@@ -332,8 +333,8 @@
   inRun: true
 
 - id: prototypeBreaks
-  label: The prototype breaks
-  line: "{his} prototype snaps in half at its first big test."
+  label: "The model breaks"
+  line: "{his} model snaps in half at its first big test."
   kind: setback
   ages: [12, 46]
   after: [buildsPrototype]
@@ -375,7 +376,7 @@
   inRun: true
 
 - id: failsTradeTest
-  label: Just misses the mark
+  label: "Just fails the test"
   line: "{name} misses the pass mark on the test."
   kind: setback
   ages: [17, 51]
@@ -385,14 +386,15 @@
   move: -2
 
 - id: practisesWithPro
-  label: Practises with a pro
-  line: "{name} practises on weekends with an experienced tradesperson."
-  if: "{name} had practised with an experienced tradesperson"
+  label: "Learns from an expert"
+  line: "{name} practises at weekends with a skilled worker in the trade."
+  if: "{name} had practised with a skilled worker"
   kind: choice
   ages: [17, 51]
   after: [failsTradeTest]
   tags: [making, helped]
   within: 1
+  withinYears: 2
 
 - id: passesTradeTest
   label: Gets the certificate
@@ -430,7 +432,7 @@
 
 - id: offersRepairs
   label: Offers quick repairs
-  line: "{name} puts up a sign: small repairs done while people wait."
+  line: "{name} puts up a sign that offers quick repairs while people wait."
   if: "{name} had started offering repairs"
   kind: choice
   ages: [14, 61]

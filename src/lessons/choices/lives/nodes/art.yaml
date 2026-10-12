@@ -52,7 +52,7 @@
 
 - id: givenOldCamera
   label: Gets an old camera
-  line: "{his} grandad passes on his old camera. Luck!"
+  line: "{his} grandad gives {him} his old camera."
   kind: lucky
   ages: [9, 16]
   unless: [photography]
@@ -80,7 +80,7 @@
 
 - id: artShowSpot
   label: A café hangs the work
-  line: "A café owner hangs {his} pictures on the wall. Luck!"
+  line: "Luckily, a café owner hangs {his} pictures on the wall."
   kind: lucky
   ages: [12, 30]
   after: [drawing, crafts, photography]
@@ -99,7 +99,7 @@
 
 - id: getsArtSchoolPlace
   label: Gets into art school
-  line: "An art school offers {him} a place. Luck!"
+  line: "Luckily, an art school offers {him} a place."
   kind: lucky
   ages: [17, 26]
   after: [portfolio]
@@ -109,7 +109,7 @@
 
 - id: artSchoolSaysNo
   label: Art school says no
-  line: "The art school says no. It stings."
+  line: "The art school says no, and it stings."
   kind: setback
   ages: [17, 26]
   after: [appliesToArtSchool]
@@ -120,7 +120,7 @@
 
 - id: studiesDesign
   label: Studies design
-  line: "{name} studies graphic design: posters, signs and book covers."
+  line: "{name} studies how to design posters, signs and book covers."
   if: "{name} had studied design"
   kind: choice
   ages: [17, 30]
@@ -137,9 +137,9 @@
   tags: [art, job, print]
 
 - id: freelanceIllustrator
-  label: Draws for clients
-  line: "{name} draws pictures for clients, one job at a time."
-  if: "{name} had drawn pictures for clients"
+  label: "Draws for customers"
+  line: "{name} draws pictures for customers, one job at a time."
+  if: "{name} had drawn pictures for customers"
   kind: choice
   ages: [20, 60]
   after: [design, drawing]
@@ -147,7 +147,7 @@
 
 - id: childrensBookJob
   label: Draws a picture book
-  line: "A publisher asks {him} to draw a children's book. Luck!"
+  line: "Luckily, a publisher asks {him} to draw a children's book."
   kind: lucky
   ages: [22, 60]
   after: [illustration, print]
@@ -184,7 +184,7 @@
 
 - id: paintsAMural
   label: Paints a wall mural
-  line: "{name} paints a mural on a long grey wall."
+  line: "{name} paints a mural on a long gray wall."
   if: "{name} had painted a mural"
   kind: choice
   ages: [20, 60]
@@ -246,6 +246,7 @@
   after: [workRuined, artSchoolSaysNo]
   tags: [art, helped]
   within: 2
+  withinYears: 2
 
 - id: keepsMakingArt
   label: Keeps making art
@@ -317,14 +318,15 @@
 # Their steps are listed in ../runs/art.yaml.
 
 - id: buildsNewPortfolio
-  label: Builds a new portfolio
-  line: "{name} joins a class to build a new portfolio with a teacher."
-  if: "{name} had built a new portfolio"
+  label: "Makes new drawings"
+  line: "{name} joins a class and fills a new folder of drawings."
+  if: "{name} had made a new folder of drawings"
   kind: choice
   ages: [17, 27]
   after: [artSchoolSaysNo]
   tags: [art, drawing, study, helped]
   within: 1
+  withinYears: 2
 
 - id: appliesAgain
   label: Applies a second time
@@ -409,9 +411,9 @@
   within: 3
 
 - id: fillsArtPortfolio
-  label: Fills a portfolio
+  label: "Fills a big folder"
   line: "{name} fills a big folder with drawings and designs."
-  if: "{name} had filled a portfolio"
+  if: "{name} had filled a big folder of drawings"
   kind: choice
   ages: [15, 19]
   after: [artSubjects]

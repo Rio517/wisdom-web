@@ -62,7 +62,7 @@
 
 - id: chefOffer
   label: A chef takes {him} on
-  line: "A chef sees {him} work and offers to train {him}. Luck!"
+  line: "Luckily, a chef sees {him} work and offers to train {him}."
   kind: lucky
   ages: [15, 26]
   after: [cafeJob, kitchen]
@@ -107,7 +107,7 @@
 
 - id: rentDoubles
   label: The rent doubles
-  line: "The rent doubles, and the sums stop adding up."
+  line: "The rent doubles, and the shop cannot pay it."
   kind: setback
   ages: [25, 60]
   after: [owner]
@@ -133,6 +133,7 @@
   after: [rentDoubles, ovenBreaks]
   tags: [food, helped]
   within: 2
+  withinYears: 2
 
 - id: smallerShop
   label: Finds a smaller shop
@@ -155,7 +156,7 @@
 
 - id: foodWriterPraises
   label: A food writer visits
-  line: "A food writer visits and writes kind words. Luck!"
+  line: "Luckily, a food writer visits and writes kind words."
   kind: lucky
   ages: [22, 60]
   after: [owner]
@@ -170,6 +171,7 @@
   ages: [22, 60]
   after: [baker, kitchen]
   tags: [food]
+  within: 3
   move: -1
 
 - id: borrowsAnOven
@@ -181,6 +183,7 @@
   after: [ovenBreaks]
   tags: [food, helped]
   within: 2
+  withinYears: 2
 
 - id: changesTheMenu
   label: Changes the menu
@@ -230,7 +233,7 @@
 
 - id: studiesFoodScience
   label: Studies food science
-  line: "{name} studies why bread rises and milk turns."
+  line: "{name} studies why bread rises and milk goes sour."
   if: "{name} had studied food science"
   kind: choice
   ages: [18, 40]
@@ -331,6 +334,7 @@
   after: [loavesStayFlat]
   tags: [food, helped]
   within: 1
+  withinYears: 2
 
 - id: cafeBuysLoaves
   label: A café buys the bread
@@ -345,9 +349,9 @@
 # Run: popUpDinner (a first menu, an empty room, a friend's advice, a new way to cook).
 
 - id: hostsPopUp
-  label: Hosts a pop-up dinner
-  line: "{name} cooks a first menu for a one-night pop-up dinner."
-  if: "{name} had hosted a pop-up dinner"
+  label: Cooks for guests
+  line: "{name} cooks a big dinner for guests one night."
+  if: "{name} had cooked a big dinner for guests"
   kind: choice
   ages: [18, 55]
   after: [food]
@@ -374,6 +378,7 @@
   after: [rainKeepsGuests]
   tags: [food, helped]
   within: 1
+  withinYears: 2
 
 - id: cooksInHomes
   label: Becomes a home chef
@@ -407,8 +412,8 @@
 
 - id: bakesForMoreCafes
   label: Bakes for more cafés
-  line: "{name} starts supplying three more cafés on the same street."
-  if: "{name} had begun supplying more cafés"
+  line: "{name} starts baking for three more cafés on the same street."
+  if: "{name} had baked for more cafés"
   kind: choice
   ages: [16, 62]
   after: [cafeBuysLoaves, cooksInHomes, winsCookOff]
