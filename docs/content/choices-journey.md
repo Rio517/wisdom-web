@@ -10,7 +10,7 @@ A guided lesson for readers aged eight and up. The people and places are made up
 
 ### The paths we make
 
-Your choices shape where a life can go. So do things nobody chooses, the lucky ones and the unlucky ones.
+Your choices shape where a life can go. Good and bad luck, which nobody chooses, shape it too.
 
 First we watch one whole life in half a minute. Then we go on a hike and meet a girl with two paths.
 
@@ -22,17 +22,17 @@ The story of Sam, one line a step (the lives store, src/lessons/choices/lives/; 
 
 - **Age 0** Sam is born.
 - **Age 6** His parents sign him up for choir.
-- **Age 10** He picks guitar.
+- **Age 10** He picks the guitar.
 - **Age 14** He starts a band with two friends.
 - **Age 16** The three bandmates record a first song.
-- **Age 16** Both friends quit. He is on his own.
+- **Age 16** Both friends quit, and he is on his own.
 - **Age 17** He forms a new band with three others.
-- **Age 18** A radio DJ plays one of his songs. Luck!
-- **Age 20** A record label signs the band.
+- **Age 18** Luckily, a radio DJ plays one of his songs.
+- **Age 20** A record company offers the band a deal.
 - **Age 22** He goes on a world tour.
-- **Age 24** Drinking and drugs take over. Shows fall apart.
-- **Age 25** The label drops the band. He loses his flat.
-- **Age 26** A friend takes him in. He asks for help.
+- **Age 24** Drinking and drugs take over, and his shows fall apart.
+- **Age 25** The record company ends the deal, and he loses his flat.
+- **Age 26** He asks for help, and a friend lets him stay.
 - **Age 30** He teaches guitar and writes new songs.
 - **Age 33** He has two great kids.
 - **Age 36** He teaches music at the local school.
@@ -57,7 +57,7 @@ Alfredo and his dad are getting ready for a big hike. They study the map. Then t
 
 Mirror Lake is a long way up. Nobody gets there in one jump. It’s one small step after another.
 
-Picture: A trail map: the trail climbs from the trailhead through a forest, past a stream and up a ridge to Mirror Lake. Alfredo and his dad wait at the trailhead with full water bottles.
+Picture: A trail map shows the trail climbing from the trailhead through a forest, past a stream and up a ridge to Mirror Lake. Alfredo and his dad wait at the trailhead with full water bottles.
 
 ### Half the water is gone.
 
@@ -66,7 +66,7 @@ Partway up, Alfredo checks his bottle. Half the water is gone already. The lake 
 **What should they do?**
 
 - **Keep going to the lake** — They’d reach the lake with almost no water for the long walk home. On a hot day, that’s dangerous. Dad says, “The lake isn’t going anywhere. Let’s turn back.”
-- **Turn back now** (what they chose) — Good thinking. The other half of the water is for getting home safely.
+- **Turn back now** (what they chose) — That’s good thinking. The other half of the water is for getting home safely.
 
 Picture: The walkers climb to the big rock. Their water bottles are half full, and the lake is still far away.
 
@@ -74,11 +74,11 @@ Picture: The walkers climb to the big rock. Their water bottles are half full, a
 
 They walk home without seeing the lake. Alfredo is disappointed. So is his dad.
 
-But they learned something for next time: bring enough water to get there and back.
+But they learned something for next time. They’ll bring enough water to get there and back.
 
 Backpack adds: Water for there and back
 
-Picture: The walkers return to the trailhead. A new card in the backpack reads: Water for there and back.
+Picture: The walkers return to the trailhead. The backpack gains a new card, called Water for there and back.
 
 ### Practice builds on practice.
 
@@ -88,7 +88,7 @@ Each walk starts from what he learned on the last one. His dad helps too. Learni
 
 Backpack adds: Reading the map · Spotting landmarks · Resting before you’re tired
 
-Picture: Three short practice loops appear near home, one after another. The backpack gains three cards: Reading the map, Spotting landmarks, Resting before you’re tired.
+Picture: Three short practice loops appear near home, one after another. The backpack gains three cards, called Reading the map, Spotting landmarks and Resting before you’re tired.
 
 ### The second try.
 
@@ -106,9 +106,9 @@ Last night, a storm washed part of the lake trail away. A ranger at the bridge s
 
 - **Sneak past the sign** — The sign is there because the trail isn’t safe. Sneaking past could turn a bad day into a dangerous one.
 - **Go home** — Feeling disappointed is normal. Alfredo feels it too, and going home is allowed. But is there another good choice?
-- **Ask the ranger about other trails** (what they chose) — The ranger smiles. “Have you seen the Waterfall Trail? It’s shorter, and it’s open.” A lucky tip they never planned for.
+- **Ask the ranger about other trails** (what they chose) — The ranger smiles. “Have you seen the Waterfall Trail? It’s shorter, and it’s open.” It’s a lucky tip they never planned for.
 
-Picture: Rain clouds over the ridge. The lake trail beyond the bridge is marked closed. A ranger stands at the bridge.
+Picture: Rain clouds hang over the ridge. The lake trail beyond the bridge is marked closed. A ranger stands at the bridge.
 
 ### Plans change. You can respond.
 
@@ -118,7 +118,7 @@ That’s called resilience. You can’t control everything, but you can find a g
 
 > **Does resilience mean never stopping?**
 >
-> No. Turning back, resting, asking for help or picking a new goal can all be good choices.
+> No, it doesn’t. Turning back, resting, asking for help or picking a new goal can all be good choices.
 >
 > Alfredo can feel disappointed and still decide what to do next. Nobody has to pretend a setback feels good.
 
@@ -130,17 +130,17 @@ Sort each card. Was it their choice, or something outside their control? Outside
 
 Drag to sort (or skip): How much water to pack (their choice) · The storm (outside their control) · Turning back (their choice) · A friendly ranger at the bridge (outside their control) · Practising with the map (their choice) · Asking the ranger about other trails (their choice)
 
-Picture: Six cards sorted into two groups. Their choices: how much water to pack, turning back, practising with the map, asking the ranger. Outside their control: the storm, and a friendly ranger being there.
+Picture: Six cards are sorted into two groups. Their choices are how much water to pack, turning back, practising with the map and asking the ranger. The storm and a friendly ranger being there were outside their control.
 
 ## Skills grow
 
 ### Same start, two paths.
 
-Meet Maya. She’s eight, and she just joined a soccer team. Let’s imagine two ways her next three years could go. Same Maya, same start. Only her choices are different.
+Meet Maya. She’s eight, and she just joined a soccer team. Let’s imagine two ways her next three years could go. It’s the same Maya with the same start. Only her choices are different.
 
 In her first season, Path A Maya goes to most practices and kicks a ball against the wall at home. Path B Maya goes now and then. So far, the difference is small. Early practice often feels like nothing is happening. Something is.
 
-Picture: One path splits into two. Path A: Maya keeps practising. Path B: Maya mostly skips. Then season one: Path A’s calendar is mostly filled; Path B’s has a few practices. Both sets of skill bars are low, with Path A slightly ahead.
+Picture: One path splits into two. On Path A, Maya keeps practising. On Path B, she mostly skips. After season one, Path A’s calendar is mostly filled, and Path B’s has a few practices. Both sets of skill bars are low, with Path A slightly ahead.
 
 ### Then learning builds on learning.
 
@@ -156,13 +156,13 @@ Each skill gives the next one a place to stand. Path B Maya is still working on 
 >
 > Picture while open: Both skill boxes switch to basketball. Path A starts with part of Court sense and Passing already filled, carried across from soccer. Dribbling starts low for both. Path B starts low on all three.
 
-Picture: Seasons two and three. Path A’s skill bars rise faster than before, with arrows showing ball control helping passing and passing helping positioning. Path B’s bars rise slowly.
+Picture: In seasons two and three, Path A’s skill bars rise faster than before, with arrows showing ball control helping passing and passing helping positioning. Path B’s bars rise slowly.
 
 ### It’s never too late to start.
 
 Path B Maya can start practising any season she likes. When she practises basketball at eleven, her skills grow too. She has more to catch up on, but the door is still open.
 
-Real life is messier than this picture. Coaches, time and money matter. Luck does too, and sometimes luck is kind: someone spots you and says, “Keep going.” Practice helps, but it doesn’t guarantee a result.
+Real life is messier than this picture. Coaches, time and money matter. Luck does too. Sometimes luck is kind, and someone spots you and says, “Keep going.” Practice helps, but it doesn’t guarantee a result.
 
 Picture: Both Mayas practise basketball for a season. Path B’s calendar fills for the first time and her bars rise; Path A keeps her head start.
 
@@ -187,7 +187,7 @@ Closed-way reasons (children): No places left this year · It cost too much righ
 
 Closed-way reasons (adults): Money was tight that year · It wasn’t offered nearby · Someone in the family needed care · An injury got in the way · The timing didn’t work out · Someone else got the place
 
-Picture: An interactive map of example life choices. At each fork, two or three choices branch ahead. Some close for a reason; some lucky chances open. The chosen path turns dark green, with gray branches for choices not taken.
+Picture: This interactive map shows example life choices. At each fork, two or three choices branch ahead. Some close for a reason, and some lucky chances open. The chosen path turns dark green, with gray branches for choices not taken.
 
 ## Take it with you
 

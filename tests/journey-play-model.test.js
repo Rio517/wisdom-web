@@ -25,7 +25,7 @@ test('frontierIndex finds the first unchosen day, or the full length once every 
 
 test('resultMessage and announceText describe a rest day and a practice day without inventing new wording', () => {
   const rest = applyActivity(createSkillState(), 'nap').result;
-  assert.match(resultMessage(rest), /Energy back up/);
+  assert.match(resultMessage(rest), /Your energy is back up/);
   assert.equal(announceText(0, rest), `Monday: Take a nap. ${resultMessage(rest)}`);
 
   const practice = applyActivity(createSkillState({ ballControl: 0.6 }), 'soccerPractice').result;
