@@ -127,8 +127,10 @@ export function createLifeMap(stack, { origin, before = null, onPick = () => {},
     // Born) and no label goes in it.
     // Its height is the bar's own, measured in the page's language (German's text can take a line more
     // than English's), so the life is laid out clear of it whatever the words.
-    const BAR_HEIGHT = r.width < 800 ? Math.max(BAR - 10, cardSize('explore-end life-end is-bar').h) : 0;
-    const bar = r.width < 800 ? BAR_HEIGHT + 10 : 0;
+    const measuredBar = r.width < 800 ? cardSize('explore-end life-end is-bar').h : 0;
+    const BAR_HEIGHT = Math.max(BAR - 10, measuredBar);
+    // The band runs from the map's top to 4 px under the bar (which sits 12 px down): 100 px for English's 83 px bar.
+    const bar = r.width < 800 ? Math.max(BAR, 12 + measuredBar + 4) : 0;
     const span = Math.min(r.height - TOP - BOTTOM, bar ? (o.y - bar - 8) / 0.45 : Infinity);
     setFadeFrom(r.width - 64);
     // Even years: a later life has as many steps as its childhood, so it gets the same room.

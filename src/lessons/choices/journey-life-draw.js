@@ -367,7 +367,7 @@ export function createPlacer({ width, height, measure, paths = [], dots = [], bo
     }
     return true;
   };
-  const far = (text, textWidth, points, home, size = CHOSEN_SIZE) => {
+  const far = (text, textWidth, points, home, size = CHOSEN_SIZE, passes = [[4, false], [2, false], [2, true]]) => {
     // Every candidate box, nearest first: the search stops once no nearer one can beat the best.
     const anchors = [home, ...points.filter((_, i) => i % 2 === 0), ...[-250, -200, -150, -100, -50, 50, 100, 150].map(dx => ({ x: home.x + dx, y: home.y }))];
     const candidates = [];
@@ -384,7 +384,7 @@ export function createPlacer({ width, height, measure, paths = [], dots = [], bo
       }
     }
     candidates.sort((a, b) => a.dist - b.dist);
-    for (const [margin, useBand] of [[4, false], [2, false], [2, true]]) {
+    for (const [margin, useBand] of passes) {
       const clash = box => taken.some(o => (!useBand || !reserved.has(o)) && box.left < o.right && box.right > o.left && box.top < o.bottom && box.bottom > o.top);
       let best = null;
       for (const { box, left, baseline, dy, dist } of candidates) {
@@ -441,7 +441,14 @@ export function createPlacer({ width, height, measure, paths = [], dots = [], bo
         if (!best || cost < best.cost) best = { cost, spot, anchor, box, left, baseline };
       }
       // Last of all, the same at the gray labels' size.
-      if (!best) return far(text, textWidth, points, home) ?? far(text, measure(text, `650 ${SMALL_SIZE}px ${FONT}`), points, home, SMALL_SIZE);
+      // Outside the end card's band first, at the label's size and then at the gray labels' size; only then in the band
+      // (a German bar can be taller than an English one, and the band is where the bar may go).
+      if (!best) {
+        const small = measure(text, `650 ${SMALL_SIZE}px ${FONT}`);
+        const clear = [[4, false], [2, false]];
+        return far(text, textWidth, points, home, CHOSEN_SIZE, clear) ?? far(text, small, points, home, SMALL_SIZE, clear)
+          ?? far(text, textWidth, points, home, CHOSEN_SIZE, [[2, true]]) ?? far(text, small, points, home, SMALL_SIZE, [[2, true]]);
+      }
       const { spot, anchor, box, left, baseline } = best;
       taken.push(box);
       const leader = !spot.dot && spot.gap > 14 ? {
