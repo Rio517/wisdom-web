@@ -34,16 +34,12 @@ const MAIN_LENGTH = pathTrack(MAIN).length;
 // The Waterfall Trail leaves the bridge eastwards, above the side stream, to a lookout beside the falls.
 const ALT = 'M628 505 C 668 498, 712 497, 756 503 S 880 522, 930 525 S 974 528, 989 530';
 // Where the pair stands at the trailhead (map units along the trail): clear of the cabin. The walked
-// line still starts at the trail's start, and the practice walks start and end where they stand.
+// line still starts at the trail's start.
 const HOME = 22;
 // Halfway, as a fraction of the trail, and where the second walk stops short of the bridge
 // (map units): both kept where they were before the trail went over the hill.
 const TURN = 355.4 / MAIN_LENGTH;
 const BRIDGE_GAP = 10.7;
-// Practice walks: from where the pair stands, out across the meadow by the trailhead and back, each a
-// little farther (fractions of the way). The second reaches the big rock, the landmark its card names.
-const practicePath = ({ x, y }) => `M${n1(x)} ${n1(y)} C ${n1(x + 60)} ${n1(y + 36)}, 268 722, 344 724 S 498 720, 566 704`;
-const PRACTICE_REACH = [0.4, 0.72, 1];
 
 const TREE_SPOTS = [
   [196, 548, 1], [226, 532, .9], [258, 556, 1.1], [300, 520, .95], [338, 540, 1], [372, 510, 1.05], [520, 488, .9], [556, 470, 1],
@@ -401,8 +397,6 @@ export function createHikeScene(root) {
   const tracks = new Map([[main, pathTrack(MAIN)], [altPath, pathTrack(ALT)]]);
   const pointOn = (path, fraction) => tracks.get(path).point(fraction);
   const home = HOME / mainLength;
-  const meadow = {}; // the practice walks' way: not drawn, only walked
-  tracks.set(meadow, pathTrack(practicePath(pointOn(main, home))));
   const homePoint = pointOn(main, home);
   // Where the trail goes over the green hill's crest, and where it comes back into view on the far
   // side (map units along it). Between the two it is behind the hill.
@@ -714,18 +708,15 @@ export function createHikeScene(root) {
       renderBottles(4, 1);
       const order = ['map', 'landmarks', 'rest'];
       practised(0);
-      // Three short walks across the meadow. At the far end of each, its card arrives beside the
-      // story; back home, what he practised joins the backpack quietly (the card had the flourish).
-      for (let index = 0; index < order.length; index += 1) {
-        const far = PRACTICE_REACH[index];
-        const duration = 700 + 320 * index;
-        if (!(await walk({ path: meadow, from: 0, to: far, duration, token }))) return;
-        practised(index + 1, index);
-        if (!(await walk({ path: meadow, from: far, to: 0, duration, token, facing: -1 }))) return;
-        renderLearned(['water', ...order.slice(0, index + 1)], [order[index]], 'is-added');
-        if (!(await wait(260, token))) return;
-      }
+      // The pair stays at the trailhead. Each card arrives beside the story in turn; a moment later
+      // what he practised joins the backpack quietly (the card had the flourish).
       place(main, home, 1);
+      for (let index = 0; index < order.length; index += 1) {
+        if (!(await wait(index ? 700 : 600, token))) return;
+        practised(index + 1, index);
+        if (!(await wait(700, token))) return;
+        renderLearned(['water', ...order.slice(0, index + 1)], [order[index]], 'is-added');
+      }
       return;
     }
     if (beatId === 'retry' && sequential && from === 'practice') {

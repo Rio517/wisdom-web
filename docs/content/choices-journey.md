@@ -90,7 +90,7 @@ Over the next few weeks, they take short walks near home. Each walk starts from 
 
 Backpack adds: Reading the map · Spotting landmarks · Resting before you’re tired
 
-Picture: Alfredo and his dad take three short walks from the trailhead. Each walk goes a little farther. The backpack gains three cards, called Reading the map, Spotting landmarks and Resting before you’re tired.
+Picture: Alfredo and his dad stand at the trailhead. The backpack gains three cards, called Reading the map, Spotting landmarks and Resting before you’re tired.
 
 ### The second try.
 
