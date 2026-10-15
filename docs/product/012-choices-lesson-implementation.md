@@ -77,7 +77,7 @@ assert.equal(model.getState().comparison, 'first');
 
 ## Task 3: Integration, browser checks and review
 
-**Files:** modify `vite.config.js`, `tests/build.test.js`, `README.md`, `prototype/README.md`, `NEXT_STEP.md`, `COMPLETED.md`; add `tests/choices.browser.js`. Keep screenshot evidence in registered study 001 round v08.
+**Files:** modify `vite.config.js`, `tests/build.test.js`, `README.md`, `prototype/README.md`, `BACKLOG.md`, `COMPLETED.md`; add `tests/choices.browser.js`. Keep screenshot evidence in registered study 001 round v08.
 
 - [x] Add a failing build test requiring `prototype/choices.html` in the build inputs and a static HTML-transform test for `<!-- CHOICES_READING -->`.
 - [x] Add the entry and transform without changing existing inputs or port guards.

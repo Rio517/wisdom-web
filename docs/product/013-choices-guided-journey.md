@@ -47,7 +47,7 @@ Explorer tree rules (`prototype/journey-explore.js`): it is a separate illustrat
 
 ## Changes to current rules that need owner approval
 
-1. The current AGENTS/NEXT_STEP wording makes Alfredo's hike an optional side example. In this study, the hike and Maya are part of the guided sequence, as requested. Every chapter can still be reached directly from the trail.
+1. The current AGENTS/BACKLOG wording makes Alfredo's hike an optional side example. In this study, the hike and Maya are part of the guided sequence, as requested. Every chapter can still be reached directly from the trail.
 2. The docs call a simulator future scope. The game here is a small, authored ten-day illustration. The Explore chapter is a seeded example tree with made-up labels. Neither is a general simulator, editor or forecast.
 3. The research names tennis as its carry-across example. This study uses soccer→basketball and cello→guitar, as the owner asked. The claims stay at "a head start that still needs adapting".
 4. The first entry was meant to take about 2–3 minutes. The full journey is longer (about 15 minutes with the game and explorer), but the main idea is complete by the end of chapter 1. Decide whether to offer a short path.

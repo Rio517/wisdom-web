@@ -64,7 +64,7 @@ await page.waitForFunction(() => document.querySelector('#life-map').dataset.mot
 - [x] Build the shared shell with real copy. Opening: “Your future has more than one path.” Explain preparation, support, circumstances and chance. Second scene: learning equal parts → equivalent fractions → adapting a recipe; identify this as a fictional example, not a forecast. Optional related-sport example states that some skills may help and others need adapting, with links to the canonical research.
 - [x] Implement dot travel with native path length/point sampling, fade untaken paths, then modest focus transform. Region labels sit outside the camera transform; the age label follows its anchor with constant readable screen-space sizing. Enable click/tap on authored anchors and an equivalent button; dragging is unnecessary.
 - [x] Inspect screenshots and interactions at desktop and iPad-sized viewports. Complete two review/improvement cycles, checking the initial abundance, settled meaning, readability, touch targets, animation interruption, keyboard, browser history and reduced motion.
-- [x] Request independent code review, resolve important findings, rerun automated and browser checks, and update `NEXT_STEP.md` with exact launch commands and remaining scope. Record completed work only after verification.
+- [x] Request independent code review, resolve important findings, rerun automated and browser checks, and update `BACKLOG.md` with exact launch commands and remaining scope. Record completed work only after verification.
 
 ## Design review against the brief
 

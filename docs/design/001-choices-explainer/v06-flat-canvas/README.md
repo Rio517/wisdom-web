@@ -72,7 +72,7 @@ Those earlier reviews did not resolve the stroke and opening feedback; the curre
 
 ## Verification and limits
 
-The current verification status is maintained in [NEXT_STEP](../../../../NEXT_STEP.md#run-and-verify). Node coverage includes topology, deterministic generation, exact age boundaries, scenario overrides, annotations, resource limits and cache behavior. The canonical browser suite covers desktop and both iPad-mini viewport sizes, actual Canvas stroke properties/counts, unnumbered controls, arrival timing, named callout collisions, history/focus, reduced motion and reading fallbacks.
+The current verification status is maintained in [BACKLOG](../../../../BACKLOG.md#run-and-verify). Node coverage includes topology, deterministic generation, exact age boundaries, scenario overrides, annotations, resource limits and cache behavior. The canonical browser suite covers desktop and both iPad-mini viewport sizes, actual Canvas stroke properties/counts, unnumbered controls, arrival timing, named callout collisions, history/focus, reduced motion and reading fallbacks.
 
 If callouts cannot fit, unplaceable visual labels and leaders are hidden while the complete semantic outcome list remains available below. Browser viewport checks do not establish physical-iPad or Safari behavior, reader comprehension or complete accessibility certification. Phone design remains deferred. The prototype is local and unpublished.
 

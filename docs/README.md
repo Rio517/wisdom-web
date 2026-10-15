@@ -50,4 +50,4 @@ Add a lesson folder when there is a first idea or research question to put in it
 | [content/](content/) | Content samples. |
 | [brief.md](brief.md) | The project brief. |
 
-[NEXT_STEP.md](../NEXT_STEP.md) is the current handoff; [COMPLETED.md](../COMPLETED.md) is the log.
+[BACKLOG.md](../BACKLOG.md) is the current handoff; [COMPLETED.md](../COMPLETED.md) is the log.

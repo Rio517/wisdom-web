@@ -11,7 +11,7 @@ All project servers use ports **4600–4699** only: **4600** for development and
 The agent setup is in the repo, so it works for anyone who clones it:
 
 - **Instructions:** `AGENTS.md` is the whole setup: scope, content rules,
-  documentation layout and how to verify work. Read it and `NEXT_STEP.md`
+  documentation layout and how to verify work. Read it and `BACKLOG.md`
   before changing anything. Codex reads `AGENTS.md`; Claude Code reads
   `CLAUDE.md`, which imports it.
 - **Agents:** `.claude/agents/design-reviewer.md` judges rendered pages
@@ -38,7 +38,7 @@ particular machine or a parent folder.
 
 ## Start here
 
-- [Current state and next steps](NEXT_STEP.md)
+- [Current state and next steps](BACKLOG.md)
 - [Lesson roadmap and documentation index](docs/README.md#lesson-roadmap)
 - [Project brief](docs/brief.md)
 - [Research library — topics and navigation](docs/research/README.md)

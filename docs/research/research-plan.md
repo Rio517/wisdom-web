@@ -25,7 +25,7 @@ The central question is: how can we teach children that preparation, practice, a
 - [x] Synthesize a cross-topic report and topic-specific findings/ledgers, editorial rules, chapter outline and sample passage, plus a proposed delivery plan.
 - [x] Verify citation support, document links, scope, current-state accuracy, and repository status.
 
-These completed items describe the focused first-chapter research, not every future topic. Repository setup and current product work are recorded in [NEXT_STEP.md](../../NEXT_STEP.md). Source records identify inspected material and access limits. The repository has no rendered website to review; document verification covers Markdown structure, links, scope, and current-state claims.
+These completed items describe the focused first-chapter research, not every future topic. Repository setup and current product work are recorded in [BACKLOG.md](../../BACKLOG.md). Source records identify inspected material and access limits. The repository has no rendered website to review; document verification covers Markdown structure, links, scope, and current-state claims.
 
 ## Research lanes
 

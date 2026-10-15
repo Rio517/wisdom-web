@@ -60,6 +60,6 @@ The historical `steps-portrait-v02.png` capture actually shows exploration: its 
 
 The browser suite checks actual behavior, not just screenshots: preview without base-map repaint, connected commit and revisit, persistent story state, input confirmation, keyboard, pointer/touch gestures, reduced motion and static reading. A frozen initial Today fan preserves the entry drawing; revisited alternatives use the existing graph instead of generating a fresh fan. Independent review prompted an actual generated static-map SVG, native choice-button semantics and post-commit/revisit focus restoration. Those findings were corrected and independently rechecked; v04 also verifies settled footsteps and the no-JavaScript diagram.
 
-Verification results for the current pass are in [NEXT_STEP.md](../../../../NEXT_STEP.md#run-and-verify). The older full browser suite was not rerun for this bounded revision.
+Verification results for the current pass are in [BACKLOG.md](../../../../BACKLOG.md#run-and-verify). The older full browser suite was not rerun for this bounded revision.
 
 Limits: no physical iPad/Safari testing, child comprehension testing, complete accessibility audit, publication or production approval. The map is not evidence about how many choices a person has.

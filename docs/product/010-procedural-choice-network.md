@@ -170,7 +170,7 @@ metadata; annotated projections are copied afresh.
 - [x] Existing authored UI ages remain 8, 12, 16, 25, 40 and 60, while
       comparison overlays use symbolic local progress rather than age forecast.
 - [x] The engine and current prototype checks are locally verified; see
-      [current verification](../../NEXT_STEP.md#run-and-verify). These checks
+      [current verification](../../BACKLOG.md#run-and-verify). These checks
       do not establish visual acceptance.
 
 ## Current visual refinement

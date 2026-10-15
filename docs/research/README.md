@@ -51,7 +51,7 @@ research/
 - Keep evidence, interpretation, fictional example, and product recommendation distinguishable. Product behavior belongs in [numbered product documents](../product/README.md).
 - Preserve source identifiers and meaningful headings. Add a topic subpage when it answers a distinct question with enough evidence to justify one; link it from the bucket overview. Do not create empty topic files.
 - Record publication date, access date, study population, design, measured outcome, confidence, and limitations. State when only an abstract was accessible. Maintain [the source index and research gaps](sources.md).
-- Prefer current statements to progress diaries. Put current priorities in [NEXT_STEP.md](../../NEXT_STEP.md) and completed tasks in [COMPLETED.md](../../COMPLETED.md).
+- Prefer current statements to progress diaries. Put current priorities in [BACKLOG.md](../../BACKLOG.md) and completed tasks in [COMPLETED.md](../../COMPLETED.md).
 - Store links and proportionate paraphrases, not copied research papers or figures without the necessary rights. Generated design artwork belongs in [design studies](../design/README.md), not as research evidence.
 
 The Markdown links are the working navigator now. A possible [research reading UI](../product/005-research-library.md) would render this same library; no web navigator is implemented.
