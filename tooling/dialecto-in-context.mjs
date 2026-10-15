@@ -1,12 +1,19 @@
 // Dialecto in-context editing for an Astro site (dev only).
 //
-//   astro.config.mjs   import dialectoInContext from './tooling/dialecto-in-context.mjs'
-//                      integrations: [dialectoInContext()]
-//   .env.local         DIALECTO_URL=...  DIALECTO_REPO=...  [DIALECTO_SCAN_TOKEN=...]
-//   CLI                node tooling/dialecto-in-context.mjs scan [--worktree]
+// Setup is one line in astro.config.mjs:
 //
-// Inert unless DIALECTO_URL and DIALECTO_REPO are set and the command is `astro dev`.
-// Spec: ddd-plan/engineering/spec-0016-in-context-editor-json.md (§3 codec, §6 add-on).
+//   import dialectoInContext from './tooling/dialecto-in-context.mjs'
+//   integrations: [dialectoInContext()]
+//
+// Active in `astro dev` as soon as it is installed; inert for build, preview and tests.
+// Everything else is optional (option or env var, option wins): url / DIALECTO_URL,
+// project / DIALECTO_PROJECT, catalogs / DIALECTO_CATALOGS, sourceLocale /
+// DIALECTO_SOURCE_LOCALE, enabled / DIALECTO_IN_CONTEXT=off. The site is identified by
+// its git remote, served to the overlay at /__dialecto/context.
+// CI scan (needs DIALECTO_SCAN_TOKEN and a numeric DIALECTO_PROJECT):
+//   node tooling/dialecto-in-context.mjs scan [--worktree]
+//
+// Spec: ddd-plan/engineering/spec-0016-in-context-editor-json.md (§3 codec, §4 site, §6 add-on).
 
 import { createHash } from 'node:crypto';
 import { execFile } from 'node:child_process';
@@ -17,6 +24,9 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { promisify } from 'node:util';
 
 const run = promisify(execFile);
+
+export const ADDON_VERSION = '2.0.0';
+export const DEFAULT_URL = 'https://dialecto.eu';
 
 // ---------------------------------------------------------------- marker codec (spec §3)
 
@@ -60,10 +70,157 @@ export function markCatalog(jsonText, { domain, locale, overrides = {} }) {
   return escapeInvisible(JSON.stringify(marked));
 }
 
+// ---------------------------------------------------------------- formatter recording (spec §4)
+//
+// Plural/select wording can only be previewed exactly with the values the page
+// formatted it with. In dev the page's `intl-messageformat` is swapped for a
+// subclass whose `format` records those values into the message's own marker
+// header (after U+001E in the payload), on the server and in the browser; the
+// browser also gets `window.__dialectoFormat` so the overlay re-renders an edit
+// with the page's own formatter. The wrapper's recorder is generated from these
+// very functions' source, so what the tests exercise is exactly what ships.
+
+const REC_OPEN = String.fromCodePoint(0x2062);
+const REC_HEADER_END = String.fromCodePoint(0x2063);
+const REC_CLOSE = String.fromCodePoint(0x2064);
+const REC_RECORD_SEP = String.fromCodePoint(0x1e);
+const REC_DIGITS = [0x200c, 0x200d, 0x2060, 0x2061].map((cp) => String.fromCodePoint(cp));
+
+function recToDigits(text) {
+  let out = '';
+  for (const byte of new TextEncoder().encode(text)) {
+    out += REC_DIGITS[(byte >> 6) & 3] + REC_DIGITS[(byte >> 4) & 3] + REC_DIGITS[(byte >> 2) & 3] + REC_DIGITS[byte & 3];
+  }
+  return out;
+}
+
+function recFromDigits(digits) {
+  if (digits.length === 0 || digits.length % 4 !== 0) return null;
+  const bytes = new Uint8Array(digits.length / 4);
+  for (let i = 0; i < bytes.length; i++) {
+    let byte = 0;
+    for (let j = 0; j < 4; j++) {
+      const value = REC_DIGITS.indexOf(digits[i * 4 + j]);
+      if (value < 0) return null;
+      byte = (byte << 2) | value;
+    }
+    bytes[i] = byte;
+  }
+  try {
+    return new TextDecoder('utf-8', { fatal: true }).decode(bytes);
+  } catch {
+    return null;
+  }
+}
+
+function recStrip(text) {
+  let out = '';
+  for (let i = 0; i < text.length; i++) {
+    const char = text[i];
+    if (char === REC_OPEN) {
+      const end = text.indexOf(REC_HEADER_END, i + 1);
+      if (end >= 0) {
+        i = end;
+        continue;
+      }
+    }
+    if (char !== REC_CLOSE && char !== REC_HEADER_END) out += char;
+  }
+  return out;
+}
+
+// JSON of the values, or null when one can't round-trip (a function, a rich-text tag…).
+function encodeArgs(values) {
+  const out = {};
+  for (const [name, value] of Object.entries(values)) {
+    if (value === null || typeof value === 'boolean') {
+      out[name] = value;
+    } else if (typeof value === 'number') {
+      if (!Number.isFinite(value)) return null;
+      out[name] = value;
+    } else if (typeof value === 'string') {
+      out[name] = value.includes(REC_OPEN) ? { $marked: recStrip(value) } : value;
+    } else if (value instanceof Date && !Number.isNaN(value.getTime())) {
+      out[name] = { $date: value.toISOString() };
+    } else {
+      return null;
+    }
+  }
+  return JSON.stringify(out);
+}
+
+// A marked message's output with its argument values recorded in its header.
+function annotate(output, values) {
+  if (typeof output !== 'string' || values === null || typeof values !== 'object') return output;
+  if (output[0] !== REC_OPEN) return output;
+  const end = output.indexOf(REC_HEADER_END);
+  if (end < 0) return output;
+  const payload = recFromDigits(output.slice(1, end));
+  if (payload === null || payload.includes(REC_RECORD_SEP)) return output;
+  const json = encodeArgs(values);
+  if (json === null) return output;
+  return REC_OPEN + recToDigits(payload + REC_RECORD_SEP + json) + output.slice(end);
+}
+
+export { annotate, encodeArgs };
+
+const codepoint = (char) => `String.fromCodePoint(0x${char.codePointAt(0).toString(16)})`;
+
+const RECORDER_SOURCE = [
+  `const REC_OPEN = ${codepoint(REC_OPEN)};`,
+  `const REC_HEADER_END = ${codepoint(REC_HEADER_END)};`,
+  `const REC_CLOSE = ${codepoint(REC_CLOSE)};`,
+  `const REC_RECORD_SEP = ${codepoint(REC_RECORD_SEP)};`,
+  `const REC_DIGITS = [${REC_DIGITS.map(codepoint).join(', ')}];`,
+  ...[recToDigits, recFromDigits, recStrip, encodeArgs, annotate].map(String),
+].join('\n\n');
+
+export { RECORDER_SOURCE as recorderSource };
+
+const FORMATTER_ID = '\0dialecto-in-context:intl-messageformat';
+
+const FORMATTER_SOURCE = `import * as real from 'intl-messageformat';
+export * from 'intl-messageformat';
+
+${RECORDER_SOURCE}
+
+const Base = real.IntlMessageFormat;
+
+export class IntlMessageFormat extends Base {
+  constructor(...args) {
+    super(...args);
+    const format = this.format.bind(this);
+    this.format = (values) => annotate(format(values), values);
+  }
+}
+export default IntlMessageFormat;
+
+if (typeof window !== 'undefined') {
+  window.__dialectoFormat = (source, locale, values) => new Base(source, locale).format(values);
+  window.dispatchEvent(new Event('dialecto:formatter'));
+}
+`;
+
+// Every import of 'intl-messageformat' from the site's code resolves to the recording wrapper.
+function formatterPlugin() {
+  return {
+    name: 'dialecto-in-context:formatter',
+    enforce: 'pre',
+    apply: 'serve',
+    resolveId(source, importer) {
+      return source === 'intl-messageformat' && importer !== FORMATTER_ID ? FORMATTER_ID : null;
+    },
+    load(id) {
+      return id === FORMATTER_ID ? FORMATTER_SOURCE : null;
+    },
+  };
+}
+
 // ---------------------------------------------------------------- configuration
 
 const LOCALE_FILE = /^[a-z]{2,3}([-_][A-Za-z0-9]{2,8})*$/;
 const OVERRIDES_PATH = '/__dialecto/overrides';
+const CONTEXT_PATH = '/__dialecto/context';
 const MAX_BODY = 256 * 1024;
 const MAX_EDITS = 5000;
 
@@ -77,23 +234,43 @@ async function loadEnv(mode, root) {
   }
 }
 
-function resolveSettings(env, options, root) {
-  const url = (env.DIALECTO_URL ?? '').trim().replace(/\/+$/, '');
-  const repo = (env.DIALECTO_REPO ?? '').trim();
-  const catalogs = options.catalogs ?? 'src/i18n/messages';
+const OFF_VALUES = new Set(['off', 'false', '0']);
+
+// The first non-empty string among the candidates (option > env > default).
+const firstText = (...candidates) => {
+  for (const value of candidates) {
+    if (typeof value === 'string' && value.trim() !== '') return value.trim();
+    if (typeof value === 'number' && Number.isFinite(value)) return String(value);
+  }
+  return null;
+};
+
+/**
+ * Pure: options and DIALECTO_* env into the add-on's settings. Precedence is
+ * option > env > default. `DIALECTO_REPO` is a deprecated alias of the project
+ * (`projectFromAlias` tells the caller to hint at the new name).
+ */
+export function resolveSettings(env = {}, options = {}, root = process.cwd()) {
+  const url = (firstText(options.url, env.DIALECTO_URL) ?? DEFAULT_URL).replace(/\/+$/, '');
+  const alias = firstText(options.project, env.DIALECTO_PROJECT) === null && firstText(env.DIALECTO_REPO) !== null;
+  const project = firstText(options.project, env.DIALECTO_PROJECT, env.DIALECTO_REPO);
+  const catalogs = firstText(options.catalogs, env.DIALECTO_CATALOGS) ?? 'src/i18n/messages';
+  const enabled =
+    typeof options.enabled === 'boolean' ? options.enabled : !OFF_VALUES.has((env.DIALECTO_IN_CONTEXT ?? '').trim().toLowerCase());
   return {
+    enabled,
     url,
-    repo,
+    urlValid: /^https?:\/\/[^/\s]/i.test(url),
+    project,
+    projectFromAlias: alias,
     token: (env.DIALECTO_SCAN_TOKEN ?? '').trim(),
     catalogs,
     catalogDir: path.resolve(root, catalogs),
     domain: path.basename(path.resolve(root, catalogs)),
-    sourceLocale: options.sourceLocale ?? 'en',
+    sourceLocale: firstText(options.sourceLocale, env.DIALECTO_SOURCE_LOCALE) ?? 'en',
     root,
   };
 }
-
-const configured = (settings) => /^https?:\/\//.test(settings.url) && settings.repo !== '';
 
 // ---------------------------------------------------------------- Vite plugin
 
@@ -172,8 +349,12 @@ function catalogPlugin(settings) {
     },
 
     configureServer(server) {
+      const readContext = createContextReader(settings);
       server.middlewares.use(OVERRIDES_PATH, (req, res, next) => {
         handleOverrides(req, res, server, replaceOverrides).catch(next);
+      });
+      server.middlewares.use(CONTEXT_PATH, (req, res, next) => {
+        handleContext(req, res, server, readContext).catch(next);
       });
     },
   };
@@ -235,6 +416,124 @@ async function handleOverrides(req, res, server, replaceOverrides) {
 
   const applied = replaceOverrides(server, edits);
   return send(res, 200, { ok: true, applied, ignored: edits.length - applied });
+}
+
+// ---------------------------------------------------------------- site context (spec §4, §6)
+
+const GITHUB_SEGMENT = /^[A-Za-z0-9._-]+$/;
+const MAX_DIRTY = 200;
+const CONTEXT_TTL_MS = 2000;
+const GIT_TIMEOUT_MS = 5000;
+
+/** `owner/name` from a GitHub remote URL in any of its common spellings, else null. */
+export function parseGitHubRemote(remote) {
+  if (typeof remote !== 'string') return null;
+  const text = remote.trim();
+  let host;
+  let repoPath;
+
+  if (text.includes('://')) {
+    let parsed;
+    try {
+      parsed = new URL(text);
+    } catch {
+      return null;
+    }
+    if (!['http:', 'https:', 'ssh:', 'git:'].includes(parsed.protocol)) return null;
+    host = parsed.hostname;
+    repoPath = parsed.pathname;
+  } else {
+    const scp = /^[^@\s/:]+@([^:/\s]+):(.+)$/.exec(text);
+    if (!scp) return null;
+    [, host, repoPath] = scp;
+  }
+
+  if (host.toLowerCase() !== 'github.com') return null;
+  const segments = repoPath.replace(/^\/+|\/+$/g, '').replace(/\.git$/, '').split('/');
+  if (segments.length !== 2 || !segments.every((segment) => GITHUB_SEGMENT.test(segment))) return null;
+  return segments.join('/');
+}
+
+/** Paths (repo-root relative, sorted, unique, capped) from `git status --porcelain=v1 -z`. */
+export function parsePorcelainZ(output) {
+  const fields = String(output ?? '').split('\0');
+  const files = new Set();
+  for (let i = 0; i < fields.length; i++) {
+    const entry = fields[i];
+    if (entry.length < 4) continue;
+    files.add(entry.slice(3));
+    // Renames and copies carry the original path as an extra field.
+    if (entry[0] === 'R' || entry[0] === 'C' || entry[1] === 'R' || entry[1] === 'C') {
+      i += 1;
+      if (fields[i]) files.add(fields[i]);
+    }
+  }
+  return [...files].sort().slice(0, MAX_DIRTY);
+}
+
+async function gitContext(root, args) {
+  const { stdout } = await run('git', args, { cwd: root, timeout: GIT_TIMEOUT_MS, maxBuffer: 8 * 1024 * 1024 });
+  return stdout;
+}
+
+/**
+ * A function resolving to `{repo, project, branch, sha, dirty, addon}`, computed
+ * on demand from git and shared for `ttlMs` (concurrent callers share one run).
+ * Never rejects: a git failure just leaves the field empty.
+ */
+export function createContextReader(settings, { git: gitRun = gitContext, ttlMs = CONTEXT_TTL_MS, now = Date.now } = {}) {
+  let cached = null;
+  const attempt = async (args) => {
+    try {
+      return await gitRun(settings.root, args);
+    } catch {
+      return null;
+    }
+  };
+
+  async function compute() {
+    const [remote, branch, sha, status] = await Promise.all([
+      attempt(['remote', 'get-url', 'origin']),
+      attempt(['rev-parse', '--abbrev-ref', 'HEAD']),
+      attempt(['rev-parse', 'HEAD']),
+      attempt(['status', '--porcelain=v1', '-z', '--untracked-files=all', '--', settings.catalogDir]),
+    ]);
+    const branchName = branch?.trim() ?? '';
+    const head = sha?.trim() ?? '';
+    return {
+      repo: parseGitHubRemote(remote),
+      project: settings.project,
+      branch: branchName && branchName !== 'HEAD' ? branchName : null,
+      sha: /^[0-9a-f]{40}$/.test(head) ? head : null,
+      dirty: parsePorcelainZ(status),
+      addon: ADDON_VERSION,
+    };
+  }
+
+  return () => {
+    if (!cached || now() - cached.at >= ttlMs) cached = { at: now(), promise: compute() };
+    return cached.promise;
+  };
+}
+
+/**
+ * A GET for the context must be same-origin and on a loopback host: browsers send
+ * `Sec-Fetch-Site: same-origin` (and no Origin) for a same-origin fetch, and any
+ * cross-site page or DNS-rebound host is turned away.
+ */
+export function contextRequestAllowed(req, scheme) {
+  const { host, origin } = req.headers;
+  if (!loopbackHost(host)) return false;
+  if (origin !== undefined && origin !== `${scheme}://${host}`) return false;
+  const site = req.headers['sec-fetch-site'];
+  return site === undefined || site === 'same-origin';
+}
+
+async function handleContext(req, res, server, readContext) {
+  if (req.method !== 'GET' && req.method !== 'HEAD') return send(res, 405, { error: 'method_not_allowed' });
+  const scheme = server.config.server.https ? 'https' : 'http';
+  if (!contextRequestAllowed(req, scheme)) return send(res, 403, { error: 'forbidden_origin' });
+  return send(res, 200, await readContext());
 }
 
 // ---------------------------------------------------------------- scan
@@ -316,14 +615,14 @@ export async function scan(settings, { worktree = false, log = () => {}, fetchIm
   try {
     let probe;
     try {
-      probe = await fetchImpl(`${settings.url}/api/repos/${settings.repo}/scan-config`, { headers: authorization });
+      probe = await fetchImpl(`${settings.url}/api/repos/${settings.project}/scan-config`, { headers: authorization });
     } catch {
       return fail(`cannot reach Dialecto at ${settings.url} — is it running?`);
     }
     if (probe.status === 401 || probe.status === 403) {
-      return fail(`scan token rejected for repo ${settings.repo} — check DIALECTO_SCAN_TOKEN and DIALECTO_REPO`);
+      return fail(`scan token rejected for project ${settings.project} — check DIALECTO_SCAN_TOKEN and DIALECTO_PROJECT`);
     }
-    if (!probe.ok) return fail(`Dialecto answered ${probe.status} for repo ${settings.repo}`);
+    if (!probe.ok) return fail(`Dialecto answered ${probe.status} for project ${settings.project}`);
 
     if (worktree) {
       log('warn', '--worktree reads uncommitted catalog files: testing only, a pull request from this scan would include those bytes');
@@ -342,7 +641,7 @@ export async function scan(settings, { worktree = false, log = () => {}, fetchIm
       log('warn', `source catalog ${settings.sourceLocale}.json not found in ${source.dir}`);
     }
 
-    const response = await fetchImpl(`${settings.url}/api/repos/${settings.repo}/scans`, {
+    const response = await fetchImpl(`${settings.url}/api/repos/${settings.project}/scans`, {
       method: 'POST',
       headers: { ...authorization, 'content-type': 'application/json' },
       body: JSON.stringify({
@@ -373,40 +672,44 @@ export async function scan(settings, { worktree = false, log = () => {}, fetchIm
 // ---------------------------------------------------------------- Astro integration
 
 export default function dialectoInContext(options = {}) {
-  let settings = null;
-
   return {
     name: 'dialecto',
     hooks: {
       'astro:config:setup': async ({ command, config, injectScript, updateConfig, logger }) => {
         const root = fileURLToPath(config.root);
-        settings = resolveSettings(await loadEnv('development', root), options, root);
+        const settings = resolveSettings(await loadEnv('development', root), options, root);
 
-        if (command !== 'dev' || !configured(settings)) {
-          logger.debug('in-context editing is off (needs astro dev, DIALECTO_URL and DIALECTO_REPO)');
-          settings = null;
+        if (command !== 'dev') {
+          logger.debug('in-context editing is off (it only runs in astro dev)');
           return;
         }
+        if (!settings.enabled) {
+          logger.debug('in-context editing is off (enabled: false or DIALECTO_IN_CONTEXT=off)');
+          return;
+        }
+        if (!settings.urlValid) {
+          logger.warn(`in-context editing stays off: "${settings.url}" is not an http(s) URL (check the url option or DIALECTO_URL)`);
+          return;
+        }
+        if (settings.projectFromAlias) logger.info('DIALECTO_REPO is deprecated; rename it to DIALECTO_PROJECT');
 
-        updateConfig({ vite: { plugins: [catalogPlugin(settings)] } });
+        updateConfig({ vite: { plugins: [catalogPlugin(settings), formatterPlugin()] } });
         const loader = [
           '(function(){',
           "var s=document.createElement('script');",
           `s.src=${JSON.stringify(`${settings.url}/assets/in-context/overlay.js`)};`,
           's.async=false;',
           `s.dataset.url=${JSON.stringify(settings.url)};`,
-          `s.dataset.repo=${JSON.stringify(settings.repo)};`,
+          `s.dataset.context=${JSON.stringify(CONTEXT_PATH)};`,
           `s.dataset.overrides=${JSON.stringify(OVERRIDES_PATH)};`,
+          ...(settings.project ? [`s.dataset.project=${JSON.stringify(settings.project)};`] : []),
           'document.head.appendChild(s);',
           '})();',
         ].join('');
         injectScript('head-inline', loader);
-        logger.info(`in-context editing on: ${settings.url} (repo ${settings.repo})`);
-      },
-
-      'astro:server:start': ({ logger }) => {
-        if (!settings || !settings.token) return;
-        scan(settings, { log: (level, message) => logger[level](message) }).then((result) => logger[result.level](result.message));
+        // Loads the recording formatter on every page, so the overlay can render exact previews.
+        injectScript('page', "import 'intl-messageformat';");
+        logger.info(`in-context editing on → ${settings.url}${settings.project ? ` (project ${settings.project})` : ''}`);
       },
     },
   };
@@ -422,8 +725,12 @@ async function cli(args) {
   }
   const root = process.cwd();
   const settings = resolveSettings(await loadEnv('development', root), {}, root);
-  if (!configured(settings)) {
-    console.error('[dialecto] set DIALECTO_URL and DIALECTO_REPO (for example in .env.local)');
+  if (!settings.urlValid) {
+    console.error(`[dialecto] DIALECTO_URL must be an http(s) URL, got "${settings.url}"`);
+    return 1;
+  }
+  if (!settings.project || !/^\d+$/.test(settings.project)) {
+    console.error("[dialecto] set DIALECTO_PROJECT to the project's number from its Dialecto URL, /repos/<number>");
     return 1;
   }
   if (!settings.token) {
