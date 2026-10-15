@@ -1,0 +1,298 @@
+/* Round v02: Lesson 1's lesson and game styles (journey.css, journey-play.css:
+   tokens, feed, cards, picture options, rail, meters) plus the frame, the pick
+   card and the activity cards shared by directions E, F and G. Flat: tints,
+   borders and strokes only. Colours are tokens; alphas via color-mix. Each
+   direction's own rows are at the end of this file. */
+@import "../../src/lessons/choices/journey.css";
+@import "../../src/lessons/choices/journey-play.css";
+
+body { min-width: 0; overflow: hidden; }
+#app { height: 100vh; height: 100dvh; display: flex; flex-direction: column; }
+
+/* ——— Frame ——— */
+.v2-top { flex: none; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 20px; height: 68px; padding: 0 24px; }
+.v2-brand { display: inline-flex; flex-direction: column; justify-content: center; min-height: 44px; color: var(--color-ink); font: 26px/1 var(--font-field); text-decoration: none; }
+.v2-brand span { display: block; margin-top: 4px; font: 15px var(--font-guide); color: var(--color-quiet); }
+.v2-study { margin: 0; text-align: center; font: 15px/1.35 var(--font-guide); color: var(--color-quiet); }
+.v2-study span { display: block; }
+.v2-study strong { color: var(--color-ink); font-weight: 600; }
+.v2-dirs { display: flex; align-items: center; gap: 6px; }
+.v2-dirs a, .v2-restart { display: inline-grid; place-items: center; min-width: 44px; min-height: 44px; border: 1px solid var(--color-rule); border-radius: 999px; background: transparent; padding: 0 12px; font: 600 15px var(--font-guide); color: var(--color-forest); text-decoration: none; }
+.v2-dirs a:hover, .v2-restart:hover { border-color: var(--color-forest); }
+.v2-dirs a[aria-current] { background: var(--color-forest); border-color: var(--color-forest); color: white; }
+.v2-lang { margin-left: 6px; }
+
+.v2 { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) clamp(330px, 27vw, 400px); max-width: 1680px; width: 100%; margin: 0 auto; }
+.v2-stage { min-width: 0; min-height: 0; margin: 4px 0 20px 20px; overflow: hidden; border-radius: 22px; background: var(--color-paper-deep); }
+.v2 .scene-play { height: 100%; }
+.v2-panel { min-height: 0; overflow: hidden; padding: 4px 24px 20px; }
+
+/* Buttons: the site's pills. */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 50px; min-width: 120px; border-radius: 999px; padding: 0 26px; font: 600 17px/1 var(--font-guide); text-decoration: none; transition: background-color 180ms, border-color 180ms, transform 150ms; }
+.btn:not([aria-disabled="true"]):active { transform: scale(.98); }
+.btn-primary { border: 0; background: var(--color-forest); color: white; }
+.btn-primary:not([aria-disabled="true"]):hover { background: var(--color-forest-deep); }
+.btn-primary[aria-disabled="true"] { opacity: .45; cursor: default; }
+.btn-quiet { border: 1.5px solid var(--color-rule); background: white; color: var(--color-quiet); }
+.btn-quiet:hover { border-color: var(--color-mist); color: var(--color-ink); }
+
+/* ——— Front page ——— */
+body.v2-index-page { overflow: auto; }
+.v2-index { width: min(760px, calc(100% - 32px)); margin: 24px auto 48px; }
+.v2-index h1 { margin: 0 0 8px; font: 500 clamp(34px, 3.4vw, 46px)/1.08 var(--font-field); letter-spacing: -.02em; }
+.v2-index-lede { margin: 0 0 26px; font: 20px/1.5 var(--font-field); color: var(--color-quiet); }
+.v2-index-list { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; }
+.v2-index-list li { display: grid; grid-template-columns: 52px minmax(0, 1fr) auto; align-items: center; gap: 18px; border: 1px solid var(--color-rule); border-radius: 22px; background: white; padding: 18px 22px; }
+.v2-index-letter { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 50%; background: color-mix(in srgb, var(--color-forest) 9%, white); color: var(--color-forest); font: 600 22px var(--font-guide); }
+.v2-index-list li[data-letter="d"] .v2-index-letter { background: var(--color-paper-deep); color: var(--color-quiet); }
+.v2-index-text h2 { margin: 0 0 2px; font: 500 22px/1.2 var(--font-field); }
+.v2-index-text p { margin: 0; font: 17px/1.45 var(--font-field); color: var(--color-quiet); }
+
+/* ——— Feed ——— */
+.v2 .play-feed { padding: max(60px, calc(50dvh - 260px)) 28px; gap: 22px; scroll-snap-type: none; }
+.v2 .play-card { max-width: 660px; padding: 26px 32px 28px; scroll-margin: 16px; }
+.v2 .play-card h2:focus { outline: none; }
+.v2 .play-card.is-past { filter: none; opacity: .55; }
+.v2 .play-card.is-past:hover, .v2 .play-card.is-past:focus-within { opacity: 1; }
+.v2 .play-activity { align-content: start; min-height: 100%; }
+/* No lift on hover: at the pointer's edge it made the option jitter (v01). */
+.v2 .play-card:not(.is-future) .play-activity:not(:disabled):hover { transform: none; }
+.v2 .play-activity:disabled { opacity: 1; }
+.v2 .play-activity[aria-pressed="true"] { border-color: var(--color-forest); background: color-mix(in srgb, var(--color-forest) 7%, white); }
+.v2 .play-options { align-items: stretch; }
+.v2 .play-options > li { display: flex; }
+.v2 .play-options > li > .play-activity { flex: 1; }
+
+/* Pick card */
+.v2-pick-heading { margin: 0 0 14px; font: 500 clamp(26px, 2.3vw, 32px)/1.1 var(--font-field); letter-spacing: -.01em; }
+.v2-pick-row + .v2-pick-row { margin-top: 12px; }
+.v2-row-label { margin: 0 0 6px; font: 600 15px/1.3 var(--font-guide); color: var(--color-quiet); }
+.v2-pick-options { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.v2-pick .play-activity { padding: 10px 6px 9px; gap: 4px; }
+.v2-pick .play-activity-icon svg { width: 38px; height: 38px; }
+.v2-pick-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 12px; margin-top: 18px; }
+.v2-pick-actions[hidden] { display: none; }
+.v2-pick.is-done .play-activity:not([aria-pressed="true"]) { opacity: .5; }
+
+/* Day card */
+.v2-day-top { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; }
+.v2-weekday { margin: 0; font: 500 clamp(24px, 2vw, 28px)/1.15 var(--font-field); letter-spacing: -.01em; }
+.v2-day-top .chance-tag { border-radius: 99px; padding: 3px 10px; font: 700 15px var(--font-guide); background: var(--color-sun-soft); color: var(--color-ink); }
+.v2-line { margin: 6px 0 0; font: 19px/1.4 var(--font-field); color: var(--color-quiet); }
+.v2-next { display: flex; align-items: center; gap: 8px; width: fit-content; margin: 10px 0 0; border-radius: 12px; padding: 5px 12px 5px 8px; background: color-mix(in srgb, var(--color-forest) 8%, white); color: var(--color-forest); font: 600 15px/1.35 var(--font-guide); }
+.v2-next[hidden] { display: none; }
+.v2-next-icon svg { display: block; width: 24px; height: 24px; }
+.v2-options { margin-top: 16px; }
+.v2-result { min-height: 0; }
+.v2-result p { margin: 14px 0 0; font: 18px/1.45 var(--font-field); animation: text-in 380ms ease-out both; }
+
+/* End card */
+.v2-end h2 { margin: 0 0 12px; font: 500 clamp(28px, 2.6vw, 34px)/1.12 var(--font-field); letter-spacing: -.015em; }
+.v2-end-line { margin: 0 0 6px; font: 19px/1.5 var(--font-field); }
+.v2-end-line:first-of-type { font-weight: 600; }
+.v2-end-actions { display: flex; justify-content: flex-end; margin-top: 18px; }
+
+/* ——— Rail: fourteen tiles share its height, a gap between the weeks ——— */
+.v2 .play-rail { gap: 4px; padding: 14px 9px; }
+.v2 .play-rail-item { flex: 1 1 0; min-height: 0; max-height: 52px; display: flex; }
+.v2 .play-rail-item:nth-child(8) { margin-top: 8px; }
+.v2 .play-rail-tile { display: flex; align-items: center; justify-content: center; gap: 4px; aspect-ratio: auto; height: 100%; min-height: 0; border-radius: 12px; }
+.v2 .play-rail-tile:disabled { opacity: 1; filter: none; }
+.v2 .play-rail-tile[data-weekend="true"] { background: var(--color-paper-deep); }
+.v2 .play-rail-tile[data-chosen="true"] { background: color-mix(in srgb, var(--color-forest) 7%, white); border-color: transparent; }
+.v2 .play-rail-tile[data-state="current"] { border-color: var(--color-forest); box-shadow: none; outline: 2px solid color-mix(in srgb, var(--color-forest) 25%, transparent); outline-offset: 1px; }
+.v2 .play-rail-num { display: block; color: var(--color-quiet); font-weight: 600; }
+.v2 .play-rail-tile[data-chosen="true"] .play-rail-num { display: block; }
+.v2 .play-rail-icon:empty { display: none; }
+.v2 .play-rail-icon svg { width: 22px; height: 22px; }
+/* A day not lived yet shows its usual activity faintly: the week's rhythm. */
+.v2 .play-rail-icon[data-show^="u:"] { opacity: .3; filter: grayscale(.6); }
+.v2[data-started="false"] .play-rail-icon[data-show^="u:"] { opacity: .22; }
+
+/* ——— Panel: one card per activity ——— */
+.v2-boxes { display: grid; gap: 12px; padding: 4px 0; }
+.v2-box { position: relative; border: 1px solid var(--color-rule); border-radius: 16px; background: var(--color-paper); padding: 12px 16px 13px; transition: border-color 600ms ease, background-color 600ms ease, outline-color 600ms ease; outline: 2px solid transparent; outline-offset: -1px; }
+.v2-box.is-empty { border-style: dashed; border-color: var(--color-mist); background: transparent; }
+.v2-box.is-empty .v2-box-icon { border-radius: 50%; background: var(--color-paper-deep); }
+.v2-box.is-empty .meter { border-style: dashed; }
+/* The card that changed: forest edge and a faint tint, then it settles. */
+.v2-box.is-changing { border-color: var(--color-forest); outline-color: var(--color-forest); background: color-mix(in srgb, var(--color-forest) 6%, var(--color-paper)); transition-duration: 150ms; }
+.v2-box header { display: flex; align-items: center; gap: 10px; min-height: 28px; }
+.v2-box-icon { display: inline-grid; place-items: center; flex: none; width: 28px; height: 28px; }
+.v2-box-icon svg { display: block; width: 28px; height: 28px; }
+.v2-box h3 { margin: 0; font: 500 19px/1.2 var(--font-field); }
+.v2-start { position: relative; height: 58px; margin: 6px 0 6px; }
+.v2-chip { position: absolute; z-index: 3; right: 0; top: -34px; border-radius: 99px; padding: 3px 11px; background: var(--color-sun-soft); color: var(--color-ink); font: 700 15px/1.3 var(--font-guide); pointer-events: none; }
+.v2-chip.is-on { animation: v2-chip 1.9s ease-out both; }
+@keyframes v2-chip { 0% { opacity: 0; transform: translateY(6px) scale(.9); } 12% { opacity: 1; transform: none; } 80% { opacity: 1; } 100% { opacity: 0; } }
+.v2-skills { display: grid; gap: 5px; }
+.v2-skill { display: grid; grid-template-columns: minmax(0, 120px) minmax(0, 1fr); align-items: center; column-gap: 10px; }
+.v2-skill-name { font: 15px/1.25 var(--font-guide); color: var(--color-ink); hyphens: auto; }
+.v2-skill .meter { height: 12px; }
+.meter[data-group="sport"] { --bar: var(--color-forest); }
+.meter[data-group="art"] { --bar: var(--color-cello); }
+.meter[data-group="quiet"] { --bar: var(--color-lake); }
+
+/* ——— Shorter screens (1280 × 800, 1133 × 744, 1024 × 768) ——— */
+@media (min-width: 901px) and (max-height: 820px) {
+  .v2-top { height: 60px; }
+  .v2-stage { margin-bottom: 14px; }
+  .v2-panel { padding-bottom: 14px; }
+  .v2-boxes { gap: 10px; padding-top: 2px; }
+  .v2-box { padding: 10px 14px 11px; }
+  .v2-start { height: 50px; margin: 4px 0 4px; }
+  .v2 .play-card { padding: 22px 26px 24px; }
+  .v2-pick-row + .v2-pick-row { margin-top: 8px; }
+  .v2-pick .play-activity-icon svg { width: 34px; height: 34px; }
+  .v2-pick-actions { margin-top: 14px; }
+}
+
+/* ——— Tablet landscape ——— */
+@media (max-width: 1180px) and (min-width: 901px) {
+  .v2 { grid-template-columns: minmax(0, 1fr) clamp(320px, 33vw, 380px); }
+  .v2-panel { padding-inline: 18px; }
+  .v2 .play-feed { padding-inline: 18px; }
+  .v2 .play-rail { flex-basis: 66px; width: 66px; padding: 12px 7px; }
+  .v2 .play-rail-icon svg { width: 20px; height: 20px; }
+  .v2-study span { display: none; }
+}
+
+/* ——— Tablet portrait: the three cards side by side above the feed ——— */
+@media (max-width: 900px) {
+  .v2-top { height: 60px; padding: 0 16px; grid-template-columns: auto minmax(0, 1fr); }
+  .v2-brand { font-size: 22px; }
+  .v2-brand span, .v2-study { display: none; }
+  .v2-dirs { justify-self: end; gap: 4px; }
+  .v2 { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); }
+  .v2-panel { order: -1; padding: 2px 16px 12px; }
+  .v2-boxes { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; padding: 0; }
+  .v2-box { padding: 9px 12px 11px; }
+  .v2-box h3 { font-size: 17px; }
+  .v2-skills { gap: 3px; }
+  .v2-skill { grid-template-columns: minmax(0, 1fr); row-gap: 2px; }
+  .v2-skill .meter { height: 10px; }
+  .v2-stage { margin: 0 16px 16px; }
+  .v2 .play-feed { padding-inline: 14px; }
+  .v2 .play-card { padding: 22px 22px 24px; }
+  .v2 .play-rail-tile { flex-direction: column; gap: 0; border-radius: 10px; }
+  .v2 .play-rail-tile .play-rail-num { font-size: 15px; line-height: 1; }
+  .v2-pick-options { gap: 8px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v2 *, .v2 *::before, .v2 *::after { transition: none !important; animation: none !important; }
+  .v2-chip.is-on { opacity: 1; }
+}
+
+/* ===================== Direction G: Maya walks closer ===================== */
+.g-walk { position: absolute; inset: 0; container-type: inline-size; }
+.g-path { position: absolute; left: 22px; right: 44px; bottom: 5px; height: 4px; }
+.g-path::before { content: ""; position: absolute; inset: 0; background: radial-gradient(circle, var(--color-mist) 1.7px, transparent 2px) 0 50% / 9px 4px repeat-x; }
+.g-path-done { position: absolute; left: 0; top: 0; width: calc(100% - 28px); height: 4px; border-radius: 99px; background: var(--color-forest); transform-origin: left center; transform: scaleX(var(--p, 0)); transition: transform 1300ms cubic-bezier(.45, 0, .25, 1); }
+.g-maya { position: absolute; left: 0; bottom: 1px; width: 50px; height: 54px; transform: translateX(calc(var(--p, 0) * (100cqw - 94px))); transition: transform 1300ms cubic-bezier(.45, 0, .25, 1); }
+.g-maya svg { display: block; width: 100%; height: 100%; transform-origin: 50% 100%; }
+.g-goal { position: absolute; right: 0; bottom: 2px; width: 42px; height: 42px; display: grid; place-items: center; }
+.g-goal svg { display: block; width: 40px; height: 40px; }
+.g-walk:not(.is-there) .g-goal svg { opacity: .55; }
+.g-walk.is-walking .g-maya svg { animation: g-bob 325ms ease-in-out infinite; }
+@keyframes g-bob { 50% { transform: translateY(-4px) rotate(-3deg); } }
+@media (max-width: 900px) {
+  .g-maya { width: 36px; height: 39px; transform: translateX(calc(var(--p, 0) * (100cqw - 72px))); }
+  .g-goal, .g-goal svg { width: 34px; height: 34px; }
+  .g-path { left: 18px; right: 36px; }
+  .g-path-done { width: calc(100% - 18px); }
+}
+
+/* ===================== Direction E: fewer steps ===================== */
+/* On the day's tile: the step to do now, and the steps left as small pictures. */
+.e-caption:empty, .e-pips:empty { display: none; }
+.v2 .e-caption { color: var(--color-forest); }
+.e-pips { display: flex; justify-content: center; gap: 4px; margin-top: 2px; }
+.e-pip { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 8px; background: var(--color-paper-deep); }
+.e-pip svg { display: block; width: 22px; height: 22px; }
+.e-pip.is-now { background: var(--color-sun-soft); outline: 2px solid var(--color-sun); outline-offset: -2px; }
+.e-pip.is-done { display: none; }
+.e-pip.is-done.is-dropping { display: grid; animation: e-pip-drop 700ms ease-in forwards; }
+@keyframes e-pip-drop { 0% { transform: none; opacity: 1; width: 28px; } 55% { transform: translateY(16px) rotate(-18deg); opacity: 0; width: 28px; } 100% { transform: translateY(16px); opacity: 0; width: 0; margin-inline: -2px; } }
+.v2[data-direction="e"] .v2-opt.is-going { border-color: var(--color-sun); background: white; }
+
+/* On the activity's card: the steps in order; a step that's done for good falls away. */
+.e-steps { display: flex; align-items: center; gap: 8px; height: 100%; }
+.e-step { flex: none; display: grid; place-items: center; width: 50px; height: 50px; border: 1px solid var(--color-rule); border-radius: 14px; background: white; overflow: hidden; }
+.e-step svg { display: block; width: 36px; height: 36px; }
+.e-step.is-go { border-color: color-mix(in srgb, var(--color-forest) 45%, white); background: color-mix(in srgb, var(--color-forest) 8%, white); }
+.e-arrow { flex: none; width: 9px; height: 9px; margin: 0 3px 0 -1px; border-top: 2.5px solid var(--color-mist); border-right: 2.5px solid var(--color-mist); transform: rotate(45deg); }
+.e-step.is-gone, .e-arrow.is-gone { display: none; }
+.e-step.is-dropping { animation: e-step-drop 1500ms linear forwards; }
+.e-arrow.is-dropping { animation: e-arrow-go 1500ms ease forwards; }
+/* Lift, tip over and fall (the case stays open), leaving its place empty a moment; then the row closes up. */
+@keyframes e-step-drop {
+  0% { transform: none; opacity: 1; width: 50px; animation-timing-function: ease-out; }
+  14% { transform: translateY(-7px) rotate(6deg); opacity: 1; width: 50px; animation-timing-function: ease-in; }
+  62% { transform: translateY(34px) rotate(-28deg); opacity: 0; width: 50px; margin-right: 0; }
+  76% { transform: translateY(34px); opacity: 0; width: 50px; margin-right: 0; animation-timing-function: ease-in-out; }
+  100% { transform: translateY(34px); opacity: 0; width: 0; margin-right: -8px; border-width: 0; }
+}
+@keyframes e-arrow-go { 0%, 62% { opacity: 1; width: 9px; } 100% { opacity: 0; width: 0; margin: 0 -4px 0 0; border-width: 0; } }
+@media (max-width: 900px) {
+  .e-steps { gap: 5px; }
+  .e-step { width: 42px; height: 42px; border-radius: 12px; }
+  .e-step svg { width: 30px; height: 30px; }
+  @keyframes e-step-drop {
+    0% { transform: none; opacity: 1; width: 42px; animation-timing-function: ease-out; }
+    14% { transform: translateY(-6px) rotate(6deg); opacity: 1; width: 42px; animation-timing-function: ease-in; }
+    62% { transform: translateY(30px) rotate(-28deg); opacity: 0; width: 42px; }
+    76% { transform: translateY(30px); opacity: 0; width: 42px; animation-timing-function: ease-in-out; }
+    100% { transform: translateY(30px); opacity: 0; width: 0; margin-right: -5px; border-width: 0; }
+  }
+  .e-pip { width: 24px; height: 24px; }
+  .e-pip svg { width: 19px; height: 19px; }
+}
+
+/* ===================== Direction F: the habit picks first ===================== */
+/* Today's option arrives chosen, Maya already heading in; the others shrink. */
+.v2[data-direction="f"] .v2-opt { position: relative; }
+.v2-day.f-habit .v2-options[data-picked="0"] { grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr) minmax(0, 1fr); }
+.v2-day.f-habit .v2-options[data-picked="1"] { grid-template-columns: minmax(0, 1fr) minmax(0, 1.7fr) minmax(0, 1fr); }
+.v2-day.f-habit .v2-options[data-picked="2"] { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.7fr); }
+.v2-day.f-habit .v2-opt:not(.f-picked):not([aria-pressed="true"]) { padding-block: 10px; opacity: .8; }
+.v2-day.f-habit .v2-opt:not(.f-picked):not([aria-pressed="true"]) .play-activity-icon svg { width: 34px; height: 34px; }
+.v2-opt.f-picked { border-color: var(--color-forest); border-width: 2px; background: color-mix(in srgb, var(--color-forest) 7%, white); }
+.f-maya { position: absolute; left: 12px; top: 12px; width: 36px; height: 39px; }
+.f-maya svg { display: block; width: 100%; height: 100%; }
+.f-maya.is-walking { animation: f-walk-in 1200ms cubic-bezier(.3, .6, .3, 1) both; }
+.f-maya.is-walking svg { animation: g-bob 300ms ease-in-out 4; }
+@keyframes f-walk-in { from { transform: translateX(-70px); opacity: 0; } 25% { opacity: 1; } to { transform: none; opacity: 1; } }
+.f-actions { display: flex; justify-content: flex-end; margin-top: 16px; }
+.f-actions[hidden] { display: none; }
+
+/* On the activity's card: Maya thinking it over. Each of the first two usual-day
+   starts pops one of the other things; then the bubble goes and the activity sits beside her. */
+.f-think { position: absolute; inset: 0; }
+.f-think-maya { position: absolute; left: 0; bottom: 0; width: 42px; height: 45px; }
+.f-think-maya svg { display: block; width: 100%; height: 100%; }
+.f-bubble { position: absolute; left: 56px; top: 1px; width: 134px; height: 50px; border: 1.5px solid var(--color-rule); border-radius: 25px; background: white; transform-origin: 0 70%; transition: width 700ms cubic-bezier(.45, 0, .25, 1) 500ms, opacity 500ms ease 700ms, transform 500ms ease 700ms; }
+.f-tail { position: absolute; border: 1.5px solid var(--color-rule); border-radius: 50%; background: white; }
+.f-tail-1 { left: -12px; top: 32px; width: 10px; height: 10px; }
+.f-tail-2 { left: -19px; top: 42px; width: 6px; height: 6px; }
+.f-thought { position: absolute; top: 9px; width: 34px; height: 34px; display: grid; place-items: center; transition: opacity 600ms ease, transform 700ms cubic-bezier(.5, 0, .7, .4); }
+.f-thought svg { display: block; width: 100%; height: 100%; }
+.f-thought-a { left: 66px; transition: transform 800ms cubic-bezier(.45, 0, .25, 1) 600ms; }
+.f-thought-b { left: 106px; }
+.f-thought-c { left: 146px; }
+.f-think[data-left="1"] .f-bubble { width: 94px; }
+.f-think[data-left="0"] .f-bubble { width: 50px; opacity: 0; transform: scale(.4); }
+.f-think:is([data-left="1"], [data-left="0"]) .f-thought-c,
+.f-think[data-left="0"] .f-thought-b { opacity: 0; transform: translateY(22px) rotate(-18deg) scale(.6); }
+/* The habit has it: the activity comes out of the bubble and sits by her, a little bigger. */
+.f-think[data-left="0"] .f-thought-a { transform: translate(-12px, 6px) scale(1.25); }
+.f-think.is-animating .f-think-maya svg { animation: g-bob 300ms ease-in-out 4; }
+@media (max-width: 900px) {
+  .f-think-maya { width: 34px; height: 37px; }
+  .f-bubble { left: 46px; width: 118px; height: 44px; }
+  .f-thought { top: 8px; width: 30px; height: 30px; }
+  .f-thought-a { left: 54px; }
+  .f-thought-b { left: 89px; }
+  .f-thought-c { left: 124px; }
+  .f-think[data-left="1"] .f-bubble { width: 82px; }
+}
