@@ -1,0 +1,67 @@
+# .github/workflows/dialecto.yml
+# Sends this repository's translation files to Dialecto when they change on main.
+# Uses only git, jq and curl from the runner image — no third-party actions.
+name: Dialecto translation files
+
+on:
+  push:
+    branches: [main]
+    paths: ["src/i18n/messages/**"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    env:
+      DIALECTO_URL: https://app.dialecto.eu
+      DIALECTO_REPO: "3"
+      DIALECTO_SCAN_TOKEN: ${{ secrets.DIALECTO_SCAN_TOKEN }}
+      GITHUB_TOKEN: ${{ github.token }}
+      DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+    steps:
+      - name: Send translation files to Dialecto
+        run: |
+          set -euo pipefail
+          paths=(':(glob)src/i18n/messages/*.json')
+          branch="$GITHUB_REF_NAME"
+
+          # The secret holds the scan token alone (ScanToken.well_formed?/1): a paste's stray
+          # spaces and line breaks are dropped, and anything more stops here, not as a failed request.
+          token=$(printf '%s' "$DIALECTO_SCAN_TOKEN" | tr -d '[:space:]')
+          if [ -z "$token" ]; then echo "::error::Add the scan token from Dialecto (Settings → Scan token) as the DIALECTO_SCAN_TOKEN secret"; exit 1; fi
+          if ! printf '%s' "$token" | grep -qxE '[A-Za-z0-9_-]{1,128}'; then echo "::error::The DIALECTO_SCAN_TOKEN secret holds more than the scan token: copy it again with Dialecto's Copy button"; exit 1; fi
+          auth="Authorization: Bearer $token"
+
+          # Only the branches this project scans (Dialecto → Settings → Branch scanning).
+          wanted=$(curl -fsS -H "$auth" "$DIALECTO_URL/api/repos/$DIALECTO_REPO/scan-config" |
+            jq -r --arg b "$branch" --arg d "$DEFAULT_BRANCH" '(.branch_regex // "") as $re
+              | $b == $d or .scan_mode == "all" or any(.tracked_branches[]; . == $b)
+                or ($re != "" and ($b | test($re)))')
+          if [ "$wanted" != "true" ]; then echo "Dialecto doesn't scan $branch"; exit 0; fi
+
+          # Just the pushed commit, fetched with plain git.
+          git init -q repo && cd repo
+          git remote add origin "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY.git"
+          basic=$(printf 'x-access-token:%s' "$GITHUB_TOKEN" | base64 -w0)
+          git -c http.extraheader="AUTHORIZATION: basic $basic" fetch -q --depth=1 origin "$GITHUB_SHA"
+          git checkout -q FETCH_HEAD
+
+          git ls-files -z -- "${paths[@]}" > "$RUNNER_TEMP/files"
+          if [ ! -s "$RUNNER_TEMP/files" ]; then echo "::error::No files match the Dialecto paths"; exit 1; fi
+
+          while IFS= read -r -d '' file; do
+            jq -cn --arg path "$file" --rawfile content "$file" '{path: $path, content: $content}'
+          done < "$RUNNER_TEMP/files" > "$RUNNER_TEMP/templates.jsonl"
+
+          checksum=$({ printf '%s\n%s\n' "$GITHUB_SHA" "$branch"; git ls-files -s -- "${paths[@]}"; } | sha256sum | cut -d' ' -f1)
+          jq -s --arg sha "$GITHUB_SHA" --arg branch "$branch" --arg checksum "$checksum" \
+            '{gitSha: $sha, gitBranch: $branch, checksum: $checksum, templates: .}' \
+            "$RUNNER_TEMP/templates.jsonl" > "$RUNNER_TEMP/scan.json"
+
+          curl -sS --fail-with-body --retry 3 -X POST -H "$auth" \
+            -H "Content-Type: application/json" \
+            --data-binary "@$RUNNER_TEMP/scan.json" \
+            "$DIALECTO_URL/api/repos/$DIALECTO_REPO/scans"
