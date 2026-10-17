@@ -73,7 +73,7 @@ export function heroLens(w, h, labels, { every = 4, firstLabel = 2, extra = '', 
   const slot = outlineNext ? at.find(p => p.index === count) : null;
   const nextSlot = slot ? printAt(slot, { size, outline: FOREST }) : '';
   // Labels: beyond the footprint's own side of the trail, with a short leader, never over another label.
-  const placed = []; let n = 0;
+  const placed = []; const chips = []; let n = 0;
   const inside = p => p.x > lens.x + 60 && p.x < lens.x + lens.w - 60 && p.y > lens.y + 50 && p.y < lens.y + lens.h - 50;
   const words = drawn.filter(inside).filter((_, i) => i % every === firstLabel % every).map(p => {
     if (n >= labels.length) return '';
@@ -86,6 +86,8 @@ export function heroLens(w, h, labels, { every = 4, firstLabel = 2, extra = '', 
     const b = { l: lx - width / 2, r: lx + width / 2, t: ly - 15, b: ly + 4 };
     if (placed.some(o => !(b.r < o.l - 14 || b.l > o.r + 14 || b.b < o.t - 6 || b.t > o.b + 6))) return '';
     placed.push(b); n += 1;
+    // A paper chip under the label, below the footprints: gray branches pass behind the words.
+    chips.push(`<rect x="${(b.l - 8).toFixed(1)}" y="${(b.t - 4).toFixed(1)}" width="${(width + 16).toFixed(1)}" height="${(b.b - b.t + 8).toFixed(1)}" rx="9" fill="${PAPER_DEEP}"/>`);
     const from = [p.cx + nx * 17 * size, p.cy + ny * 17 * size]; const to = [p.cx + nx * (reach - 18), p.cy + ny * (reach - 18)];
     return `<path d="M${from[0].toFixed(1)} ${from[1].toFixed(1)}L${to[0].toFixed(1)} ${to[1].toFixed(1)}" stroke="${FOREST}" stroke-opacity=".4" stroke-width="1.5" stroke-linecap="round"/>${label(lx, ly, text, { anchor: 'middle' })}`;
   }).join('');
@@ -102,7 +104,7 @@ export function heroLens(w, h, labels, { every = 4, firstLabel = 2, extra = '', 
     <rect x="${lens.x}" y="${lens.y.toFixed(1)}" width="${lens.w}" height="${lens.h.toFixed(1)}" rx="24" fill="${PAPER_DEEP}"/>
     <g clip-path="url(#${clip})"><g transform="${t}">${lifeMap(full, {}, { fieldOnly: true, thin: true, grayWidth: 7 })}</g>
       ${label(ten + 12, lens.y + lens.h - 16, '10', { color: QUIET, halo: null, weight: 500 })}
-      ${prints}${nextSlot}${tagMarks}${words}${extra}</g>
+      ${chips.join('')}${prints}${nextSlot}${tagMarks}${words}${extra}</g>
     <rect x="${lens.x}" y="${lens.y.toFixed(1)}" width="${lens.w}" height="${lens.h.toFixed(1)}" rx="24" fill="none" stroke="${QUIET}" stroke-width="2"/>`);
 }
 

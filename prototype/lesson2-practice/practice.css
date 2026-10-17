@@ -73,7 +73,8 @@ body { overflow: auto; min-width: 700px; }
   .panel-boxes { gap: 8px; }
   .panel-boxes .skill-box { padding: 8px 12px; }
   /* Name and word on one line, the bar under them: the two boxes fit beside the story at iPad heights. */
-  .panel-boxes .skill-row { grid-template-columns: minmax(0, 1fr) auto; row-gap: 3px; padding: 2px 0; }
+  .panel-boxes .skill-box { padding: 8px 10px; }
+  .panel-boxes .skill-row { grid-template-columns: minmax(0, 1fr) auto; column-gap: 6px; row-gap: 2px; padding: 1px 0; }
   .panel-boxes .skill-name { grid-row: 1; grid-column: 1; font-weight: 500; }
   .panel-boxes .skill-meta { grid-row: 1; grid-column: 2; margin: 0; }
   .panel-boxes .meter { grid-row: 2; grid-column: 1 / -1; }
