@@ -10,9 +10,9 @@ The frames in [`prototype/lesson2-practice/`](../../../../prototype/lesson2-prac
 
 #### 01 want · Wanting and choosing.
 
-Maya is eight, and she wants to be good at soccer. Wanting is a wish, though. She can’t choose it today.
+Maya is eight, and she wants to be good at soccer. But she can’t choose to be good today.
 
-Here is what she can choose. Practice is at four o’clock. She can go.
+She can choose something smaller. Practice is at four o’clock, and she can go.
 
 Picture: Maya with her ball at the start of a path. Far down the path, small and pale, a flag says what she wants. Right at her feet, the first footprint is only an outline: the choice she can make today. A small gray shape sits by the bench.
 
@@ -25,7 +25,7 @@ So she goes. The next week she goes again, even in the rain.
 
 At practice, she listens to the coach and tries hard. At home, she kicks her ball against the wall.
 
-Each one is a choice she can make today.
+Each of these is one small choice.
 
 Picture: one ground line with four moments of Maya on it, joined by her footprints: the field, the rain, the cones, the wall at home.
 
@@ -42,14 +42,14 @@ Something is happening, though. Each practice leaves a little behind, even befor
 
 Picture: Lesson 1’s weeks grid, almost full for season one. Beside it, Lesson 1’s soccer box with its bars barely started.
 
-- weeks: Weeks she practised
+- weeks: Weeks of practice
 - season: Season 1
 - season2: Season 2
 - season3: Season 3
 - box: Soccer
 - s1: Ball control
 - s2: Passing
-- s3: Positioning
+- s3: Knowing where to stand
 - w1: Learning
 - w2: Just starting
 - w3: Just starting
@@ -101,17 +101,17 @@ Picture: three blocks in Lesson 1’s “builds on” colours, each resting on t
 
 #### 07 maths · Maths too.
 
-This works for almost anything. Nobody decides one day to be a mathematician.
+The same goes for many things. Nobody becomes a mathematician just by deciding to.
 
-They choose science class. They do the homework, then do it again the next night. Years of small choices like that are what a mathematician is made of.
+A mathematician chooses maths class. They do the homework, then do it again the next night. Years of small choices like that are what a mathematician is made of.
 
 Picture: a second trail of footprints, someone else’s, with its own small choices, ending at a chalkboard.
 
-- g1: Science class
+- g1: Maths class
 - g2: Homework
 - g3: Homework again
 - g4: A hard problem
-- g5: Science class
+- g5: Maths class
 - g6: Homework
 - end: Mathematician
 
@@ -121,28 +121,28 @@ Picture: a second trail of footprints, someone else’s, with its own small choi
 
 At eleven, Maya tries basketball. Some of what she built comes with her.
 
-She already knows where to stand and when to pass. Dribbling with her hands is new, so that starts from the beginning.
+She already knows where to stand and when to pass. Dribbling with her hands is new, so she starts that from the beginning.
 
-Picture: Maya at eleven with a basketball, and Lesson 1’s basketball box. Court sense and passing start partly filled with soccer’s stripes; dribbling starts low.
+Picture: Maya at eleven with a basketball, and Lesson 1’s basketball box. Knowing where to stand and passing start partly filled with soccer’s stripes; dribbling starts low.
 
 - box: Basketball
-- s1: Court sense
+- s1: Knowing where to stand
 - s2: Passing
 - s3: Dribbling with hands
 - w1: Getting there · head start
 - w2: Learning · head start
 - w3: Just starting
-- key: striped = from soccer
+- key: Stripes come from soccer
 
 #### 09 late · Never too late.
 
-Anyone can start choosing practice, in any season. Starting later can mean more to catch up on. The door stays open.
+Anyone can start practising, at any age. Starting later can mean more to catch up on, but the door stays open.
 
 Real life is messier than this picture. Coaches, time and money matter. So does luck, good and bad. Practice helps, but it doesn’t guarantee a result.
 
 Picture: the map again. A gray path turns green later in life and grows its own footprints. On the paths ahead, Lesson 1’s star for luck and diamond for a setback.
 
-- late: Starts later
+- late: A later start
 - lucky: A coach notices
 - setback: An injury
 
@@ -158,7 +158,7 @@ Picture: the map once more, the whole line made of footprints.
 
 #### 11 next · Coming next.
 
-One more thing. What Maya practises gets easier, and it takes less effort.
+What Maya practises gets easier over time.
 
 These days, she doesn’t think about her feet at all. So who is doing it?
 
@@ -184,9 +184,9 @@ Pick one thing each afternoon. Your skills grow from what you pick.
 - d1.b: Practise cello
 - d1.c: Watch videos
 - d2.when: Tuesday
-- d2.text: Cello lesson today. School was long.
+- d2.text: The cello lesson is today. School was long.
 - d2.a: Go to the cello lesson
-- d2.b: Kick at the wall
+- d2.b: Kick balls at the wall
 - d2.c: Take a nap
 - kind.soccer: Soccer
 - kind.cello: Cello
@@ -197,36 +197,35 @@ Pick one thing each afternoon. Your skills grow from what you pick.
 - box.basketball: Basketball
 - skill.ballControl: Ball control
 - skill.passing: Passing
-- skill.positioning: Positioning
+- skill.positioning: Knowing where to stand
 - skill.reading: Reading music
 - skill.rhythm: Rhythm
 - skill.fingers: Finger skill
-- skill.court: Court sense
+- skill.court: Knowing where to stand
 - skill.bPassing: Passing
 - skill.dribbling: Dribbling with hands
 
 #### A2 moment · Ten afternoons.
 
-A new box opens partly filled. Some of soccer comes with you.
+A new box opens partly filled. Some of your soccer skills come with you.
 
 - d7.when: Wednesday
 - d7.chance: New
 - d7.text: A friend asks you to shoot hoops at the park.
 - d7.a: Play basketball
-- d7.b: Kick at the wall
+- d7.b: Kick balls at the wall
 - d7.c: Practise cello
-- d7.result: Court sense and passing came with you from soccer. Dribbling with your hands is new.
-- key: striped = from soccer
+- key: Stripes come from soccer
 
 #### A3 end · Ten afternoons.
 
-Ten afternoons, and every one of them left something behind.
+Every one of your ten afternoons left something behind.
 
 - end.heading: Ten afternoons later
 - end.l1: You chose soccer five times, so soccer grew the most.
-- end.l2: You chose the cello three times, and it grew a little.
+- end.l2: You chose cello three times, and it grew a little.
 - end.l3: Basketball began with a head start from soccer.
-- end.again: Play again
+- end.again: Start again
 
 ### B · Footprints
 
@@ -247,9 +246,9 @@ Each afternoon, pick one.
 
 #### B3 end · Footprints.
 
-Twenty afternoons left fourteen footprints. From far away, they are one line.
+You went to practice on fourteen of twenty afternoons. From far away, they are one line.
 
-- again: Play again
+- again: Start again
 
 ### C · No activity
 

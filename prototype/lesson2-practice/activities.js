@@ -63,7 +63,7 @@ const A = [
     stage: scene(`${card({ ...DAY1, options: day1Options(-1), state: 'active' })}${card({ ...DAY2, options: day2Options(), state: 'future' })}`, [], 0),
     panel: panel([soccerBox(0, 0, 0), celloBox(0, 0, 0)]) },
   { id: 'activity-A-2', copy: 'A2', chapter: ACTIVITY, kicker: ACTIVITY, at: 1, of: 1,
-    stage: scene(`${card({ ...DAY7, options: day7Options(0), state: 'active', result: W('A2', 'd7.result'),
+    stage: scene(`${card({ ...DAY7, options: day7Options(0), state: 'active',
       after: `<div class="card-box">${basketBox(0.2, 0.16, 0.03, true)}<span class="box-key">${esc(W('A2', 'key'))}</span></div>` })}`, PICKS.slice(0, 7), 6),
     panel: panel([soccerBox(0.2, 0.14, 0.1), celloBox(0.12, 0.08, 0.05)]) },
   { id: 'activity-A-3', copy: 'A3', chapter: ACTIVITY, kicker: ACTIVITY, at: 1, of: 1,
