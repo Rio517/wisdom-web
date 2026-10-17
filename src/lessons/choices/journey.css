@@ -163,18 +163,25 @@ h1, h2, h3, h4 { font-family: var(--font-field); font-weight: 500; }
   .narration-body[data-beat="practice"] #beat-kicker { display: none; }
   .narration-body[data-beat="practice"] .beat-text p { margin-bottom: 0; }
 }
-/* Beside the map the three must show whole. Where the column is too short for them (journey.js
-   tries each step in turn and stops at the first that fits), the step gives up its kicker and the
-   spare space, then some heading size, then the last of the gaps. */
+/* Beside the map a step's words show whole, never scrolled. Where the column is too short for them
+   (journey.js tries each notch in turn and stops at the first that fits), the step gives up its kicker
+   and the spare space, then some heading size, then a little body size (17px, never under 16) and
+   the last of the gaps. The life fits its own list (journey-life.js). */
 @media (min-width: 990px) {
   .narration-body.is-tight #beat-kicker { display: none; }
   .narration-body.is-tight #beat-heading { margin-bottom: 14px; }
-  .narration-body.is-tight .beat-text p { margin-bottom: 0; }
-  .narration-body.is-tight .practised { @apply gap-1; margin-top: 12px; }
+  .narration-body.is-tight .beat-text p { margin-bottom: 10px; }
+  .narration-body.is-tight .choice-prompt { margin-top: 0; }
+  .narration-body.is-tight .closer { margin-top: 10px; }
+  .narration-body.is-tight .practised { @apply gap-1; margin-top: 2px; }
   .narration-body.is-tight .practised li { padding-block: 7px; }
   .narration-body.is-tighter #beat-heading { font-size: clamp(24px, 2vw, 28px); }
+  .narration-body.is-tighter .choice-button { padding-block: 6px; }
+  .narration-body.is-tighter .explore-panel { gap: 8px; }
   .narration-body.is-tightest #beat-heading { margin-bottom: 10px; }
-  .narration-body.is-tightest .practised { margin-top: 8px; }
+  .narration-body.is-tightest .beat-text p { margin-bottom: 8px; font-size: 17px; line-height: 1.5; }
+  .narration-body.is-tightest .practised { margin-top: 0; }
+  .narration-body.is-tightest .choice-feedback { padding-block: 8px; line-height: 1.45; }
   .narration-body.is-tightest .practised li { padding-block: 6px; }
 }
 @media (min-width: 1400px) {
@@ -192,6 +199,21 @@ h1, h2, h3, h4 { font-family: var(--font-field); font-weight: 500; }
 .takeaways strong { @apply block text-[17px]; font-family: var(--font-field); }
 .takeaways span { @apply block text-[15px] leading-snug; color: var(--color-quiet); }
 .end-actions { @apply mt-2 flex flex-wrap gap-2; }
+/* Beside the map the three takeaways sit in a band across the foot of the page, under the map and the
+   column, so the map keeps its height and the column its words. They stay in the column's reading
+   order; journey.js sets --band to the band's height, which the page gives up for it. */
+@media (min-width: 990px) {
+  .journey[data-beat="takeaways"] { position: relative; padding-bottom: var(--band, 0px); }
+  .journey[data-beat="takeaways"] > .narration { position: static; }
+  .journey[data-beat="takeaways"] .narration-body.is-changing > #beat-extra { animation: none; }
+  .journey[data-beat="takeaways"] > .stage { margin-bottom: 12px; }
+  .journey[data-beat="takeaways"] .takeaways {
+    position: absolute; left: 20px; right: 20px; bottom: 0; margin: 0;
+    grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; padding: 14px 16px 16px;
+    border-top: 1px solid var(--color-rule);
+  }
+  .journey[data-beat="takeaways"] .takeaways strong { margin-bottom: 3px; line-height: 1.25; }
+}
 .pill-button { @apply min-h-10 rounded-full border px-3.5 text-[15px]; border-color: var(--color-forest); background: white; color: var(--color-forest); }
 .pill-button:hover { background: #28544210; }
 
@@ -628,6 +650,18 @@ dialog::backdrop { background: #23302d66; }
   .stage:has(> .scene-skills:not([hidden])) { height: max(56vh, 720px); } /* two lanes of skill boxes need the room (the Spanish basketball box is the tallest) */
   .narration { padding: 8px 24px 28px; }
   .narration-body { overflow: visible; }
+  /* Back and Next stay on screen: the controls hold to the foot of the window while the words
+     scroll under them, and settle in place at the end of the page. Dots and buttons share a row. */
+  .narration-controls {
+    position: sticky; bottom: 0; z-index: 4; margin-inline: -24px; padding: 10px 24px 12px;
+    background: var(--color-paper); grid-template-columns: minmax(0, auto) auto; justify-content: space-between; align-items: center; column-gap: 12px;
+  }
+  .nav-buttons { grid-column: 2; justify-content: flex-end; }
+  .narration-controls .key-hint { display: none; }
+  .beat-dots { min-width: 0; overflow: hidden; gap: 4px; }
+  .beat-dots li { flex: 0 1 26px; min-width: 14px; }
+  .beat-dots li:has([aria-current]) { min-width: 22px; }
+  .beat-dots button { width: 100%; }
   .chapter-stop .stop-label { font-size: 15px; }
 }
 
@@ -664,7 +698,7 @@ dialog::backdrop { background: #23302d66; }
 /* Beside the stage the column holds still, and the list takes all of it from the heading down to the
    controls: it fits (journey-life.js), and only a story too long for any size scrolls, after it has played. */
 @media (min-width: 990px) {
-  .narration-body[data-beat="life"] { display: flex; flex-direction: column; overflow: hidden; padding-bottom: 4px; container-type: inline-size; }
+  .narration-body[data-beat="life"] { display: flex; flex-direction: column; overflow: hidden; padding-bottom: 7px; container-type: inline-size; } /* 7px: the Pause link's target reaches 7px below it */
   .narration-body[data-beat="life"] > * { flex: none; }
   .narration-body[data-beat="life"] #beat-heading { margin-bottom: 16px; }
   .narration-body[data-beat="life"] > .beat-text { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
@@ -720,9 +754,9 @@ dialog::backdrop { background: #23302d66; }
 /* ——— The life in the Explore chapter's language (journey-life-map.js) ——— */
 .life-axis { position: absolute; inset: 0; pointer-events: none; opacity: 0; }
 .life-tick { position: absolute; top: 10px; bottom: 30px; width: 1px; margin-left: -.5px; background: repeating-linear-gradient(to bottom, #dde4dc 0 2px, transparent 2px 9px); }
-.life-tick b, .life-axis-name { position: absolute; font: 600 12px/1 var(--font-guide); color: var(--color-quiet); white-space: nowrap; }
+.life-tick b, .life-axis-name { position: absolute; font: 600 15px/1 var(--font-guide); color: var(--color-quiet); white-space: nowrap; }
 .life-tick b { left: 50%; top: calc(100% + 9px); transform: translateX(-50%); }
-.life-axis-name { left: 16px; bottom: 9px; }
+.life-axis-name { left: 16px; bottom: 6px; }
 /* The live canvas sits over the step in motion only. */
 .map-stack canvas.life-live { inset: auto; }
 .life-overlay { position: absolute; inset: 0; pointer-events: none; }
@@ -798,6 +832,9 @@ dialog::backdrop { background: #23302d66; }
   /* The fitted lists are measured in the frame their size changes: the 0.001 ms transition
      below would hold WebKit's layout back a frame, and the fit would read the old line breaks. */
   .life-steps, .life-steps *, #whatif-list, #whatif-list * { transition-property: none !important; }
+  /* The same for the story column's tiers (fitNarration, journey.js) and the hike's labels, sized and
+     slid inside the map as they are measured (layout, journey-hike.js). */
+  .narration-body, .narration-body *, .hike-map text, .hike-map tspan { transition-property: none !important; }
   .life-end.is-arriving { animation: none; }
 }
 
@@ -869,6 +906,14 @@ dialog::backdrop { background: #23302d66; }
   .map-stack canvas:is(.life-grays, .life-dark, .life-marks) { width: calc(100% - var(--cut, 0px)); }
 }
 @media (min-width: 990px) and (max-width: 1100px) { .journey { --col: 330px; } }
+/* The hike's steps carry the most words beside the map (a choice, then its answer): its column is
+   wider on laptops and landscape iPads, the same on every step of the hike so its map keeps one size. */
+@media (min-width: 990px) {
+  .journey:is([data-beat="plan"], [data-beat="halfway"], [data-beat="turnback"], [data-beat="practice"], [data-beat="retry"], [data-beat="closed"], [data-beat="respond"], [data-beat="sort"]) { --col: clamp(420px, 33vw, 440px); }
+}
+@media (min-width: 990px) and (max-width: 1100px) {
+  .journey:is([data-beat="plan"], [data-beat="halfway"], [data-beat="turnback"], [data-beat="practice"], [data-beat="retry"], [data-beat="closed"], [data-beat="respond"], [data-beat="sort"]) { --col: 370px; }
+}
 @property --edge { syntax: '<length>'; inherits: true; initial-value: 0px; }
 @keyframes column-in { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) {
@@ -884,7 +929,7 @@ dialog::backdrop { background: #23302d66; }
   /* Below the map on a portrait tablet: the story in two columns (steps 1–6, then 7–11), and the
      map a little shorter while it plays, so the lines, Pause and Next all show without scrolling. */
   .journey[data-beat="life"] > .stage, .journey[data-beat="adds"] > .stage { height: max(440px, calc(100dvh - 640px)); min-height: 440px; }
-  .narration-body[data-beat="life"] { padding-top: 8px; padding-bottom: 4px; }
+  .narration-body[data-beat="life"] { padding-top: 8px; padding-bottom: 7px; }
   .narration-body[data-beat="life"] #beat-heading { margin-bottom: 10px; }
   .narration-body[data-beat="life"] .life-steps { display: block; columns: 2; column-gap: 24px; }
   .narration-body[data-beat="life"] .life-step { grid-template-columns: max(44px, calc(13.5px * var(--age-em, 0))) minmax(0, 1fr); column-gap: 6px; margin-bottom: 3px; break-inside: avoid; }
@@ -904,3 +949,6 @@ dialog::backdrop { background: #23302d66; }
   .hike-map .walkers.walking .walk-swing, .hike-map .walkers.walking .walk-bob { animation: none; }
   *, *::before, *::after { animation-duration: 0.001ms !important; animation-delay: 0s !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
 }
+
+/* Test only (?stress=wide, journey.js): every word about 8% wider, for fonts wider than the Mac's. */
+:root.stress-wide body, :root.stress-wide body * { letter-spacing: .036em !important; }

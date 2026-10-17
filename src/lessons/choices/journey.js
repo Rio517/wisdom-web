@@ -12,6 +12,8 @@ import { watchField } from '../../components/stage-field.js';
 
 const beats = beatList();
 const $ = selector => document.querySelector(selector);
+// Test only: ?stress=wide sets every word about 8% wider (journey.css), for the fit sweep.
+if (new URLSearchParams(location.search).get('stress') === 'wide') document.documentElement.classList.add('stress-wide');
 /** The beat a URL fragment points at, following merged beats' old fragments; -1 when none. */
 const beatForHash = hash => {
   const fragment = hash.slice(1);
@@ -178,19 +180,29 @@ const sortBoard = createSortBoard(scenes.hike.sortBoard, {
   },
 });
 
-// The hike's practice cards show whole beside the map: where the story column is too short for
-// them, the step tightens one notch at a time (journey.css) and stops at the first that fits.
+// Beside the map a step's words show whole: where the column is too short for them, the step
+// tightens one notch at a time (journey.css) and stops at the first that fits. The life and its
+// what-ifs fit their own lists (journey-life.js); under the map the page scrolls instead.
 const TIGHT = ['is-tight', 'is-tighter', 'is-tightest'];
-function fitPractised() {
+const besideMap = matchMedia('(min-width: 990px)');
+function fitNarration() {
   const body = $('#narration-body');
   body.classList.remove(...TIGHT);
-  if (!body.querySelector('#practised')) return;
+  if (!besideMap.matches || body.dataset.beat === 'life' || body.classList.contains('whatif')) return;
   for (const notch of TIGHT) {
     if (body.scrollHeight <= body.clientHeight) break;
     body.classList.add(notch);
   }
 }
-new ResizeObserver(fitPractised).observe($('#narration-body'));
+new ResizeObserver(fitNarration).observe($('#narration-body'));
+// The takeaways' band under the map and the column (journey.css) takes its own height from the page,
+// measured as it shows and when the window changes size (not in a ResizeObserver: the page's own
+// observers would then see the change in the same frame).
+function sizeBand() {
+  const list = journeyRoot.dataset.beat === 'takeaways' && $('#beat-extra .takeaways');
+  if (list) journeyRoot.style.setProperty('--band', `${list.offsetHeight}px`);
+}
+addEventListener('resize', sizeBand);
 
 function renderNarration(item, { animate }) {
   const { beat, chapter, beatIndex } = item;
@@ -212,7 +224,6 @@ function renderNarration(item, { animate }) {
   if (beat.sort) extra.innerHTML = renderSortProgress(item);
   if (beat.practised) {
     extra.innerHTML = `<ul class="practised" id="practised">${beat.practised.map(card => `<li><strong>${ICONS[LEARNED[card.id].icon === 'rest' ? 'restSmall' : LEARNED[card.id].icon]}${escapeHTML(LEARNED[card.id].label)}</strong><span>${escapeHTML(card.text)}</span></li>`).join('')}</ul>`;
-    fitPractised();
   }
   if (beat.closer) {
     extra.insertAdjacentHTML('beforeend', `<details class="closer"><summary>${escapeHTML(beat.closer.heading)}</summary>${beat.closer.body.map(text => `<p>${escapeHTML(text)}</p>`).join('')}</details>`);
@@ -223,6 +234,8 @@ function renderNarration(item, { animate }) {
       <div class="end-actions"><button class="pill-button" type="button" data-end="restart">${escapeHTML(t('lesson.ui.restart'))}</button>
       <button class="pill-button" type="button" data-end="explore">${escapeHTML(t('lesson.ui.explore'))}</button></div>`;
   }
+  sizeBand();
+  fitNarration();
   if (animate && !prefersReducedMotion()) {
     body.classList.remove('is-changing');
     void body.offsetWidth;
@@ -446,6 +459,7 @@ $('#beat-extra').addEventListener('click', event => {
   if (choiceButton) {
     choices.set(item.beat.id, choiceButton.dataset.choice);
     $('#beat-extra').innerHTML = renderChoice(item);
+    fitNarration();
     scenes[rootFor(item.chapter.id)].choose?.(item.beat.id, choiceButton.dataset.choice);
     $(`[data-choice="${choiceButton.dataset.choice}"]`)?.focus({ preventScroll: true });
     return;
