@@ -1,4 +1,4 @@
-// Usage: node tooling/fit-sweep.mjs [--step id] [--lang en] [--size 1133x744] [--out file.json] [--shot dir]
+// Usage: node tooling/fit-sweep.mjs [--step id] [--lang en] [--size 1133x744] [--out file.json] [--shot dir [--wait ms]]
 //   env: BASE (preview URL), ENGINE=chromium, STRESS=wide (adds ?stress=wide), REDUCED=1 (reducedMotion: reduce)
 import { webkit, chromium } from 'playwright';
 import fs from 'node:fs';
@@ -94,6 +94,7 @@ for (const lang of langs) for (const size of sizes) {
         while (Date.now() - t0 < 1500 && same < 3) { await page.waitForTimeout(100); const s = await page.evaluate(sig); same = s === last ? same + 1 : 0; last = s; }
         res = await page.evaluate(measure);
         res.settled = same >= 3;
+        if (arg('shot')) await page.waitForTimeout(Number(arg('wait') || 0)); // --wait ms: let arrival animations end before a still
         if (arg('shot')) await page.screenshot({ path: `${arg('shot')}/${lang}-${ids[i]}-${size}.png` });
       } catch (e) { res = { error: String(e).slice(0, 150) }; }
       results.push({ step: ids[i], lang, size, ...res, errors: [...errs] });
