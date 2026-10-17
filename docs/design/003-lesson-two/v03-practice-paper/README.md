@@ -75,7 +75,7 @@ The elephant is a pale mist-gray placeholder shape in Maya's pictures from step 
 
 Each is drawn in three frames: the start, the moment that teaches, and the end.
 
-- **A · Ten afternoons.** Lesson 1's old activity, redrawn from a playthrough of commit `869884b`. Each afternoon offers three picture choices, and the soccer and cello boxes grow from what was picked. On afternoon 7 basketball opens with court sense and passing partly filled (striped, from soccer). Hypothesis: choosing, again and again, and seeing the bars grow teaches the core better than reading it.
+- **A · Ten afternoons.** Lesson 1's old activity, redrawn from a playthrough of commit `869884b`. Each afternoon offers three picture choices, and the soccer and cello boxes grow from what was picked. On afternoon 7 basketball opens with knowing where to stand and passing partly filled (striped, from soccer). Hypothesis: choosing, again and again, and seeing the bars grow teaches the core better than reading it.
 - **B · Footprints.** The reader's own picks lay Maya's footprints along the ground; rest leaves a gap. A skill tag appears beside the trail now and then. The end zooms out to Lesson 1's map, where the reader's footprints are the green line. Hypothesis: making the hero picture yourself, with almost no words, lands it harder than seeing it.
 - **C · No activity.** The story alone. Its one interactive moment is the hero: "Look closer" on the map opens the footprint lens, and "Back to the map" closes it. Hypothesis: the story is enough, and an activity adds reading and time without adding the idea.
 
@@ -87,7 +87,7 @@ Counted from `copy.md` by `copy.js`'s `countWords` (heading, paragraphs and take
 
 | Step | 01 | 02 | 03 | 04 | 05 | 06 | 07 | 08 | 09 | 10 | 11 | Total |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Words | 38 | 44 | 37 | 26 | 35 | 41 | 43 | 38 | 50 | 47 | 30 | 429 |
+| Words | 36 | 42 | 37 | 26 | 35 | 41 | 45 | 39 | 50 | 47 | 24 | 422 |
 
 Limits: 50 a step, 450 in total. Step 09 is at the limit.
 
@@ -102,10 +102,12 @@ Limits: 50 a step, 450 in total. Step 09 is at the limit.
 - B's frames show fourteen footprints over twenty afternoons as a fixed example, not a counted playthrough.
 - The skill boxes reuse Lesson 1's markup and classes. At heights of 800 px or less, the panel's skill rows put the name and the word on one line so both boxes fit beside the story.
 - The elephant is a placeholder shape, as planned.
+- The third skill has one name everywhere, "Knowing where to stand". The shorter "Where to stand" fails the copy check as a question-shaped label, and "Kick a ball at the wall" fails it at six words, so the option reads "Kick balls at the wall".
+- In the hero, each footprint label sits on a paper chip, so the gray branches pass behind the words.
 
 ## Known issues
 
 - Frames are static: the activities' buttons and the C lens toggle do nothing yet.
-- In the hero, a few footprint labels ("Wall at home", "Practice in the rain") sit on gray branches. They stay readable, but a halo or a nudge would be cleaner.
+- At 1133×744 the skill name "Knowing where to stand" wraps to two lines in the activity A panel. It still fits beside the story.
 - The chapter trail's Activity stop shows on the storyboard, so story 09's Next reads "Next: Activity". With C, that stop would go.
 - English only; no catalog keys yet.
