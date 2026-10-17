@@ -20,9 +20,9 @@ Accepted storyboard direction is [v07 — Hiking lesson storyboard](001-choices-
 
 **Earlier comparison (2026-09-07):** [opening](001-choices-explainer/v06-flat-canvas/opening-desktop-v06.png), [full context](001-choices-explainer/v06-flat-canvas/retained-desktop-v04.png), [fading alternatives](001-choices-explainer/v06-flat-canvas/fading-desktop-v04.png) and [quiet context](001-choices-explainer/v06-flat-canvas/hybrid-desktop-v04.png). These actual browser captures show heavier, higher-resolution strokes and stronger early branching, with the same network/scenario across the three visibility treatments. Two review/improvement loops are recorded in the round README. At that review, owner selection and a tuning UI were pending. A standalone tuning page now exists; those captures are historical. Tablet evidence: [portrait](001-choices-explainer/v06-flat-canvas/today-tablet-portrait-v04.png) and [landscape](001-choices-explainer/v06-flat-canvas/today-tablet-landscape-v04.png).
 
-## Lesson 2 — Habits
+## Lesson 2 — Practice
 
-[003 — Lesson 2](003-lesson-two/README.md): [v01 — Game directions](003-lesson-two/v01-game-directions/README.md), three playable ways to live the two-week soccer, cello and reading game, in review.
+[003 — Lesson 2](003-lesson-two/README.md) is now Lesson 2 · Practice: [v03 — Practice on paper](003-lesson-two/v03-practice-paper/README.md), the story and three activity ideas as static frames, in review; [v01 — Game directions](003-lesson-two/v01-game-directions/README.md) belongs to Lesson 4 (habits).
 
 ## Naming and versioning
 
