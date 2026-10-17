@@ -11,7 +11,8 @@
     "lives:check": "node tooling/lives-check.mjs",
     "dev:prototype": "vite",
     "build:prototype": "vite build",
-    "preview:prototype": "vite preview"
+    "preview:prototype": "vite preview",
+    "fit:sweep": "node tooling/fit-sweep.mjs && node tooling/fit-sum.mjs"
   },
   "devDependencies": {
     "@tailwindcss/vite": "4.3.3",
