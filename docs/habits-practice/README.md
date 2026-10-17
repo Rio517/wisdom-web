@@ -1,6 +1,6 @@
 # Habits › Habits and daily practice
 
-Status: In preparation. Structure C accepted in [015](../product/015-lesson-two-proposal.md) on 2026-10-09; no copy approved, nothing in the site. Created: 2026-10-09. Updated: 2026-10-09.
+Status: In preparation. Now Lesson 4, after Practice and the elephant and the rider ([016](../product/016-lessons-two-to-four.md), 2026-10-17); the text below describes 015's earlier plan for this lesson as Lesson 2. No copy approved, nothing in the site. Created: 2026-10-09. Updated: 2026-10-17.
 
 This is the guide's second lesson. Lesson 1 shows *that* repeated choices add up; this lesson shows *how* to keep making them. It follows Maya, who practises soccer, as she finds a time and a place to start, sets things up, misses a week and comes back, and changes a routine that stops helping. Then the reader plays a two-week game with soccer, cello and reading, and makes a plan of their own on paper. It does not claim a general habit of good judgment, a number of days for a habit to form, or that a missed day undoes anything. This folder holds work specific to the lesson. Guide-wide documents stay in `docs/product`, `docs/research` and `docs/design`.
 

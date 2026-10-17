@@ -1,6 +1,6 @@
 # 015 — Lesson 2: where Maya belongs, and a longer habits game
 
-Status: Accepted (structure C, 2026-10-09); Lesson 2 not yet built. Created: 2026-10-09. Updated: 2026-10-09.
+Status: Accepted (structure C, 2026-10-09); superseded in part by [016](016-lessons-two-to-four.md) on 2026-10-17: practice becomes Lesson 2, habits Lesson 4, and the two-week activity moves with habits. Created: 2026-10-09. Updated: 2026-10-17.
 
 Related: [lesson roadmap](../README.md#lesson-roadmap) · [004 — Habits](004-habits-and-daily-practice.md) · [013 — Lesson 1](013-choices-guided-journey.md) · [Lesson 1 copy](../content/choices-journey.md#skills-grow) · [habits research](../research/habits/README.md)
 
