@@ -6,19 +6,18 @@ kicker: Lección 1 · Decisiones
 
 La Lección 1, [*Decisiones — Los caminos que hacemos*](../the-paths-we-make/), es un recorrido guiado e ilustrado sobre cómo se acumulan las decisiones a lo largo de una vida, y sobre cuánto de lo que ocurre no depende de la persona que la vive.
 
-Empieza con un amplio mapa de muchos caminos posibles, y luego se centra en dos historias concretas: una caminata que se complica dos veces, una por planificación y otra por el clima, y una niña llamada Maya que prueba el mismo comienzo en dos caminos imaginados. Después, un explorador libre le permite al lector construir una vida de ejemplo desde los tres hasta los setenta años. Termina con tres ideas clave.
+Empieza con un amplio mapa de muchos caminos posibles, y luego se centra en una historia concreta: una caminata que se complica dos veces, una por planificación y otra por el clima. Después, un explorador libre le permite al lector construir una vida de ejemplo desde los tres hasta los setenta años. Termina con dos ideas clave y un enlace a la Lección 2, Practicar.
 
 Estas notas son el complemento para adultos de esa lección, y del [resumen de la lección](../) junto al que se encuentra. Leerla completa toma unos 10 minutos; la [versión solo de texto](../the-paths-we-make/read/) se lee en unos ocho. Está escrita para funcionar desde alrededor de los ocho años, y funciona mejor leída en compañía, con espacio para detenerse y conversar.
 
 ## Qué enseña
 
-La lección plantea tres ideas, y mantiene cada una deliberadamente modesta:
+La lección plantea dos ideas, y mantiene cada una deliberadamente modesta:
 
 - **Las decisiones se acumulan.** Las pequeñas cosas que se repiten una y otra vez (practicar, presentarse, pedir ayuda) pueden convertirse en algo más grande, para bien o para mal. Un día difícil no decide el futuro.
-- **Cada aprendizaje se apoya en el anterior.** Lo que alguien ya sabe o sabe hacer le da a lo siguiente un lugar desde donde empezar, a veces incluso en una actividad relacionada.
 - **No todo depende de ti.** Las decisiones de otras personas, el apoyo disponible y el simple azar dan forma a qué caminos permanecen abiertos.
 
-También deja algunas cosas fuera a propósito. No explica cómo toma decisiones la gente; eso es una lección posterior, «Cómo tomamos decisiones». No es un consejo profesional, y ninguno de los caminos ficticios se clasifica por encima de otro: una vida dedicada a entrenar, cuidar de la familia o trabajar en un oficio no se muestra como más pequeña que una pasada en un laboratorio o una sala de juntas. El rendimiento académico se trata como un tipo de progreso entre varios, no como una medida del valor de un niño.
+También deja algunas cosas fuera a propósito. No explica cómo toma decisiones la gente; eso es la Lección 3, «El elefante y el jinete». Cómo cada aprendizaje se apoya en el anterior es la Lección 2, Practicar. No es un consejo profesional, y ninguno de los caminos ficticios se clasifica por encima de otro: una vida dedicada a entrenar, cuidar de la familia o trabajar en un oficio no se muestra como más pequeña que una pasada en un laboratorio o una sala de juntas. El rendimiento académico se trata como un tipo de progreso entre varios, no como una medida del valor de un niño.
 
 ## Cómo usarla en compañía
 
@@ -30,23 +29,22 @@ Después, unas pocas preguntas ligadas a momentos concretos suelen funcionar mej
 
 - En la botella de agua a mitad de la caminata: ¿qué habrías hecho tú, y por qué?
 - Después del tablero de arrastrar y clasificar: ¿qué tarjeta fue más difícil de colocar en «su decisión» o «fuera de su control»?
-- Después de la temporada de baloncesto de Maya: ¿qué sabía hacer ya la Maya del Camino A que la ayudó en un deporte nuevo? ¿Te ha pasado algo parecido a ti?
 - En el explorador: ¿qué línea gris, un camino que no tomaste, te gustaría volver a probar?
-- Al final: ¿cuál de las tres ideas clave se siente más cierta para algo en tu propia vida ahora mismo?
+- Al final: ¿cuál de las dos ideas clave se siente más cierta para algo en tu propia vida ahora mismo?
 
 Dos o tres preguntas son suficientes para una sola sesión.
 
 ## Qué dice la evidencia, y qué no
 
-El aprendizaje anterior puede respaldar genuinamente el aprendizaje posterior. El conocimiento previo relevante puede ayudar a alguien a darle sentido a algo nuevo, aunque una idea previa equivocada también puede confundir ([How People Learn II, 2018](https://www.nationalacademies.org/read/24783/chapter/7), en inglés). Una habilidad relacionada puede dar una ventaja inicial, pero la evidencia de eso es más débil de lo que un ejemplo bien armado puede hacer parecer. Una revisión sistemática de la transferencia entre deportes encontró mayormente estudios a corto plazo y de menor calidad, y solo dos que analizaron el aprendizaje posterior ([Oppici y Panchuk, 2022](https://www.sciencedirect.com/science/article/pii/S1469029221002363), en inglés). Trata esas dos escenas como ilustraciones de una posible ventaja inicial parcial que todavía necesita adaptarse, no como una promesa de que dos actividades cualesquiera se conectarán así.
+El aprendizaje anterior puede respaldar genuinamente el aprendizaje posterior. El conocimiento previo relevante puede ayudar a alguien a darle sentido a algo nuevo, aunque una idea previa equivocada también puede confundir ([How People Learn II, 2018](https://www.nationalacademies.org/read/24783/chapter/7), en inglés). Una habilidad relacionada puede dar una ventaja inicial, pero la evidencia de eso es más débil de lo que un ejemplo bien armado puede hacer parecer. Una revisión sistemática de la transferencia entre deportes encontró mayormente estudios a corto plazo y de menor calidad, y solo dos que analizaron el aprendizaje posterior ([Oppici y Panchuk, 2022](https://www.sciencedirect.com/science/article/pii/S1469029221002363), en inglés). La Lección 2 lo muestra con el fútbol y el baloncesto de Maya. Trata esas escenas como ilustraciones de una posible ventaja inicial parcial que todavía necesita adaptarse, no como una promesa de que dos actividades cualesquiera se conectarán así.
 
-Las circunstancias, el apoyo y el azar no son un adorno aquí; son una de las tres ideas clave de la lección, y la investigación coincide en que importan. Un suceso externo puede cambiar lo que pasa después, a veces mucho y a veces solo un poco, y la recuperación posterior es un proceso respaldado por las relaciones, las escuelas y los servicios, no solo por la fuerza de voluntad (ver la [investigación sobre circunstancias](https://github.com/Rio517/wisdom-web/blob/main/docs/research/circumstances/README.md), en inglés). Por eso la lección vuelve una y otra vez a pedir ayuda y cambiar de planes, como hacen Alfredo y su papá cuando llegan al sendero cerrado.
+Las circunstancias, el apoyo y el azar no son un adorno aquí; son una de las dos ideas clave de la lección, y la investigación coincide en que importan. Un suceso externo puede cambiar lo que pasa después, a veces mucho y a veces solo un poco, y la recuperación posterior es un proceso respaldado por las relaciones, las escuelas y los servicios, no solo por la fuerza de voluntad (ver la [investigación sobre circunstancias](https://github.com/Rio517/wisdom-web/blob/main/docs/research/circumstances/README.md), en inglés). Por eso la lección vuelve una y otra vez a pedir ayuda y cambiar de planes, como hacen Alfredo y su papá cuando llegan al sendero cerrado.
 
 Nada de esto significa que el futuro de un niño en particular quede decidido a los ocho años, ni por nada de lo que hay en esta lección.
 
 ## Qué es ilustración, no datos
 
-Algunas cosas en la lección parecen precisas, pero no lo son. La altura y la forma del mapa de caminos no significan nada; no hay ninguna medición detrás de lo grande que se ve una rama. Las barras de habilidad de Maya usan un modelo inventado de práctica sin números reales detrás; lo importante es el patrón (el progreso inicial se siente lento, y luego algunas habilidades se construyen sobre otras), no las barras específicas. Las decisiones de ejemplo del explorador en cada edad son ejemplos del tipo de decisiones que toma la gente, no una clasificación de vidas buenas y malas ni una predicción sobre el lector. Todas las personas de la lección son ficticias.
+Algunas cosas en la lección parecen precisas, pero no lo son. La altura y la forma del mapa de caminos no significan nada; no hay ninguna medición detrás de lo grande que se ve una rama. Las decisiones de ejemplo del explorador en cada edad son ejemplos del tipo de decisiones que toma la gente, no una clasificación de vidas buenas y malas ni una predicción sobre el lector. Todas las personas de la lección son ficticias.
 
 ## Accesibilidad y opciones de lectura
 

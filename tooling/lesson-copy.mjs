@@ -22,7 +22,7 @@ const add = (...lines) => out.push(...lines);
 
 add(`# ${t('reading.title')} (guided journey${locale === DEFAULT_LOCALE ? '' : ` · ${LOCALE_NAMES[locale]}`})`, '');
 if (locale === DEFAULT_LOCALE) {
-  add('Status: Draft 04, the text of Lesson 1 on the site. Created: 2026-09-26. Updated: 2026-10-12.', '');
+  add('Status: Draft 05, the text of Lesson 1 on the site. Created: 2026-09-26. Updated: 2026-10-18.', '');
   add('This is the readable copy of [Lesson 1](../product/013-choices-guided-journey.md). The live words are in `src/i18n/messages/en.json`, and the translations sit beside it (see [014](../product/014-languages.md)). Edit either here or in the catalog; after a code pass, regenerate this file with `npm run copy:lesson`. [Draft 02](choices-story.md) is the text of the earlier lesson study.', '');
 } else {
   add(`Generated from \`src/i18n/messages/${locale}.json\` for review. Section labels stay in English; everything else is the ${LOCALE_NAMES[locale]} text readers see.`, '');
@@ -73,10 +73,7 @@ for (const chapter of chaptersFor(t, sam)) {
 
 if (locale === DEFAULT_LOCALE) {
   add('## Editorial notes', '');
-  add('- The order is big picture first, then two concrete examples (setbacks and circumstances; compounding and carry-across), then a free explorer and three takeaways.');
-  add('- Maya is compared with herself on two imagined paths, not with another child, so the contrast is about practice patterns rather than ability.');
-  add('- Soccer-to-basketball is an illustrative carry-across example, kept optional behind “Trying something new”. The research supports a possible related-skill head start with adaptation, not guaranteed or large transfer ([learning findings](../research/learning/README.md)).');
-  add('- No numbers are shown; Maya’s bars use words such as Learning and Getting good.');
+  add('- The order is big picture first, then one concrete example (setbacks and circumstances), then a free explorer and two takeaways. The ending points to Lesson 2 (Practice), which holds Maya’s story and the ten afternoons.');
   add('- The hike’s closed trail and the explorer’s closed ways and lucky chances keep circumstances visible.');
   add('- Explorer labels are examples of the kinds of choices people make at each age. They are not ranked, and no option is presented as better. Early ones are marked as chosen by family.');
 }

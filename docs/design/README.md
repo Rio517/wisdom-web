@@ -2,7 +2,7 @@
 
 ## Start here — the site
 
-The first complete website is [002 — Site shell and home, v01 — Launch](002-site/v01-launch/README.md): home page, lesson overview, text version, notes, about and the shared index, built in Astro with the approved field-guide look. Its newest round, [v04 — Lesson 1 fit](002-site/v04-lesson1-fit/README.md), makes every Lesson 1 step fit laptop and iPad screens in four languages.
+The first complete website is [002 — Site shell and home, v01 — Launch](002-site/v01-launch/README.md): home page, lesson overview, text version, notes, about and the shared index, built in Astro with the approved field-guide look. Its round [v04 — Lesson 1 fit](002-site/v04-lesson1-fit/README.md) makes every Lesson 1 step fit laptop and iPad screens in four languages; the newest, [v05 — Lesson 2 links](002-site/v05-lesson2-links/README.md), gives Lesson 1 its new ending and links Lesson 2 from the menu and the home roadmap.
 
 ## Choices
 
@@ -22,7 +22,7 @@ Accepted storyboard direction is [v07 — Hiking lesson storyboard](001-choices-
 
 ## Lesson 2 — Practice
 
-[003 — Lesson 2](003-lesson-two/README.md) is now Lesson 2 · Practice: [v03 — Practice on paper](003-lesson-two/v03-practice-paper/README.md), the story and three activity ideas as static frames, in review; [v01 — Game directions](003-lesson-two/v01-game-directions/README.md) belongs to Lesson 4 (habits).
+[003 — Lesson 2](003-lesson-two/README.md) is now Lesson 2 · Practice: [v04 — Practice build](003-lesson-two/v04-practice-build/README.md), the lesson built on the site (unlinked, noindex), in review, from [v03 — Practice on paper](003-lesson-two/v03-practice-paper/README.md), the story and three activity ideas as static frames, where the owner picked activity A; [v01 — Game directions](003-lesson-two/v01-game-directions/README.md) belongs to Lesson 4 (habits).
 
 ## Naming and versioning
 

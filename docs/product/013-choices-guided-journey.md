@@ -1,8 +1,8 @@
 # 013 — Choices guided journey
 
-Status: Approved by the owner as Lesson 1 (2026-09-27); implemented in the Astro site at `/choices/the-paths-we-make/`. Published. Since 2026-10-13 the lesson opens with one written life and its what-ifs ([v13](../design/001-choices-explainer/v13-lesson1-opening/README.md)), and the ten-afternoon game described below is held for Lesson 2. Created: 2026-09-26. Updated: 2026-10-13.
+Status: Approved by the owner as Lesson 1 (2026-09-27); implemented in the Astro site at `/choices/the-paths-we-make/`. Published. Since 2026-10-13 the lesson opens with one written life and its what-ifs ([v13](../design/001-choices-explainer/v13-lesson1-opening/README.md)), and the ten-afternoon game described below is held for Lesson 2. Since 2026-10-18 Maya's chapter and the ten-afternoon activity live in Lesson 2, Practice ([016](016-lessons-two-to-four.md)). Lesson 1 has four chapters: Many paths, The hike, Explore and Take it with you, and its ending links to Lesson 2. The rows and notes below that describe Maya and the game record the study; Lesson 2 now holds them. Created: 2026-09-26. Updated: 2026-10-18.
 
-[Editable copy (Draft 03)](../content/choices-journey.md) · [Live study](http://127.0.0.1:4600/prototype/journey.html) · [Design round v09](../design/001-choices-explainer/v09-guided-journey/README.md) · Earlier lesson: [012](012-choices-lesson-implementation.md), [Draft 02](../content/choices-story.md)
+[Editable copy (Draft 05)](../content/choices-journey.md) · [Live study](http://127.0.0.1:4600/prototype/journey.html) · [Design round v09](../design/001-choices-explainer/v09-guided-journey/README.md) · Earlier lesson: [012](012-choices-lesson-implementation.md), [Draft 02](../content/choices-story.md)
 
 ## Why
 
@@ -23,10 +23,8 @@ Owner direction (2026-09-26):
 | --- | --- | --- |
 | Many paths | Cover, many paths, one path at a time, outside your control | The approved path field grows from the beginning dot. A traveller walks to Today at age 12 and example choices appear as chips: dark for choices taken ("Joined a soccer team"), gray for choices not taken ("Chess club"), green for choices still possible ("Robotics club"). The labels come from 20 story sets in `prototype/journey-choices.js`, one per visit. The two future groups sit on connected branch families in the top and bottom halves and show progression: one builds on what was started (Make the school team → Captain the team / Coach younger kids), the other starts something new (Start cello → Get a cello tutor / Switch to piano). A small key replaces the earlier disclaimer line. A few future paths close, each with a reason chip ("The team was full"). The view then zooms into the traveller to open the hike. |
 | The hike | Plan, halfway, turning back, practice, second try, closure, response, sort | A flat SVG trail map with walkers, water bottles and a backpack that collects what Alfredo learns. The two setbacks are water (their planning) and a storm closure (not their control), each with a choice and feedback. The chapter ends with a drag-to-sort board: drag cards from the middle to "Their choice" or "Outside their control". Tapping a card and then a side also works, as does the keyboard (← →) or Skip. A wrong drop shakes and returns the card for another try. |
-| Skills grow | Fork, slow start, learning builds, trying basketball, never too late | One Maya forks into two lanes: Path A keeps practising, Path B mostly skips. Calendars fill week by week, and skill bars and growth badges show slow, then faster, growth. "Helped by…" notes show foundations. The boxes flip to basketball with striped head starts, then both Mayas practise basketball and Path B grows too. |
-| Your turn | One game beat | A vertical scroll of ten afternoon cards, with a day rail on the right and the soccer and cello skill boxes plus energy in the side panel. Choosing moves on to the next afternoon automatically, with no Next button. Cards that aren't centred grey out. Scrolling back brings an earlier day to full colour, and it can be changed: the whole run replays and later choices are kept. Future days stay disabled. The end card shows a summary, what carries over to basketball and guitar, and "Play again" with markers from the last try. |
 | Explore | One interactive beat | A camera follows a traveller through a seeded tree of example choices from age 3 to 70. At each fork, two or three chips ("Get a tutor for maths", "Apply for the gifted programme", "Start an apprenticeship") sit above their branches. Hovering a branch previews in blue everything it could lead to. Some options are closed by circumstances, shown dashed with a reason ("No places left this year"). Gray not-taken branches keep their labels; clicking one goes back and takes it. The side panel lists "Your path so far" as steps you can return to. At 70 the camera zooms out to show the whole life path, with "Try a different life". |
-| Take it with you | Takeaways | The life map returns at Today with three takeaways and buttons to replay the game, restart or explore. |
+| Take it with you | Takeaways | The life map returns at Today with two takeaways ("Choices add up" and "Not everything is yours to choose"). The text ends: "Alfredo got what he wanted by choosing to practise. Next: how practice works." Buttons lead to Lesson 2, back to the start, or to the explorer. |
 
 Explorer tree rules (`prototype/journey-explore.js`): it is a separate illustrative structure, not the approved life-map network, which forks mostly before age five. Each node draws its own seeded number of options, fork spacing and bend, so forks never line up in synchronized columns. The branches ahead are laid out in nested bands so they don't cross, and a branch's height is fixed once passed. Labels come from age bands in `prototype/journey-choices.js`; choices before age seven are marked "chosen by family". Options are never ranked and closures only ever close some of the options at a fork.
 
@@ -40,10 +38,8 @@ Explorer tree rules (`prototype/journey-explore.js`): it is a separate illustrat
 
 ## Evidence and boundaries
 
-- The skill model (`prototype/journey-game.js`) is an **illustration**. A skill's foundation multiplies new practice (slow at first, then faster), and levels are capped. Practising while worn out builds less. Readers see words, not numbers. It is not a simulator and makes no claim about real rates.
-- The research supports "earlier learning can help later learning" and a possible related-skill head start that still needs adapting. It does not support large or guaranteed transfer ([learning findings](../research/learning/README.md); the sport-transfer review found low-to-moderate-quality evidence). The page therefore shows partial, labelled head starts, with the new skill (dribbling with hands, frets and strumming) starting low.
-- Maya is compared with herself on two imagined paths, so the contrast is about practice patterns, not ability or worth. The copy says real life also depends on coaches, time, money and luck, and that practice doesn't guarantee a result.
-- Circumstances stay visible: closed paths on the map, the storm, and the chance days in the game.
+- The skill model, the related-skill head starts and Maya's comparison with herself belong to Lesson 2 ([016](016-lessons-two-to-four.md)). Their boundaries stay as written there and in the [learning findings](../research/learning/README.md): an illustration in words, not numbers, with partial head starts and no promised result.
+- Circumstances stay visible: closed paths on the map, the storm, and the explorer's closed ways and lucky chances.
 
 ## Changes to current rules that need owner approval
 
@@ -57,7 +53,7 @@ Explorer tree rules (`prototype/journey-explore.js`): it is a separate illustrat
 - Content lives in chapter and beat records (`kicker`, `heading`, `body`, optional `choice`, `sort`, `closer`, `learned`, `takeaways`, `alt`). The static reading and tests are built from those records.
 - Round-two owner feedback (2026-09-26): remove the illustration disclaimer line, drag-to-sort with Skip, label real example choices on the map, no Next button in the game (vertical feed with day rail, past days editable), merge "travel" and "ahead", tighter Many-paths copy, and a fun, interactive life-path explorer with example choices.
 - Each chapter's picture is a scene module with `show(beatId, { from, animate, token })` and optional `choose(beatId, optionId)`. Scenes must be able to reach any beat's final state directly, and may animate only when stepping forward one beat.
-- Each beat's `alt` text doubles as a shot description for a future video storyboard. Hike beats 1–7 and Maya beats 1–5 map one-to-one to short clips.
+- Each beat's `alt` text doubles as a shot description for a future video storyboard. Hike beats 1–7 map one-to-one to short clips.
 
 ## Acceptance for this study
 
@@ -68,7 +64,6 @@ Explorer tree rules (`prototype/journey-explore.js`): it is a separate illustrat
 
 ## Open questions
 
-- Ages: is 12 the right example age for the map, and 8→11 right for Maya?
-- Does the game need a shorter version (for example, five afternoons) for younger readers?
+- Ages: is 12 the right example age for the map?
 - Should the earlier `choices.html` page remain as "Explore the life map", or be retired once this is accepted?
 - Illustration style for the video pass: keep this flat SVG vocabulary, or commission a matching painted set?

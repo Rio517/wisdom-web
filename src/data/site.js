@@ -1,8 +1,10 @@
-// Site-wide structure: the lesson roadmap and the Choices lesson's chapters.
+// Site-wide structure: the lesson roadmap and the chapters of the written lessons.
 // Words come from the message catalogs (site.*); pass a translator from
 // src/i18n/index.js (build) so each page renders in its own language.
 import { chaptersFor, beatList } from '../lessons/choices/journey-story.js';
 import { ICONS } from '../lessons/choices/journey-icons.js';
+import { PRACTICE_PATH, chaptersFor as practiceChapters } from '../lessons/practice/practice-story.js';
+import { TAKEAWAY_ICONS as PRACTICE_ICONS } from '../lessons/practice/practice-pictures.js';
 import { localizePath } from '../i18n/config.js';
 
 export const SITE = {
@@ -21,20 +23,21 @@ export const href = (locale, path) => url(localizePath(path, locale));
 
 export const LESSON_PATH = '/choices/the-paths-we-make/';
 
-/** The six planned lessons, in reading order. Only available ones get pages. */
+/** The lessons, in reading order. Only written ones get pages; a lesson's title lives in one key. */
 const LESSON_DATA = [
   { number: '01', id: 'choices', status: 'available', path: '/choices/' },
-  { number: '02', id: 'habits', status: 'next' },
-  { number: '03', id: 'deciding', status: 'planned' },
-  { number: '04', id: 'happiness', status: 'planned' },
-  { number: '05', id: 'relationships', status: 'planned' },
-  { number: '06', id: 'learning', status: 'planned' },
+  { number: '02', id: 'practice', status: 'available', path: '/practice/', titleKey: 'practice.ui.title' },
+  { number: '03', id: 'deciding', status: 'next' },
+  { number: '04', id: 'habits', status: 'planned' },
+  { number: '05', id: 'happiness', status: 'planned' },
+  { number: '06', id: 'relationships', status: 'planned' },
+  { number: '07', id: 'learning', status: 'planned' },
 ];
 
 export function lessonsFor(t) {
   return LESSON_DATA.map(lesson => ({
     ...lesson,
-    title: t(`site.lesson.${lesson.id}.title`),
+    title: t(lesson.titleKey ?? `site.lesson.${lesson.id}.title`),
     summary: t(`site.lesson.${lesson.id}.summary`),
     statusLabel: t(`site.status.${lesson.status}`),
     tip: lesson.status === 'available' ? undefined : t(`site.soonTip.${lesson.status}`),
@@ -42,7 +45,7 @@ export function lessonsFor(t) {
   }));
 }
 
-const CHAPTER_ICONS = { paths: 'map', hike: 'backpack', skills: 'soccerSmall', play: 'celloSmall', explore: 'eye', wrap: 'leaf' };
+const CHAPTER_ICONS = { paths: 'map', hike: 'backpack', explore: 'eye', wrap: 'leaf' };
 
 export function choicesChaptersFor(t) {
   const chapters = chaptersFor(t);
@@ -56,6 +59,25 @@ export function choicesChaptersFor(t) {
     icon: ICONS[CHAPTER_ICONS[chapter.id]] ?? '',
     href: `${href(t.locale, LESSON_PATH)}#${firstFragment.get(chapter.id)}`,
   }));
+}
+
+const PRACTICE_CHAPTER_ICONS = { small: 'soccerSmall', adding: 'add', new: 'basketball', activity: 'celloSmall', keep: 'leaf' };
+
+/** Lesson 2's chapters for its overview page, each linking to its first step. */
+export function practiceChaptersFor(t) {
+  return practiceChapters(t).map((chapter, index) => ({
+    id: chapter.id,
+    number: String(index + 1).padStart(2, '0'),
+    title: chapter.title,
+    text: t(`site.practiceChapter.${chapter.id}.text`),
+    icon: ICONS[PRACTICE_CHAPTER_ICONS[chapter.id]] ?? '',
+    href: `${href(t.locale, PRACTICE_PATH)}#${chapter.id}-${chapter.beats[0].id}`,
+  }));
+}
+
+export function practiceTakeawaysFor(t) {
+  return practiceChapters(t).find(chapter => chapter.id === 'keep').beats[0].takeaways
+    .map(item => ({ ...item, icon: PRACTICE_ICONS[item.icon] }));
 }
 
 export function takeawaysFor(t) {

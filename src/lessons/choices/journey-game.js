@@ -104,13 +104,12 @@ export function daysWithLabels(t = runtimeT) {
 
 export const MAX_ENERGY = 3;
 export const GAME_SCALE = 1.5;
-export const MAYA_SCALE = 0.5;
 const ALL_SKILLS = Object.values(SKILL_GROUPS).flatMap(group => group.skills.map(skill => skill.id));
 const round = value => Math.round(value * 1000) / 1000;
 
-export function createSkillState(levels = {}) {
+export function createSkillState(levels = {}, skills = ALL_SKILLS) {
   return {
-    levels: Object.fromEntries(ALL_SKILLS.map(id => [id, levels[id] ?? 0])),
+    levels: Object.fromEntries(skills.map(id => [id, levels[id] ?? 0])),
     energy: MAX_ENERGY,
     fun: 0,
     history: [],
@@ -122,8 +121,12 @@ export function boostFor(foundationLevel) {
   return 0.5 + 1.6 * Math.max(0, Math.min(1, foundationLevel));
 }
 
-export function applyActivity(state, activityId, { day = null, scale = GAME_SCALE } = {}) {
-  const activity = ACTIVITIES[activityId];
+/**
+ * One afternoon's choice. Another activity (Lesson 2's ten afternoons) passes its own `activities`
+ * and `foundations`; `tiring: false` leaves energy out, so practice never counts for less.
+ */
+export function applyActivity(state, activityId, { day = null, scale = GAME_SCALE, activities = ACTIVITIES, foundations = FOUNDATIONS, tiring = true } = {}) {
+  const activity = activities[activityId];
   if (!activity) throw new Error(`Unknown activity ${activityId}`);
   const levels = { ...state.levels };
   const gains = {};
@@ -135,14 +138,14 @@ export function applyActivity(state, activityId, { day = null, scale = GAME_SCAL
     energy = Math.min(MAX_ENERGY, energy + 2);
     fun += 1;
   } else {
-    tired = energy <= 0;
+    tired = tiring && energy <= 0;
     const tiredFactor = tired ? 0.45 : 1;
     for (const [skill, base] of Object.entries(activity.gains)) {
-      const foundation = FOUNDATIONS[skill];
-      const multiplier = boostFor(state.levels[foundation]);
-      const room = 1 - levels[skill];
+      const foundation = foundations[skill] ?? skill;
+      const multiplier = boostFor(state.levels[foundation] ?? 0);
+      const room = 1 - (levels[skill] ?? 0);
       const gain = round(Math.min(room, base * scale * multiplier * tiredFactor * (0.35 + 0.65 * room)));
-      levels[skill] = round(levels[skill] + gain);
+      levels[skill] = round((levels[skill] ?? 0) + gain);
       gains[skill] = gain;
       if (multiplier >= 1.1 && gain > 0) boosts.push({ skill, from: foundation });
     }
@@ -163,12 +166,13 @@ export function applyActivity(state, activityId, { day = null, scale = GAME_SCAL
  * one. Pure: the same choices always replay to the same state, which lets a
  * reader edit an earlier day and have every later day recompute from it.
  */
-export function replayChoices(choiceIds = []) {
-  let state = createSkillState();
+export function replayChoices(choiceIds = [], { skills, onDay = null, ...options } = {}) {
+  let state = createSkillState({}, skills);
   for (let day = 0; day < choiceIds.length; day += 1) {
     const activityId = choiceIds[day];
     if (activityId == null) break;
-    state = applyActivity(state, activityId, { day }).state;
+    if (onDay) state = onDay(state, day);
+    state = applyActivity(state, activityId, { day, ...options }).state;
   }
   return state;
 }
@@ -202,39 +206,4 @@ export function summarize(state, t = runtimeT) {
   if (counts.rest) lines.push(t('game.summary.rest', { count: counts.rest }));
   if (counts.tired) lines.push(t('game.summary.tired', { count: counts.tired }));
   return { counts, lines };
-}
-
-/** Maya’s two paths: a season is twelve weeks; each week she practises or doesn’t. */
-export const MAYA_PATTERNS = {
-  a: [1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0],
-  b: [0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0],
-};
-
-export function mayaSeasons({ seasons = 3, pattern, activities = ['soccerPractice', 'kickBall', 'soccerPractice'] }) {
-  let state = createSkillState();
-  const snapshots = [{ levels: { ...state.levels }, weeks: [] }];
-  for (let season = 0; season < seasons; season += 1) {
-    const weeks = [];
-    pattern.forEach((practised, week) => {
-      weeks.push(practised);
-      if (!practised) return;
-      state = { ...state, energy: MAX_ENERGY };
-      state = applyActivity(state, activities[week % activities.length], { scale: MAYA_SCALE }).state;
-    });
-    snapshots.push({ levels: { ...state.levels }, weeks });
-  }
-  return snapshots;
-}
-
-/** A season of practice on skills without a modelled foundation chain (e.g. a new sport). */
-export function practiseSeason(levels, pattern = MAYA_PATTERNS.a, base = 0.05) {
-  const next = { ...levels };
-  for (const practised of pattern) {
-    if (!practised) continue;
-    for (const id of Object.keys(next)) {
-      const room = 1 - next[id];
-      next[id] = round(next[id] + Math.min(room, base * boostFor(next[id]) * (0.35 + 0.65 * room)));
-    }
-  }
-  return next;
 }

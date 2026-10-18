@@ -1,0 +1,114 @@
+/* Lesson 2 · Practice: what its pictures and its activity add to Lesson 1's journey styles
+   (journey.css, journey-play.css). Flat: no shadows, glows or volume. */
+
+/* ——— Pictures ——— */
+.scene-practice { overflow: hidden; }
+.pl-layer { position: absolute; inset: 0; }
+.pl-layer.is-entering { animation: scene-in 520ms cubic-bezier(.2,.7,.2,1) both; }
+.pl-layer.is-leaving { animation: scene-out 380ms ease-in both; pointer-events: none; }
+.pl-layer .pic { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
+.pl-labels { position: absolute; inset: 0; pointer-events: none; }
+
+/* A label in the map's style: forest, semibold, a ring of the stage's colour so it reads over lines. */
+.pl-label {
+  --halo: #f2f5f0;
+  position: absolute; white-space: nowrap; font: 650 15px/1.15 var(--font-guide); color: var(--color-forest);
+  text-shadow: 1px 0 var(--halo), -1px 0 var(--halo), 0 1px var(--halo), 0 -1px var(--halo), 1px 1px var(--halo), -1px -1px var(--halo), 1px -1px var(--halo), -1px 1px var(--halo), 2px 0 var(--halo), -2px 0 var(--halo), 0 2px var(--halo), 0 -2px var(--halo);
+}
+.pl-label.can-wrap { white-space: normal; width: max-content; text-wrap: balance; }
+.pl-label.is-start { --tx: 0; }
+.pl-label.is-middle { --tx: -50%; text-align: center; }
+.pl-label.is-end { --tx: -100%; text-align: right; }
+.pl-label.at-baseline { transform: translate(var(--tx), -80%); }
+.pl-label.at-above { transform: translate(var(--tx), -100%); }
+.pl-label.at-below { transform: translate(var(--tx), 0); }
+.pl-label.at-center { transform: translate(var(--tx), -50%); }
+.pl-label.is-quiet { color: var(--color-quiet); font-weight: 550; }
+.pl-label.is-ink { --halo: transparent; color: var(--color-ink); }
+.pl-label.is-white { --halo: transparent; color: white; }
+.pl-label.is-chip { --halo: transparent; padding: 3px 8px; border-radius: 8px; background: #f2f5f0; }
+
+/* HTML laid over a picture (a lane, a skill box). */
+.pl-over { position: absolute; }
+.pl-lane { top: 50%; transform: translateY(-50%); }
+.solo-lane { display: grid; grid-template-columns: 92px minmax(0, 1fr) minmax(220px, 290px); gap: 20px; align-items: center; padding: 22px 24px; border-radius: 20px; background: white; border: 1px solid var(--color-rule); box-shadow: inset 4px 0 0 var(--color-forest); }
+.solo-lane .lane-who strong { color: var(--color-forest); }
+.pl-boxed .skill-box { background: white; }
+.skill-box .box-note, .skill-box .skill-meta, .skill-box .skill-word { font-size: 15px; }
+.skill-box.is-new { border-color: var(--color-sun); background: white; }
+.skill-box.is-new .box-note { color: #7a5412; font-weight: 600; }
+.box-key { display: block; margin: 8px 0 0; font: 15px var(--font-guide); color: var(--color-quiet); }
+
+/* Step 05: the map's box opening into the lens (practice-stage.js runs the move). */
+.hero { position: absolute; inset: 0; }
+.hero-back, .hero-front { position: absolute; inset: 0; pointer-events: none; }
+.hero-back svg, .hero-front svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.hero-map { position: absolute; inset: 0; transform-origin: 0 0; transform: translate(var(--mini-x), var(--mini-y)) scale(var(--mini-s)); }
+.hero-map .hero-map-labels { visibility: hidden; opacity: 0; }
+.hero-lens { position: absolute; transform-origin: 0 0; }
+.hero-lens > svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; overflow: visible; }
+.hero.is-zooming .hero-map, .hero.is-zooming .hero-lens { will-change: transform, opacity; }
+
+/* The takeaways' icons (one is footprints, drawn here). */
+.takeaways li > svg { flex: none; }
+
+/* ——— Ten afternoons ——— */
+.practice .scene-play { position: absolute; inset: 0; display: grid; grid-template-columns: minmax(0, 1fr) 76px; height: auto; }
+.practice .play-feed { height: 100%; margin: 0; padding: 26px 28px 0; display: grid; align-content: start; justify-items: center; gap: 18px; overflow: hidden; scroll-snap-type: none; }
+.practice .play-card { max-width: 660px; width: 100%; margin: 0 auto; }
+.practice .play-card.is-future { pointer-events: none; }
+/* The waiting afternoon shows its choices, not yet what they grow (keeps the screen under 120 words). */
+.practice .play-card.is-future .play-activity-kind { visibility: hidden; }
+.practice .play-card.is-arriving { animation: card-in 420ms cubic-bezier(.2,.7,.2,1) both; }
+@keyframes card-in { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+.practice .play-heading { margin: 4px 0 18px; font: 500 30px/1.15 var(--font-field); letter-spacing: -.01em; color: var(--color-ink); }
+.practice .play-activity-label { font-size: 16px; }
+.practice .play-rail { height: 100%; padding: 20px 14px; gap: 8px; box-sizing: border-box; }
+.practice .play-rail-tile { width: 48px; height: 48px; }
+.practice .play-summary-list li { font: 18px/1.5 var(--font-field); }
+.practice .play-end h2:focus { outline: none; }
+.card-box { margin-top: 14px; max-width: 380px; }
+.panel-boxes { display: grid; gap: 10px; }
+.panel-boxes .skill-box { padding: 10px 14px; }
+.panel-boxes .skill-row { padding: 1px 0; }
+.skill-box.is-growing { animation: box-grow 520ms ease-out; }
+@keyframes box-grow { 0% { border-color: var(--color-forest); } 100% { border-color: var(--color-rule); } }
+@media (prefers-reduced-motion: reduce) {
+  .practice .play-card.is-arriving, .skill-box.is-growing { animation: none; }
+}
+
+/* At iPad-landscape heights the lesson's tighter type; the two boxes fit beside the story. */
+@media (max-height: 800px) {
+  .practice .play-feed { padding-top: 18px; }
+  .practice .play-card { padding: 24px 30px; }
+  .practice .play-heading { font-size: 26px; margin-bottom: 14px; }
+  .practice .play-activity { padding: 12px 8px; }
+  .practice .play-activity-icon svg { width: 40px; height: 40px; }
+  .panel-boxes { gap: 8px; }
+  .panel-boxes .skill-box { padding: 8px 10px; }
+  .panel-boxes .skill-row { grid-template-columns: minmax(0, 1fr) auto; column-gap: 6px; row-gap: 2px; padding: 1px 0; }
+  .panel-boxes .skill-name { grid-row: 1; grid-column: 1; font-weight: 500; }
+  .panel-boxes .skill-meta { grid-row: 1; grid-column: 2; margin: 0; }
+  .panel-boxes .meter { grid-row: 2; grid-column: 1 / -1; }
+}
+
+/* Upright tablets: the stage on top, the rail along its foot. */
+@media (max-width: 989px) {
+  .practice .scene-play { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) auto; }
+  .practice .play-feed { padding: 18px 20px 0; }
+  .practice .play-card { padding: 22px 24px; }
+  .practice .play-rail { width: auto; height: auto; flex: none; flex-direction: row; justify-content: center; padding: 10px 12px; border-left: 0; border-top: 1px solid var(--color-rule); overflow: hidden; }
+  .practice .play-rail-item { width: auto; }
+  .practice .play-rail-tile { width: 44px; height: 44px; }
+  .panel-boxes { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .panel-boxes .skill-box { padding: 8px 10px; }
+  .panel-boxes .skill-row { grid-template-columns: minmax(0, 1fr) auto; column-gap: 6px; row-gap: 2px; padding: 1px 0; }
+  .panel-boxes .skill-name { grid-row: 1; grid-column: 1; font-weight: 500; }
+  .panel-boxes .skill-meta { grid-row: 1; grid-column: 2; margin: 0; }
+  .panel-boxes .meter { grid-row: 2; grid-column: 1 / -1; }
+  .solo-lane { grid-template-columns: 80px minmax(0, 1fr); }
+  .solo-lane .lane-box { grid-column: 1 / -1; }
+}
+
+/* Step 05 drawn ahead while step 04 shows (practice-stage.js): laid out, never seen. */
+.pl-layer.is-waiting { visibility: hidden; pointer-events: none; }

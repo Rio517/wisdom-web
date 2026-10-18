@@ -5,6 +5,7 @@ import { writtenLifeIn } from '../../../../lessons/choices/lives/build.js';
 import { LESSON_PATH, UI, href } from '../../../../data/site.js';
 import { getTranslator } from '../../../../i18n/index.js';
 import { localeStaticPaths } from '../../../../i18n/config.js';
+import { PRACTICE_PATH } from '../../../../lessons/practice/practice-story.js';
 
 export const getStaticPaths = localeStaticPaths;
 const { locale } = Astro.props;
@@ -23,5 +24,8 @@ const reading = renderJourneyReading({ t, life: writtenLifeIn(locale) });
       </div>
     </header>
     <div class="prose" set:html={reading} />
+    <div class="actions">
+      <a class="btn btn-primary" href={href(locale, PRACTICE_PATH)}>{t('lesson.ui.nextLesson', { title: t('practice.ui.title') })}<Fragment set:html={UI.arrow} /></a>
+    </div>
   </article>
 </SiteLayout>

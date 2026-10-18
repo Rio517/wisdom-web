@@ -7,6 +7,7 @@ import { writtenLifeIn } from '../../../../lessons/choices/lives/build.js';
 import { UI, href } from '../../../../data/site.js';
 import { getTranslator } from '../../../../i18n/index.js';
 import { localeStaticPaths } from '../../../../i18n/config.js';
+import { PRACTICE_PATH } from '../../../../lessons/practice/practice-story.js';
 
 export const getStaticPaths = localeStaticPaths;
 const { locale } = Astro.props;
@@ -31,7 +32,7 @@ const reading = renderJourneyReading({ t, life: writtenLifeIn(locale) });
     <button class="quiet-link" id="open-reading" type="button">{t('lesson.ui.readAsText')}</button>
   </header>
 
-  <main class="journey" id="journey">
+  <main class="journey" id="journey" data-next-lesson={href(locale, PRACTICE_PATH)}>
     <section class="stage" id="stage" aria-label={t('lesson.ui.illustration')}>
       <div class="scene scene-paths" id="scene-paths" data-scene="paths">
         <div class="map-stack">
@@ -41,7 +42,6 @@ const reading = renderJourneyReading({ t, life: writtenLifeIn(locale) });
         </div>
       </div>
       <div class="scene scene-hike" id="scene-hike" data-scene="hike" hidden></div>
-      <div class="scene scene-skills" id="scene-skills" data-scene="skills" hidden></div>
       <div class="scene scene-explore" id="scene-explore" data-scene="explore" hidden></div>
       <p class="sr-only" id="stage-description" aria-live="polite"></p>
     </section>

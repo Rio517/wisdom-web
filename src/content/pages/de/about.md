@@ -12,11 +12,13 @@ Jede Lektion beginnt mit Forschung, nicht mit Meinung. Erkenntnisse, ihre Quelle
 
 ## Was es schon gibt
 
-[Lektion 1, Entscheidungen — Die Wege, die wir gehen](../choices/the-paths-we-make/), erklärt, wie sich Entscheidungen mit der Zeit summieren, wie Lernen auf Lernen aufbauen kann, und wie viel von Umständen, Unterstützung und Zufall geprägt wird, die sich niemand aussuchen kann. Die [Hinweise für Erwachsene](../choices/notes/) beschreiben, wie man die Lektion mit einem Kind nutzt und was die Forschung dahinter zeigt – und was nicht.
+[Lektion 1, Entscheidungen — Die Wege, die wir gehen](../choices/the-paths-we-make/), erklärt, wie sich Entscheidungen mit der Zeit summieren und wie viel von Umständen, Unterstützung und Zufall geprägt wird, die sich niemand aussuchen kann. Die [Hinweise für Erwachsene](../choices/notes/) beschreiben, wie man die Lektion mit einem Kind nutzt und was die Forschung dahinter zeigt – und was nicht.
+
+[Lektion 2, Üben](../practice/), begleitet Maya und ihren Fußball drei Jahre lang. Sie zeigt, wie sich kleine Entscheidungen summieren, wenn man sie immer wieder trifft, und wie eine Fähigkeit der nächsten einen Anfang gibt.
 
 ## Was geplant ist
 
-Weitere Lektionen sind geplant, in dieser Reihenfolge: Gewohnheiten und tägliches Üben; wie wir Entscheidungen treffen; was ein glückliches Leben ausmacht; Beziehungen; und wie man lernt. Keine davon existiert bisher. Diese Seite wird aktualisiert, sobald eine fertig zu lesen ist.
+Weitere Lektionen sind geplant, in dieser Reihenfolge: der Elefant und der Reiter; Gewohnheiten und tägliches Üben; was ein glückliches Leben ausmacht; Beziehungen; und wie man lernt. Keine davon existiert bisher. Diese Seite wird aktualisiert, sobald eine fertig zu lesen ist.
 
 ## Mehr erfahren
 
