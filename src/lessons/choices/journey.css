@@ -698,7 +698,9 @@ dialog::backdrop { background: #23302d66; }
 /* Beside the stage the column holds still, and the list takes all of it from the heading down to the
    controls: it fits (journey-life.js), and only a story too long for any size scrolls, after it has played. */
 @media (min-width: 990px) {
-  .narration-body[data-beat="life"] { display: flex; flex-direction: column; overflow: hidden; padding-bottom: 7px; container-type: inline-size; } /* 7px: the Pause link's target reaches 7px below it */
+  .narration-body[data-beat="life"] { display: flex; flex-direction: column; overflow: hidden; padding-bottom: 4px; container-type: inline-size; }
+  /* The Pause link's 44px target leans up over the list, so it stays inside the 4px padding. */
+  .narration-body[data-beat="life"] .life-pause::after { inset: -10px -4px -4px; }
   .narration-body[data-beat="life"] > * { flex: none; }
   .narration-body[data-beat="life"] #beat-heading { margin-bottom: 16px; }
   .narration-body[data-beat="life"] > .beat-text { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
