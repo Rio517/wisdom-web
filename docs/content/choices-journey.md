@@ -1,6 +1,6 @@
 # Choices — The paths we make (guided journey)
 
-Status: Draft 04, the text of Lesson 1 on the site. Created: 2026-09-26. Updated: 2026-10-12.
+Status: Draft 05, the text of Lesson 1 on the site. Created: 2026-09-26. Updated: 2026-10-18.
 
 This is the readable copy of [Lesson 1](../product/013-choices-guided-journey.md). The live words are in `src/i18n/messages/en.json`, and the translations sit beside it (see [014](../product/014-languages.md)). Edit either here or in the catalog; after a code pass, regenerate this file with `npm run copy:lesson`. [Draft 02](choices-story.md) is the text of the earlier lesson study.
 
@@ -12,7 +12,7 @@ A guided lesson for readers aged eight and up. The people and places are made up
 
 Your choices shape where a life can go. Good and bad luck, which nobody chooses, shape it too.
 
-First we watch one whole life in half a minute. Then we go on a hike and meet a girl with two paths.
+First we watch one whole life in half a minute. Then we go on a hike with Alfredo and his dad.
 
 Picture: A single dot marks the beginning of a life.
 
@@ -134,40 +134,6 @@ Drag to sort (or skip): How much water to pack (their choice) · The storm (outs
 
 Picture: Six cards are sorted into two groups. Their choices are how much water to pack, turning back, practising with the map and asking the ranger. The storm and a friendly ranger being there were outside their control.
 
-## Skills grow
-
-### Same start, two paths.
-
-Meet Maya. She’s eight, and she just joined a soccer team. Let’s imagine two ways her next three years could go. It’s the same Maya with the same start. Only her choices are different.
-
-In her first season, Path A Maya goes to most practices and kicks a ball against the wall at home. Path B Maya goes now and then. So far, the difference is small. Early practice often feels like nothing is happening. Something is.
-
-Picture: One path splits into two. On Path A, Maya keeps practising. On Path B, she mostly skips. After season one, Path A’s calendar is mostly filled, and Path B’s has a few practices. Both sets of skill bars are low, with Path A slightly ahead.
-
-### Then learning builds on learning.
-
-Path A Maya stops staring at the ball. Now she can look up and see her teammates. So passing gets easier to learn.
-
-Each skill gives the next one a place to stand. Path B Maya is still working on the basics, so the gap grows.
-
-> **Trying something new**
->
-> At eleven, both Mayas try basketball. It’s a different ball, and dribbling with your hands is new.
->
-> But Path A Maya already knows where to stand and when to pass. That comes with her. Path B Maya has to learn most of it from the start.
->
-> Picture while open: Both skill boxes switch to basketball. Path A starts with part of Court sense and Passing already filled, carried across from soccer. Dribbling starts low for both. Path B starts low on all three.
-
-Picture: In seasons two and three, Path A’s skill bars rise faster than before, with arrows showing ball control helping passing and passing helping positioning. Path B’s bars rise slowly.
-
-### It’s never too late to start.
-
-Path B Maya can start practising any season she likes. When she practises basketball at eleven, her skills grow too. She has more to catch up on, but the door is still open.
-
-Real life is messier than this picture. Coaches, time and money matter. Luck does too. Sometimes luck is kind, and someone spots you and says, “Keep going.” Practice helps, but it doesn’t guarantee a result.
-
-Picture: Both Mayas practise basketball for a season. Path B’s calendar fills for the first time and her bars rise; Path A keeps her head start.
-
 ## Explore
 
 ### Choose a life path.
@@ -195,19 +161,17 @@ Picture: This interactive map shows example life choices. At each fork, two or t
 
 ### What to take with you.
 
-Your choices matter. They’re just not the whole story. Lots of paths are still open. What will you practise next?
+Your choices matter. They’re just not the whole story. Lots of paths are still open.
+
+Alfredo got what he wanted by choosing to practise. Next: how practice works.
 
 - **Choices add up.** Small things you do again and again can grow into something big, for better or worse. One hard day doesn’t decide your future.
-- **Learning builds on learning.** What you know gives the next thing a place to start. Sometimes that works even for something new.
 - **Not everything is yours to choose.** Some surprises are storms. Some are lucky breaks. Either way, you can pause, ask for help and choose your next step.
 
 Picture: The life map comes back. It shows Sam’s whole path, and light green paths are still open past age 41.
 
 ## Editorial notes
 
-- The order is big picture first, then two concrete examples (setbacks and circumstances; compounding and carry-across), then a free explorer and three takeaways.
-- Maya is compared with herself on two imagined paths, not with another child, so the contrast is about practice patterns rather than ability.
-- Soccer-to-basketball is an illustrative carry-across example, kept optional behind “Trying something new”. The research supports a possible related-skill head start with adaptation, not guaranteed or large transfer ([learning findings](../research/learning/README.md)).
-- No numbers are shown; Maya’s bars use words such as Learning and Getting good.
+- The order is big picture first, then one concrete example (setbacks and circumstances), then a free explorer and two takeaways. The ending points to Lesson 2 (Practice), which holds Maya’s story and the ten afternoons.
 - The hike’s closed trail and the explorer’s closed ways and lucky chances keep circumstances visible.
 - Explorer labels are examples of the kinds of choices people make at each age. They are not ranked, and no option is presented as better. Early ones are marked as chosen by family.
