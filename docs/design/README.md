@@ -2,7 +2,7 @@
 
 ## Start here — the site
 
-The first complete website is [002 — Site shell and home, v01 — Launch](002-site/v01-launch/README.md): home page, lesson overview, text version, notes, about and the shared index, built in Astro with the approved field-guide look.
+The first complete website is [002 — Site shell and home, v01 — Launch](002-site/v01-launch/README.md): home page, lesson overview, text version, notes, about and the shared index, built in Astro with the approved field-guide look. Its newest round, [v04 — Lesson 1 fit](002-site/v04-lesson1-fit/README.md), makes every Lesson 1 step fit laptop and iPad screens in four languages.
 
 ## Choices
 

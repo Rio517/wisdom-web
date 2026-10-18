@@ -342,7 +342,7 @@ function foregroundSVG() {
   </g>
   ${bridgeMarkup()}
   ${cabinMarkup()}
-  <text class="place-label" x="62" data-x="62" y="578" text-anchor="middle">${tx('hike.trailhead')}</text>
+  <text class="place-label" x="62" data-x="62" y="578" text-anchor="middle" id="trailhead-label">${tx('hike.trailhead')}</text>
   <text class="place-label" x="1003" data-x="1003" y="254" text-anchor="middle">${tx('hike.lake')}</text>
   <text class="place-label small" x="412" data-x="412" y="672" text-anchor="end" id="rock-label">${tx('hike.rock')}</text>
   <text class="place-label small" x="652" data-x="652" y="792" id="stream-label">${tx('hike.stream')}</text>
@@ -536,6 +536,7 @@ export function createHikeScene(root) {
       span.textContent = line;
       return span;
     }));
+    separateFlag();
   };
   const show = (selector, on) => $(selector).classList.toggle('shown', on);
 
@@ -561,10 +562,12 @@ export function createHikeScene(root) {
   const svg = $('svg.hike-map');
   const bubbleText = $('#bubble-text');
   const bubbleRect = $('#bubble-rect');
+  let labelScale = 1; // screen px per map unit
   function layout() {
     const box = svg.getBoundingClientRect();
     if (!box.width || !box.height) return;
     const k = Math.min(box.width / 1200, box.height / 800);
+    labelScale = k;
     svg.style.setProperty('--lbl', `${(16 / k).toFixed(1)}px`);
     svg.style.setProperty('--lbl-s', `${(15 / k).toFixed(1)}px`);
     // Keep fixed labels fully inside the visible map: slide a label inward when its box would cross an edge.
@@ -589,6 +592,31 @@ export function createHikeScene(root) {
       bubbleText.setAttribute('x', String(left + width / 2));
       bubbleText.setAttribute('y', String(Math.ceil(size.height + 18) / 2 + size.height * 0.3));
     }
+    separateFlag();
+  }
+  // The flag's words keep 4px clear of the ranger's name and the trailhead's, in any language: they
+  // slide left towards the trailhead's name, as far as it allows, and the ranger's name moves right
+  // for whatever is left (it stays beside the ranger).
+  function separateFlag() {
+    const words = $('#turn-flag-text'), name = $('#ranger-label'), head = $('#trailhead-label');
+    const spans = [...words.children];
+    spans.forEach(span => span.setAttribute('x', flagTextX));
+    name.setAttribute('x', '684');
+    if (!spans.length) return;
+    // The lines' own boxes: WebKit's box for the whole <text> sits a few px off its tspans.
+    const lines = spans.map(span => span.getBoundingClientRect());
+    const a = { left: Math.min(...lines.map(r => r.left)), right: Math.max(...lines.map(r => r.right)), top: Math.min(...lines.map(r => r.top)), bottom: Math.max(...lines.map(r => r.bottom)) };
+    const b = name.getBoundingClientRect(), c = head.getBoundingClientRect();
+    if (a.right <= a.left || !b.width) return;
+    const gap = 4;
+    const apart = (p, q) => p.bottom + gap <= q.top || q.bottom + gap <= p.top;
+    const leftLimit = apart(a, c) ? -Infinity : c.right + gap;
+    const rightLimit = apart(a, b) ? Infinity : b.left - gap;
+    let shift = Math.min(0, rightLimit - a.right); // px on screen, left is negative
+    if (a.left + shift < leftLimit) shift = leftLimit - a.left;
+    if (shift) spans.forEach(span => span.setAttribute('x', n1(Number(flagTextX) + shift / labelScale)));
+    const over = a.right + shift - rightLimit;
+    if (over > 0) name.setAttribute('x', n1(684 + over / labelScale));
   }
   if (typeof ResizeObserver === 'function') new ResizeObserver(layout).observe(svg);
   layout();
