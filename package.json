@@ -7,7 +7,7 @@
     "build": "astro build",
     "preview": "astro preview --port 4601",
     "test": "node --test tests/*.test.js",
-    "copy:lesson": "node tooling/lesson-copy.mjs && node tooling/practice-copy.mjs",
+    "copy:lesson": "node tooling/lesson-copy.mjs && node tooling/practice-copy.mjs && node tooling/elephant-copy.mjs",
     "lives:check": "node tooling/lives-check.mjs",
     "dev:prototype": "vite",
     "build:prototype": "vite build",

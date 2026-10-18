@@ -1,0 +1,64 @@
+/* Lesson 3 · The elephant and the rider: what its pictures and its activity add to Lessons 1 and 2's
+   journey styles (journey.css, journey-sort.css, practice.css). Flat: no shadows, glows or volume. */
+
+/* ——— Pictures ——— */
+.scene-elephant { --elephant-gap: var(--color-paper-deep); }
+.elephant .pl-label { font-weight: 600; }
+.pl-label.is-on-white { --halo: white; }
+/* A label on a white chip (the frames' chips), centred on its point. */
+.pl-label.el-chip {
+  --halo: transparent;
+  display: inline-flex; align-items: center; gap: 6px; padding: 8px 12px;
+  border-radius: 999px; background: white; border: 1.5px solid var(--color-rule); font-weight: 600;
+}
+.pl-label.el-chip svg { width: 22px; height: 22px; flex: none; }
+
+/* The kicker over step 07 (For older readers · optional) and the activity's quiet line, under the story. */
+.elephant .beat-result { margin: 4px 0 0; font: 600 18px/1.4 var(--font-guide); color: var(--color-forest); animation: text-in 380ms ease-out both; }
+
+/* ——— Elephant or rider: the pair above Lesson 1's board ——— */
+.scene-sort { display: grid; grid-template-rows: minmax(96px, 47fr) minmax(min-content, 53fr); }
+.scene-sort .es-scene { position: relative; min-height: 0; }
+.scene-sort .es-scene .pic { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
+.scene-sort .sort-board {
+  position: relative; inset: auto; z-index: auto; min-height: 0; border-radius: 0; background: transparent;
+  padding: 0 20px 20px; gap: 16px; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr) minmax(0, 1fr); grid-template-rows: minmax(0, 1fr);
+}
+.scene-sort .sort-bin-elephant { grid-column: 1; grid-row: 1; }
+.scene-sort .sort-centre { grid-column: 2; grid-row: 1; justify-content: flex-start; padding-top: 8px; gap: 12px; }
+.scene-sort .sort-bin-rider { grid-column: 3; grid-row: 1; }
+.scene-sort .sort-centre:has(.sort-complete:not([hidden])) { justify-content: center; }
+
+/* The two sides, tinted: the elephant's in sage, the rider's in sun; each with its small picture and name. */
+.scene-sort .sort-bin { padding: 14px 14px 16px; }
+.scene-sort .sort-bin-elephant { border-color: var(--color-sage); background: color-mix(in srgb, var(--color-sage) 6%, transparent); }
+.scene-sort .sort-bin-rider { border-color: color-mix(in srgb, var(--color-sun) 75%, white); background: color-mix(in srgb, var(--color-sun) 6%, transparent); }
+.scene-sort .sort-bin.drag-over,
+.scene-sort .sort-board.has-selection .sort-bin:hover { border-style: solid; border-color: var(--color-forest); background: color-mix(in srgb, var(--color-forest) 7%, transparent); }
+.scene-sort .sort-bin-title { gap: 10px; margin: 0; font: 500 21px/1.2 var(--font-field); color: var(--color-forest); }
+.scene-sort .sort-bin-title svg.sort-side-icon { width: 46px; height: 36px; }
+.scene-sort .sort-bin-rider .sort-bin-title svg.sort-side-icon { width: 28px; }
+.scene-sort .sort-bin-strong { margin: 6px 0 0; font: 600 16px/1.3 var(--font-guide); color: var(--color-forest); }
+.scene-sort .sort-bin-list { margin-top: 12px; overflow: visible; }
+.scene-sort .sort-bin-card { display: flex; align-items: center; min-height: 50px; padding: 8px 12px; border-radius: 16px; font: 500 18px/1.25 var(--font-field); color: var(--color-ink); }
+.scene-sort .sort-bin-card.is-crossing { position: relative; z-index: 5; }
+
+/* The pile: two columns of loose cards under the instruction. */
+.scene-sort .sort-instruction { font: 500 18px/1.3 var(--font-field); }
+.scene-sort .sort-hint { line-height: 1.3; }
+.scene-sort .sort-intro { gap: 2px; }
+.scene-sort .sort-pile { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; padding: 0; }
+.scene-sort .sort-card { display: grid; place-items: center; min-height: 58px; padding: 8px 12px; }
+.scene-sort .sort-complete-quiet { display: grid; place-items: center; padding: 0; border: 0; background: transparent; }
+
+@media (max-height: 800px) {
+  .scene-sort .sort-card { min-height: 50px; font-size: 17px; }
+  .scene-sort .sort-bin-card { min-height: 44px; font-size: 17px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .elephant .beat-result { animation: none; }
+}
+
+/* Start again, in the middle once both sides are full. */
+.scene-sort .sort-again { min-height: 44px; padding: 10px 18px; font: 600 16px/1.2 var(--font-guide); }
