@@ -4,7 +4,7 @@ Status: proposal for review, 2026-10-18. English only. Nothing here is in the si
 
 The frames in [`prototype/lesson3-elephant/`](../../../../prototype/lesson3-elephant/) read this file, so the words on the frames and the words here are the same. Each step has its heading, the story text, a note on the picture, and the picture's own words as `key: value` lines. Chapter names are the chapter trail's labels.
 
-Changes from [v01](../v01-paper/copy.md): steps 04 and 05 move to a new example (a friend at the park who keeps changing the rules), a new step 03b (Now or later, on what matters right now) joins the Two strengths chapter, and the activity is the plain sort, Elephant or rider. Step ids keep v01's numbers, so step 04 is still Pulling the reins. No picture has leader lines; labels sit near what they name.
+Changes from [v01](../v01-paper/copy.md): steps 04 and 05 move to a new example (a friend at the park who keeps changing the rules), a new step 03b (Now or later, on what matters now and what can wait) joins the Two strengths chapter, and the activity is the plain sort, Elephant or rider. Step ids keep v01's numbers, so step 04 is still Pulling the reins. No picture has leader lines; labels sit near what they name.
 
 ## Story
 
@@ -49,20 +49,20 @@ Picture: the trail map from Lesson 1’s hike, with Alfredo and his dad at the t
 
 #### 03b now · Now or later.
 
-The rider can also notice what matters right now.
+The rider can also tell what matters now and what can wait.
 
-Everyone is waiting in the car, and your jacket zip is stuck. Your elephant wants to fight it until it works. Your rider sees that it can wait. You get in the car and fix it there.
+Everyone is waiting in the car, and your zip is stuck. Your elephant wants to keep tugging until it works. Your rider sees that the zip can wait. You fix it in the car.
 
 Picture: a family car at the kerb with its back door open and the family inside, ready to go. The elephant and its rider walk up to the open door. On the ground beside them lies a jacket with its zip stuck halfway. Nobody in the car is cross.
 
 - zip: Stuck zip
-- car: Everyone waiting
+- car: Waiting family
 
 ### Chapter · Steering
 
 #### 04 reins · Pulling the reins.
 
-At the park, a friend keeps changing the rules. Your elephant wants to yell. Your rider pulls the reins, and you bite your tongue.
+At the park, a friend keeps changing the rules. Your elephant wants to yell. Your rider pulls the reins, and you keep quiet.
 
 That works for a moment. But the elephant is much bigger than the rider, and soon it pulls again.
 
@@ -74,7 +74,7 @@ Picture: a park with a chalk game on the path. The friend stands beyond it with 
 
 People with good self-control tend not to fight their elephant much. They train it, and they give it easier paths.
 
-You step away for a breath, then say what isn’t fair. Or you all agree on the rules first.
+You step away for a breath, then say calmly what feels unfair. Or you all agree on the rules first.
 
 Picture: the same park. A short path leads a few steps away from the chalk game to a tree, where the elephant stands, calm, and the rider’s hand rests on its head again. Back at the game, the friend waits with the ball. The two labels sit along the easy path, one near the tree and one near the game.
 
@@ -85,11 +85,9 @@ Picture: the same park. A short path leads a few steps away from the chalk game 
 
 #### 06 team · One team.
 
-Neither one is the real you. The rider isn’t the boss, and the elephant isn’t the problem.
+Neither one is the real you. The rider isn’t the boss, and the elephant isn’t the problem. Both are you, and they travel best together.
 
 “We are the rider, and we are the elephant,” writes Jonathan Haidt.
-
-They travel best together.
 
 Picture: the elephant and its rider walking together up a gentle rise toward a lookout, the path behind them.
 
@@ -109,7 +107,7 @@ Picture: the elephant has already turned its back on a plate. Up on its neck, th
 #### 08 keep · Three ideas to keep.
 
 - **Two parts, one team.** You are the rider and the elephant, working together.
-- **The elephant learns.** It learns from what you do again and again.
+- **A learning elephant.** The elephant learns from what you do again and again.
 - **Training and easy paths.** Training the elephant and choosing easy paths tend to work better than pulling the reins.
 
 Picture: the elephant and its rider on the open path again, small in a wide landscape.
@@ -132,15 +130,15 @@ The mechanism is Lesson 1’s drag-to-sort board (the hike’s packing sort): a 
 
 #### B1 start · Elephant or rider.
 
-Each partner is strong in its own way. Drag each moment to the one who handles it.
+Each partner is strong in its own way. Some moments need the elephant, and some need the rider.
 
 - chapter: Activity
 - elephant: Elephant
 - rider: Rider
 - instruction: Drag each card to a side.
 - hint: Or tap a card, then tap a side.
-- m1: The tower falls again
-- m2: Losing a match
+- m1: Mad at the tower
+- m2: Sad after losing
 - m3: Catching a ball
 - m4: Planning a birthday
 - m5: Saving for a bike
@@ -151,22 +149,22 @@ Each partner is strong in its own way. Drag each moment to the one who handles i
 - side.m4: rider
 - side.m5: rider
 - side.m6: rider
-- quiet.m1: The elephant feels it first, fast and strong.
+- quiet.m1: The elephant feels the anger first, fast and strong.
 - quiet.m2: The elephant feels the sting before any thought.
 - quiet.m3: Practice trained the elephant, so the catch just happens.
 - quiet.m4: The rider pictures the day and who will come.
-- quiet.m5: The rider can wait now for something bigger later.
+- quiet.m5: The rider can wait now for a bike later.
 - quiet.m6: The rider tries one idea, then another.
 
 #### B2 moment · Elephant or rider.
 
-Each partner is strong in its own way. Drag each moment to the one who handles it.
+Each partner is strong in its own way. Some moments need the elephant, and some need the rider.
 
-Picture: the middle of the sort. The tower falls again and Planning a birthday are already on their sides; Losing a match has just landed on the elephant’s side, so its quiet line shows. Catching a ball is being dragged toward the elephant. Saving for a bike and Solving a puzzle wait in the pile.
+Picture: the middle of the sort. Mad at the tower and Planning a birthday are already on their sides; Sad after losing has just landed on the elephant’s side, so its quiet line shows. Catching a ball is being dragged toward the elephant. Saving for a bike and Solving a puzzle wait in the pile.
 
 #### B3 end · Elephant or rider.
 
-Each partner is strong in its own way. Drag each moment to the one who handles it.
+Each partner is strong in its own way.
 
 Picture: both sides full, three cards each, with each side’s strength above its cards.
 
