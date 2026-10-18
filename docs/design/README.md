@@ -24,6 +24,10 @@ Accepted storyboard direction is [v07 — Hiking lesson storyboard](001-choices-
 
 [003 — Lesson 2](003-lesson-two/README.md) is now Lesson 2 · Practice: [v04 — Practice build](003-lesson-two/v04-practice-build/README.md), the lesson built on the site (unlinked, noindex), in review, with [v05 — The elephant in Lesson 2](003-lesson-two/v05-elephant/README.md), the elephant in its slots, in review, from [v03 — Practice on paper](003-lesson-two/v03-practice-paper/README.md), the story and three activity ideas as static frames, where the owner picked activity A; [v01 — Game directions](003-lesson-two/v01-game-directions/README.md) belongs to Lesson 4 (habits).
 
+## Lesson 3 — The elephant and the rider
+
+[004 — Lesson 3](004-lesson-three/README.md) is Lesson 3 · The elephant and the rider ([016](../product/016-lessons-two-to-four.md)). Its first round, [v01 — On paper](004-lesson-three/v01-paper/README.md), draws the story and three activity ideas as static frames for the owner's pick.
+
 ## Naming and versioning
 
 Current implementation review: [study 001, v08 — Alfredo lesson](001-choices-explainer/v08-alfredo-lesson/README.md), the accepted hiking storyboard as a Tailwind lesson with optional map exploration.
