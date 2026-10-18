@@ -164,10 +164,13 @@ export function lifeMap(frame, words, { labels = true, axisLabels = labels, futu
   }).join('');
   const grays = field.gray.map(b => `<path d="${b.d}" stroke="${b.depth === 0 ? MIST : TAIL}" stroke-width="${grayWidth ?? (b.depth === 0 ? GRAY : GRAY - 0.4)}" fill="none" stroke-linecap="round"${ve}/>`).join('');
   const aheads = futures ? field.ahead.map(b => `<path d="${b.d}" stroke="${AHEAD}" stroke-width="${b.depth === 0 ? 3.4 : 2.6}" fill="none" stroke-linecap="round"${ve}/>`).join('') : '';
-  const mask = `<defs><linearGradient id="${id}-g" x1="0" x2="1" y1="0" y2="0">
-      <stop offset="0" stop-color="white"/><stop offset="${f(fadeFrom * 100) / 100}" stop-color="white"/><stop offset="1" stop-color="black"/></linearGradient>
-      <mask id="${id}" maskUnits="userSpaceOnUse" x="0" y="0" width="${w}" height="${h}"><rect width="${w}" height="${h}" fill="url(#${id}-g)"/></mask></defs>`;
-  if (fieldOnly) return `${mask}${axis}<g mask="url(#${id})">${grays}</g>`;
+  // The edge fade: a veil of the stage's colour over the gray and future paths (flat, and much
+  // quicker to paint than an SVG mask while the map moves).
+  const veil = `<defs><linearGradient id="${id}" x1="0" x2="1" y1="0" y2="0">
+      <stop offset="0" stop-color="${PAPER_DEEP}" stop-opacity="0"/><stop offset="${f(fadeFrom * 100) / 100}" stop-color="${PAPER_DEEP}" stop-opacity="0"/><stop offset="1" stop-color="${PAPER_DEEP}"/></linearGradient></defs>
+      <rect width="${w}" height="${h}" fill="url(#${id})"/>`;
+  // The lens shows the soccer years, well before the fade: no mask (a magnified one is slow to paint).
+  if (fieldOnly) return `${axis}${grays}`;
   const pts = routePoints(frame);
   const line = list => `<path d="M${list.map(p => `${f(p[0])} ${f(p[1])}`).join('L')}" stroke="${FOREST}" stroke-width="${LIVED}" fill="none" stroke-linecap="round" stroke-linejoin="round"${ve}/>`;
   let route;
@@ -187,7 +190,7 @@ export function lifeMap(frame, words, { labels = true, axisLabels = labels, futu
     }
   }
   if (axisLabels) label(frame.left - 40, h - 24, words.axis, { tone: 'quiet' });
-  return `${mask}${axis}<g mask="url(#${id})">${grays}${aheads}</g>${route}${dots}${todayDot}${extra}`;
+  return `${grays}${aheads}${veil}${axis}${route}${dots}${todayDot}${extra}`;
 }
 
 /** The rectangle round the soccer years on a map frame; with `aspect`, its width over height. */

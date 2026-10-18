@@ -57,6 +57,8 @@
 .practice .play-feed { height: 100%; margin: 0; padding: 26px 28px 0; display: grid; align-content: start; justify-items: center; gap: 18px; overflow: hidden; scroll-snap-type: none; }
 .practice .play-card { max-width: 660px; width: 100%; margin: 0 auto; }
 .practice .play-card.is-future { pointer-events: none; }
+/* The waiting afternoon shows its choices, not yet what they grow (keeps the screen under 120 words). */
+.practice .play-card.is-future .play-activity-kind { visibility: hidden; }
 .practice .play-card.is-arriving { animation: card-in 420ms cubic-bezier(.2,.7,.2,1) both; }
 @keyframes card-in { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
 .practice .play-heading { margin: 4px 0 18px; font: 500 30px/1.15 var(--font-field); letter-spacing: -.01em; color: var(--color-ink); }
@@ -107,3 +109,6 @@
   .solo-lane { grid-template-columns: 80px minmax(0, 1fr); }
   .solo-lane .lane-box { grid-column: 1 / -1; }
 }
+
+/* Step 05 drawn ahead while step 04 shows (practice-stage.js): laid out, never seen. */
+.pl-layer.is-waiting { visibility: hidden; pointer-events: none; }

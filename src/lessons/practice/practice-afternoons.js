@@ -54,9 +54,9 @@ export function createAfternoons(root, { onPhase = () => {} } = {}) {
   function card(index, { waiting = false } = {}) {
     const day = DAYS[index];
     const opens = index === OPENS && !waiting;
-    return `<article class="play-card ${waiting ? 'is-future' : 'is-active'}" data-day="${index}" aria-labelledby="play-heading-${index}"${waiting ? ' aria-hidden="true"' : ''}>
-      <p class="play-day-label"><span>${escapeHTML(dayLabel(index))}</span>${day.chance ? `<span class="chance-tag">${escapeHTML(t('practice.activity.new'))}</span>` : ''}</p>
-      <h2 class="play-heading" id="play-heading-${index}">${escapeHTML(t(`practice.activity.day${index + 1}`))}</h2>
+    return `<article class="play-card ${waiting ? 'is-future' : 'is-active'}" data-day="${index}" aria-labelledby="play-day-${index} play-heading-${index}"${waiting ? ' aria-hidden="true"' : ''}>
+      <p class="play-day-label" id="play-day-${index}"><span>${escapeHTML(dayLabel(index))}</span>${day.chance ? `<span class="chance-tag">${escapeHTML(t('practice.activity.new'))}</span>` : ''}</p>
+      <p class="play-heading" id="play-heading-${index}">${escapeHTML(t(`practice.activity.day${index + 1}`))}</p>
       <ul class="play-options" aria-labelledby="play-heading-${index}">${day.options.map(id => option(index, id)).join('')}</ul>
       ${opens ? `<div class="card-box">${box('basketball', { isNew: true, note: t('practice.activity.new'), id: 'play-basketball' })}<p class="box-key">${escapeHTML(t('practice.stripes'))}</p></div>` : ''}
     </article>`;

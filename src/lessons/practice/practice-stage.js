@@ -15,6 +15,7 @@ export function createPracticeStage(root) {
   let layer = null;
   let pending = 0;
   let size = { w: 0, h: 0 };
+  let ready = null; // step 05, drawn ahead while step 04 shows, so the zoom starts on its first frame
 
   const measure = () => {
     const box = root.getBoundingClientRect();
@@ -66,11 +67,30 @@ export function createPracticeStage(root) {
   function show(beatId, { from = null, animate = false } = {}) {
     size = measure();
     current = beatId;
-    const element = draw(beatId);
     const moving = animate && !prefersReducedMotion();
     const zooming = moving && from === 'map' && beatId === 'steps';
+    const early = ready && ready.w === size.w && ready.h === size.h && beatId === 'steps' ? ready.element : null;
+    if (ready && ready.element !== early) ready.element.remove();
+    ready = null;
+    const element = early ?? draw(beatId);
+    element.classList.remove('is-waiting');
+    element.removeAttribute('aria-hidden');
     place(element, { fade: moving && !zooming });
     if (zooming) zoom(element);
+    if (beatId === 'map') drawAhead();
+  }
+
+  function drawAhead() {
+    const at = { ...size };
+    const idle = globalThis.requestIdleCallback ?? (callback => setTimeout(callback, 200));
+    idle(() => {
+      if (current !== 'map' || ready || at.w !== size.w || at.h !== size.h) return;
+      const element = draw('steps');
+      element.classList.add('is-waiting');
+      element.setAttribute('aria-hidden', 'true');
+      root.prepend(element);
+      ready = { ...at, element };
+    });
   }
 
   new ResizeObserver(() => {

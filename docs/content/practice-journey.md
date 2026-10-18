@@ -95,7 +95,7 @@ From afternoon 7: A new box opens partly filled. Some of your soccer skills come
 After the tenth: Every one of your ten afternoons left something behind.
 
 - **Afternoon 1 of 10 · Monday.** Soccer practice is at four. The cello waits in the corner. Go to soccer practice (Soccer) · Practise cello (Cello) · Watch videos (Rest and fun)
-- **Afternoon 2 of 10 · Tuesday.** The cello lesson is today. School was long. Go to your lesson (Cello) · Kick at the wall (Soccer) · Take a nap (Rest and fun)
+- **Afternoon 2 of 10 · Tuesday.** The cello lesson is today. School was long. Take the cello lesson (Cello) · Kick at the wall (Soccer) · Take a nap (Rest and fun)
 - **Afternoon 3 of 10 · Wednesday.** Your friends are playing tag in the park. Play tag (Rest and fun) · Practise cello (Cello) · Kick at the wall (Soccer)
 - **Afternoon 4 of 10 · Thursday.** It’s raining, so soccer practice is off. Dribble in the hallway (Soccer) · Practise cello (Cello) · Build a blanket fort (Rest and fun)
 - **Afternoon 5 of 10 · Friday.** Soccer practice is today. A new film just came out. Go to soccer practice (Soccer) · Watch the new film (Rest and fun) · Practise cello (Cello)
