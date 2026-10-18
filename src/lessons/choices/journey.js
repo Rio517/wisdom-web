@@ -1,6 +1,7 @@
 import { CHAPTERS, FRAGMENT_ALIASES, LEARNED, beatList, chaptersFor, renderReadingBeat } from './journey-story.js';
 import { t } from '../../i18n/runtime.js';
 import { ICONS } from './journey-icons.js';
+import { edgePoints } from './journey-life-draw.js';
 import { createToken, prefersReducedMotion, wait } from './journey-motion.js';
 import { createPathsScene } from './journey-map.js';
 import { createHikeScene } from './journey-hike.js';
@@ -156,6 +157,37 @@ const sortBoard = createSortBoard(scenes.hike.sortBoard, {
 // own lists (journey-life.js).
 const fitNarration = createNarrationFit($('#narration-body'), { skip: body => body.dataset.beat === 'life' || body.classList.contains('whatif') });
 const sizeBand = createBand(journeyRoot);
+
+// On an upright screen the ending's map keeps only the range the life uses, at the same scale, so
+// the words and the buttons have room below it (journey.css crops the stage by --crop-top and --crop).
+const upright = matchMedia('(width < 990px)');
+function cropEndingMap() {
+  journeyRoot.style.removeProperty('--crop');
+  journeyRoot.style.removeProperty('--crop-top');
+  const lifeMap = scenes.paths.life;
+  if (journeyRoot.dataset.beat !== 'takeaways' || !upright.matches || scenes.paths.failed || !lifeMap) return;
+  const g = lifeMap.geometry();
+  const boxes = [...g.labels, ...g.grayLabels].filter(Boolean).map(label => label.box);
+  const lines = [...g.edges.slice(1), ...g.alts.flatMap(entry => [entry.edge, ...entry.tails]), ...g.ahead];
+  const ys = [...g.points.map(point => point.y), ...lines.flatMap(edge => edgePoints(edge, 12).map(point => point.y))];
+  const highest = Math.min(...ys, ...boxes.map(box => box.top));
+  const lowest = Math.max(...ys, ...boxes.map(box => box.bottom));
+  // The stack sits 18 px down the stage: 24 px stay clear above the life, and 14 px under it before
+  // the age axis's own 36 px at the foot.
+  const top = Math.floor(highest - 6);
+  const bottom = Math.floor(pathsStack.clientHeight - lowest - 14 - 36);
+  // Crop only what the page needs to fit the window, from both ends alike.
+  const room = Math.max(0, top) + Math.max(0, bottom);
+  const needed = document.documentElement.scrollHeight - innerHeight + 8;
+  if (room <= 0 || needed <= 8) return;
+  const share = Math.min(1, needed / room);
+  journeyRoot.style.setProperty('--crop-top', `${Math.floor(Math.max(0, top) * share)}px`);
+  journeyRoot.style.setProperty('--crop', `${Math.floor(Math.max(0, bottom) * share)}px`);
+}
+let cropTimer = 0;
+const recrop = () => { clearTimeout(cropTimer); cropTimer = setTimeout(cropEndingMap, 160); };
+upright.addEventListener('change', recrop);
+addEventListener('resize', recrop);
 
 function renderNarration(item, { animate }) {
   const { beat } = item;
@@ -316,6 +348,7 @@ async function go(target, { animate = true, focus = 'none', history = 'replace',
       // Prepare the final state before it fades in.
       roots[rootId].hidden = false;
       scene.show(item.beat.id, { animate: false, token: run });
+      if (rootId === 'paths') cropEndingMap();
       if (visibleRoot) roots[rootId].hidden = true;
     }
     await switchRoot(rootId);
@@ -348,6 +381,7 @@ async function go(target, { animate = true, focus = 'none', history = 'replace',
   } else {
     scene.show(item.beat.id, { from: sequential ? previous.beat.id : null, animate: sequential, token: run });
     if (item.beat.id === 'cover') coverField.snapshot();
+    cropEndingMap();
   }
   if (item.beat.id === 'life') {
     if (autoplay) { life.player.reset(); if (!(await wait(200, run))) return; life.player.play(); } else life.player.showAll();

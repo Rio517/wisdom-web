@@ -617,8 +617,13 @@ dialog::backdrop { background: #23302d66; }
   .journey { height: auto; grid-template-columns: 1fr; }
   .stage { margin: 0 16px; height: 56vh; min-height: 470px; }
   .journey[data-cover] .stage { margin: 0 16px 16px; height: calc(100dvh - 128px); min-height: 520px; }
-  /* Lesson 1's ending: a shorter map leaves room for the words and the link to Lesson 2. */
-  .journey:not(.practice)[data-beat="takeaways"] .stage { height: calc(56vh - 200px); min-height: 400px; }
+  /* Lesson 1's ending: the map keeps only the range the life uses (journey.js sets --crop-top and
+     --crop), at the same scale, so the words and the link to Lesson 2 have room. */
+  .journey:not(.practice)[data-beat="takeaways"] { --crops: calc(var(--crop-top, 0px) + var(--crop, 0px)); }
+  .journey:not(.practice)[data-beat="takeaways"] .stage { height: calc(56vh - var(--crops)); min-height: calc(470px - var(--crops)); }
+  .journey:not(.practice)[data-beat="takeaways"] .scene-paths { top: calc(-1 * var(--crop-top, 0px)); bottom: auto; height: calc(100% + var(--crops)); }
+  .journey:not(.practice)[data-beat="takeaways"] .life-tick { top: calc(10px + var(--crop-top, 0px)); bottom: calc(30px + var(--crop, 0px)); }
+  .journey:not(.practice)[data-beat="takeaways"] .life-axis-name { bottom: calc(6px + var(--crop, 0px)); }
   .journey[data-cover="true"] .cover-stage { width: calc(100% - 48px); }
   .narration { padding: 8px 24px 28px; }
   .narration-body { overflow: visible; }
