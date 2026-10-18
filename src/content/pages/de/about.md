@@ -12,7 +12,7 @@ Jede Lektion beginnt mit Forschung, nicht mit Meinung. Erkenntnisse, ihre Quelle
 
 ## Was es schon gibt
 
-[Lektion 1, Entscheidungen — Die Wege, die wir gehen](../choices/the-paths-we-make/), erklärt, wie sich Entscheidungen mit der Zeit summieren und wie viel von Umständen, Unterstützung und Zufall geprägt wird, die sich niemand aussuchen kann. Die [Hinweise für Erwachsene](../choices/notes/) beschreiben, wie man die Lektion mit einem Kind nutzt und was die Forschung dahinter zeigt – und was nicht.
+[Lektion 1, Wege und Entscheidungen](../choices/the-paths-we-make/), erklärt, wie sich Entscheidungen mit der Zeit summieren und wie viel von Umständen, Unterstützung und Zufall geprägt wird, die sich niemand aussuchen kann. Die [Hinweise für Erwachsene](../choices/notes/) beschreiben, wie man die Lektion mit einem Kind nutzt und was die Forschung dahinter zeigt – und was nicht.
 
 [Lektion 2, Üben](../practice/), begleitet Maya und ihren Fußball drei Jahre lang. Sie zeigt, wie sich kleine Entscheidungen summieren, wenn man sie immer wieder trifft, und wie eine Fähigkeit der nächsten einen Anfang gibt.
 

@@ -4,7 +4,7 @@ description: Ein kurzer Leitfaden für Erwachsene, die Lektion 1 mit einem Kind 
 kicker: Lektion 1 · Entscheidungen
 ---
 
-Lektion 1, [*Entscheidungen — Die Wege, die wir gehen*](../the-paths-we-make/), ist eine geführte, bebilderte Reise darüber, wie sich Entscheidungen über ein Leben summieren, und darüber, wie viel von dem, was passiert, nicht in der Hand der Person liegt, die es lebt.
+Lektion 1, [*Wege und Entscheidungen*](../the-paths-we-make/), ist eine geführte, bebilderte Reise darüber, wie sich Entscheidungen über ein Leben summieren, und darüber, wie viel von dem, was passiert, nicht in der Hand der Person liegt, die es lebt.
 
 Sie beginnt mit einer weiten Karte vieler möglicher Wege und verengt sich dann zu einer konkreten Geschichte: einer Wanderung, die zweimal auf Schwierigkeiten stößt, einmal durch Planung und einmal durch das Wetter. Danach lässt ein freier Explorer die lesende Person ein Beispielleben vom Alter drei bis siebzig aufbauen. Am Ende stehen zwei Kernideen zum Mitnehmen und ein Link zu Lektion 2, Üben.
 

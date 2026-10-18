@@ -4,7 +4,7 @@ description: Una guía breve para el adulto que lee la Lección 1 con un niño, 
 kicker: Lección 1 · Decisiones
 ---
 
-La Lección 1, [*Decisiones — Los caminos que hacemos*](../the-paths-we-make/), es un recorrido guiado e ilustrado sobre cómo se acumulan las decisiones a lo largo de una vida, y sobre cuánto de lo que ocurre no depende de la persona que la vive.
+La Lección 1, [*Caminos y decisiones*](../the-paths-we-make/), es un recorrido guiado e ilustrado sobre cómo se acumulan las decisiones a lo largo de una vida, y sobre cuánto de lo que ocurre no depende de la persona que la vive.
 
 Empieza con un amplio mapa de muchos caminos posibles, y luego se centra en una historia concreta: una caminata que se complica dos veces, una por planificación y otra por el clima. Después, un explorador libre le permite al lector construir una vida de ejemplo desde los tres hasta los setenta años. Termina con dos ideas clave y un enlace a la Lección 2, Practicar.
 
