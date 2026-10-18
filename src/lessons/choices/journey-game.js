@@ -108,9 +108,9 @@ export const MAYA_SCALE = 0.5;
 const ALL_SKILLS = Object.values(SKILL_GROUPS).flatMap(group => group.skills.map(skill => skill.id));
 const round = value => Math.round(value * 1000) / 1000;
 
-export function createSkillState(levels = {}) {
+export function createSkillState(levels = {}, skills = ALL_SKILLS) {
   return {
-    levels: Object.fromEntries(ALL_SKILLS.map(id => [id, levels[id] ?? 0])),
+    levels: Object.fromEntries(skills.map(id => [id, levels[id] ?? 0])),
     energy: MAX_ENERGY,
     fun: 0,
     history: [],
@@ -122,8 +122,12 @@ export function boostFor(foundationLevel) {
   return 0.5 + 1.6 * Math.max(0, Math.min(1, foundationLevel));
 }
 
-export function applyActivity(state, activityId, { day = null, scale = GAME_SCALE } = {}) {
-  const activity = ACTIVITIES[activityId];
+/**
+ * One afternoon's choice. Another activity (Lesson 2's ten afternoons) passes its own `activities`
+ * and `foundations`; `tiring: false` leaves energy out, so practice never counts for less.
+ */
+export function applyActivity(state, activityId, { day = null, scale = GAME_SCALE, activities = ACTIVITIES, foundations = FOUNDATIONS, tiring = true } = {}) {
+  const activity = activities[activityId];
   if (!activity) throw new Error(`Unknown activity ${activityId}`);
   const levels = { ...state.levels };
   const gains = {};
@@ -135,14 +139,14 @@ export function applyActivity(state, activityId, { day = null, scale = GAME_SCAL
     energy = Math.min(MAX_ENERGY, energy + 2);
     fun += 1;
   } else {
-    tired = energy <= 0;
+    tired = tiring && energy <= 0;
     const tiredFactor = tired ? 0.45 : 1;
     for (const [skill, base] of Object.entries(activity.gains)) {
-      const foundation = FOUNDATIONS[skill];
-      const multiplier = boostFor(state.levels[foundation]);
-      const room = 1 - levels[skill];
+      const foundation = foundations[skill] ?? skill;
+      const multiplier = boostFor(state.levels[foundation] ?? 0);
+      const room = 1 - (levels[skill] ?? 0);
       const gain = round(Math.min(room, base * scale * multiplier * tiredFactor * (0.35 + 0.65 * room)));
-      levels[skill] = round(levels[skill] + gain);
+      levels[skill] = round((levels[skill] ?? 0) + gain);
       gains[skill] = gain;
       if (multiplier >= 1.1 && gain > 0) boosts.push({ skill, from: foundation });
     }
@@ -163,12 +167,13 @@ export function applyActivity(state, activityId, { day = null, scale = GAME_SCAL
  * one. Pure: the same choices always replay to the same state, which lets a
  * reader edit an earlier day and have every later day recompute from it.
  */
-export function replayChoices(choiceIds = []) {
-  let state = createSkillState();
+export function replayChoices(choiceIds = [], { skills, onDay = null, ...options } = {}) {
+  let state = createSkillState({}, skills);
   for (let day = 0; day < choiceIds.length; day += 1) {
     const activityId = choiceIds[day];
     if (activityId == null) break;
-    state = applyActivity(state, activityId, { day }).state;
+    if (onDay) state = onDay(state, day);
+    state = applyActivity(state, activityId, { day, ...options }).state;
   }
   return state;
 }

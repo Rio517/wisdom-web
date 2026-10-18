@@ -9,6 +9,7 @@ import { createExploreScene } from './journey-explore.js';
 import { createSortBoard } from './journey-sort.js';
 import { createLifeStory } from './journey-life.js';
 import { watchField } from '../../components/stage-field.js';
+import { TIGHT, createChapterTrail, createNarrationFit, createBand, watchDots, renderControls as renderStepControls, kickerFor, titleFor, escapeHTML } from './journey-shell.js';
 
 const beats = beatList();
 const $ = selector => document.querySelector(selector);
@@ -19,7 +20,6 @@ const beatForHash = hash => {
   const fragment = hash.slice(1);
   return beats.findIndex(item => item.fragment === (FRAGMENT_ALIASES[fragment] ?? fragment));
 };
-const escapeHTML = value => String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;');
 
 const roots = {
   paths: $('#scene-paths'),
@@ -120,32 +120,7 @@ const sorted = new Map();
 let visibleRoot = null;
 
 // ——— Chapter trail ———
-const trailDone = $('#trail-done');
-{
-  const stops = CHAPTERS.map((_, position) => ((position + 0.5) / CHAPTERS.length) * 1000);
-  const third = (stops[1] - stops[0]) / 3;
-  let d = `M ${stops[0]} 24 C ${stops[0] + third} 6, ${stops[1] - third} 42, ${stops[1]} 24`;
-  for (let position = 2; position < stops.length; position += 1) d += ` S ${stops[position] - third} ${position % 2 ? 42 : 6}, ${stops[position]} 24`;
-  $('#trail-base').setAttribute('d', d);
-  trailDone.setAttribute('d', d);
-}
-const trailLength = trailDone.getTotalLength();
-trailDone.style.strokeDasharray = `${trailLength} ${trailLength}`;
-$('#chapter-list').innerHTML = CHAPTERS.map((chapter, chapterIndex) => `<li style="width:${100 / CHAPTERS.length}%">
-  <button class="chapter-stop" type="button" data-chapter="${chapterIndex}">
-    <span class="stop-dot" aria-hidden="true"></span><span class="stop-label">${escapeHTML(chapter.short ?? chapter.title)}</span>
-  </button></li>`).join('');
-
-function updateTrail(chapterIndex) {
-  document.querySelectorAll('.chapter-stop').forEach(button => {
-    const stop = Number(button.dataset.chapter);
-    button.dataset.state = stop < chapterIndex ? 'done' : stop === chapterIndex ? 'current' : 'todo';
-    if (stop === chapterIndex) button.setAttribute('aria-current', 'step');
-    else button.removeAttribute('aria-current');
-  });
-  const fraction = chapterIndex / (CHAPTERS.length - 1);
-  trailDone.style.strokeDashoffset = String(trailLength * (1 - fraction));
-}
+const updateTrail = createChapterTrail(CHAPTERS);
 
 // ——— Narration ———
 function renderChoice(item) {
@@ -180,40 +155,19 @@ const sortBoard = createSortBoard(scenes.hike.sortBoard, {
   },
 });
 
-// Beside the map a step's words show whole: where the column is too short for them, the step
-// tightens one notch at a time (journey.css) and stops at the first that fits. The life and its
-// what-ifs fit their own lists (journey-life.js); under the map the page scrolls instead.
-const TIGHT = ['is-tight', 'is-tighter', 'is-tightest'];
-const besideMap = matchMedia('(min-width: 990px)');
-function fitNarration() {
-  const body = $('#narration-body');
-  body.classList.remove(...TIGHT);
-  if (!besideMap.matches || body.dataset.beat === 'life' || body.classList.contains('whatif')) return;
-  for (const notch of TIGHT) {
-    if (body.scrollHeight <= body.clientHeight) break;
-    body.classList.add(notch);
-  }
-}
-new ResizeObserver(fitNarration).observe($('#narration-body'));
-// The takeaways' band under the map and the column (journey.css) takes its own height from the page,
-// measured as it shows and when the window changes size (not in a ResizeObserver: the page's own
-// observers would then see the change in the same frame).
-function sizeBand() {
-  const list = journeyRoot.dataset.beat === 'takeaways' && $('#beat-extra .takeaways');
-  if (list) journeyRoot.style.setProperty('--band', `${list.offsetHeight}px`);
-}
-addEventListener('resize', sizeBand);
+// Beside the map a step's words show whole (journey-shell.js); the life and its what-ifs fit their
+// own lists (journey-life.js).
+const fitNarration = createNarrationFit($('#narration-body'), { skip: body => body.dataset.beat === 'life' || body.classList.contains('whatif') });
+const sizeBand = createBand(journeyRoot);
 
 function renderNarration(item, { animate }) {
-  const { beat, chapter, beatIndex } = item;
+  const { beat } = item;
   const body = $('#narration-body');
   body.getAnimations().forEach(animation => animation.cancel());
   body.dataset.beat = beat.id;
   body.classList.remove('whatif', ...TIGHT);
   journeyRoot.dataset.beat = beat.id;
-  $('#beat-kicker').textContent = chapter.beats.length > 1
-    ? t('lesson.ui.kickerStep', { kicker: beat.kicker, step: beatIndex + 1, total: chapter.beats.length })
-    : beat.kicker;
+  $('#beat-kicker').textContent = kickerFor(item);
   $('#beat-heading').textContent = beat.heading;
   $('#beat-text').innerHTML = beat.body.map(text => `<p>${escapeHTML(text)}</p>`).join('')
     + (beat.note ? `<p class="beat-note">${escapeHTML(beat.note)}</p>` : '');
@@ -244,26 +198,8 @@ function renderNarration(item, { animate }) {
   body.scrollTop = 0;
 }
 
-// Beside Back and Next in one row (a what-if, a short screen) the dots may not all fit: then none show.
-const beatDots = $('#beat-dots');
-new ResizeObserver(() => beatDots.classList.toggle('is-crowded', beatDots.scrollWidth > beatDots.clientWidth + 1)).observe(beatDots);
-
-function renderControls(item) {
-  const { chapter, beatIndex } = item;
-  $('#beat-dots').innerHTML = chapter.beats.map((beat, position) => {
-    const globalIndex = beats.findIndex(entry => entry.chapter === chapter && entry.beatIndex === position);
-    return `<li><button type="button" data-beat="${globalIndex}" aria-label="${escapeHTML(t('lesson.ui.stepLabel', { step: position + 1, heading: beat.heading }))}" ${position === beatIndex ? 'aria-current="step"' : ''} data-seen="${seen.has(globalIndex)}"></button></li>`;
-  }).join('');
-  $('#beat-dots').hidden = chapter.beats.length < 2;
-  $('#back').disabled = index === 0;
-  const next = $('#next');
-  const isLast = index === beats.length - 1;
-  next.hidden = isLast;
-  const upcoming = beats[index + 1];
-  next.textContent = item.beat.next
-    ?? (upcoming && upcoming.chapter !== item.chapter ? t('lesson.ui.nextChapter', { chapter: upcoming.chapter.short ?? upcoming.chapter.title }) : t('lesson.ui.next'));
-  next.dataset.emphasis = String(index === 0);
-}
+watchDots($('#beat-dots'));
+const renderControls = () => renderStepControls({ beats, index, seen });
 
 // ——— The life the story tells (design 001 v13) ———
 const LIFE_BEAT = beats.findIndex(item => item.beat.id === 'life');
@@ -362,12 +298,10 @@ async function go(target, { animate = true, focus = 'none', history = 'replace',
     if (history === 'push') window.history.pushState(null, '', fragment);
     else window.history.replaceState(null, '', fragment);
   }
-  const titleHeading = item.beat.heading.replace(/\.$/, '');
-  const lessonTitle = t('lesson.ui.title');
-  document.title = titleHeading === lessonTitle ? `${lessonTitle} · ${t('site.name')}` : `${titleHeading} · ${lessonTitle}`;
+  document.title = titleFor(item, t('lesson.ui.title'));
   updateTrail(item.chapterIndex);
   if (!toHike) renderNarration(item, { animate });
-  renderControls(item);
+  renderControls();
   $('#stage-description').textContent = item.beat.alt ?? '';
   $('#announcer').textContent = t('lesson.ui.announce', { chapter: item.chapter.title, step: item.beatIndex + 1, total: item.chapter.beats.length, heading: item.beat.heading });
   // During the story → and Space belong to it, so focus waits on the narration rather than on Next.
