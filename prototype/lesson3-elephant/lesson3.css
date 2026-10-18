@@ -1,0 +1,46 @@
+/* Lesson 3 · The elephant and the rider on paper (design 004, v01). Lesson 2's paper frames (the built
+   lessons' layout, one viewport tall each), plus the takeaways band, result lines and the activities'
+   overlays. Flat: no shadows, glows or volume. */
+@import "../lesson2-practice/practice.css";
+
+/* The elephant's leg gap matches the stage; scenes set it again where it stands on grass. */
+.frame .stage { --elephant-gap: var(--color-paper-deep); }
+.beat-kicker { font-size: 15px; }
+
+/* One result line, under the story text. */
+.beat-result { margin: 4px 0 0; font: 600 18px/1.4 var(--font-guide); color: var(--color-forest); }
+
+/* Choices laid over the stage's foot. */
+.choice-row { bottom: 20px; }
+.foot-choice { min-width: 150px; min-height: 88px; font-size: 16px; }
+.foot-choice svg { width: 34px; height: 34px; }
+.foot-choice.is-chosen { border-color: var(--color-forest); border-width: 2px; background: color-mix(in srgb, var(--color-forest) 6%, white); }
+.foot-choice.is-quiet { opacity: .55; }
+.stage-pill-row { position: absolute; left: 0; right: 0; bottom: 24px; display: flex; justify-content: center; gap: 12px; }
+.stage-pill { font-size: 16px; }
+
+/* A · the evenings so far. */
+.day-strip { position: absolute; left: 24px; top: 20px; margin: 0; padding: 0; list-style: none; display: flex; gap: 8px; }
+.day { display: flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 14px 0 8px; border-radius: 999px; background: white; border: 1px solid var(--color-rule); font: 600 15px var(--font-guide); color: var(--color-quiet); }
+.day.is-current { border: 2px solid var(--color-forest); color: var(--color-forest); }
+.day-icon { display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: var(--color-paper-deep); }
+.day-icon svg { width: 18px; height: 18px; }
+
+/* B · Elephant or rider: one moment card at the top, each partner's strengths filling in beside it. */
+.moment-card { position: absolute; left: 50%; top: 22px; transform: translateX(-50%); width: min(460px, calc(100% - 40px)); padding: 16px 20px 18px; border-radius: 20px; background: white; border: 1px solid var(--color-rule); text-align: center; }
+.moment-card .moment-name { margin: 0 0 12px; font: 500 26px/1.2 var(--font-field); color: var(--color-ink); }
+.moment-card .moment-icon { display: block; width: 44px; height: 44px; margin: 0 auto 6px; }
+.moment-picks { display: flex; justify-content: center; gap: 10px; }
+.strength { position: absolute; width: min(240px, 30%); display: grid; gap: 8px; align-content: start; }
+.strength-title { margin: 0 0 2px; font: 600 16px var(--font-guide); color: var(--color-forest); }
+.strength-word { margin: 0 0 4px; font: 500 20px/1.2 var(--font-field); color: var(--color-ink); }
+.strength-tag { display: flex; align-items: center; min-height: 40px; padding: 0 14px; border-radius: 999px; font: 600 15px var(--font-guide); color: var(--color-forest); background: color-mix(in srgb, var(--color-sage) 22%, white); }
+.strength-tag.is-new { background: white; border: 2px solid var(--color-forest); }
+.strength-slot { min-height: 40px; border-radius: 999px; border: 1.5px dashed var(--color-mist); }
+
+@media (max-height: 800px) {
+  .foot-choice { min-height: 78px; padding: 8px 14px; }
+  .moment-card { top: 16px; padding: 12px 18px 14px; }
+  .moment-card .moment-name { font-size: 22px; margin-bottom: 10px; }
+}
+.next-button { white-space: nowrap; }
