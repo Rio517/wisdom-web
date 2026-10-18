@@ -2,7 +2,7 @@
 // `#### <id> <slug> · <Heading>` starts a step; plain lines are story paragraphs;
 // `- **Title.** text` lines are takeaways; `- key: value` lines are the picture's words;
 // `Picture:` lines are notes for the reader of copy.md and are not drawn.
-import raw from '../../docs/design/004-lesson-three/v01-paper/copy.md?raw';
+import raw from '../../docs/design/004-lesson-three/v02-sort/copy.md?raw';
 
 function parse(text) {
   const steps = new Map();

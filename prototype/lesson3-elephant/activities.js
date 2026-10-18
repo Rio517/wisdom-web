@@ -1,93 +1,83 @@
-// Lesson 3 · The elephant and the rider: three activity ideas, three frames each (the start, the moment
-// that teaches, the end), drawn in the lesson's layout. A steers past a tempting side trail; B sorts
-// everyday moments between the two partners; C has no activity, only one tap inside step 04.
-import { ICONS } from '../../src/lessons/choices/journey-icons.js';
+// Lesson 3 · The elephant and the rider: the activity, Elephant or rider, in three frames (design 004, v02):
+// the start, the middle of the sort and the end. The board is Lesson 1's drag-to-sort board (the hike's packing
+// sort, src/lessons/choices/journey-sort.js): a pile of cards in the middle and one side for each partner. The
+// elephant and its rider stand above the board. No score, no count and no right-or-wrong mark: a quiet line
+// under the story text when a card lands.
+import { elephant, rider } from '../../src/lessons/shared/elephant.js';
 import { word } from './copy.js';
 import { mount, buildFrames, ui } from './shell.js';
-import { esc, svg, pair, ground, leader, riderAt, BOOK_ICON, FOREST, SUN, CLAY, WOOD, SAGE, PAPER } from './scenes.js';
-import { STORY_CHAPTERS, TAKEAWAY_ICONS, forkScene } from './storyboard.js';
+import { esc, svg, pair, sun, hills, horizon, tuft } from './scenes.js';
+import { STORY_CHAPTERS, TAKEAWAY_ICONS } from './storyboard.js';
 
-const W = (id, key) => word(id, key);
-const ACTIVITY = W('A1', 'chapter');
-const C_CHAPTERS = STORY_CHAPTERS.filter(name => name !== ACTIVITY);
-const nextChapter = name => ui('lesson.ui.nextChapter').replace('{chapter}', name);
-const ROW = 132; // the band at the stage's foot that holds the choices
+const W = key => word('B1', key);
+const ACTIVITY = W('chapter');
+const MOMENTS = ['m1', 'm2', 'm3', 'm4', 'm5', 'm6'];
+const sideOf = id => W(`side.${id}`);
 
-// ——— A · Steer the elephant ———
-const icon = body => `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">${body}</svg>`;
-const A_ICONS = {
-  c1: icon(`<path d="M5 19C6 12 10 6 18 5" stroke="${WOOD}" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M15 3l4 2-2 4" stroke="${WOOD}" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`),
-  c2: icon(`<rect x="4" y="11" width="16" height="9" rx="1.5" fill="${WOOD}"/><rect x="3" y="8" width="18" height="4" rx="1.2" fill="${WOOD}"/>`),
-  c3: icon(BOOK_ICON),
+// The same loose tilt for a card every time (Lesson 1's seedRotation).
+function tilt(id) {
+  let hash = 0;
+  for (let i = 0; i < id.length; i += 1) hash = (hash * 31 + id.charCodeAt(i)) | 0;
+  return ((Math.abs(hash) % 601) / 100) - 3;
+}
+
+// Small pictures beside each side's title: the elephant alone and the rider alone, the delivered art scaled down.
+const mini = (art, box) => `<svg class="sortb-icon" viewBox="${box}" aria-hidden="true" focusable="false">${art}</svg>`;
+const ICON = {
+  elephant: mini(`<g style="--elephant-gap: white">${elephant()}</g>`, '-48 -66 92 70'),
+  rider: mini(rider(), '-7 -24 16 33'),
 };
-function choices(chosen = '') {
-  return `<div class="choice-row">${['c1', 'c2', 'c3'].map(key => `<button type="button" class="foot-choice${chosen === key ? ' is-chosen' : ''}" aria-pressed="${chosen === key}">${A_ICONS[key]}<span>${esc(W('A1', key))}</span></button>`).join('')}</div>`;
-}
-const pill = (text, { solid = false } = {}) => `<div class="stage-pill-row"><button type="button" class="stage-pill${solid ? ' is-solid' : ''}">${esc(text)}</button></div>`;
-const words = { game: W('A1', 'game'), home: W('A1', 'home') };
 
-/** The evenings so far, top left of the stage: each day's name and the way that was picked. */
-function days(current, picks = []) {
-  return `<ol class="day-strip">${['d1', 'd2', 'd3'].map((key, i) => `<li class="day${i === current ? ' is-current' : ''}"${i === current ? ' aria-current="step"' : ''}>
-    <span class="day-icon" aria-hidden="true">${picks[i] ? A_ICONS[picks[i]] : ''}</span><span>${esc(W('A1', key))}</span></li>`).join('')}</ol>`;
-}
-// Monday: the fork, the game out. Tuesday, after Monday's pull: back at the fork, Monday's turn and drift in gray.
-// Wednesday, after Tuesday's "Put the game away": the box stayed shut, the side trail grows over, the way home is easy.
-const a1 = (w, h) => `${forkScene(w, h - ROW, { reins: true, words })}${days(0)}${choices()}`;
-const a2 = (w, h) => `${forkScene(w, h - ROW, { reins: true, traces: ['reinsFaint'], words })}${days(1, ['c1'])}${choices()}`;
-const a3 = (w, h) => `${forkScene(w, h - ROW, { game: 'box', at: 'home', pose: 'walk1', traces: ['path'], words: { home: words.home } })}${days(2, ['c1', 'c2'])}${pill(W('A3', 'again'))}`;
+const card = (id, { cls = '', rot = true } = {}) => `<li class="sortb-card${cls}" style="--rot:${rot ? tilt(id) : 0}deg">${esc(W(id))}</li>`;
 
-// ——— B · Elephant or rider ———
-const CAKE = icon(`<rect x="4" y="12" width="16" height="8" rx="2" fill="${SUN}"/><rect x="4" y="15" width="16" height="2" fill="${PAPER}"/><path d="M12 11V6" stroke="${CLAY}" stroke-width="2" stroke-linecap="round"/><path d="M12 2.5c1.5 1.4 1.5 2.6 0 3.3-1.5-.7-1.5-1.9 0-3.3z" fill="${SUN}"/>`);
-const BALL = ICONS.ball.replace('<svg', '<svg class="moment-icon"');
-function momentCard(name, picture, picked = '') {
-  const pick = key => `<button type="button" class="stage-pill${picked === key ? ' is-solid' : ''}" aria-pressed="${picked === key}">${esc(W('B1', `pick.${key}`))}</button>`;
-  return `<div class="moment-card">${picture}<p class="moment-name">${esc(name)}</p><div class="moment-picks">${pick('elephant')}${pick('rider')}</div></div>`;
+/** One side of the board. `cards` are moment ids already there; `fresh` the one that just landed. */
+function bin(who, cards, { strong = '', over = false, fresh = '' } = {}) {
+  return `<section class="sortb-bin sortb-${who}${over ? ' is-over' : ''}" aria-label="${esc(W(who))}">
+    <h2 class="sortb-title">${ICON[who]}<span>${esc(W(who))}</span></h2>
+    ${strong ? `<p class="sortb-strong">${esc(strong)}</p>` : ''}
+    <ul class="sortb-list">${cards.map(id => card(id, { cls: id === fresh ? ' is-new' : '', rot: false })).join('')}</ul></section>`;
 }
-function column(who, tags, { strong = '', side = 'left', top = 0, fresh = '' } = {}) {
-  const slots = Array.from({ length: Math.max(0, 2 - tags.length) }, () => '<span class="strength-slot"></span>').join('');
-  return `<div class="strength" style="${side}:28px; top:${top}px"><p class="strength-title">${esc(W('B1', who))}</p>
-    ${strong ? `<p class="strength-word">${esc(strong)}</p>` : ''}
-    ${tags.map(t => `<span class="strength-tag${t === fresh ? ' is-new' : ''}">${esc(t)}</span>`).join('')}${slots}</div>`;
-}
-function partners(w, h, { elephant = [], rider = [], strong = false, fresh = '' } = {}) {
-  const gy = Math.round(h * 0.92);
-  const eh = Math.min(h * 0.34, w * 0.27);
-  const s = eh / 64; const r = riderAt(w * 0.5, gy, eh);
-  const lines = `${leader(w - 28 - Math.min(240, w * 0.3) - 6, h * 0.36 + 10, r.x + 6 * s, r.y - 2 * s)}${leader(28 + Math.min(240, w * 0.3) + 6, h * 0.46 + 10, w * 0.5 - 26 * s, gy - 40 * s)}`;
-  return `${svg(w, h, `${ground(w, gy, h)}${pair(w * 0.5, gy, eh)}${lines}`)}
-    ${column('elephant', elephant, { side: 'left', top: h * 0.46, strong: strong ? W('B3', 'strong.elephant') : '', fresh })}
-    ${column('rider', rider, { side: 'right', top: h * 0.36, strong: strong ? W('B3', 'strong.rider') : '', fresh })}`;
-}
-const b1 = (w, h) => `${partners(w, h)}${momentCard(W('B1', 'm1'), BALL)}`;
-const b2 = (w, h) => `${partners(w, h, { elephant: [W('B1', 'm1')], rider: [W('B1', 'm2')], fresh: W('B1', 'm2') })}${momentCard(W('B1', 'm2'), CAKE.replace('<svg', '<svg class="moment-icon"'), 'rider')}`;
-const b3 = (w, h) => `${partners(w, h, { elephant: [W('B1', 'm1'), W('B1', 'm3')], rider: [W('B1', 'm2'), W('B1', 'm4')], strong: true })}<div class="stage-pill-row" style="top:28px; bottom:auto"><button type="button" class="stage-pill">${esc(W('B3', 'again'))}</button></div>`;
 
-// ——— C · No activity: step 04 with one tap ———
-function cFrame(w, h, { at = 'fork', traces = [], button, solid = false }) {
-  return `${forkScene(w, h - ROW, { reins: true, at, pose: at === 'fork' ? 'stand' : 'walk1', traces, words })}${pill(button, { solid })}`;
+/** The middle: the instruction, then the pile, with an empty place where a card was picked up. */
+function pile(ids, { lifted = '', done = false } = {}) {
+  if (done) return `<div class="sortb-centre is-done"><button type="button" class="stage-pill">${esc(word('B3', 'again'))}</button></div>`;
+  return `<div class="sortb-centre"><p class="sortb-instruction">${esc(W('instruction'))}</p><p class="sortb-hint">${esc(W('hint'))}</p>
+    <ul class="sortb-pile">${ids.map(id => (id === lifted ? '<li class="sortb-gap" aria-hidden="true"></li>' : card(id))).join('')}</ul></div>`;
 }
-const c1 = (w, h) => cFrame(w, h, { button: W('C1', 'pull') });
-const c2 = (w, h) => cFrame(w, h, { at: 'turn', traces: ['turn'], button: W('C1', 'pull'), solid: true });
-const c3 = (w, h) => cFrame(w, h, { at: 'drift', traces: ['reins'], button: W('C3', 'pull') });
 
+/** The scene above the board: the pair at the middle, big and calm, on a low rise with hills behind. */
+function scene(w, top) {
+  const gy = Math.round(top - 14);
+  const eh = Math.min((gy - 28) * 0.8, w * 0.25); const s = eh / 64;
+  const ex = w / 2 + 2 * s;
+  return svg(w, gy + 24, `${sun(w * 0.84, gy * 0.32, Math.min(w, gy) * 0.07)}${hills(w, gy, gy * 0.2)}${horizon(w, gy)}
+    ${tuft(w * 0.14, gy - 4)}${tuft(w * 0.8, gy - 4, 1.2)}${pair(ex, gy, eh, { gap: 'var(--color-paper-deep)' })}`, `style="bottom:auto; height:${gy + 24}px"`);
+}
+
+function board(w, h, { elephantSide = [], riderSide = [], pileIds = MOMENTS, lifted = '', fresh = '', done = false } = {}) {
+  const top = Math.round(h * 0.47);
+  const dragged = lifted ? `<div class="sortb-drag" style="left:${Math.round(20 + w * 0.06)}px; top:${Math.round(top + (h - top) * 0.6)}px">${card(lifted, { cls: ' is-lifted', rot: false })}</div>` : '';
+  return `${scene(w, top)}<div class="sortb" style="top:${top}px">
+    ${bin('elephant', elephantSide, { strong: done ? word('B3', 'strong.elephant') : '', over: !!lifted, fresh })}
+    ${pile(pileIds, { lifted, done })}
+    ${bin('rider', riderSide, { strong: done ? word('B3', 'strong.rider') : '' })}</div>${dragged}`;
+}
+
+const mine = who => MOMENTS.filter(id => sideOf(id) === who);
+// Start: all six in the pile. Middle: three sorted (Losing a match has just landed), Catching a ball on its way to
+// the elephant. End: both sides full, each with its strength.
+const b1 = (w, h) => board(w, h);
+const b2 = (w, h) => board(w, h, { elephantSide: ['m1', 'm2'], riderSide: ['m4'], pileIds: ['m3', 'm5', 'm6'], lifted: 'm3', fresh: 'm2' });
+const b3 = (w, h) => board(w, h, { elephantSide: mine('elephant'), riderSide: mine('rider'), pileIds: [], done: true });
+
+const nextChapter = name => ui('lesson.ui.nextChapter').replace('{chapter}', name);
 const A = { chapter: ACTIVITY, at: 1, of: 1, nextLabel: nextChapter(STORY_CHAPTERS[STORY_CHAPTERS.indexOf(ACTIVITY) + 1]) };
-const C = { chapter: STORY_CHAPTERS[2], at: 1, of: 2, nextLabel: ui('lesson.ui.next') };
-const A_ITEMS = [
-  { id: 'activity-A-1', copy: 'A1', stage: a1, ...A, first: false },
-  { id: 'activity-A-2', copy: 'A2', stage: a2, ...A, result: W('A2', 'result') },
-  { id: 'activity-A-3', copy: 'A3', stage: a3, ...A, result: W('A3', 'result') },
+const ITEMS = [
   { id: 'activity-B-1', copy: 'B1', stage: b1, ...A },
-  { id: 'activity-B-2', copy: 'B2', stage: b2, ...A, result: W('B2', 'result') },
-  { id: 'activity-B-3', copy: 'B3', stage: b3, ...A, result: W('B3', 'result') },
-];
-const C_ITEMS = [
-  { id: 'activity-C-1', copy: 'C1', stage: c1, ...C },
-  { id: 'activity-C-2', copy: 'C2', stage: c2, ...C },
-  { id: 'activity-C-3', copy: 'C3', stage: c3, ...C },
+  { id: 'activity-B-2', copy: 'B2', stage: b2, ...A, result: W('quiet.m2') },
+  { id: 'activity-B-3', copy: 'B3', stage: b3, ...A, result: word('B3', 'result') },
 ];
 
 export function start(root) {
-  const defs = [...buildFrames(A_ITEMS, STORY_CHAPTERS), ...buildFrames(C_ITEMS, C_CHAPTERS)].map(def => ({ ...def, first: false }));
-  mount(root, defs, TAKEAWAY_ICONS);
+  mount(root, buildFrames(ITEMS, STORY_CHAPTERS).map(def => ({ ...def, first: false })), TAKEAWAY_ICONS);
 }

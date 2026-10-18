@@ -3,7 +3,7 @@
 // units (the viewBox is the stage's own size), so text keeps its real size. Flat: token colours,
 // uniform strokes, no shadows or volume.
 import { elephant, elephantWithRider } from '../../src/lessons/shared/elephant.js';
-import { alfredo, dad } from '../../src/lessons/choices/journey-icons.js';
+import { alfredo, dad, person } from '../../src/lessons/choices/journey-icons.js';
 import {
   esc, svg, sampleSmooth, footprints, maya, bench,
   INK, QUIET, RULE, PAPER, PAPER_DEEP, LAKE, LAKE_SOFT, SUN_SOFT, WOOD, FOREST, SAGE, MIST, CLAY, SUN, AHEAD,
@@ -40,8 +40,6 @@ export function chip(x, y, text, { size = 16, color = FOREST, border = RULE, ico
     ${icon ? `<svg x="${f(x0 + pad - 2)}" y="${f(y - 11)}" width="22" height="22" viewBox="0 0 24 24">${icon}</svg>` : ''}
     ${label(x0 + pad + iw, y + size * 0.36, text, { size, color, halo: null })}</g>`;
 }
-/** A thin leader line from a label to the thing it names. */
-export const leader = (x0, y0, x1, y1) => `<path d="M${f(x0)} ${f(y0)}L${f(x1)} ${f(y1)}" stroke="${QUIET}" stroke-width="1.5" stroke-linecap="round"/><circle cx="${f(x1)}" cy="${f(y1)}" r="3" fill="${QUIET}"/>`;
 
 // ——— The pair ———
 export const UNIT = { left: -46, right: 39, top: -64, riderTop: -80 };
@@ -110,23 +108,6 @@ export function elephantPrints(points, { step = 34, side = 9, r = 7, color = SAG
 }
 
 // ——— Things along the way ———
-/** A tablet on a low stool with a game on its screen, feet at (x, y). */
-export const gameScreen = (x, y, s = 1) => `<g transform="translate(${f(x)} ${f(y)}) scale(${s})">
-  <path d="M-22 0L-16 -30M22 0L16 -30" stroke="${WOOD}" stroke-width="4" stroke-linecap="round"/><rect x="-26" y="-36" width="52" height="7" rx="3" fill="${WOOD}"/>
-  <rect x="-40" y="-92" width="80" height="56" rx="8" fill="${INK}"/><rect x="-34" y="-86" width="68" height="44" rx="4" fill="${LAKE_SOFT}"/>
-  <circle cx="-14" cy="-68" r="8" fill="${SUN}"/><path d="M2 -52L14 -74L26 -52Z" fill="${FOREST}"/><path d="M-30 -50H30" stroke="${SAGE}" stroke-width="3"/></g>`;
-/** A box with its lid on, where the game went. */
-export const gameBox = (x, y, s = 1) => `<g transform="translate(${f(x)} ${f(y)}) scale(${s})"><rect x="-30" y="-30" width="60" height="30" rx="4" fill="${WOOD}"/><rect x="-34" y="-38" width="68" height="10" rx="3" fill="${WOOD}"/><path d="M-30 -24H30" stroke="${PAPER}" stroke-opacity=".35" stroke-width="2"/></g>`;
-/** A small table, feet at (x, y). `books`: 'out' open on the top, or 'bag' a closed backpack. */
-export function table(x, y, s = 1, { books = 'bag' } = {}) {
-  const top = books === 'out'
-    ? `<path d="M-40 -60c9-4 18-3 24 2v6c-6-4-15-5-24-2z" fill="${LAKE}"/><path d="M8 -60c-9-4-18-3-24 2v6c6-4 15-5 24-2z" fill="${SAGE}"/>
-       <rect x="16" y="-70" width="34" height="8" rx="2" fill="${CLAY}"/><rect x="18" y="-79" width="30" height="9" rx="2" fill="${FOREST}"/><rect x="22" y="-86" width="24" height="7" rx="2" fill="${SUN}"/>
-       <path d="M-8 -66l20 -4" stroke="${INK}" stroke-width="2.4" stroke-linecap="round"/>`
-    : `<rect x="-12" y="-96" width="36" height="40" rx="10" fill="${FOREST}"/><path d="M-2 -96V-101a8 8 0 0 1 16 0V-96" stroke="${FOREST}" stroke-width="4" fill="none"/><rect x="-4" y="-78" width="20" height="13" rx="4" fill="${SAGE}"/>`;
-  return `<g transform="translate(${f(x)} ${f(y)}) scale(${s})"><rect x="-56" y="-56" width="112" height="8" rx="3" fill="${WOOD}"/>
-    <path d="M-48 -48V0M48 -48V0" stroke="${WOOD}" stroke-width="6" stroke-linecap="round"/>${top}</g>`;
-}
 /** A stove with a hot pan, feet at (x, y). */
 export const stove = (x, y, s = 1) => `<g transform="translate(${f(x)} ${f(y)}) scale(${s})">
   <rect x="-44" y="-70" width="88" height="70" rx="6" fill="${RULE}"/><rect x="-36" y="-56" width="72" height="44" rx="4" fill="${MIST}"/>
@@ -151,4 +132,38 @@ export const walker = (art, x, y, s) => `<g transform="translate(${f(x)} ${f(y)}
 export const bottle = (x, y, { empty = false, s = 1 } = {}) => `<g transform="translate(${f(x)} ${f(y)}) scale(${s})">
   <rect x="-9" y="-34" width="18" height="34" rx="6" fill="${empty ? 'white' : LAKE}" stroke="${LAKE}" stroke-width="2"/><rect x="-5" y="-41" width="10" height="7" rx="2" fill="${LAKE}"/></g>`;
 export const WATER_ICON = `<path d="M12 3c4 5 7 8.5 7 12a7 7 0 0 1-14 0c0-3.5 3-7 7-12z" fill="${LAKE}"/>`;
-export const BOOK_ICON = `<path d="M3 6c3.5-1 6.5-.5 9 1.5V21c-2.5-2-5.5-2.5-9-1.5z" fill="${LAKE}"/><path d="M21 6c-3.5-1-6.5-.5-9 1.5V21c2.5-2 5.5-2.5 9-1.5z" fill="${SAGE}"/>`;
+
+// ——— v02: the car, the jacket, the park ———
+/** A family car seen from the side, wheels on (x, y), facing right. Its back door stands open (the opening and the
+ *  door swung out at its hinge), and two grown-ups wait in the front. */
+export function car(x, y, s = 1) {
+  const head = cx => `<circle cx="${cx}" cy="-88" r="9" fill="${LAKE}"/><path d="M${cx - 13} -76a13 11 0 0 1 26 0z" fill="${LAKE}"/>`;
+  return `<g transform="translate(${f(x)} ${f(y)}) scale(${s})">
+    <path d="M-150 -26V-58C-150 -66 -144 -70 -136 -71L-104 -74 -76 -108C-71 -114 -65 -116 -58 -116H58C66 -116 72 -112 76 -106L100 -74 136 -70C144 -69 150 -63 150 -55V-26C150 -20 146 -16 140 -16H-140C-146 -16 -150 -20 -150 -26Z" fill="${LAKE}"/>
+    <path d="M4 -104H58C63 -104 66 -102 69 -98L86 -74H4Z" fill="${LAKE_SOFT}"/>${head(32)}${head(62)}
+    <path d="M-66 -104H-8V-24H-92V-74Z" fill="${PAPER_DEEP}"/>
+    <path d="M-8 -108L22 -100V-30L-8 -22Z" fill="${LAKE}" stroke="${PAPER}" stroke-width="2.5" stroke-linejoin="round"/><path d="M-3 -100L17 -95V-76L-3 -78Z" fill="${LAKE_SOFT}"/>
+    <circle cx="-88" cy="-16" r="24" fill="${INK}"/><circle cx="-88" cy="-16" r="10" fill="${MIST}"/>
+    <circle cx="92" cy="-16" r="24" fill="${INK}"/><circle cx="92" cy="-16" r="10" fill="${MIST}"/>
+    <rect x="140" y="-58" width="10" height="10" rx="3" fill="${SUN}"/></g>`;
+}
+/** A child's jacket lying flat, its zip stuck halfway, centred at (x, y). */
+export const jacket = (x, y, s = 1) => `<g transform="translate(${f(x)} ${f(y)}) scale(${s})">
+  <path d="M-34 -30L-14 -38H14L34 -30 52 -6 40 2 30 -10V22H-30V-10L-40 2-52 -6Z" fill="${CLAY}"/>
+  <path d="M0 -36V22" stroke="${PAPER}" stroke-opacity=".5" stroke-width="2.4"/><path d="M0 -6V22" stroke="${INK}" stroke-opacity=".35" stroke-width="2.4" stroke-dasharray="2 3"/>
+  <rect x="-4" y="-10" width="8" height="11" rx="2" fill="${SUN}"/></g>`;
+/** A friend in Maya's drawing language (person()), with a lake shirt and a ball, facing left, feet at (x, y). */
+export function friend(x, y, height) {
+  const inner = person({ shirt: LAKE, hair: CLAY, ball: true }).replace(/^\s*<svg[^>]*>/, '').replace(/<\/svg>\s*$/, '');
+  const s = height / 62;
+  return `<g transform="translate(${f(x + 60 * s * 0.42)} ${f(y - 61.5 * s)}) scale(${-s} ${s})">${inner}</g>`;
+}
+/** A chalk game drawn on the park path, seen from a little above, centred at (x, y). `changed` adds the friend's
+ *  new line, in fresh yellow chalk, across the old ones. */
+export function chalkGame(x, y, s = 1, { changed = false } = {}) {
+  const line = (d, color = 'white', wd = 4) => `<path d="${d}" stroke="${color}" stroke-width="${wd}" stroke-linecap="round" stroke-linejoin="round" fill="none"/>`;
+  return `<g transform="translate(${f(x)} ${f(y)}) scale(${s})">
+    ${line('M-120 -26L120 -26 150 26H-150Z')}${line('M-40 -26L-50 26M40 -26L50 26')}
+    <circle cx="-88" cy="0" r="8" fill="white"/><circle cx="88" cy="0" r="8" fill="white"/>
+    ${changed ? line('M-14 -40C-4 -14 4 12 18 40', SUN, 5) : ''}</g>`;
+}

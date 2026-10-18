@@ -1,4 +1,4 @@
-/* Lesson 3 · The elephant and the rider on paper (design 004, v01). Lesson 2's paper frames (the built
+/* Lesson 3 · The elephant and the rider on paper (design 004, v02). Lesson 2's paper frames (the built
    lessons' layout, one viewport tall each), plus the takeaways band, result lines and the activities'
    overlays. Flat: no shadows, glows or volume. */
 @import "../lesson2-practice/practice.css";
@@ -19,28 +19,32 @@
 .stage-pill-row { position: absolute; left: 0; right: 0; bottom: 24px; display: flex; justify-content: center; gap: 12px; }
 .stage-pill { font-size: 16px; }
 
-/* A · the evenings so far. */
-.day-strip { position: absolute; left: 24px; top: 20px; margin: 0; padding: 0; list-style: none; display: flex; gap: 8px; }
-.day { display: flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 14px 0 8px; border-radius: 999px; background: white; border: 1px solid var(--color-rule); font: 600 15px var(--font-guide); color: var(--color-quiet); }
-.day.is-current { border: 2px solid var(--color-forest); color: var(--color-forest); }
-.day-icon { display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: var(--color-paper-deep); }
-.day-icon svg { width: 18px; height: 18px; }
-
-/* B · Elephant or rider: one moment card at the top, each partner's strengths filling in beside it. */
-.moment-card { position: absolute; left: 50%; top: 22px; transform: translateX(-50%); width: min(460px, calc(100% - 40px)); padding: 16px 20px 18px; border-radius: 20px; background: white; border: 1px solid var(--color-rule); text-align: center; }
-.moment-card .moment-name { margin: 0 0 12px; font: 500 26px/1.2 var(--font-field); color: var(--color-ink); }
-.moment-card .moment-icon { display: block; width: 44px; height: 44px; margin: 0 auto 6px; }
-.moment-picks { display: flex; justify-content: center; gap: 10px; }
-.strength { position: absolute; width: min(240px, 30%); display: grid; gap: 8px; align-content: start; }
-.strength-title { margin: 0 0 2px; font: 600 16px var(--font-guide); color: var(--color-forest); }
-.strength-word { margin: 0 0 4px; font: 500 20px/1.2 var(--font-field); color: var(--color-ink); }
-.strength-tag { display: flex; align-items: center; min-height: 40px; padding: 0 14px; border-radius: 999px; font: 600 15px var(--font-guide); color: var(--color-forest); background: color-mix(in srgb, var(--color-sage) 22%, white); }
-.strength-tag.is-new { background: white; border: 2px solid var(--color-forest); }
-.strength-slot { min-height: 40px; border-radius: 999px; border: 1.5px dashed var(--color-mist); }
+/* The activity: Elephant or rider, on Lesson 1's sort board (journey-sort.css), flat. */
+.sortb { position: absolute; left: 20px; right: 20px; bottom: 20px; display: grid; grid-template-columns: 1fr 1.15fr 1fr; gap: 16px; }
+.sortb-bin { display: flex; flex-direction: column; min-height: 0; padding: 14px 14px 16px; border-radius: 18px; border: 2px dashed var(--color-sage); background: color-mix(in srgb, var(--color-sage) 6%, transparent); }
+.sortb-rider { border-color: color-mix(in srgb, var(--color-sun) 75%, white); background: color-mix(in srgb, var(--color-sun) 6%, transparent); }
+.sortb-bin.is-over { border-style: solid; border-color: var(--color-forest); background: color-mix(in srgb, var(--color-forest) 7%, transparent); }
+.sortb-title { display: flex; align-items: center; gap: 10px; margin: 0; font: 500 21px/1.2 var(--font-field); color: var(--color-forest); }
+.sortb-icon { width: 46px; height: 36px; flex: none; }
+.sortb-rider .sortb-icon { width: 28px; }
+.sortb-strong { margin: 6px 0 0; font: 600 16px var(--font-guide); color: var(--color-forest); }
+.sortb-list, .sortb-pile { margin: 12px 0 0; padding: 0; list-style: none; display: grid; gap: 8px; align-content: start; }
+.sortb-pile { grid-template-columns: 1fr 1fr; gap: 10px; }
+.sortb-card { display: grid; place-items: center; min-height: 58px; padding: 8px 12px; border-radius: 16px; background: white; border: 1px solid var(--color-rule); font: 500 18px/1.25 var(--font-field); color: var(--color-ink); text-align: center; transform: rotate(var(--rot, 0deg)); }
+.sortb-list .sortb-card { min-height: 50px; justify-items: start; text-align: left; }
+.sortb-card.is-new { border: 2px solid var(--color-forest); }
+.sortb-card.is-lifted { border: 2px solid var(--color-forest); transform: rotate(-5deg); }
+.sortb-gap { min-height: 58px; border-radius: 16px; border: 1.5px dashed var(--color-mist); }
+.sortb-centre { display: flex; flex-direction: column; justify-content: flex-start; padding-top: 8px; text-align: center; }
+.sortb-centre.is-done { justify-content: center; align-items: center; }
+.sortb-instruction { margin: 0; font: 500 18px/1.3 var(--font-field); color: var(--color-ink); }
+.sortb-hint { margin: 2px 0 0; font: 15px/1.3 var(--font-guide); color: var(--color-quiet); }
+.sortb-drag { position: absolute; width: 168px; z-index: 2; }
+.sortb-drag .sortb-card { list-style: none; }
 
 @media (max-height: 800px) {
   .foot-choice { min-height: 78px; padding: 8px 14px; }
-  .moment-card { top: 16px; padding: 12px 18px 14px; }
-  .moment-card .moment-name { font-size: 22px; margin-bottom: 10px; }
+  .sortb-card { min-height: 50px; font-size: 17px; }
+  .sortb-list .sortb-card { min-height: 44px; }
 }
 .next-button { white-space: nowrap; }

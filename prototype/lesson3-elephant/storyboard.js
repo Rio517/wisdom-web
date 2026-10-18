@@ -1,15 +1,15 @@
-// Lesson 3 · The elephant and the rider, every step as one frame (design 004, v01). Static pictures:
+// Lesson 3 · The elephant and the rider, every step as one frame (design 004, v02). Static pictures:
 // the only thing that moves is Back/Next, which scrolls to the neighbouring frame.
 import { step, word } from './copy.js';
 import { mount, buildFrames, ui } from './shell.js';
 import {
-  svg, label, chip, leader, pair, riderAt, ground, horizon, sun, hills, tree, tuft, path, paths, trace, arrowEnd, elephantPrints,
-  gameScreen, gameBox, table, stove, plank, plate, alfredo, dad, walker, bottle, maya, bench,
+  svg, label, chip, pair, riderAt, ground, horizon, sun, hills, tree, tuft, path, trace, arrowEnd, elephantPrints,
+  stove, plank, plate, alfredo, dad, walker, bottle, maya, bench, car, jacket, friend, chalkGame,
   WATER_ICON, GROUND_GAP, FOREST, SAGE, MIST, QUIET, LAKE, LAKE_SOFT, RULE, AHEAD,
 } from './scenes.js';
 
 const W = (id, key) => word(id, key);
-export const STORY_CHAPTERS = [step('01').chapter, step('02').chapter, step('04').chapter, step('06').chapter, word('A1', 'chapter'), step('08').chapter];
+export const STORY_CHAPTERS = [step('01').chapter, step('02').chapter, step('04').chapter, step('06').chapter, word('B1', 'chapter'), step('08').chapter];
 
 // 01 · The hero: a big, calm elephant on the ground line, its small rider looking ahead; the path runs on over low hills.
 function meet(w, h) {
@@ -20,14 +20,13 @@ function meet(w, h) {
   const far = `M${w * 0.72} ${gy}C${w * 0.8} ${gy - h * 0.3} ${w * 0.95} ${gy - h * 0.32} ${w + 30} ${gy - h * 0.26}V${gy}Z`;
   const ahead = [[ex + 46 * s, gy + 20], [w * 0.7, gy + 6], [w * 0.8, gy - h * 0.1], [w * 0.92, gy - h * 0.165]];
   const r = riderAt(ex, ey, eh);
-  const riderChip = [r.x + 30 * s, r.y - 10 * s];
-  const bodyChip = [ex - 46 * s - 50, ey - 50 * s];
+  const size = Math.round(Math.max(18, Math.min(22, h / 36)));
   return svg(w, h, `${sun(w * 0.14, h * 0.17, Math.min(w, h) * 0.05)}<path d="${far}" fill="${SAGE}" fill-opacity=".18"/><path d="${rise}" fill="${SAGE}" fill-opacity=".26"/>
     ${tree(w * 0.8, gy - h * 0.2, 0.8)}${tree(w * 0.94, gy - h * 0.25, 0.6)}
     ${ground(w, gy, h)}${trace(ahead, { color: AHEAD, dash: '0', width: 4 })}${tuft(w * 0.08, gy + 34)}${tuft(w * 0.66, gy + 50, 1.2)}
     ${pair(ex, ey, eh)}
-    ${leader(riderChip[0] - 22, riderChip[1] + 6, r.x + 3 * s, r.y - 4 * s)}${chip(riderChip[0], riderChip[1], W('01', 'rider'))}
-    ${leader(bodyChip[0] + 30, bodyChip[1] + 6, ex - 34 * s, ey - 40 * s)}${chip(bodyChip[0], bodyChip[1], W('01', 'elephant'))}`);
+    ${label(r.x - 2 * s, r.y - 14 * s, W('01', 'rider'), { size, anchor: 'middle' })}
+    ${label(ex - 49 * s, ey - 33 * s, W('01', 'elephant'), { size, anchor: 'end' })}`);
 }
 
 // 02 · Lesson 2's last picture again: Maya dribbles, eyes up, her elephant right behind her; two more quick moments ahead.
@@ -74,56 +73,50 @@ function slow(w, h) {
     ${chip(ax + 26 * ds + 110, gy - 46 * ds, W('03', 'card'), { icon: WATER_ICON })}`);
 }
 
-// ——— The fork, shared by steps 04 and 05 and activities A and C ———
-export function forkGeometry(w, h) {
-  const gy = Math.round(h * 0.3);
-  const eh = Math.min(h * 0.26, w * 0.22);
-  const F = [w * 0.36, h * 0.71];
-  const T = [w * 0.86, h * 0.43]; const S = [w * 0.86, h * 0.79];
-  const trunk = [[-40, h * 0.8], [w * 0.16, h * 0.76], F];
-  const main = [F, [w * 0.56, h * 0.57], [w * 0.74, h * 0.47], [T[0] - 60, T[1] + 4]];
-  const side = [F, [w * 0.54, h * 0.78], [w * 0.7, h * 0.8], [S[0] - 50, S[1]]];
-  const spots = { fork: [w * 0.3, h * 0.72], turn: [w * 0.5, h * 0.6], drift: [w * 0.66, h * 0.8], home: [w * 0.67, h * 0.545] };
-  const reinsTrace = [[w * 0.4, h * 0.68], [w * 0.46, h * 0.625], [w * 0.5, h * 0.64], [w * 0.52, h * 0.71], [w * 0.54, h * 0.785]];
-  const turnTrace = [[w * 0.4, h * 0.68], [w * 0.44, h * 0.64], [w * 0.47, h * 0.62]];
-  const pathTrace = [[w * 0.36, h * 0.71], [w * 0.46, h * 0.62], [w * 0.5, h * 0.59], [w * 0.53, h * 0.57]];
-  return { gy, eh, F, T, S, trunk, main, side, spots, reinsTrace, turnTrace, pathTrace };
-}
-/**
- * The fork scene, seen from a little above: the ground is the stage, the paths are the lessons' ground colour.
- * `game`: 'screen' or 'box'; `books`: 'bag' or 'out'; `at`: where the elephant stands; `traces`: any of
- * 'reins' (dotted, the pull and the drift back), 'reinsFaint', 'path' (the easy way home).
- */
-export function forkScene(w, h, { game = 'screen', books = 'bag', at = 'fork', pose = 'stand', reins = false, traces = [], words = {} } = {}) {
-  const g = forkGeometry(w, h);
-  const ps = Math.min(1.2, h / 680);
-  const sideFaint = game === 'box';
-  const [ex, ey] = g.spots[at];
-  const tr = [];
-  if (traces.includes('reinsFaint')) tr.push(trace(g.reinsTrace, { color: QUIET, opacity: 0.6 }), arrowEnd(g.reinsTrace, { color: QUIET }));
-  if (traces.includes('reins')) tr.push(trace(g.reinsTrace), arrowEnd(g.reinsTrace));
-  if (traces.includes('turn')) tr.push(trace(g.turnTrace), arrowEnd(g.turnTrace));
-  if (traces.includes('path')) tr.push(trace(g.pathTrace, { dash: '10 9', width: 3.6 }), arrowEnd(g.pathTrace));
-  const wordAt = [];
-  if (words.game) wordAt.push(chip(g.S[0], g.S[1] - (sideFaint ? 46 : 96) * ps - 26, words.game));
-  if (words.home) wordAt.push(chip(g.T[0], g.T[1] - (books === 'out' ? 92 : 106) * ps - 26, words.home));
-  if (words.reins) { const p = g.reinsTrace[4]; wordAt.push(label(p[0] - 10, p[1] + 52, words.reins, { color: QUIET, anchor: 'middle' })); }
-  if (words.path) { const p = g.pathTrace[1]; wordAt.push(label(p[0] - 30, p[1] - 30, words.path, { anchor: 'end' })); }
-  const tufts = [[0.08, 0.5], [0.2, 0.62], [0.52, 0.44], [0.3, 0.9], [0.62, 0.92], [0.42, 0.38]].map(([u, v]) => tuft(w * u, h * v)).join('');
-  const overgrown = sideFaint ? [[0.6, 0.79], [0.7, 0.81], [0.78, 0.79], [0.66, 0.77]].map(([u, v]) => tuft(w * u, h * v, 1.2)).join('') : '';
-  const ways = sideFaint
-    ? `${paths([[g.trunk, 62, 58], [g.main, 58, 34, false]])}${paths([[g.side, 50, 36, false]], { opacity: 0.1 })}`
-    : paths([[g.trunk, 62, 58], [g.main, 58, 34, false], [g.side, 50, 36, false]]);
-  return svg(w, h, `${sun(w * 0.62, h * 0.12, Math.min(w, h) * 0.045)}${hills(w, g.gy, h * 0.07)}${horizon(w, g.gy)}${tufts}
-    ${ways}${overgrown}
-    ${table(g.T[0], g.T[1], ps, { books })}${game === 'screen' ? gameScreen(g.S[0], g.S[1], ps) : gameBox(g.S[0], g.S[1], ps)}
-    ${tr.join('')}${pair(ex, ey, g.eh, { pose, reins })}${wordAt.join('')}`);
+// 03b · Now or later: the family waits in the car, its back door open; the pair walks over to climb in, and the
+// jacket with its stuck zip lies on the ground beside them, for later.
+function now(w, h) {
+  const gy = Math.round(h * 0.76);
+  const eh = Math.min(h * 0.3, w * 0.26); const s = eh / 64;
+  const cs = Math.min(1.7, (w * 0.56) / 300);
+  const cx = w - 150 * cs - Math.max(28, w * 0.04);
+  const ex = Math.max(46 * s + 30, cx - 150 * cs - 50 * s);
+  const jx = ex - 4 * s; const jy = gy + Math.min(78, (h - gy) * 0.5);
+  return svg(w, h, `${sun(w * 0.16, h * 0.16, Math.min(w, h) * 0.045)}
+    ${ground(w, gy, h)}
+    ${car(cx, gy, cs)}${chip(cx + 40 * cs, gy - 116 * cs - 34, W('03b', 'car'))}
+    ${pair(ex, gy, eh, { pose: 'walk1' })}
+    ${jacket(jx, jy, Math.min(1.1, h / 700))}${label(jx + 66, jy + 8, W('03b', 'zip'))}`);
 }
 
-// 04 · The pull: the elephant at the fork, nearer the game; the dotted line turns toward homework, then back.
-const reinsStep = (w, h) => forkScene(w, h, { reins: true, traces: ['reins'], words: { game: W('04', 'game'), home: W('04', 'home') } });
-// 05 · The game put away, the books out: the elephant walks the main path, no pulling.
-const pathStep = (w, h) => forkScene(w, h, { game: 'box', books: 'out', at: 'home', pose: 'walk1', traces: ['path'], words: { game: W('05', 'away'), home: W('05', 'ready') } });
+// ——— The park, shared by steps 04 and 05: a chalk game on the path, a friend with the ball, a tree ———
+function park(w, h, { step05 = false } = {}) {
+  const gy = Math.round(h * 0.34);
+  const eh = Math.min(h * 0.3, w * 0.26); const s = eh / 64;
+  const gs = Math.min(1.25, w / 820);
+  const game = [w * 0.6, h * 0.8];
+  const fx = w * 0.86; const fy = h * 0.72; const fh = eh * 0.74;
+  const tx = w * 0.08; const ty = h * 0.56;
+  const walk = [[-40, h * 0.92], [w * 0.3, h * 0.86], [game[0], game[1]], [w + 40, h * 0.74]];
+  const away = [[w * 0.44, h * 0.85], [w * 0.37, h * 0.72], [w * 0.29, h * 0.62]];
+  const tufts = [[0.3, 0.44], [0.52, 0.4], [0.7, 0.5], [0.5, 0.97], [0.94, 0.94], [0.08, 0.98]].map(([u, v]) => tuft(w * u, h * v)).join('');
+  const base = `${sun(w * 0.8, h * 0.13, Math.min(w, h) * 0.045)}${hills(w, gy, h * 0.08)}${horizon(w, gy)}${tufts}
+    ${path(walk, 74, 60)}${step05 ? path(away, 46, 40) : ''}${tree(tx, ty, 1.6)}
+    ${chalkGame(game[0], game[1], gs, { changed: !step05 })}${friend(fx, fy, fh)}`;
+  if (!step05) {
+    const ex = Math.max(46 * s + 30, w * 0.27); const ey = h * 0.9;
+    return svg(w, h, `${base}${pair(ex, ey, eh, { reins: true })}
+      ${chip(game[0] + 30 * gs, game[1] - 40 * gs - 26, W('04', 'rules'))}`);
+  }
+  const ee = eh * 0.8; const ex = w * 0.3; const ey = h * 0.62;
+  return svg(w, h, `${base}${pair(ex, ey, ee)}
+    ${label(ex - 4, ey + 34, W('05', 'breath'), { anchor: 'middle' })}
+    ${chip(game[0], game[1] - 40 * gs - 26, W('05', 'agree'))}`);
+}
+// 04 · The pull: the friend draws a new rule; the elephant wants to yell, and the rider holds the reins.
+const reinsStep = (w, h) => park(w, h);
+// 05 · Easier paths: a few steps away by the tree, calm, the friend waiting at the game.
+const pathStep = (w, h) => park(w, h, { step05: true });
 
 // 06 · Together up a gentle rise toward a lookout, the path behind them.
 function team(w, h) {
@@ -144,11 +137,11 @@ function first(w, h) {
   const eh = Math.min(h * 0.32, w * 0.28); const s = eh / 64;
   const ex = w * 0.56;
   const r = riderAt(ex, gy, eh);
-  const say = [Math.min(w - 90, r.x + 110), r.y - 40];
+  const say = [r.x - 2 * s, r.y - 17 * s];
   const px = Math.max(80, ex - 46 * s - 100);
   return svg(w, h, `${ground(w, gy, h)}${plate(px, gy, Math.min(1.3, h / 600))}
     ${pair(ex, gy, eh)}
-    ${leader(say[0] - 40, say[1] + 12, r.x + 4 * s, r.y - 6 * s)}${chip(say[0], say[1], W('07', 'reason'))}`);
+    ${chip(say[0], say[1], W('07', 'reason'))}`);
 }
 
 // 08 · The pair small on the open path, a wide landscape; the takeaways sit in the band below.
@@ -178,6 +171,7 @@ const ITEMS = [
   { id: 'story-01', copy: '01', stage: meet },
   { id: 'story-02', copy: '02', stage: quick },
   { id: 'story-03', copy: '03', stage: slow },
+  { id: 'story-03b', copy: '03b', stage: now },
   { id: 'story-04', copy: '04', stage: reinsStep },
   { id: 'story-05', copy: '05', stage: pathStep },
   { id: 'story-06', copy: '06', stage: team },
@@ -185,7 +179,7 @@ const ITEMS = [
   { id: 'story-08', copy: '08', stage: keep },
   { id: 'story-09', copy: '09', stage: next, nextLabel: W('09', 'button') },
 ];
-export const STAGES = { meet, quick, slow, reinsStep, pathStep, team, first, keep, next };
+export const STAGES = { meet, quick, slow, now, reinsStep, pathStep, team, first, keep, next };
 
 /** The takeaways' small pictures: the pair, the elephant's prints again and again, a fork in the path. */
 export const TAKEAWAY_ICONS = [
@@ -196,6 +190,6 @@ export const TAKEAWAY_ICONS = [
 
 export function start(root) {
   // The trail's Activity stop sits between One team and Takeaways, so story 07's Next goes to it.
-  const items = ITEMS.map(item => (item.copy === '07' ? { ...item, nextLabel: ui('lesson.ui.nextChapter').replace('{chapter}', word('A1', 'chapter')) } : item));
+  const items = ITEMS.map(item => (item.copy === '07' ? { ...item, nextLabel: ui('lesson.ui.nextChapter').replace('{chapter}', word('B1', 'chapter')) } : item));
   mount(root, buildFrames(items, STORY_CHAPTERS), TAKEAWAY_ICONS);
 }

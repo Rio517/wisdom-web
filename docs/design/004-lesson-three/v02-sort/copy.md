@@ -53,7 +53,7 @@ The rider can also notice what matters right now.
 
 Everyone is waiting in the car, and your jacket zip is stuck. Your elephant wants to fight it until it works. Your rider sees that it can wait. You get in the car and fix it there.
 
-Picture: a family car at the kerb with its back door open and the family inside, ready to go. The elephant and its rider stand by the open door, about to climb in. On the ground beside them lies a jacket with its zip stuck halfway. Nobody in the car is cross.
+Picture: a family car at the kerb with its back door open and the family inside, ready to go. The elephant and its rider walk up to the open door. On the ground beside them lies a jacket with its zip stuck halfway. Nobody in the car is cross.
 
 - zip: Stuck zip
 - car: Everyone waiting
@@ -66,7 +66,7 @@ At the park, a friend keeps changing the rules. Your elephant wants to yell. You
 
 That works for a moment. But the elephant is much bigger than the rider, and soon it pulls again.
 
-Picture: a park with a chalk game on the path. The friend stands at the far side of it, holding the ball, a new chalk line freshly drawn across the old one. The friend looks pleased with the new rule, not mean. The elephant leans toward the friend, and the rider, small on its neck, holds the reins tight. A short dotted trace shows the elephant held back, then leaning in again.
+Picture: a park with a chalk game on the path. The friend stands beyond it with the ball, and a new line in fresh yellow chalk runs across the old game. The friend is having fun, not being mean. The elephant stands close to the game, and the rider, small on its neck, holds the reins.
 
 - rules: New rule
 
