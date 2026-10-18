@@ -1,0 +1,37 @@
+---
+// A compact language menu: a button showing the current code ("EN") that opens the codes of the other
+// languages, each a link to this page in that language, named in its own language.
+// Renders nothing while only one language is offered (drafts stay unlinked). Script: lesson-controls.js.
+import { LOCALE_NAMES, LOCALE_TAGS, stripLocale, switcherLocales } from '../i18n/config.js';
+import { UI, href } from '../data/site.js';
+import { getTranslator } from '../i18n/index.js';
+
+interface Props { locale: string; id: string }
+const { locale, id } = Astro.props;
+const t = getTranslator(locale);
+const path = stripLocale(Astro.url.pathname);
+const codes = switcherLocales(locale);
+const caret = '<svg viewBox="0 0 10 10" aria-hidden="true" focusable="false"><path d="M1.5 3.5h7L5 7.5z" fill="currentColor"/></svg>';
+---
+{codes.length > 1 && (
+  <div class="lang-menu" data-lang-menu data-local-keys>
+    <button class="lang-menu-button" type="button" id={`${id}-button`} aria-haspopup="true" aria-expanded="false" aria-controls={`${id}-list`}
+      aria-labelledby={`${id}-tip ${id}-code`} data-tip={`${id}-tip`}>
+      <Fragment set:html={UI.globe} />
+      <span id={`${id}-code`} class="lang-menu-code">{locale.toUpperCase()}</span>
+      <Fragment set:html={caret} />
+    </button>
+    <span class="soon-tip control-tip" role="tooltip" id={`${id}-tip`} hidden>{t('nav.language')}</span>
+    <ul class="lang-menu-list" id={`${id}-list`} role="menu" aria-labelledby={`${id}-button`} hidden>
+      {codes.map(code => (
+        <li role="none">
+          <a role="menuitem" tabindex="-1" href={href(code, path)} hreflang={LOCALE_TAGS[code]} lang={LOCALE_TAGS[code]}
+            aria-label={LOCALE_NAMES[code]} aria-current={code === locale ? 'true' : undefined}>
+            <span>{code.toUpperCase()}</span>
+            {code === locale && <Fragment set:html={UI.check} />}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+)}

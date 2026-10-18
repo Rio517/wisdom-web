@@ -9,6 +9,7 @@ import { createExploreScene } from './journey-explore.js';
 import { createSortBoard } from './journey-sort.js';
 import { createLifeStory } from './journey-life.js';
 import { watchField } from '../../components/stage-field.js';
+import { bindReadingDialog } from '../../components/lesson-controls.js';
 import { TIGHT, createChapterTrail, createNarrationFit, createBand, watchDots, renderControls as renderStepControls, kickerFor, titleFor, escapeHTML } from './journey-shell.js';
 
 const beats = beatList();
@@ -472,7 +473,7 @@ window.addEventListener('popstate', () => {
 
 const dialog = $('#reading-dialog');
 // The text version tells the life on screen (the page was built with Sam's).
-$('#open-reading').addEventListener('click', async () => {
+bindReadingDialog(dialog, async () => {
   await life.ensureLife();
   tellLife();
   for (const id of ['life', 'adds', 'takeaways']) {
@@ -481,7 +482,6 @@ $('#open-reading').addEventListener('click', async () => {
     if (old && beat) old.outerHTML = renderReadingBeat(beat, t);
   }
   if (onLife() && life.player.state.playing && life.player.state.started) life.player.toggle(); // the story waits behind the text
-  dialog.showModal();
 });
 dialog.querySelector('[data-close]').addEventListener('click', () => dialog.close());
 

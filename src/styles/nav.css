@@ -75,3 +75,39 @@
 .site-nav[data-mode="drawer"] { position: fixed; left: 0; top: 0; bottom: 0; z-index: 50; width: min(320px, 88vw); height: auto; box-shadow: 0 0 0 1px #23302d14; transform: translateX(-102%); visibility: hidden; transition: transform 260ms cubic-bezier(.2,.7,.2,1), visibility 0s 260ms; }
 .site-nav[data-mode="drawer"][data-open="true"] { transform: none; visibility: visible; transition: transform 300ms cubic-bezier(.2,.7,.2,1); }
 
+
+/* ——— Lesson header controls: Pictures | Text and the language menu (LessonControls.astro) ——— */
+.lesson-controls { display: flex; align-items: center; gap: 8px; font-family: var(--font-guide); }
+.control-slot, .lang-menu { position: relative; display: block; }
+.view-toggle { display: flex; gap: 2px; padding: 1px; border: 1px solid var(--color-rule); border-radius: 999px; background: var(--color-paper); }
+.view-option { display: grid; place-items: center; width: 40px; height: 40px; border: 0; border-radius: 999px; background: transparent; color: var(--color-ink); transition: background 160ms, color 160ms; }
+.view-option svg { width: 18px; height: 18px; }
+.view-option:hover { background: #2854420f; }
+.view-option:is([aria-pressed="true"], [aria-current="page"]) { background: var(--color-forest); color: white; }
+.lang-menu-button { display: inline-flex; align-items: center; gap: 6px; height: 44px; border: 1px solid var(--color-rule); border-radius: 999px; background: var(--color-paper); padding: 0 12px 0 11px; font: 600 15px/1 var(--font-guide); color: var(--color-ink); transition: border-color 160ms; }
+.lang-menu-button:hover, .lang-menu-button[aria-expanded="true"] { border-color: var(--color-forest); }
+.lang-menu-button svg { width: 18px; height: 18px; flex: none; }
+.lang-menu-button svg:last-child { width: 9px; height: 9px; color: var(--color-quiet); }
+.view-option:focus-visible, .lang-menu-button:focus-visible { border-radius: 999px; }
+/* Tips sit under their control, right-aligned so the last one stays on screen. */
+.lesson-controls .control-tip { left: auto; right: 0; top: calc(100% + 8px); z-index: 45; max-width: none; white-space: nowrap; }
+.lesson-controls .control-tip::before { left: auto; right: 15px; }
+.lang-menu .control-tip::before { right: 32px; }
+.lang-menu-list { position: absolute; right: 0; top: calc(100% + 6px); z-index: 45; display: grid; gap: 2px; min-width: 100%; margin: 0; padding: 4px; list-style: none; border: 1px solid var(--color-rule); border-radius: 16px; background: var(--color-paper); }
+.lang-menu-list a { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 40px; border-radius: 12px; padding: 0 10px 0 13px; font: 600 15px/1 var(--font-guide); color: var(--color-ink); text-decoration: none; }
+.lang-menu-list a:hover { background: #2854420f; }
+.lang-menu-list a[aria-current] { color: var(--color-forest); }
+.lang-menu-list a svg { width: 16px; height: 16px; }
+.lang-menu-list a:focus-visible { outline-offset: -2px; border-radius: 12px; }
+@media (pointer: coarse) {
+  .view-option { width: 44px; height: 44px; }
+  .lang-menu-button { height: 48px; }
+  .lang-menu-list a { min-height: 44px; }
+}
+/* The copy inside the reading dialog sits where the header's controls are (lesson-controls.js places it). */
+.lesson-controls-dialog { position: fixed; z-index: 1; }
+dialog:not([open]) .lesson-controls-dialog { display: none; }
+@media (prefers-reduced-motion: reduce) {
+  .lesson-controls .control-tip { animation: none; }
+  .view-option, .lang-menu-button { transition: none; }
+}

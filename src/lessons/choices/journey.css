@@ -525,8 +525,10 @@ h1, h2, h3, h4 { font-family: var(--font-field); font-weight: 500; }
 .play-progress { @apply m-0 text-[15px]; color: var(--color-quiet); }
 
 /* ——— Reading dialog ——— */
-dialog { width: min(820px, 94vw); max-height: 90vh; overflow: auto; border: 0; border-radius: 22px; background: var(--color-paper); color: var(--color-ink); padding: 26px 48px 44px; }
+/* The text opens under the header, where its Pictures | Text toggle stays reachable. */
+dialog { width: min(820px, 94vw); margin: 88px auto 24px; max-height: calc(100dvh - 112px); overflow: auto; border: 0; border-radius: 22px; background: var(--color-paper); color: var(--color-ink); padding: 26px 48px 44px; }
 dialog::backdrop { background: #23302d66; }
+#reading-dialog:focus-visible { outline: none; }
 .dialog-close { float: right; }
 .nojs-note { display: none; @apply mb-6 rounded-xl px-4 py-3; background: var(--color-sun-soft); }
 .journey-reading h1 { @apply mb-3 mt-10; font-size: 40px; line-height: 1.05; }
@@ -611,6 +613,12 @@ dialog::backdrop { background: #23302d66; }
    language (Spanish, 801px tall), so 990 leaves a small margin. */
 @media (width < 990px) {
   body { overflow: auto; }
+  /* The trail sits right under the controls here, so their tips open to the left, beside the brand. */
+  .journey-header .lesson-controls, .lesson-controls-dialog { position: relative; }
+  .lesson-controls-dialog { position: fixed; }
+  :is(.journey-header, #reading-dialog) :is(.control-slot, .lang-menu) { position: static; }
+  :is(.journey-header, #reading-dialog) .control-tip { top: 50%; right: calc(100% + 10px); margin-top: -20px; }
+  :is(.journey-header, #reading-dialog) .control-tip::before { top: 50%; right: -4px; margin-top: -5px; }
   /* The trail takes the full width on its own row, so every chapter name fits on one line. */
   .journey-header { grid-template-columns: 1fr auto; height: auto; row-gap: 0; padding-top: 8px; }
   .chapter-trail { grid-column: 1 / -1; grid-row: 2; max-width: none; }

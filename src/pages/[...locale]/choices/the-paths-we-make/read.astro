@@ -1,5 +1,6 @@
 ---
 import SiteLayout from '../../../../layouts/SiteLayout.astro';
+import LessonControls from '../../../../components/LessonControls.astro';
 import { renderJourneyReading } from '../../../../lessons/choices/journey-story.js';
 import { writtenLifeIn } from '../../../../lessons/choices/lives/build.js';
 import { LESSON_PATH, UI, href } from '../../../../data/site.js';
@@ -13,6 +14,7 @@ const t = getTranslator(locale);
 const reading = renderJourneyReading({ t, life: writtenLifeIn(locale) });
 ---
 <SiteLayout title={t('read.title')} description={t('read.description')} current="read" locale={locale}>
+  <LessonControls slot="controls" locale={locale} id="header-controls" view="text" picturesHref={href(locale, LESSON_PATH)} textHref={href(locale, `${LESSON_PATH}read/`)} />
   <article class="page page-narrow">
     <header class="page-header">
       <p class="kicker">{t('read.kicker')}</p>

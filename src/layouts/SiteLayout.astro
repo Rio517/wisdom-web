@@ -20,6 +20,7 @@ const t = getTranslator(locale);
       <header class="site-topbar">
         <button class="nav-opener" type="button" data-nav-open aria-label={t('nav.open')}><Fragment set:html={UI.menu} />{t('nav.index')}</button>
         <a class="brand" href={href(locale, '/')}><span class="brand-name">{t('site.name')}</span></a>
+        {Astro.slots.has('controls') && <div class="topbar-controls"><slot name="controls" /></div>}
       </header>
       <main id="main" tabindex="-1">
         <DraftNote locale={locale} />

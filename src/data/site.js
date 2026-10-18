@@ -98,6 +98,7 @@ export const UI = {
   people: ui('<circle cx="9" cy="8.5" r="3"/><path d="M3.5 19c.6-3.2 2.8-5 5.5-5s4.9 1.8 5.5 5"/><circle cx="16.5" cy="9.5" r="2.4"/><path d="M15.5 14.2c2.4-.2 4.4 1.3 5 4.3"/>'),
   device: ui('<rect x="4" y="3.5" width="16" height="17" rx="2.5"/><path d="M10 17.5h4"/>'),
   text: ui('<path d="M5 6h14M5 10h14M5 14h9M5 18h11"/>'),
+  pictures: ui('<rect x="3.5" y="4.5" width="17" height="15" rx="2.5"/><circle cx="15.5" cy="9.5" r="1.8"/><path d="M3.8 17c2.7-3.2 5.6-4.4 8.5-3.4 2.4.8 4.6 1.9 8 1.1"/>'),
   check: ui('<path d="M5 12.5l4.2 4L19 7"/>'),
   book: ui('<path d="M5 5.5A2.5 2.5 0 0 1 7.5 3H19v15H7.5A2.5 2.5 0 0 0 5 20.5z"/><path d="M5 20.5A2.5 2.5 0 0 1 7.5 18H19"/>'),
   globe: ui('<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.4 2.5 3.5 5.3 3.5 8.5s-1.1 6-3.5 8.5c-2.4-2.5-3.5-5.3-3.5-8.5s1.1-6 3.5-8.5z"/>'),
