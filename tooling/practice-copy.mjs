@@ -32,7 +32,7 @@ for (const chapter of chaptersFor(t)) {
       for (const day of afternoonsFor(t)) {
         add(`- **${day.label}${day.chance ? ` · ${day.chance}` : ''}.** ${day.text} ${day.options.map(option => `${option.label} (${option.kind})`).join(' · ')}`);
       }
-      add('', `End card: **${t('practice.activity.end.heading')}**, a line each for soccer and cello by how often they were picked (for example “${t('practice.activity.end.soccer.most', { count: 5 })}”), then “${t('practice.activity.end.basketball.head')}” and **${t('practice.activity.end.again')}**.`, '');
+      add('', `End card: **${t('practice.activity.end.heading')}**, a line each for soccer and cello, in words, never a number (for example “${t('practice.activity.end.soccer.most')}” or “${t('practice.activity.end.cello.less', { band: 'few' })}”); then, only if basketball was picked, “${t('practice.activity.end.basketball.head')}”; and **${t('practice.activity.end.again')}**.`, '');
     } else {
       for (const paragraph of beat.body) add(paragraph, '');
     }

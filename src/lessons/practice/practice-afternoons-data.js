@@ -101,16 +101,33 @@ export function counts(choices) {
   return out;
 }
 
-/** The end card's lines: soccer and cello (which grew the most), then basketball's start. */
+/** How often, in words, never a number: now and then (1–2), a few times (3–4), often (5 or more). */
+export const band = count => (count <= 2 ? 'rare' : count <= 4 ? 'few' : 'many');
+
+/** How much a group's skills grew in all (the sum of its levels; nothing shrinks, so this only adds). */
+const grown = (levels, group) => SKILLS[group].reduce((sum, id) => sum + (levels[id] ?? 0), 0);
+
+/**
+ * The end card's lines: soccer, cello, then basketball's start if it was picked. A line compares
+ * the two only when the picks and the growth agree; otherwise it says how often, in words, and that
+ * it grew, so every line is true for every mix of choices.
+ */
 export function endLines(choices, levels, carried, t) {
   const tally = counts(choices);
   const line = (group, other) => {
     const count = tally[group];
     if (!count) return t(`practice.activity.end.${group}.none`);
-    const shape = count > tally[other] ? 'most' : count < tally[other] ? 'less' : 'even';
-    return t(`practice.activity.end.${group}.${shape}`, { count });
+    const more = count > tally[other] && grown(levels, group) > grown(levels, other);
+    const less = count < tally[other] && grown(levels, group) < grown(levels, other);
+    const most = more && Object.values(tally).every(value => value <= count);
+    const shape = most ? 'most' : more ? 'more' : less ? 'less' : 'even';
+    return t(`practice.activity.end.${group}.${shape}`, { band: band(count) });
   };
-  const head = carried && Object.values(carried).some(level => level > 0.02);
-  return [line('soccer', 'cello'), line('cello', 'soccer'), t(`practice.activity.end.basketball.${head ? 'head' : 'fresh'}`)];
+  const lines = [line('soccer', 'cello'), line('cello', 'soccer')];
+  if (tally.basketball) {
+    const head = carried && Object.values(carried).some(level => level > 0.02);
+    lines.push(t(`practice.activity.end.basketball.${head ? 'head' : 'fresh'}`));
+  }
+  return lines;
 }
 

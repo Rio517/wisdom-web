@@ -82,20 +82,40 @@ test('changing an earlier afternoon recomputes the later ones', () => {
   assert.notDeepEqual(replay(changed).levels, replay(PLAYED).levels);
 });
 
-test('the end card names what grew most and the head start', () => {
+test('the end card names what grew most and the head start, in words', () => {
   const state = replay(PLAYED);
   const tally = counts(PLAYED);
   assert.equal(tally.soccer + tally.cello + tally.basketball + tally.rest, 10);
   const lines = endLines(PLAYED, state.levels, state.carried, en);
-  assert.equal(lines.length, 3);
-  assert.match(lines[0], /soccer grew the most/);
-  assert.match(lines[2], /head start/);
-  for (const locale of LOCALES) {
-    const t = getTranslator(locale);
-    for (const line of endLines(PLAYED, state.levels, state.carried, t)) assert.ok(line && !line.includes('{'), `${locale}: ${line}`);
-  }
+  assert.deepEqual(lines, ['You chose soccer most often, so soccer grew the most.', 'You chose cello now and then, and it grew a little.', 'Basketball began with a head start from soccer.']);
   const none = endLines(Array(10).fill('nap'), replay([]).levels, null, en);
   assert.match(none[0], /didn’t choose soccer/);
+});
+
+test('every mix of afternoons gets true end lines with no numbers', () => {
+  const sum = (levels, group) => SKILLS[group].reduce((total, id) => total + levels[id], 0);
+  let mixes = 0;
+  // Every mix of the ten afternoons (3^10), checked in English; a sample in every language.
+  for (let code = 0; code < 3 ** 10; code += 1) {
+    const choices = DAYS.map((day, index) => day.options[Math.floor(code / 3 ** index) % 3]);
+    const { levels, carried } = replay(choices);
+    const tally = counts(choices);
+    const lines = endLines(choices, levels, carried, en);
+    assert.ok(lines.every(line => !/\d|\{/.test(line)), lines.join(' '));
+    assert.equal(lines.length, tally.basketball ? 3 : 2, 'the basketball line only after basketball was picked');
+    for (const [index, group, other] of [[0, 'soccer', 'cello'], [1, 'cello', 'soccer']]) {
+      if (/grew the most|grew more/.test(lines[index])) {
+        assert.ok(tally[group] > tally[other] && sum(levels, group) > sum(levels, other), lines[index]);
+      }
+      if (/most often/.test(lines[index])) assert.ok(Object.values(tally).every(value => value <= tally[group]), lines[index]);
+      if (/a little/.test(lines[index])) assert.ok(sum(levels, group) < sum(levels, other), lines[index]);
+    }
+    if (code % 97 === 0) for (const locale of LOCALES) {
+      for (const line of endLines(choices, levels, carried, getTranslator(locale))) assert.ok(line && !/\d|\{/.test(line), `${locale}: ${line}`);
+    }
+    mixes += 1;
+  }
+  assert.equal(mixes, 59049);
 });
 
 test('the text version has every step and the activity as a still', () => {

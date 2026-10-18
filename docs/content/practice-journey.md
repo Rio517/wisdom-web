@@ -101,11 +101,11 @@ After the tenth: Every one of your ten afternoons left something behind.
 - **Afternoon 5 of 10 · Friday.** Soccer practice is today. A new film just came out. Go to soccer practice (Soccer) · Watch the new film (Rest and fun) · Practise cello (Cello)
 - **Afternoon 6 of 10 · Monday.** You slept badly, and you’re tired. Rest (Rest and fun) · Go to soccer practice (Soccer) · Practise cello (Cello)
 - **Afternoon 7 of 10 · Wednesday · New.** A friend asks you to shoot hoops at the park. Play basketball (Basketball) · Kick at the wall (Soccer) · Practise cello (Cello)
-- **Afternoon 8 of 10 · Thursday.** There’s soccer practice, but a friend asks you over. Go to soccer practice (Soccer) · Go to your friend’s (Rest and fun) · Practise cello (Cello)
+- **Afternoon 8 of 10 · Thursday.** Soccer practice is today, but a friend asks you over. Go to soccer practice (Soccer) · Go to your friend’s (Rest and fun) · Practise cello (Cello)
 - **Afternoon 9 of 10 · Friday.** The coach is teaching a new passing trick. Learn the new trick (Soccer) · Practise cello (Cello) · Rest (Rest and fun)
-- **Afternoon 10 of 10 · Saturday.** It’s the last afternoon. The team needs one more player. Play in the match (Soccer) · Practise cello (Cello) · Read a comic (Rest and fun)
+- **Afternoon 10 of 10 · Saturday.** The team has a match today and needs one more player. Play in the match (Soccer) · Practise cello (Cello) · Read a comic (Rest and fun)
 
-End card: **Ten afternoons later**, a line each for soccer and cello by how often they were picked (for example “You chose soccer 5 times, so soccer grew the most.”), then “Basketball began with a head start from soccer.” and **Start again**.
+End card: **Ten afternoons later**, a line each for soccer and cello, in words, never a number (for example “You chose soccer most often, so soccer grew the most.” or “You chose cello a few times, and it grew a little.”); then, only if basketball was picked, “Basketball began with a head start from soccer.”; and **Start again**.
 
 Picture: One afternoon’s card with three picture choices, and a column of your ten afternoons beside it. Your soccer and cello boxes grow from what you pick.
 

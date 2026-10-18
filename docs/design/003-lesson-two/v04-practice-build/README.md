@@ -16,7 +16,7 @@ Does Lesson 2 · Practice, built on the site from the approved [v03 frames](../v
 ## Review images
 
 Every step and the activity at 1440 × 900 (English):
-[01](story-01-want-1440-v01.png) · [02](story-02-again-1440-v01.png) · [03](story-03-quiet-1440-v01.png) · [04](story-04-map-1440-v01.png) · [05](story-05-steps-1440-v01.png) · [06](story-06-builds-1440-v01.png) · [07](story-07-maths-1440-v01.png) · [08](story-08-basketball-1440-v01.png) · [09](story-09-late-1440-v01.png) · [10](story-10-keep-1440-v01.png) · [11](story-11-next-1440-v01.png) · [A1](activity-A-1-1440-v01.png) · [A2](activity-A-2-1440-v01.png) · [A3](activity-A-3-1440-v01.png)
+[01](story-01-want-1440-v01.png) · [02](story-02-again-1440-v01.png) · [03](story-03-quiet-1440-v01.png) · [04](story-04-map-1440-v01.png) · [05](story-05-steps-1440-v01.png) · [06](story-06-builds-1440-v01.png) · [07](story-07-maths-1440-v01.png) · [08](story-08-basketball-1440-v01.png) · [09](story-09-late-1440-v01.png) · [10](story-10-keep-1440-v01.png) · [11](story-11-next-1440-v01.png) · [A1](activity-A-1-1440-v01.png) · [A2](activity-A-2-1440-v01.png) · [A3](activity-A-3-1440-v02.png) (end card without counts; [v01](activity-A-3-1440-v01.png) had them)
 
 Step 05 and A2 on iPads: [05 at 1133 × 744](story-05-steps-1133-v01.png) · [05 at 744 × 1133](story-05-steps-744-v01.png) · [A2 at 1133 × 744](activity-A-2-1133-v01.png) · [A2 at 744 × 1133](activity-A-2-744-v01.png)
 
@@ -44,6 +44,8 @@ A2 is afternoon 7 with Play basketball just picked; A3 is the end card after ten
 - Choice labels keep to four words: "Take the cello lesson" (was "Go to the cello lesson") and "Kick at the wall" (was "Kick balls at the wall").
 - An afternoon's prompt is text, not a heading. The next afternoon waits under the card only where it fits whole, and without its captions.
 - What a pick grew is announced to screen readers only; no result line shows, as in the frames.
+- The end card says how often in words, never a number ("You chose soccer most often, so soccer grew the most."), and compares soccer and cello only when the picks and the growth agree. Its basketball line shows only if basketball was picked.
+- Afternoon 8 is "Soccer practice is today, but a friend asks you over." and afternoon 10 "The team has a match today and needs one more player."
 - The elephant is not drawn: each place the frames show it holds an empty, named slot (`data-slot="elephant"`) on steps 01, 02, 03, 06, 08 and 11.
 - German names the first chapter "Kleine Schritte".
 
