@@ -136,14 +136,14 @@ test('prototype studies keep their own ports and output folder', async () => {
 
 test('the lesson has pages for the journey, its text version, notes and the site shell', async () => {
   for (const path of ['[...locale]/index.astro', '[...locale]/about.astro', '404.astro', '[...locale]/choices/index.astro',
-    '[...locale]/choices/notes.astro', '[...locale]/choices/the-paths-we-make/index.astro', '[...locale]/choices/the-paths-we-make/read.astro']) {
+    '[...locale]/choices/notes.astro', '[...locale]/choices/the-paths-we-make/index.astro', '[...locale]/choices/the-paths-we-make/read.astro', '[...locale]/practice/index.astro']) {
     await readFile(new URL(`../src/pages/${path}`, import.meta.url), 'utf8');
   }
   for (const page of ['about.md', 'choices/notes.md']) await readFile(new URL(`../src/content/pages/en/${page}`, import.meta.url), 'utf8');
   const { renderJourneyReading } = await import('../src/lessons/choices/journey-story.js');
   const reading = renderJourneyReading();
   assert.match(reading, /Mirror Lake/);
-  assert.match(reading, /Path B Maya/);
+  assert.match(reading, /Waterfall Trail/);
 });
 
 test('every page is built in every language from one set of routes', async () => {

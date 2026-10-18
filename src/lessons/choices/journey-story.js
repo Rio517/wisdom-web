@@ -28,13 +28,8 @@ const STRUCTURE = [
       { id: 'ranger', mine: false }, { id: 'practise', mine: true }, { id: 'ask', mine: true },
     ] },
   ] },
-  { id: 'skills', beats: [
-    { id: 'fork', body: 2 },
-    { id: 'builds', body: 2, scrub: true, closer: 2, closerPicture: true },
-    { id: 'never-late', body: 2 },
-  ] },
   { id: 'explore', beats: [{ id: 'explore', body: 1, explore: true }] },
-  { id: 'wrap', short: true, beats: [{ id: 'takeaways', body: 1, takeaways: ['add', 'build', 'weather'] }] },
+  { id: 'wrap', short: true, beats: [{ id: 'takeaways', body: 2, takeaways: ['add', 'weather'] }] },
 ];
 
 const range = count => Array.from({ length: count }, (_, i) => i + 1);
@@ -96,9 +91,7 @@ export function chaptersFor(t = runtimeT, life = null) {
       if (beat.sort) record.sort = beat.sort.map(card => ({ ...card, label: t(`lesson.sort.${card.id}`) }));
       if (beat.closer) {
         record.closer = { heading: t(`${key}.closer.heading`), body: range(beat.closer).map(n => t(`${key}.closer.body${n}`)) };
-        if (beat.closerPicture) record.closer.alt = t(`${key}.closer.alt`);
       }
-      if (beat.scrub) record.scrub = true;
       if (beat.explore) record.explore = true;
       if (beat.takeaways) {
         record.takeaways = beat.takeaways.map(icon => ({
@@ -121,7 +114,9 @@ export const LEARNED = learnedFor();
 
 /** Fragments of beats that were merged or removed, so old links land on the beat that holds their words or comes next. */
 export const FRAGMENT_ALIASES = {
-  'skills-slow': 'skills-fork', 'skills-transfer': 'skills-builds', 'play-game': 'explore-explore',
+  // Maya's chapter moved to Lesson 2 (Practice): its old steps land on Explore, the step after them.
+  'skills-slow': 'explore-explore', 'skills-transfer': 'explore-explore', 'skills-fork': 'explore-explore',
+  'skills-builds': 'explore-explore', 'skills-never-late': 'explore-explore', 'play-game': 'explore-explore',
   // The opening's one life replaced the field, the traveller and the closed ways (design 001 v13).
   'paths-many': 'paths-life', 'paths-travel': 'paths-life', 'paths-outside': 'paths-adds',
 };
@@ -164,8 +159,7 @@ function readingBeat(beat, { t, learned }) {
     parts.push(`<div class="reading-sort"><p><strong>${escapeHTML(t('reading.theirChoices'))}</strong> ${mine.join(' · ')}</p><p><strong>${escapeHTML(t('reading.outsideControl'))}</strong> ${not.join(' · ')}</p></div>`);
   }
   if (beat.closer) {
-    const picture = beat.closer.alt ? `<p class="reading-visual"><span>${escapeHTML(t('reading.picture'))}</span> ${escapeHTML(beat.closer.alt)}</p>` : '';
-    parts.push(`<aside class="reading-closer"><h4>${escapeHTML(beat.closer.heading)}</h4>${beat.closer.body.map(p => `<p>${escapeHTML(p)}</p>`).join('')}${picture}</aside>`);
+    parts.push(`<aside class="reading-closer"><h4>${escapeHTML(beat.closer.heading)}</h4>${beat.closer.body.map(p => `<p>${escapeHTML(p)}</p>`).join('')}</aside>`);
   }
   if (beat.explore) {
     parts.push(`<p>${escapeHTML(t('reading.exploreIntro'))}</p><ul class="reading-examples">`);

@@ -104,7 +104,6 @@ export function daysWithLabels(t = runtimeT) {
 
 export const MAX_ENERGY = 3;
 export const GAME_SCALE = 1.5;
-export const MAYA_SCALE = 0.5;
 const ALL_SKILLS = Object.values(SKILL_GROUPS).flatMap(group => group.skills.map(skill => skill.id));
 const round = value => Math.round(value * 1000) / 1000;
 
@@ -207,39 +206,4 @@ export function summarize(state, t = runtimeT) {
   if (counts.rest) lines.push(t('game.summary.rest', { count: counts.rest }));
   if (counts.tired) lines.push(t('game.summary.tired', { count: counts.tired }));
   return { counts, lines };
-}
-
-/** Maya’s two paths: a season is twelve weeks; each week she practises or doesn’t. */
-export const MAYA_PATTERNS = {
-  a: [1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0],
-  b: [0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0],
-};
-
-export function mayaSeasons({ seasons = 3, pattern, activities = ['soccerPractice', 'kickBall', 'soccerPractice'] }) {
-  let state = createSkillState();
-  const snapshots = [{ levels: { ...state.levels }, weeks: [] }];
-  for (let season = 0; season < seasons; season += 1) {
-    const weeks = [];
-    pattern.forEach((practised, week) => {
-      weeks.push(practised);
-      if (!practised) return;
-      state = { ...state, energy: MAX_ENERGY };
-      state = applyActivity(state, activities[week % activities.length], { scale: MAYA_SCALE }).state;
-    });
-    snapshots.push({ levels: { ...state.levels }, weeks });
-  }
-  return snapshots;
-}
-
-/** A season of practice on skills without a modelled foundation chain (e.g. a new sport). */
-export function practiseSeason(levels, pattern = MAYA_PATTERNS.a, base = 0.05) {
-  const next = { ...levels };
-  for (const practised of pattern) {
-    if (!practised) continue;
-    for (const id of Object.keys(next)) {
-      const room = 1 - next[id];
-      next[id] = round(next[id] + Math.min(room, base * boostFor(next[id]) * (0.35 + 0.65 * room)));
-    }
-  }
-  return next;
 }

@@ -7,7 +7,7 @@ import { beatList } from '../choices/journey-story.js';
 import { escapeHTML } from '../choices/journey-shell.js';
 import { DAYS, ACTIVITIES, activityGroup } from './practice-afternoons-data.js';
 
-/** The lesson's address (a working name, unlinked until it is approved) and its text version. */
+/** The lesson's address (a working name) and its text version. */
 export const PRACTICE_PATH = '/practice/small-choices/';
 export const PRACTICE_READ_PATH = `${PRACTICE_PATH}read/`;
 

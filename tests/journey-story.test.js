@@ -6,8 +6,8 @@ import { loadStore } from '../src/lessons/choices/lives/engine.js';
 import { writtenLife } from '../src/lessons/choices/lives/engine.js';
 import { t as runtimeT } from '../src/i18n/runtime.js';
 
-test('the journey keeps the approved order: big picture, hike, compounding, explore, takeaways', () => {
-  assert.deepEqual(CHAPTERS.map(chapter => chapter.id), ['paths', 'hike', 'skills', 'explore', 'wrap']);
+test('the journey keeps the approved order: big picture, hike, explore, takeaways', () => {
+  assert.deepEqual(CHAPTERS.map(chapter => chapter.id), ['paths', 'hike', 'explore', 'wrap']);
 });
 
 // "Many paths" tells one life from the lives store: Sam's, as the static reading does.
@@ -23,13 +23,11 @@ test('every beat has a stable unique fragment, a heading, text and a picture des
   }
 });
 
-test('Maya takes three beats; basketball is an optional closer with its own picture', () => {
-  const skills = CHAPTERS.find(chapter => chapter.id === 'skills');
-  assert.deepEqual(skills.beats.map(beat => beat.id), ['fork', 'builds', 'never-late']);
-  const builds = skills.beats[1];
-  assert.ok(builds.scrub, 'learning builds keeps its scrub');
-  assert.equal(builds.closer.body.length, 2);
-  assert.ok(builds.closer.alt, 'the closer describes its picture');
+test('Maya lives in Lesson 2: no Skills chapter, two takeaways, and her old links land on Explore', () => {
+  assert.ok(!CHAPTERS.some(chapter => chapter.id === 'skills'));
+  assert.deepEqual(CHAPTERS.at(-1).beats[0].takeaways.map(item => item.icon), ['add', 'weather']);
+  for (const old of ['skills-fork', 'skills-builds', 'skills-never-late', 'skills-slow', 'skills-transfer']) assert.equal(FRAGMENT_ALIASES[old], 'explore-explore');
+  assert.doesNotMatch(renderJourneyReading(), /Maya/);
 });
 
 test('old fragments of merged beats land on the beat that holds their words', () => {
@@ -56,12 +54,11 @@ test('the control sort includes both kinds of card and learned items exist', () 
 test('copy avoids guarantees, invented numbers and scores', () => {
   const text = JSON.stringify(CHAPTERS);
   assert.doesNotMatch(text, /\d+ ?%|guarantees? (?:success|you)|will always|always leads/i);
-  assert.match(text, /doesn’t guarantee/);
 });
 
 test('the static reading renders every heading and escapes content', () => {
-  const html = renderJourneyReading({ t: (key, values) => (key === 'lesson.beat.fork.heading' ? 'A <b> test' : runtimeT(key, values)) });
-  for (const { beat } of beatList()) if (beat.id !== 'fork') assert.ok(html.includes(beat.heading.replaceAll('&', '&amp;')), beat.heading);
+  const html = renderJourneyReading({ t: (key, values) => (key === 'lesson.beat.plan.heading' ? 'A <b> test' : runtimeT(key, values)) });
+  for (const { beat } of beatList()) if (beat.id !== 'plan') assert.ok(html.includes(beat.heading.replaceAll('&', '&amp;')), beat.heading);
   assert.match(html, /A &lt;b&gt; test/);
   assert.match(html, /what they chose/);
 });

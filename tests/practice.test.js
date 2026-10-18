@@ -30,6 +30,12 @@ test('the English story stays within its 422 words', () => {
   assert.ok(total <= 422, `${total} words`);
 });
 
+test('Lesson 2 promises no result: practice helps, it doesn’t guarantee', () => {
+  const text = JSON.stringify(chaptersFor(en));
+  assert.match(text, /doesn’t guarantee/);
+  assert.doesNotMatch(text, /\d+ ?%|guarantees? (?:success|you)|will always|always leads/i);
+});
+
 test('every step has words and a picture description in every language', () => {
   for (const locale of LOCALES) {
     const t = getTranslator(locale);
@@ -128,18 +134,26 @@ test('the text version has every step and the activity as a still', () => {
   }
 });
 
-test('the journey and its text version are built, unlinked and noindex', () => {
+test('Lesson 2 is linked like Lesson 1: the roadmap, the menu, its overview page and the end of Lesson 1', async () => {
   assert.equal(PRACTICE_READ_PATH, `${PRACTICE_PATH}read/`);
+  const { lessonsFor } = await import('../src/data/site.js');
+  const lessons = lessonsFor(en);
+  assert.deepEqual(lessons.map(lesson => lesson.id), ['choices', 'practice', 'deciding', 'habits', 'happiness', 'relationships', 'learning']);
+  assert.deepEqual(lessons.filter(lesson => lesson.href).map(lesson => lesson.href), ['/choices/', '/practice/']);
+  assert.equal(lessons[1].title, en('practice.ui.title'));
   const dist = new URL('../dist/', import.meta.url);
-  if (!existsSync(new URL('index.html', dist))) return; // checked after `npm run build`
-  for (const prefix of ['', 'es/', 'de/', 'fr/']) {
-    for (const page of [PRACTICE_PATH, PRACTICE_READ_PATH]) {
-      const html = readFileSync(new URL(`${prefix}${page.slice(1)}index.html`, dist), 'utf8');
-      assert.match(html, /<meta name="robots" content="noindex/, `${prefix}${page}`);
+  if (!existsSync(new URL('index.html', dist))) return; // the built pages are checked after `npm run build`
+  const page = path => readFileSync(new URL(`${path.slice(1)}index.html`, dist), 'utf8');
+  for (const prefix of ['/', '/es/', '/de/', '/fr/']) {
+    const local = path => `${prefix}${path.slice(1)}`;
+    for (const path of [PRACTICE_PATH, PRACTICE_READ_PATH, '/practice/']) {
+      assert.doesNotMatch(page(local(path)), /<meta name="robots" content="noindex/, local(path));
     }
-    const home = readFileSync(new URL(`${prefix}index.html`, dist), 'utf8');
-    assert.ok(!home.includes(PRACTICE_PATH), `${prefix} home links to Lesson 2`);
-    const lesson1 = readFileSync(new URL(`${prefix}choices/the-paths-we-make/index.html`, dist), 'utf8');
-    assert.ok(!lesson1.includes(PRACTICE_PATH), `${prefix} Lesson 1 links to Lesson 2`);
+    const home = page(prefix);
+    assert.ok(home.includes(`href="${local('/practice/')}"`), `${prefix}: the roadmap links to Lesson 2`);
+    assert.ok(home.includes(`href="${local(PRACTICE_PATH)}"`), `${prefix}: the menu links to Lesson 2`);
+    const overview = page(local('/practice/'));
+    assert.ok(overview.includes(`href="${local(PRACTICE_PATH)}"`) && overview.includes(`href="${local(PRACTICE_READ_PATH)}"`), `${prefix}: the overview links to the lesson`);
+    assert.ok(page(local('/choices/the-paths-we-make/')).includes(`data-next-lesson="${local(PRACTICE_PATH)}"`), `${prefix}: Lesson 1 ends with a link to Lesson 2`);
   }
 });

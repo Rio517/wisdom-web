@@ -2,6 +2,7 @@
 // The shared site index: a sidebar on wide screens, a drawer on tablets and
 // inside the full-screen lesson. Only written lessons get links.
 import { SITE, LESSON_PATH, UI, href, lessonsFor } from '../data/site.js';
+import { PRACTICE_PATH, PRACTICE_READ_PATH } from '../lessons/practice/practice-story.js';
 import { getTranslator } from '../i18n/index.js';
 import LanguageSwitch from './LanguageSwitch.astro';
 import DraftNote from './DraftNote.astro';
@@ -10,13 +11,19 @@ interface Props { current?: string; mode?: 'sidebar' | 'drawer'; id?: string; lo
 const { current = '', mode = 'sidebar', id = 'site-nav', locale } = Astro.props;
 const t = getTranslator(locale);
 const soon = lessonsFor(t).filter(lesson => lesson.status !== 'available');
-const pages = [
-  { key: 'choices', label: t('nav.aboutLesson'), path: '/choices/' },
-  { key: 'lesson', label: t('nav.lesson'), path: LESSON_PATH },
-  { key: 'read', label: t('nav.read'), path: `${LESSON_PATH}read/` },
-  { key: 'notes', label: t('nav.notes'), path: '/choices/notes/' },
+const written = [
+  { number: '01', title: t('nav.choices'), open: ['choices', 'lesson', 'read', 'notes', 'home'], pages: [
+    { key: 'choices', label: t('nav.aboutLesson'), path: '/choices/' },
+    { key: 'lesson', label: t('nav.lesson'), path: LESSON_PATH },
+    { key: 'read', label: t('nav.read'), path: `${LESSON_PATH}read/` },
+    { key: 'notes', label: t('nav.notes'), path: '/choices/notes/' },
+  ] },
+  { number: '02', title: t('practice.ui.title'), open: ['practice', 'practice-lesson', 'practice-read'], pages: [
+    { key: 'practice', label: t('nav.aboutLesson'), path: '/practice/' },
+    { key: 'practice-lesson', label: t('nav.journey'), path: PRACTICE_PATH },
+    { key: 'practice-read', label: t('nav.read'), path: PRACTICE_READ_PATH },
+  ] },
 ];
-const choicesOpen = ['choices', 'lesson', 'read', 'notes', 'home'].includes(current);
 ---
 <nav class="site-nav" id={id} data-mode={mode} data-open="false" aria-label={t('nav.label')}
   data-label-close={t('nav.close')} data-label-hide={t('nav.hide')}>
@@ -33,16 +40,18 @@ const choicesOpen = ['choices', 'lesson', 'read', 'notes', 'home'].includes(curr
   <div>
     <p class="nav-section-label" id={`${id}-lessons`}>{t('nav.lessons')}</p>
     <ul class="nav-lessons" aria-labelledby={`${id}-lessons`}>
-      <li class="nav-lesson">
-        <details open={choicesOpen}>
-          <summary><span class="lesson-num">01</span><span class="nav-lesson-title">{t('nav.choices')}</span><span class="chevron" set:html={UI.chevron} /></summary>
-          <ul class="nav-pages">
-            {pages.map(page => (
-              <li><a href={href(locale, page.path)} aria-current={current === page.key ? 'page' : undefined}>{page.label}</a></li>
-            ))}
-          </ul>
-        </details>
-      </li>
+      {written.map(lesson => (
+        <li class="nav-lesson">
+          <details open={lesson.open.includes(current)}>
+            <summary><span class="lesson-num">{lesson.number}</span><span class="nav-lesson-title">{lesson.title}</span><span class="chevron" set:html={UI.chevron} /></summary>
+            <ul class="nav-pages">
+              {lesson.pages.map(page => (
+                <li><a href={href(locale, page.path)} aria-current={current === page.key ? 'page' : undefined}>{page.label}</a></li>
+              ))}
+            </ul>
+          </details>
+        </li>
+      ))}
       {soon.map(lesson => (
         <li class="nav-lesson nav-lesson-soon" data-status={lesson.status}>
           <button class="nav-soon soon-trigger" type="button" aria-describedby={`${id}-tip-${lesson.id}`}>

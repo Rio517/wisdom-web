@@ -199,6 +199,8 @@ h1, h2, h3, h4 { font-family: var(--font-field); font-weight: 500; }
 .takeaways strong { @apply block text-[17px]; font-family: var(--font-field); }
 .takeaways span { @apply block text-[15px] leading-snug; color: var(--color-quiet); }
 .end-actions { @apply mt-2 flex flex-wrap gap-2; }
+.end-actions .next-lesson { @apply inline-flex items-center no-underline; min-height: 40px; }
+.end-actions .next-lesson:focus-visible { outline: 3px solid var(--color-forest); outline-offset: 2px; }
 /* Beside the map the three takeaways sit in a band across the foot of the page, under the map and the
    column, so the map keeps its height and the column its words. They stay in the column's reading
    order; journey.js sets --band to the band's height, which the page gives up for it. */
@@ -213,6 +215,10 @@ h1, h2, h3, h4 { font-family: var(--font-field); font-weight: 500; }
     border-top: 1px solid var(--color-rule);
   }
   .journey[data-beat="takeaways"] .takeaways strong { margin-bottom: 3px; line-height: 1.25; }
+  /* Two takeaways share the band in halves, with a rule between them. */
+  .journey[data-beat="takeaways"] .takeaways:not(:has(> li:nth-child(3))) { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0; }
+  .journey[data-beat="takeaways"] .takeaways:not(:has(> li:nth-child(3))) > li + li { border-left: 1px solid var(--color-rule); padding-left: 22px; margin-left: 22px; }
+  .journey[data-beat="takeaways"] .takeaways:not(:has(> li:nth-child(3))) span { max-width: 62ch; }
 }
 .pill-button { @apply min-h-10 rounded-full border px-3.5 text-[15px]; border-color: var(--color-forest); background: white; color: var(--color-forest); }
 .pill-button:hover { background: #28544210; }
@@ -429,36 +435,7 @@ h1, h2, h3, h4 { font-family: var(--font-field); font-weight: 500; }
   background: var(--color-paper);
 }
 
-/* ——— Skills (Maya) ——— */
-.scene-skills { @apply grid; grid-template-rows: auto minmax(0, 1fr); padding: 18px 24px 10px; }
-.scene-skills { --fork-w: 78px; }
-/* The bar uses the lanes' own columns: "Time" over the fork, the steps from the lane edge. */
-.season-bar { @apply mb-3 grid items-center; grid-template-columns: var(--fork-w) minmax(0, 1fr); min-height: 52px; }
-.season-bar label { @apply text-[15px] font-semibold; color: var(--color-quiet); }
-.season-track { @apply flex min-w-0 flex-wrap items-center gap-x-4 gap-y-1; }
-.season-steps { @apply relative grid min-w-0; flex: 1 1 100%; grid-auto-flow: column; grid-auto-columns: 1fr; max-width: 620px; --dot-y: 12px; }
-.season-steps::before { content: ""; position: absolute; left: 10%; right: 10%; top: calc(var(--dot-y) - 1.5px); height: 3px; background: var(--color-mist); border-radius: 3px; }
-.season-steps .season-fill { position: absolute; left: 10%; top: calc(var(--dot-y) - 1.5px); height: 3px; background: var(--color-forest); border-radius: 3px; transition: width 600ms cubic-bezier(.3,.7,.2,1); }
-.season-step { @apply relative z-10 flex min-h-11 flex-col items-center justify-start rounded-full border-0 bg-transparent px-1 text-[15px] leading-tight; padding-top: calc(var(--dot-y) - 8px); color: var(--color-quiet); }
-.season-step i { @apply mb-1 block flex-none rounded-full; width: 16px; height: 16px; background: var(--color-paper-deep); border: 2.5px solid var(--color-mist); transition: all 250ms; }
-.season-step[aria-pressed="true"] i, .season-step[data-done="true"] i { background: var(--color-forest); border-color: var(--color-forest); }
-.season-step[aria-pressed="true"] { color: var(--color-forest); font-weight: 600; }
-.season-step[aria-pressed="true"] i { transform: scale(1.25); }
-.season-step:not(:disabled):hover { color: var(--color-forest); }
-.season-step:disabled { cursor: default; }
-.scrub-hint { display: none; }
-.scene-skills[data-scrub="true"] .scrub-hint { display: inline-block; max-width: 100%; @apply rounded-full px-3 py-1 text-[15px] font-semibold; background: var(--color-sun-soft); color: #7a5412; }
-.lanes-wrap { @apply relative grid min-h-0; grid-template-columns: var(--fork-w) minmax(0, 1fr); }
-.fork { position: absolute; left: 0; top: 0; width: var(--fork-w); height: 100%; overflow: visible; }
-.fork path { fill: none; stroke-width: 4; stroke-linecap: round; transition: stroke-dashoffset 900ms cubic-bezier(.3,.7,.2,1); stroke-dasharray: 300; stroke-dashoffset: 0; }
-.fork-a { stroke: var(--color-forest); }
-.fork-b { stroke: var(--color-lake); }
-.lanes-wrap:has(.lanes[data-split="false"]) .fork path { stroke-dashoffset: 300; }
-/* One start point: the dot sits on the curves' shared origin, exactly half-way down the lanes. */
-.fork-start { position: absolute; left: 0; top: 50%; width: var(--fork-w); height: 0; @apply text-[15px] font-semibold; color: var(--color-quiet); }
-.fork-start span:last-child { @apply absolute whitespace-nowrap rounded-full px-1.5 py-0.5; top: 14px; left: 0; background: var(--color-paper-deep); }
-.fork-dot { position: absolute; width: 14px; height: 14px; border-radius: 99px; background: var(--color-forest); top: -7px; left: calc(var(--fork-w) * .09 - 7px); }
-.lanes { @apply relative col-start-2 grid min-h-0 gap-3; grid-template-rows: 1fr 1fr; }
+/* ——— Skill boxes, lanes and calendars (Lesson 2 uses them) ——— */
 .lane {
   @apply relative grid min-h-0 items-center gap-5 rounded-[20px] px-5 py-3;
   grid-template-columns: 92px minmax(0, 1fr) minmax(240px, 290px);
@@ -467,8 +444,6 @@ h1, h2, h3, h4 { font-family: var(--font-field); font-weight: 500; }
 }
 .lane-a { box-shadow: inset 4px 0 0 var(--color-forest); }
 .lane-b { box-shadow: inset 4px 0 0 var(--color-lake); }
-.lanes[data-split="false"] .lane-b { opacity: 0; transform: translateY(-50%) scale(.98); }
-.lanes[data-split="false"] .lane-a { transform: translateY(calc(50% + 6px)); }
 .lane-who { @apply grid justify-items-center text-center; }
 .lane-who svg { width: 77px; height: 82px; }
 .lane-who strong { @apply mt-1 block text-[17px]; font-family: var(--font-field); }
@@ -587,7 +562,6 @@ dialog::backdrop { background: #23302d66; }
   .skill-row .skill-name { font-size: 15px; font-weight: 600; }
   .skill-word { white-space: normal; }
   .lane-box { min-width: 0; }
-  .scene-skills { --fork-w: 64px; }
 }
 /* The same calendar on a wider screen whose badges are too long for the row, and on a tablet where even
    that squeezes the weeks, the badge beside its label (fitCalendars in journey-skills.js).
@@ -615,8 +589,6 @@ dialog::backdrop { background: #23302d66; }
 }
 /* Short landscape screens (Safari on iPad shows ~690px): tighter lanes so the skill box never spills out of its lane. */
 @media (min-width: 990px) and (max-height: 800px) {
-  .scene-skills { padding: 12px 20px 8px; }
-  .season-bar { margin-bottom: 8px; min-height: 46px; }
   .lane { padding-block: 6px; }
   .lane-who svg { height: 44px; width: 41px; }
   .calendar-title { margin-bottom: 4px; }
@@ -624,7 +596,6 @@ dialog::backdrop { background: #23302d66; }
   .skill-box { padding: 6px 12px; }
   .skill-box header { margin-bottom: 0; }
   .skill-box h3 { font-size: 15px; line-height: 20px; }
-  .lanes { gap: 8px; }
   .skill-row { padding: 0; }
   .skill-meta { margin-top: 0; line-height: 1.1; }
   .lane { padding-block: 4px; }
@@ -646,8 +617,9 @@ dialog::backdrop { background: #23302d66; }
   .journey { height: auto; grid-template-columns: 1fr; }
   .stage { margin: 0 16px; height: 56vh; min-height: 470px; }
   .journey[data-cover] .stage { margin: 0 16px 16px; height: calc(100dvh - 128px); min-height: 520px; }
+  /* Lesson 1's ending: a shorter map leaves room for the words and the link to Lesson 2. */
+  .journey:not(.practice)[data-beat="takeaways"] .stage { height: calc(56vh - 200px); min-height: 400px; }
   .journey[data-cover="true"] .cover-stage { width: calc(100% - 48px); }
-  .stage:has(> .scene-skills:not([hidden])) { height: max(56vh, 720px); } /* two lanes of skill boxes need the room (the Spanish basketball box is the tallest) */
   .narration { padding: 8px 24px 28px; }
   .narration-body { overflow: visible; }
   /* Back and Next stay on screen: the controls hold to the foot of the window while the words

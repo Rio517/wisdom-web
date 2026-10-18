@@ -4,7 +4,6 @@ import { ICONS } from './journey-icons.js';
 import { createToken, prefersReducedMotion, wait } from './journey-motion.js';
 import { createPathsScene } from './journey-map.js';
 import { createHikeScene } from './journey-hike.js';
-import { createSkillsScene } from './journey-skills.js';
 import { createExploreScene } from './journey-explore.js';
 import { createSortBoard } from './journey-sort.js';
 import { createLifeStory } from './journey-life.js';
@@ -24,7 +23,6 @@ const beatForHash = hash => {
 const roots = {
   paths: $('#scene-paths'),
   hike: $('#scene-hike'),
-  skills: $('#scene-skills'),
   explore: $('#scene-explore'),
 };
 // "Many paths" tells one life (journey-life.js): a changed life tells the narration as it grows.
@@ -36,7 +34,6 @@ const scenes = {
     onPick: info => hooks.onPick(info), onStep: (node, position) => hooks.onStep(node, position), onDone: run => hooks.onDone(run), onLeave: () => hooks.onLeave(),
   } }),
   hike: createHikeScene(roots.hike),
-  skills: createSkillsScene(roots.skills),
   explore: createExploreScene(roots.explore),
 };
 // The hike's practice cards arrive with its walks: the scene says how many show and which is new.
@@ -185,7 +182,8 @@ function renderNarration(item, { animate }) {
   if (beat.explore) scenes.explore.mountPanel(extra);
   if (beat.takeaways) {
     extra.innerHTML = `<ul class="takeaways">${beat.takeaways.map(entry => `<li>${ICONS[entry.icon]}<div><strong>${escapeHTML(entry.heading)}</strong><span>${escapeHTML(entry.text)}</span></div></li>`).join('')}</ul>
-      <div class="end-actions"><button class="pill-button" type="button" data-end="restart">${escapeHTML(t('lesson.ui.restart'))}</button>
+      <div class="end-actions"><a class="solid-pill next-lesson" href="${escapeHTML(journeyRoot.dataset.nextLesson ?? '')}">${escapeHTML(t('lesson.ui.nextLesson', { title: t('practice.ui.title') }))}</a>
+      <button class="pill-button" type="button" data-end="restart">${escapeHTML(t('lesson.ui.restart'))}</button>
       <button class="pill-button" type="button" data-end="explore">${escapeHTML(t('lesson.ui.explore'))}</button></div>`;
   }
   sizeBand();
@@ -314,7 +312,7 @@ async function go(target, { animate = true, focus = 'none', history = 'replace',
   const scene = scenes[rootId];
   if (toHike) { await arriveAtHike(item, run, focus); return; }
   if (visibleRoot !== roots[rootId]) {
-    if (rootId === 'paths' || rootId === 'hike' || rootId === 'skills') {
+    if (rootId === 'paths' || rootId === 'hike') {
       // Prepare the final state before it fades in.
       roots[rootId].hidden = false;
       scene.show(item.beat.id, { animate: false, token: run });
@@ -322,7 +320,6 @@ async function go(target, { animate = true, focus = 'none', history = 'replace',
     }
     await switchRoot(rootId);
     if (run.cancelled) return;
-    if (rootId === 'skills' && item.beat.id === 'fork' && animate) scene.show('fork', { animate: true, token: run });
     if (rootId === 'explore') scene.show();
   } else if (leavingCover) {
     // Full width while the paths grow; then the narration slides in over the map's right part (the
@@ -416,15 +413,8 @@ document.addEventListener('keydown', event => {
 });
 
 // An opened closer scrolls fully into view in the narration (a closed one stays pinned at its foot).
-// A closer with its own picture changes the stage while it is open.
 $('#beat-extra').addEventListener('toggle', event => {
-  const item = beats[index];
-  if (!event.target.matches('details.closer')) return;
-  if (event.target.open) revealInNarration(event.target);
-  if (!item.beat.closer?.alt) return;
-  const { open } = event.target;
-  scenes[rootFor(item.chapter.id)].closer?.(open, { animate: true });
-  $('#stage-description').textContent = open ? item.beat.closer.alt : item.beat.alt;
+  if (event.target.matches('details.closer') && event.target.open) revealInNarration(event.target);
 }, true);
 
 function revealInNarration(element) {

@@ -12,11 +12,13 @@ Every lesson starts with research rather than opinion. Findings, their sources a
 
 ## What's here now
 
-[Lesson 1, Choices — The paths we make](../choices/the-paths-we-make/), explains how choices add up over time, how learning can build on learning, and how much is shaped by circumstances, support and chance that nobody gets to choose. Its [notes for grown-ups](../choices/notes/) cover how to use it with a child and what the evidence behind it does and doesn't say.
+[Lesson 1, Choices — The paths we make](../choices/the-paths-we-make/), explains how choices add up over time, and how much is shaped by circumstances, support and chance that nobody gets to choose. Its [notes for grown-ups](../choices/notes/) cover how to use it with a child and what the evidence behind it does and doesn't say.
+
+[Lesson 2, Practice](../practice/), follows Maya and her soccer ball for three years. It shows how small choices, made again and again, add up, and how one skill gives the next a place to start.
 
 ## What's planned
 
-More lessons are planned, in this order: habits and daily practice; how we make choices; what makes a happy life; relationships; and how to learn. None of these exist yet. This page will be updated as each one is ready to read.
+More lessons are planned, in this order: the elephant and the rider; habits and daily practice; what makes a happy life; relationships; and how to learn. None of these exist yet. This page will be updated as each one is ready to read.
 
 ## Find out more
 

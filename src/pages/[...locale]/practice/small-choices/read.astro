@@ -1,6 +1,5 @@
 ---
 // Lesson 2 · Practice as text: every step, the activity as a still, and the pictures in words.
-// Unlinked and noindex, like the journey, until the build is approved.
 import SiteLayout from '../../../../layouts/SiteLayout.astro';
 import { renderPracticeReading, PRACTICE_PATH } from '../../../../lessons/practice/practice-story.js';
 import { UI, href } from '../../../../data/site.js';
@@ -12,7 +11,7 @@ const { locale } = Astro.props;
 const t = getTranslator(locale);
 const reading = renderPracticeReading({ t });
 ---
-<SiteLayout title={t('practice.read.title')} description={t('practice.read.description')} locale={locale} noindex>
+<SiteLayout title={t('practice.read.title')} description={t('practice.read.description')} current="practice-read" locale={locale}>
   <article class="page page-narrow">
     <header class="page-header">
       <p class="kicker">{t('practice.read.kicker')}</p>

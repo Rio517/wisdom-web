@@ -1,7 +1,6 @@
 ---
 // Lesson 2 · Practice: the guided journey (design 003 v04). Its address is a working name, held in
-// one place (PRACTICE_PATH in practice-story.js; the folder follows it). Unlinked and noindex until
-// the build is approved: nothing on the site points here yet.
+// one place (PRACTICE_PATH in practice-story.js; the folder follows it).
 import '../../../../lessons/choices/journey.css';
 import '../../../../lessons/choices/journey-play.css';
 import '../../../../lessons/practice/practice.css';
@@ -17,9 +16,9 @@ const { locale } = Astro.props;
 const t = getTranslator(locale);
 const reading = renderPracticeReading({ t });
 ---
-<BaseLayout title={t('practice.ui.title')} description={t('practice.ui.description')} locale={locale} clientMessages noindex>
+<BaseLayout title={t('practice.ui.title')} description={t('practice.ui.description')} locale={locale} clientMessages>
   <a class="skip-link" href="#narration">{t('lesson.ui.skipToStory')}</a>
-  <SiteNav mode="drawer" locale={locale} />
+  <SiteNav current="practice-lesson" mode="drawer" locale={locale} />
   <header class="journey-header">
     <div class="journey-home">
       <button class="journey-menu" type="button" data-nav-open aria-label={t('lesson.ui.openIndex')}><Fragment set:html={UI.menu} /></button>
