@@ -1,5 +1,10 @@
-// Drag-or-tap sorting activity: "What was in their control?"
-// Self-contained component. No dependencies besides the shared icon set.
+// Drag-or-tap sorting board: a pile of cards in the middle and one side on each hand.
+// Lesson 1 (the defaults) asks "What was in their control?": right-or-wrong lines, one retry,
+// then the card is moved for you, and Skip shows the answers. A lesson passes its own two
+// `sides`, its cards (each with `side`, or Lesson 1's `mine`) and `judge: false` for a quiet
+// sort: every card lands, one on the wrong side slides gently across to its own, `lineFor`
+// gives its line (handed to onChange, for the story column), and at the end each side shows
+// its `strong` words with `again` in the middle. Self-contained apart from the shared icon set.
 import { t } from '../../i18n/runtime.js';
 import { ICONS } from './journey-icons.js';
 
@@ -25,8 +30,19 @@ function verdictText(card, correct, forced) {
   return card.mine ? t('sort.verdict.wrongMine') : t('sort.verdict.wrongNot');
 }
 
-export function createSortBoard(container, { cards, results = {}, doneText, onChange = () => {} }) {
+/** Lesson 1's two sides: their choice on the left, outside their control on the right. */
+const controlSides = () => [
+  { value: true, cls: 'sort-bin-mine', attrs: 'data-mine="true"', title: t('sort.binMine'), icon: ICONS.backpack, place: t('sort.placeMine'), announce: card => t('sort.announceMine', { card: card.label }) },
+  { value: false, cls: 'sort-bin-not', attrs: 'data-mine="false"', title: t('sort.binNot'), icon: ICONS.weather, place: t('sort.placeNot'), announce: card => t('sort.announceNot', { card: card.label }) },
+];
+
+// A wrong-side card rests where it landed for a moment, then slides across to its own side.
+const SLIDE = 900;
+
+export function createSortBoard(container, { cards, results = {}, doneText, onChange = () => {}, sides = controlSides(), judge = true, lineFor = () => '', again = '', onAgain = () => {} }) {
   const cardsById = new Map(cards.map(card => [card.id, card]));
+  const sideOf = card => ('side' in card ? card.side : card.mine);
+  const sideFor = value => sides.find(side => side.value === value);
   const resultsState = { ...results };
   const attempts = new Map();
   const forcedSet = new Set();
@@ -37,43 +53,49 @@ export function createSortBoard(container, { cards, results = {}, doneText, onCh
   let skipTimer = null;
   let destroyed = false;
 
-  container.innerHTML = `
-    <section class="sort-bin sort-bin-mine" data-mine="true" aria-label="${esc(t('sort.binMine'))}">
-      <h2 class="sort-bin-title">${ICONS.backpack}<span>${esc(t('sort.binMine'))}</span></h2>
+  const binHTML = side => `
+    <section class="sort-bin ${side.cls}" ${side.attrs ?? ''} aria-label="${esc(side.title)}">
+      <h2 class="sort-bin-title">${side.icon}<span>${esc(side.title)}</span></h2>${judge ? '' : `
+      <p class="sort-bin-strong" hidden>${esc(side.strong ?? '')}</p>`}
       <ul class="sort-bin-list"></ul>
-      <button type="button" class="sort-bin-target sr-only">${esc(t('sort.placeMine'))}</button>
-    </section>
+      <button type="button" class="sort-bin-target sr-only">${esc(side.place)}</button>
+    </section>`;
+  const completeHTML = judge
+    ? `<div class="sort-complete" hidden>
+        <h3 class="sort-complete-heading" tabindex="-1">${esc(t('sort.allSorted'))}</h3>
+        <p class="sort-complete-text"></p>
+      </div>`
+    : `<div class="sort-complete sort-complete-quiet" hidden>
+        <button type="button" class="pill-button sort-again">${esc(again)}</button>
+      </div>`;
+  container.innerHTML = `${binHTML(sides[0])}
     <div class="sort-centre">
       <div class="sort-intro">
         <p class="sort-instruction">${esc(t('sort.instruction'))}</p>
         <p class="sort-hint">${esc(t('sort.hint'))}<span class="sr-only"> ${esc(t('sort.keyboardHint'))}</span></p>
       </div>
       <div class="sort-pile" role="group" aria-label="${esc(t('sort.pileLabel'))}"></div>
-      <p class="sort-verdict" aria-live="polite"></p>
-      <button type="button" class="sort-skip">${esc(t('sort.skip'))}</button>
-      <div class="sort-complete" hidden>
-        <h3 class="sort-complete-heading" tabindex="-1">${esc(t('sort.allSorted'))}</h3>
-        <p class="sort-complete-text"></p>
-      </div>
-    </div>
-    <section class="sort-bin sort-bin-not" data-mine="false" aria-label="${esc(t('sort.binNot'))}">
-      <h2 class="sort-bin-title">${ICONS.weather}<span>${esc(t('sort.binNot'))}</span></h2>
-      <ul class="sort-bin-list"></ul>
-      <button type="button" class="sort-bin-target sr-only">${esc(t('sort.placeNot'))}</button>
-    </section>
+      <p class="sort-verdict" aria-live="polite"${judge ? '' : ' hidden'}></p>
+      ${judge ? `<button type="button" class="sort-skip">${esc(t('sort.skip'))}</button>` : ''}
+      ${completeHTML}
+    </div>${binHTML(sides[1])}
     <p class="sort-announce sr-only" aria-live="polite"></p>`;
   container.setAttribute('data-local-keys', '');
 
-  const binMineEl = container.querySelector('.sort-bin-mine');
-  const binNotEl = container.querySelector('.sort-bin-not');
+  // The first side (Lesson 1's "mine") and the second; "Mine"/"Not" name them by position.
+  const binMineEl = container.querySelector(`.${sides[0].cls}`);
+  const binNotEl = container.querySelector(`.${sides[1].cls}`);
   const binMineList = binMineEl.querySelector('.sort-bin-list');
   const binNotList = binNotEl.querySelector('.sort-bin-list');
+  const binFor = value => (value === sides[0].value ? binMineEl : binNotEl);
+  const listFor = value => (value === sides[0].value ? binMineList : binNotList);
   const pileEl = container.querySelector('.sort-pile');
   const introEl = container.querySelector('.sort-intro');
   const verdictEl = container.querySelector('.sort-verdict');
-  const skipBtn = container.querySelector('.sort-skip');
+  const skipBtn = container.querySelector('.sort-skip') ?? document.createElement('button');
   const completeEl = container.querySelector('.sort-complete');
-  const completeHeadingEl = container.querySelector('.sort-complete-heading');
+  const completeHeadingEl = container.querySelector('.sort-complete-heading') ?? container.querySelector('.sort-again');
+  const strongEls = [...container.querySelectorAll('.sort-bin-strong')];
   const completeTextEl = container.querySelector('.sort-complete-text');
   const announceEl = container.querySelector('.sort-announce');
 
@@ -85,10 +107,11 @@ export function createSortBoard(container, { cards, results = {}, doneText, onCh
     const done = isComplete();
     introEl.hidden = done;
     pileEl.hidden = done;
-    verdictEl.hidden = done;
+    verdictEl.hidden = done || !judge;
     skipBtn.hidden = done;
     completeEl.hidden = !done;
-    if (done) completeTextEl.textContent = doneText;
+    strongEls.forEach(el => { el.hidden = !done; });
+    if (done && completeTextEl) completeTextEl.textContent = doneText;
   }
 
   function triggerShake(el) {
@@ -123,7 +146,29 @@ export function createSortBoard(container, { cards, results = {}, doneText, onCh
     li.addEventListener('transitionend', () => { li.style.transition = ''; }, { once: true });
   }
 
-  function buildBinListItem(card, forced) {
+  /** A card placed on the other side: it shows where it landed, rests, then slides across to its own. */
+  function slideAcross(li, fromRect) {
+    if (reducedMotion() || typeof li.animate !== 'function') return;
+    const toRect = li.getBoundingClientRect();
+    const away = `translate(${fromRect.left - toRect.left}px, ${fromRect.top - toRect.top}px)`;
+    li.classList.add('is-crossing');
+    const slide = li.animate([
+      { transform: away, offset: 0 },
+      { transform: away, offset: 0.3 },
+      { transform: 'none', offset: 1 },
+    ], { duration: SLIDE, easing: 'cubic-bezier(.45,0,.2,1)' });
+    slide.finished.then(() => li.classList.remove('is-crossing'), () => li.classList.remove('is-crossing'));
+  }
+
+  /** Where a card would land at the foot of a side's list. */
+  function landingRect(value) {
+    const list = listFor(value);
+    const last = list.lastElementChild;
+    const box = list.getBoundingClientRect();
+    return { left: box.left, top: last ? last.getBoundingClientRect().bottom + 8 : box.top };
+  }
+
+  function buildBinListItem(card, forced = false) {
     const li = document.createElement('li');
     li.className = 'sort-bin-card';
     li.dataset.id = card.id;
@@ -150,7 +195,7 @@ export function createSortBoard(container, { cards, results = {}, doneText, onCh
   }
 
   function announce(card) {
-    announceEl.textContent = t(card.mine ? 'sort.announceMine' : 'sort.announceNot', { card: card.label });
+    announceEl.textContent = sideFor(sideOf(card)).announce(card);
   }
 
   function focusAfterPlacement() {
@@ -176,38 +221,47 @@ export function createSortBoard(container, { cards, results = {}, doneText, onCh
     container.classList.remove('has-selection');
   }
 
-  function placeSelectedIn(mine) {
+  function placeSelectedIn(value) {
     if (!selectedId) return;
     const card = cardsById.get(selectedId);
     clearSelection();
-    handleAttempt(card, mine, {});
+    handleAttempt(card, value, {});
   }
 
-  function finalize(card, { correct, forced, dragEl }) {
-    resultsState[card.id] = card.mine;
+  function finalize(card, { correct, forced, dragEl, chosen }) {
+    const value = sideOf(card);
+    resultsState[card.id] = value;
     attempts.delete(card.id);
     if (forced) forcedSet.add(card.id);
-    const bin = card.mine ? binMineList : binNotList;
+    const crossing = !judge && !correct;
+    // Where the card was let go of, or where it would have landed on the side it was given.
+    const fromRect = dragEl ? dragEl.getBoundingClientRect() : crossing ? landingRect(chosen) : null;
     const li = buildBinListItem(card, forced);
-    bin.appendChild(li);
-    if (dragEl) {
-      settleIntoBin(li, dragEl.getBoundingClientRect());
+    listFor(value).appendChild(li);
+    if (crossing) {
+      slideAcross(li, fromRect);
+      dragEl?.remove();
+      pileEl.querySelector(`[data-id="${card.id}"]`)?.remove();
+    } else if (dragEl) {
+      settleIntoBin(li, fromRect);
       dragEl.remove();
     } else {
-      if (!reducedMotion()) li.classList.add(card.mine ? 'sort-fly-right' : 'sort-fly-left');
+      if (!reducedMotion()) li.classList.add(value === sides[0].value ? 'sort-fly-right' : 'sort-fly-left');
       pileEl.querySelector(`[data-id="${card.id}"]`)?.remove();
     }
     clearSelection();
     announce(card);
-    verdictEl.textContent = verdictText(card, correct, forced);
+    const line = judge ? verdictText(card, correct, forced) : lineFor(card);
+    if (judge) verdictEl.textContent = line;
     checkComplete();
-    onChange({ ...resultsState }, { done: isComplete(), cardId: card.id, correct });
+    onChange({ ...resultsState }, { done: isComplete(), cardId: card.id, correct, line });
     focusAfterPlacement();
   }
 
   function handleAttempt(card, chosenMine, { dragEl = null } = {}) {
     if (!card || resultsState[card.id] !== undefined) return;
-    const correct = chosenMine === card.mine;
+    const correct = chosenMine === sideOf(card);
+    if (!judge) { finalize(card, { correct, forced: false, dragEl, chosen: chosenMine }); return; }
     const attemptsSoFar = attempts.get(card.id) ?? 0;
     if (correct || attemptsSoFar >= 1) {
       finalize(card, { correct, forced: !correct, dragEl });
@@ -223,8 +277,8 @@ export function createSortBoard(container, { cards, results = {}, doneText, onCh
       const r = el.getBoundingClientRect();
       return x >= r.left && x <= r.right && y >= r.top && y <= r.bottom;
     };
-    if (inRect(binMineEl)) return true;
-    if (inRect(binNotEl)) return false;
+    if (inRect(binMineEl)) return sides[0].value;
+    if (inRect(binNotEl)) return sides[1].value;
     return null;
   }
 
@@ -257,8 +311,8 @@ export function createSortBoard(container, { cards, results = {}, doneText, onCh
     drag.rotation += (0 - drag.rotation) * 0.25;
     drag.el.style.transform = `translate(${dx}px, ${dy}px) rotate(${drag.rotation}deg) scale(1.05)`;
     const hit = hitBin(event.clientX, event.clientY);
-    binMineEl.classList.toggle('drag-over', hit === true);
-    binNotEl.classList.toggle('drag-over', hit === false);
+    binMineEl.classList.toggle('drag-over', hit === sides[0].value);
+    binNotEl.classList.toggle('drag-over', hit === sides[1].value);
   }
 
   function onPointerUp(event) {
@@ -269,7 +323,10 @@ export function createSortBoard(container, { cards, results = {}, doneText, onCh
     binMineEl.classList.remove('drag-over');
     binNotEl.classList.remove('drag-over');
     if (!finished.moved) return; // a plain tap: the click event handles selection
+    // Swallow the click this drag may end with, but only that one: when the drop lands outside the
+    // pile no click reaches it, and the next tap must still work.
     suppressClick = true;
+    setTimeout(() => { suppressClick = false; }, 0);
     finished.el.classList.remove('dragging');
     const hit = hitBin(event.clientX, event.clientY);
     if (hit === null) { finished.el.style.transform = ''; return; }
@@ -293,8 +350,8 @@ export function createSortBoard(container, { cards, results = {}, doneText, onCh
     selectCard(btn.dataset.id);
   }
 
-  function onBinMineClick() { placeSelectedIn(true); }
-  function onBinNotClick() { placeSelectedIn(false); }
+  function onBinMineClick() { placeSelectedIn(sides[0].value); }
+  function onBinNotClick() { placeSelectedIn(sides[1].value); }
 
   function onKeydown(event) {
     if (event.key === 'Escape') {
@@ -306,7 +363,7 @@ export function createSortBoard(container, { cards, results = {}, doneText, onCh
     if (!btn) return;
     event.preventDefault();
     event.stopPropagation();
-    handleAttempt(cardsById.get(btn.dataset.id), event.key === 'ArrowLeft', {});
+    handleAttempt(cardsById.get(btn.dataset.id), event.key === 'ArrowLeft' ? sides[0].value : sides[1].value, {});
   }
 
   function doSkip() {
@@ -319,12 +376,11 @@ export function createSortBoard(container, { cards, results = {}, doneText, onCh
       const card = remaining[i];
       if (card && resultsState[card.id] === undefined) {
         clearSelection();
-        resultsState[card.id] = card.mine;
+        resultsState[card.id] = sideOf(card);
         attempts.delete(card.id);
-        const bin = card.mine ? binMineList : binNotList;
         const li = buildBinListItem(card, false);
-        bin.appendChild(li);
-        if (!reducedMotion()) li.classList.add(card.mine ? 'sort-fly-right' : 'sort-fly-left');
+        listFor(sideOf(card)).appendChild(li);
+        if (!reducedMotion()) li.classList.add(sideOf(card) === sides[0].value ? 'sort-fly-right' : 'sort-fly-left');
         pileEl.querySelector(`[data-id="${card.id}"]`)?.remove();
       }
       i += 1;
@@ -350,16 +406,31 @@ export function createSortBoard(container, { cards, results = {}, doneText, onCh
     const unsorted = cards.filter(card => resultsState[card.id] === undefined);
     pileEl.replaceChildren(...unsorted.map(createCardElement));
     binMineList.replaceChildren(...cards
-      .filter(card => resultsState[card.id] !== undefined && card.mine)
+      .filter(card => resultsState[card.id] !== undefined && sideOf(card) === sides[0].value)
       .map(card => buildBinListItem(card, forcedSet.has(card.id))));
     binNotList.replaceChildren(...cards
-      .filter(card => resultsState[card.id] !== undefined && !card.mine)
+      .filter(card => resultsState[card.id] !== undefined && sideOf(card) === sides[1].value)
       .map(card => buildBinListItem(card, forcedSet.has(card.id))));
     verdictEl.textContent = '';
     announceEl.textContent = '';
     skipBtn.disabled = false;
     checkComplete();
   }
+
+  /** Every card back in the pile (the quiet sort's Start again). */
+  function restart() {
+    for (const card of cards) delete resultsState[card.id];
+    forcedSet.clear();
+    attempts.clear();
+    renderAll();
+  }
+  function onAgainClick() {
+    restart();
+    onAgain();
+    onChange({ ...resultsState }, { done: false, restart: true });
+    pileEl.querySelector('.sort-card')?.focus({ preventScroll: true });
+  }
+  const againBtn = container.querySelector('.sort-again');
 
   function destroy() {
     if (destroyed) return;
@@ -373,6 +444,7 @@ export function createSortBoard(container, { cards, results = {}, doneText, onCh
     binMineEl.removeEventListener('click', onBinMineClick);
     binNotEl.removeEventListener('click', onBinNotClick);
     skipBtn.removeEventListener('click', exposedSkip);
+    againBtn?.removeEventListener('click', onAgainClick);
     container.removeEventListener('keydown', onKeydown);
   }
 
@@ -384,9 +456,10 @@ export function createSortBoard(container, { cards, results = {}, doneText, onCh
   binMineEl.addEventListener('click', onBinMineClick);
   binNotEl.addEventListener('click', onBinNotClick);
   skipBtn.addEventListener('click', exposedSkip);
+  againBtn?.addEventListener('click', onAgainClick);
   container.addEventListener('keydown', onKeydown);
 
   renderAll();
 
-  return { render: renderAll, skip: exposedSkip, destroy };
+  return { render: renderAll, skip: exposedSkip, restart, destroy, get results() { return { ...resultsState }; } };
 }
