@@ -10,6 +10,7 @@ import { CHAPTERS } from './practice-story.js';
 import { TAKEAWAY_ICONS } from './practice-pictures.js';
 import { createPracticeStage } from './practice-stage.js';
 import { createAfternoons, PHASES } from './practice-afternoons.js';
+import { bindReadingDialog } from '../../components/lesson-controls.js';
 
 const $ = selector => document.querySelector(selector);
 // Test only: ?stress=wide sets every word about 8% wider (journey.css), for the fit sweep.
@@ -127,7 +128,7 @@ window.addEventListener('popstate', () => {
 });
 
 const dialog = $('#reading-dialog');
-$('#open-reading').addEventListener('click', () => dialog.showModal());
+bindReadingDialog(dialog);
 dialog.querySelector('[data-close]').addEventListener('click', () => dialog.close());
 
 // A hook for the review captures and the fit sweep.

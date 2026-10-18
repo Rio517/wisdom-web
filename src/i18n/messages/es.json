@@ -428,6 +428,7 @@
   "lesson.ui.pause": "Pausa",
   "lesson.ui.play": "Reproducir",
   "lesson.ui.readAsText": "Leer como texto",
+  "lesson.ui.readWithPictures": "Leer con imágenes",
   "lesson.ui.restart": "Empezar desde el principio",
   "lesson.ui.skipToStory": "Saltar al texto de la historia",
   "lesson.ui.stepLabel": "Paso {step}: {heading}",

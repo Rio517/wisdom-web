@@ -1,7 +1,8 @@
 ---
 // Lesson 2 · Practice as text: every step, the activity as a still, and the pictures in words.
 import SiteLayout from '../../../../layouts/SiteLayout.astro';
-import { renderPracticeReading, PRACTICE_PATH } from '../../../../lessons/practice/practice-story.js';
+import LessonControls from '../../../../components/LessonControls.astro';
+import { renderPracticeReading, PRACTICE_PATH, PRACTICE_READ_PATH } from '../../../../lessons/practice/practice-story.js';
 import { UI, href } from '../../../../data/site.js';
 import { getTranslator } from '../../../../i18n/index.js';
 import { localeStaticPaths } from '../../../../i18n/config.js';
@@ -12,6 +13,7 @@ const t = getTranslator(locale);
 const reading = renderPracticeReading({ t });
 ---
 <SiteLayout title={t('practice.read.title')} description={t('practice.read.description')} current="practice-read" locale={locale}>
+  <LessonControls slot="controls" locale={locale} id="header-controls" view="text" picturesHref={href(locale, PRACTICE_PATH)} textHref={href(locale, PRACTICE_READ_PATH)} />
   <article class="page page-narrow">
     <header class="page-header">
       <p class="kicker">{t('practice.read.kicker')}</p>

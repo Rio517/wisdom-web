@@ -208,3 +208,11 @@ p { text-wrap: pretty; }
   .site-shell { display: block; }
   .page { padding: 0; }
 }
+
+/* ——— Text pages: the lesson controls at the top right (SiteLayout's controls slot) ——— */
+.site-main { position: relative; }
+.site-topbar .topbar-controls { margin-left: auto; }
+@media (min-width: 1101px) {
+  .site-topbar:has(.topbar-controls) { position: absolute; top: 0; right: 0; z-index: 30; display: flex; align-items: center; height: 76px; padding: 0 28px; }
+  .site-topbar:has(.topbar-controls) > :not(.topbar-controls) { display: none !important; }
+}

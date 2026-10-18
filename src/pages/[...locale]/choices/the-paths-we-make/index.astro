@@ -2,6 +2,7 @@
 import '../../../../lessons/choices/journey.css';
 import BaseLayout from '../../../../layouts/BaseLayout.astro';
 import SiteNav from '../../../../components/SiteNav.astro';
+import LessonControls from '../../../../components/LessonControls.astro';
 import { renderJourneyReading } from '../../../../lessons/choices/journey-story.js';
 import { writtenLifeIn } from '../../../../lessons/choices/lives/build.js';
 import { UI, href } from '../../../../data/site.js';
@@ -29,7 +30,7 @@ const reading = renderJourneyReading({ t, life: writtenLifeIn(locale) });
       </svg>
       <ol id="chapter-list"></ol>
     </nav>
-    <button class="quiet-link" id="open-reading" type="button">{t('lesson.ui.readAsText')}</button>
+    <LessonControls locale={locale} id="header-controls" />
   </header>
 
   <main class="journey" id="journey" data-next-lesson={href(locale, PRACTICE_PATH)}>
@@ -66,7 +67,8 @@ const reading = renderJourneyReading({ t, life: writtenLifeIn(locale) });
 
   <p class="sr-only" id="announcer" role="status" aria-live="polite"></p>
 
-  <dialog id="reading-dialog" aria-labelledby="journey-reading-title">
+  <dialog id="reading-dialog" aria-labelledby="journey-reading-title" tabindex="-1" autofocus>
+    <LessonControls locale={locale} id="dialog-controls" view="text" inDialog />
     <button class="quiet-link dialog-close" type="button" data-close>{t('lesson.ui.backToJourney')}</button>
     <div class="nojs-note">{t('lesson.ui.noJs')}</div>
     <Fragment set:html={reading} />

@@ -1,0 +1,42 @@
+---
+// The lesson header's two controls: a Pictures | Text toggle and the language menu.
+// On a lesson page both views are buttons (Text opens the reading dialog; the lesson's script does that);
+// on a text page (`…/read/`) they are links, Text the current page. Script: lesson-controls.js.
+import LanguageMenu from './LanguageMenu.astro';
+import { UI } from '../data/site.js';
+import { getTranslator } from '../i18n/index.js';
+
+interface Props { locale: string; id: string; view?: 'pictures' | 'text'; picturesHref?: string; textHref?: string; inDialog?: boolean }
+const { locale, id, view = 'pictures', picturesHref, textHref, inDialog = false } = Astro.props;
+const t = getTranslator(locale);
+const options = [
+  { key: 'pictures', icon: UI.pictures, tip: t('lesson.ui.readWithPictures'), href: picturesHref },
+  { key: 'text', icon: UI.text, tip: t('lesson.ui.readAsText'), href: textHref },
+];
+const links = Boolean(picturesHref && textHref);
+---
+<div class:list={['lesson-controls', { 'lesson-controls-dialog': inDialog }]} data-lesson-controls>
+  <div class="view-toggle" role="group">
+    {options.map(option => (
+      <span class="control-slot">
+        {links ? (
+          <a class="view-option" href={option.href} data-view={option.key} data-tip={`${id}-tip-${option.key}`}
+            aria-labelledby={`${id}-tip-${option.key}`} aria-current={option.key === view ? 'page' : undefined}>
+            <Fragment set:html={option.icon} />
+          </a>
+        ) : (
+          <button class="view-option" type="button" data-view={option.key} data-tip={`${id}-tip-${option.key}`}
+            aria-labelledby={`${id}-tip-${option.key}`} aria-pressed={String(option.key === view)}>
+            <Fragment set:html={option.icon} />
+          </button>
+        )}
+        <span class="soon-tip control-tip" role="tooltip" id={`${id}-tip-${option.key}`} hidden>{option.tip}</span>
+      </span>
+    ))}
+  </div>
+  <LanguageMenu locale={locale} id={`${id}-lang`} />
+</div>
+<script>
+  import { initLessonControls } from './lesson-controls.js';
+  initLessonControls();
+</script>
