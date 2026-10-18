@@ -1,0 +1,28 @@
+---
+// Lesson 2 · Practice as text: every step, the activity as a still, and the pictures in words.
+// Unlinked and noindex, like the journey, until the build is approved.
+import SiteLayout from '../../../../layouts/SiteLayout.astro';
+import { renderPracticeReading, PRACTICE_PATH } from '../../../../lessons/practice/practice-story.js';
+import { UI, href } from '../../../../data/site.js';
+import { getTranslator } from '../../../../i18n/index.js';
+import { localeStaticPaths } from '../../../../i18n/config.js';
+
+export const getStaticPaths = localeStaticPaths;
+const { locale } = Astro.props;
+const t = getTranslator(locale);
+const reading = renderPracticeReading({ t });
+---
+<SiteLayout title={t('practice.read.title')} description={t('practice.read.description')} locale={locale} noindex>
+  <article class="page page-narrow">
+    <header class="page-header">
+      <p class="kicker">{t('practice.read.kicker')}</p>
+      <h1>{t('practice.ui.title')}</h1>
+      <p class="page-lede">{t('practice.read.lede')}</p>
+      <div class="actions">
+        <a class="btn btn-primary" href={href(locale, PRACTICE_PATH)}>{t('read.open')}<Fragment set:html={UI.arrow} /></a>
+        <button class="btn btn-quiet" type="button" onclick="window.print()">{t('read.print')}</button>
+      </div>
+    </header>
+    <div class="prose" set:html={reading} />
+  </article>
+</SiteLayout>
