@@ -5,6 +5,7 @@ import { chaptersFor, beatList } from '../lessons/choices/journey-story.js';
 import { ICONS } from '../lessons/choices/journey-icons.js';
 import { PRACTICE_PATH, chaptersFor as practiceChapters } from '../lessons/practice/practice-story.js';
 import { TAKEAWAY_ICONS as PRACTICE_ICONS } from '../lessons/practice/practice-pictures.js';
+import { ELEPHANT_PATH, ELEPHANT_TITLE } from '../lessons/elephant/elephant-story.js';
 import { localizePath } from '../i18n/config.js';
 
 export const SITE = {
@@ -27,7 +28,7 @@ export const LESSON_PATH = '/choices/the-paths-we-make/';
 const LESSON_DATA = [
   { number: '01', id: 'choices', status: 'available', path: '/choices/' },
   { number: '02', id: 'practice', status: 'available', path: '/practice/', titleKey: 'practice.ui.title' },
-  { number: '03', id: 'deciding', status: 'next' },
+  { number: '03', id: 'deciding', status: 'available', path: ELEPHANT_PATH, titleKey: ELEPHANT_TITLE },
   { number: '04', id: 'habits', status: 'planned' },
   { number: '05', id: 'happiness', status: 'planned' },
   { number: '06', id: 'relationships', status: 'planned' },

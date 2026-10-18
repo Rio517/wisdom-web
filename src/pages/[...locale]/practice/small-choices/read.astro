@@ -3,6 +3,7 @@
 import SiteLayout from '../../../../layouts/SiteLayout.astro';
 import LessonControls from '../../../../components/LessonControls.astro';
 import { renderPracticeReading, PRACTICE_PATH, PRACTICE_READ_PATH } from '../../../../lessons/practice/practice-story.js';
+import { ELEPHANT_PATH, ELEPHANT_TITLE } from '../../../../lessons/elephant/elephant-story.js';
 import { UI, href } from '../../../../data/site.js';
 import { getTranslator } from '../../../../i18n/index.js';
 import { localeStaticPaths } from '../../../../i18n/config.js';
@@ -25,5 +26,8 @@ const reading = renderPracticeReading({ t });
       </div>
     </header>
     <div class="prose" set:html={reading} />
+    <div class="actions">
+      <a class="btn btn-primary" href={href(locale, ELEPHANT_PATH)}>{t('practice.ui.nextLesson', { title: t(ELEPHANT_TITLE) })}<Fragment set:html={UI.arrow} /></a>
+    </div>
   </article>
 </SiteLayout>

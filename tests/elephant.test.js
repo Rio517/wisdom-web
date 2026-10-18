@@ -65,3 +65,23 @@ test('the text version has every step and the activity as a still', () => {
     assert.ok(!/<script/i.test(html));
   }
 });
+
+test('Lesson 3 is linked: the roadmap, the menu and the end of Lesson 2', async () => {
+  const { readFileSync, existsSync } = await import('node:fs');
+  const { lessonsFor } = await import('../src/data/site.js');
+  const lesson = lessonsFor(en).find(item => item.id === 'deciding');
+  assert.equal(lesson.status, 'available');
+  assert.equal(lesson.href, ELEPHANT_PATH);
+  assert.equal(lesson.title, en('elephant.ui.title'));
+  const dist = new URL('../dist/', import.meta.url);
+  if (!existsSync(new URL('index.html', dist))) return; // the built pages are checked after `npm run build`
+  const page = path => readFileSync(new URL(`${path.slice(1)}index.html`, dist), 'utf8');
+  for (const prefix of ['/', '/es/', '/de/', '/fr/']) {
+    const local = path => `${prefix}${path.slice(1)}`;
+    for (const path of [ELEPHANT_PATH, ELEPHANT_READ_PATH]) assert.doesNotMatch(page(local(path)), /<meta name="robots" content="noindex/, local(path));
+    assert.ok(page(prefix).includes(`href="${local(ELEPHANT_PATH)}"`), `${prefix}: the roadmap and menu link to Lesson 3`);
+    assert.ok(page(local(ELEPHANT_READ_PATH)).includes(`href="${local(ELEPHANT_PATH)}"`), `${prefix}: the text version links to the journey`);
+    assert.ok(page(local('/practice/small-choices/')).includes(`data-next-lesson="${local(ELEPHANT_PATH)}"`), `${prefix}: Lesson 2 ends with a link to Lesson 3`);
+    assert.ok(page(local('/practice/small-choices/read/')).includes(`href="${local(ELEPHANT_PATH)}"`), `${prefix}: Lesson 2's text version links to Lesson 3`);
+  }
+});
