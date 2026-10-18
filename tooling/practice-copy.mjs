@@ -46,7 +46,7 @@ if (locale === DEFAULT_LOCALE) {
   add('- The story and the activity follow the approved paper round ([003 v03](../design/003-lesson-two/v03-practice-paper/README.md)); its `copy.md` is the approved English, and the build round lists every change.');
   add('- Soccer-to-basketball is an illustrative head start from related skills, not guaranteed or large transfer ([learning findings](../research/learning/README.md)).');
   add('- No numbers on the afternoons; the bars use words such as Learning and Getting good, and nothing shrinks.');
-  add('- The empty place beside Maya on some steps is held for Lesson 3’s elephant.');
+  add('- A small, unnamed elephant stands in the background of some pictures and beside Maya on the last step; Lesson 3 says who it is.');
   add('');
 }
 

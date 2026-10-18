@@ -8,7 +8,7 @@ import { levelWord } from '../choices/journey-game.js';
 import { escapeHTML } from '../choices/journey-shell.js';
 import {
   svg, label, collect, labelsHTML, textWidth, mapFrame, lifeMap, stretchBox, routeStretch, footprints, sampleSmooth, printAt, pathD,
-  maya, elephantSlot, ground, goal, cone, rainCloud, wall, bench, flag, hoop, basketball, chalkboard, star, diamond, routeHeightAt,
+  maya, mayaSpan, elephantSlot, ground, goal, cone, rainCloud, wall, bench, flag, hoop, basketball, chalkboard, star, diamond, routeHeightAt,
   TODAY, MAX_AGE, STRETCH, FOREST, SAGE, SUN, QUIET, AHEAD, RULE, PAPER_DEEP,
 } from './practice-draw.js';
 
@@ -37,6 +37,8 @@ function want(w, h) {
   return art(() => {
     const gy = Math.round(h * 0.64); const mh = figure(h) * 1.35;
     const mx = w * 0.17;
+    // The elephant past the bench; the bench keeps its width, so on a narrower stage it steps right.
+    const ex = Math.max(w * 0.59, w * 0.46 + 92 + 46 * 44 / 64 + 7);
     const path = [[mx + 46, gy + 26], [w * 0.42, gy + 10], [w * 0.62, gy - 26], [w * 0.8, gy - 70], [w * 0.88, gy - 96]];
     const at = []; footprints(sampleSmooth(path, 16), { step: 34, side: 10, at });
     const first = at[0];
@@ -45,7 +47,7 @@ function want(w, h) {
     return svg(w, h, `${ground(w, gy, h - gy)}
       <path d="M${w * 0.7} ${gy}C${w * 0.78} ${gy - 120} ${w * 0.98} ${gy - 120} ${w + 40} ${gy - 40}V${gy}Z" fill="${SAGE}" fill-opacity=".22"/>
       <path d="${pathD(path)}" stroke="${AHEAD}" stroke-width="3.4" fill="none" stroke-linecap="round"/>
-      ${flag(w * 0.885, gy - 96)}${bench(w * 0.46, gy - 4)}${elephantSlot(w * 0.59, gy - 2, 44)}
+      ${flag(w * 0.885, gy - 96)}${bench(w * 0.46, gy - 4)}${elephantSlot(ex, gy - 2, 44, { clear: [[w * 0.46, w * 0.46 + 92], mayaSpan(mx, mh)] })}
       ${maya(mx, gy + 4, mh)}${printAt(first, { size: 1.6, outline: FOREST })}`);
   });
 }
@@ -63,7 +65,7 @@ function again(w, h) {
     ];
     const prints = footprints([[24, gy + 30], [w - 24, gy + 30]], { size: 0.9, step: 30, side: 7 });
     ['practice', 'rain', 'eyes', 'wall'].forEach((key, i) => label(xs[i], gy + 62, W(`practice.print.${key}`), { anchor: 'middle', at: 'below', max: w * 0.21 }));
-    return svg(w, h, `${ground(w, gy, h - gy)}${props.join('')}${elephantSlot(xs[3] - 92, gy, 40)}
+    return svg(w, h, `${ground(w, gy, h - gy)}${props.join('')}${elephantSlot(xs[3] - 92, gy, 40, { clear: [mayaSpan(xs[2], mh), [xs[2] + 50, xs[2] + 74]] })}
       ${xs.map(x => maya(x, gy, mh)).join('')}${prints}`);
   });
 }
@@ -80,14 +82,13 @@ function quiet(w, h) {
   ] });
   const width = Math.min(w - 48, 860);
   const season = n => t('skills.season', { n });
-  return `${svg(w, h, elephantSlot(w * 0.5 + width / 2 - 40, h * 0.5 + 170, 40))}
-    <div class="pl-over pl-lane" style="left:${(w - width) / 2}px; width:${width}px">
+  return `<div class="pl-over pl-lane" style="left:${(w - width) / 2}px; width:${width}px">
       <article class="solo-lane">
         <div class="lane-who">${person({ shirt: FOREST, ball: true })}</div>
         <div class="calendar"><p class="calendar-title">${escapeHTML(W('practice.beat.quiet.weeks'))}</p>
           <div class="calendar-rows">${weeksRow(season(1), [1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1])}${weeksRow(season(2), Array(12).fill(0))}${weeksRow(season(3), Array(12).fill(0))}</div></div>
         <div class="lane-box">${box}</div>
-      </article></div>`;
+      </article><svg class="pl-elephant" width="110" height="52" viewBox="0 0 110 52" aria-hidden="true" focusable="false">${elephantSlot(70, 46, 40)}</svg></div>`;
 }
 
 /** Where the hero's two pictures go: the map, small, top left; the lens below it, the stage's width. */
@@ -222,7 +223,7 @@ function newBall(w, h) {
   ] });
   const bw = Math.min(380, w * 0.42);
   const mx = w * 0.3;
-  return `${svg(w, h, `${ground(w, gy, h - gy)}${elephantSlot(w * 0.075, gy, 40)}${hoop(w * 0.15, gy, Math.min(1.25, h / 620))}
+  return `${svg(w, h, `${ground(w, gy, h - gy)}${elephantSlot(w * 0.075, gy, 40, { clear: [[w * 0.15 - 5, w * 0.15 + 5], mayaSpan(mx, mh, { ball: false })] })}${hoop(w * 0.15, gy, Math.min(1.25, h / 620))}
       ${maya(mx, gy, mh, { ball: false })}${basketball(mx + mh * 0.44, gy - mh * 0.5, mh * 0.13)}`)}
     <div class="pl-over pl-boxed" style="right:${Math.max(24, w * 0.06)}px; width:${bw}px; top:${Math.max(20, h * 0.26)}px">${box}<p class="box-key">${escapeHTML(W('practice.stripes'))}</p></div>`;
 }

@@ -46,7 +46,7 @@ A2 is afternoon 7 with Play basketball just picked; A3 is the end card after ten
 - What a pick grew is announced to screen readers only; no result line shows, as in the frames.
 - The end card says how often in words, never a number ("You chose soccer most often, so soccer grew the most."), and compares soccer and cello only when the picks and the growth agree. Its basketball line shows only if basketball was picked.
 - Afternoon 8 is "Soccer practice is today, but a friend asks you over." and afternoon 10 "The team has a match today and needs one more player."
-- The elephant is not drawn: each place the frames show it holds an empty, named slot (`data-slot="elephant"`) on steps 01, 02, 03, 06, 08 and 11.
+- The elephant was not drawn in this round: each place the frames show it held an empty, named slot (`data-slot="elephant"`) on steps 01, 02, 03, 06, 08 and 11. [v05](../v05-elephant/README.md) fills them.
 - German names the first chapter "Kleine Schritte".
 
 ## Checks (2026-10-18)

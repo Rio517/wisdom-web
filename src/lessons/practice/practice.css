@@ -2,7 +2,7 @@
    (journey.css, journey-play.css). Flat: no shadows, glows or volume. */
 
 /* ——— Pictures ——— */
-.scene-practice { overflow: hidden; }
+.scene-practice { overflow: hidden; --elephant-gap: var(--color-paper-deep); }
 .pl-layer { position: absolute; inset: 0; }
 .pl-layer.is-entering { animation: scene-in 520ms cubic-bezier(.2,.7,.2,1) both; }
 .pl-layer.is-leaving { animation: scene-out 380ms ease-in both; pointer-events: none; }
@@ -31,6 +31,7 @@
 /* HTML laid over a picture (a lane, a skill box). */
 .pl-over { position: absolute; }
 .pl-lane { top: 50%; transform: translateY(-50%); }
+.pl-elephant { position: absolute; top: 100%; right: 0; overflow: visible; }
 .solo-lane { display: grid; grid-template-columns: 92px minmax(0, 1fr) minmax(220px, 290px); gap: 20px; align-items: center; padding: 22px 24px; border-radius: 20px; background: white; border: 1px solid var(--color-rule); box-shadow: inset 4px 0 0 var(--color-forest); }
 .solo-lane .lane-who strong { color: var(--color-forest); }
 .pl-boxed .skill-box { background: white; }
