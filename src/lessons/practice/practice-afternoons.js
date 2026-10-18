@@ -55,7 +55,7 @@ export function createAfternoons(root, { onPhase = () => {} } = {}) {
     const day = DAYS[index];
     const opens = index === OPENS && !waiting;
     return `<article class="play-card ${waiting ? 'is-future' : 'is-active'}" data-day="${index}" aria-labelledby="play-heading-${index}"${waiting ? ' aria-hidden="true"' : ''}>
-      <p class="play-day-label">${escapeHTML(dayLabel(index))}${day.chance ? `<span class="chance-tag">${escapeHTML(t('practice.activity.new'))}</span>` : ''}</p>
+      <p class="play-day-label"><span>${escapeHTML(dayLabel(index))}</span>${day.chance ? `<span class="chance-tag">${escapeHTML(t('practice.activity.new'))}</span>` : ''}</p>
       <h2 class="play-heading" id="play-heading-${index}">${escapeHTML(t(`practice.activity.day${index + 1}`))}</h2>
       <ul class="play-options" aria-labelledby="play-heading-${index}">${day.options.map(id => option(index, id)).join('')}</ul>
       ${opens ? `<div class="card-box">${box('basketball', { isNew: true, note: t('practice.activity.new'), id: 'play-basketball' })}<p class="box-key">${escapeHTML(t('practice.stripes'))}</p></div>` : ''}
@@ -84,7 +84,17 @@ export function createAfternoons(root, { onPhase = () => {} } = {}) {
     if (basket) setSkillBox(basket, state.levels, { carried: state.carried ?? {} });
     if (arrive && !prefersReducedMotion()) feed.querySelector('.play-card').classList.add('is-arriving');
     if (focus) (feed.querySelector('.play-activity, #play-end-heading'))?.focus({ preventScroll: true });
+    fitWaiting();
   }
+
+  // The next afternoon waits under the card only where it fits whole.
+  function fitWaiting() {
+    const waiting = feed.querySelector('.play-card.is-future');
+    if (!waiting) return;
+    waiting.hidden = false;
+    waiting.hidden = waiting.getBoundingClientRect().bottom > feed.getBoundingClientRect().bottom + 0.5;
+  }
+  new ResizeObserver(fitWaiting).observe(feed);
 
   function renderRail() {
     const edge = frontier();
