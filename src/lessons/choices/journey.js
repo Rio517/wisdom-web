@@ -188,6 +188,9 @@ let cropTimer = 0;
 const recrop = () => { clearTimeout(cropTimer); cropTimer = setTimeout(cropEndingMap, 160); };
 upright.addEventListener('change', recrop);
 addEventListener('resize', recrop);
+// The map lays itself out again when its stack changes size (as when the stage leaves another
+// scene's height): measure the ending again once it has.
+new ResizeObserver(() => { if (journeyRoot.dataset.beat === 'takeaways') recrop(); }).observe(pathsStack);
 
 function renderNarration(item, { animate }) {
   const { beat } = item;
@@ -353,6 +356,7 @@ async function go(target, { animate = true, focus = 'none', history = 'replace',
     }
     await switchRoot(rootId);
     if (run.cancelled) return;
+    if (rootId === 'paths') recrop();
     if (rootId === 'explore') scene.show();
   } else if (leavingCover) {
     // Full width while the paths grow; then the narration slides in over the map's right part (the
