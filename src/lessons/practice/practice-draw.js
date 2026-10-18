@@ -1,6 +1,6 @@
 // Drawing for Lesson 2's pictures (ported from the approved paper frames,
 // prototype/lesson2-practice/draw.js): Maya's life on Lesson 1's map, footprints, Maya, the
-// elephant's empty slot and the small scenes. Each picture is SVG in the stage's own pixels, so
+// elephant and the small scenes. Each picture is SVG in the stage's own pixels, so
 // strokes keep Lesson 1's widths; its words are HTML laid over it (labels(), practice.css), so
 // they wrap, keep the 15 px floor and read over the lines like the life map's labels.
 // Flat: uniform strokes, token colours and Lesson 1's map mixes, no shadows or volume.
@@ -8,6 +8,7 @@ import { person, ICONS } from '../choices/journey-icons.js';
 import { TAIL, AHEAD, LIVED, GRAY, DOT, RING } from '../choices/journey-life-draw.js';
 import { FOREST, SAGE, MIST, CLAY, SUN, INK, QUIET, RULE, PAPER_DEEP, LAKE, CLAY_SOFT, CELLO } from '../choices/journey-colors.js';
 import { escapeHTML } from '../choices/journey-shell.js';
+import { elephant } from '../shared/elephant.js';
 
 export { FOREST, SAGE, MIST, CLAY, SUN, INK, QUIET, RULE, PAPER_DEEP, TAIL, AHEAD };
 const f = v => +v.toFixed(1);
@@ -242,15 +243,21 @@ export function maya(x, y, height, { shirt = FOREST, ball = true, flip = false }
   const inner = person({ shirt, ball }).replace(/^\s*<svg[^>]*>/, '').replace(/<\/svg>\s*$/, '');
   const s = height / 62;
   const width = (ball ? 60 : 47) * s;
-  return `<g transform="translate(${f(flip ? x + width * 0.42 : x - width * 0.42)} ${f(y - 61.5 * s)}) scale(${flip ? -s : s} ${s})">${inner}</g>`;
+  return `<g class="maya" transform="translate(${f(flip ? x + width * 0.42 : x - width * 0.42)} ${f(y - 61.5 * s)}) scale(${flip ? -s : s} ${s})">${inner}</g>`;
 }
+/** Maya's left and right edges (ball included) for maya(x, …, height). */
+export const mayaSpan = (x, height, { ball = true } = {}) => { const width = (ball ? 60 : 47) * height / 62; return [x - width * 0.42, x + width * 0.58]; };
 /**
- * The elephant's place in Maya's pictures: an empty, named slot, its feet at (x, y) and `height`
- * px tall. Nothing is drawn yet; the art comes later and fills `[data-slot="elephant"]`.
+ * The elephant in Maya's pictures (shared/elephant.js, standing still), its feet at (x, y) and
+ * `height` px tall. Never named in the words; Lesson 3 says who it is. `clear` lists the
+ * [left, right] spans on its ground that it must not touch (Maya, props): when it would, the
+ * slot stays empty on that step rather than squeeze the picture.
  */
-export function elephantSlot(x, y, height = 46) {
-  const width = height * 1.45;
-  return `<g class="elephant-slot" data-slot="elephant" data-x="${f(x)}" data-y="${f(y)}" data-height="${f(height)}"><rect x="${f(x - width * 0.45)}" y="${f(y - height)}" width="${f(width)}" height="${f(height)}" fill="none"/></g>`;
+export function elephantSlot(x, y, height = 46, { clear = [] } = {}) {
+  const s = height / 64; const left = x - 46 * s - 6, right = x + 39 * s + 6;
+  const fits = clear.every(([l, r]) => r <= left || l >= right);
+  const art = fits ? `<g transform="translate(${f(x)} ${f(y)}) scale(${+s.toFixed(3)})">${elephant()}</g>` : '';
+  return `<g class="elephant-slot" data-slot="elephant" data-x="${f(x)}" data-y="${f(y)}" data-height="${f(height)}">${art}</g>`;
 }
 export const ground = (w, y, h) => `<rect x="0" y="${f(y)}" width="${w}" height="${f(h)}" fill="${SAGE}" fill-opacity=".22"/><path d="M0 ${f(y)}H${w}" stroke="${SAGE}" stroke-opacity=".5" stroke-width="2"/>`;
 export const goal = (x, y, s = 1) => `<g transform="translate(${f(x)} ${f(y)}) scale(${s})" fill="none" stroke-linecap="round" stroke-linejoin="round">
