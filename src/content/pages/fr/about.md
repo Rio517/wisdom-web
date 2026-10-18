@@ -12,7 +12,7 @@ Chaque leçon part de la recherche plutôt que de l’opinion. Les résultats, l
 
 ## Ce qui existe aujourd’hui
 
-[Leçon 1, Les choix — Les chemins qu’on trace](../choices/the-paths-we-make/), explique comment les choix s’additionnent avec le temps, et à quel point tout dépend des circonstances, du soutien et de la chance que personne ne choisit. Ses [notes pour les adultes](../choices/notes/) expliquent comment l’utiliser avec un enfant et ce que les données qui l’appuient disent et ne disent pas.
+[Leçon 1, Chemins et choix](../choices/the-paths-we-make/), explique comment les choix s’additionnent avec le temps, et à quel point tout dépend des circonstances, du soutien et de la chance que personne ne choisit. Ses [notes pour les adultes](../choices/notes/) expliquent comment l’utiliser avec un enfant et ce que les données qui l’appuient disent et ne disent pas.
 
 [Leçon 2, L’entraînement](../practice/), suit Maya et son ballon de foot pendant trois ans. Elle montre comment les petits choix, faits encore et encore, s’additionnent, et comment une compétence donne un point de départ à la suivante.
 

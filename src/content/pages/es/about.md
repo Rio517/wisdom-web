@@ -12,7 +12,7 @@ Cada lección empieza con investigación, no con opiniones. Los hallazgos, sus f
 
 ## Qué hay disponible ahora
 
-[Lección 1, Decisiones — Los caminos que hacemos](../choices/the-paths-we-make/), explica cómo se acumulan las decisiones con el tiempo y cuánto depende de circunstancias, apoyo y azar que nadie llega a elegir. Sus [notas para adultos](../choices/notes/) explican cómo usarla con un niño y qué dice —y qué no dice— la evidencia detrás de ella.
+[Lección 1, Caminos y decisiones](../choices/the-paths-we-make/), explica cómo se acumulan las decisiones con el tiempo y cuánto depende de circunstancias, apoyo y azar que nadie llega a elegir. Sus [notas para adultos](../choices/notes/) explican cómo usarla con un niño y qué dice —y qué no dice— la evidencia detrás de ella.
 
 [Lección 2, Practicar](../practice/), sigue a Maya y su balón de fútbol durante tres años. Muestra cómo se acumulan las pequeñas decisiones que tomamos una y otra vez, y cómo una habilidad le da a la siguiente un punto de partida.
 

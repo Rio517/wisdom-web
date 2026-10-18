@@ -1,4 +1,4 @@
-# Choices — The paths we make (guided journey)
+# Paths and choices (guided journey)
 
 Status: Draft 05, the text of Lesson 1 on the site. Created: 2026-09-26. Updated: 2026-10-18.
 
@@ -8,7 +8,7 @@ A guided lesson for readers aged eight and up. The people and places are made up
 
 ## Many paths
 
-### The paths we make
+### Paths and choices
 
 Your choices shape where a life can go. Good and bad luck, which nobody chooses, shape it too.
 
@@ -157,7 +157,7 @@ Closed-way reasons (adults): Money was tight that year · It wasn’t offered ne
 
 Picture: This interactive map shows example life choices. At each fork, two or three choices branch ahead. Some close for a reason, and some lucky chances open. The chosen path turns dark green, with gray branches for choices not taken.
 
-## Take it with you
+## Takeaways
 
 ### What to take with you.
 

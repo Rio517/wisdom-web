@@ -4,7 +4,7 @@ description: A short guide for the adult reading Lesson 1 with a child, covering
 kicker: Lesson 1 · Choices
 ---
 
-Lesson 1, [*Choices — The paths we make*](../the-paths-we-make/), is a guided, illustrated journey about how choices add up over a life, and about how much of what happens is not up to the person living it.
+Lesson 1, [*Paths and choices*](../the-paths-we-make/), is a guided, illustrated journey about how choices add up over a life, and about how much of what happens is not up to the person living it.
 
 It opens with a wide map of many possible paths, then narrows into one concrete story: a hike that runs into trouble twice, once by planning and once by weather. Then a free explorer lets the reader build an example life from age three to seventy. It closes with two takeaways and a link to Lesson 2, Practice.
 

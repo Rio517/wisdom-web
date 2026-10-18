@@ -4,7 +4,7 @@ description: Un court guide pour l’adulte qui lit la leçon 1 avec un enfant, 
 kicker: Leçon 1 · Les choix
 ---
 
-La leçon 1, [*Les choix — Les chemins qu’on trace*](../the-paths-we-make/), est un parcours guidé et illustré sur la façon dont les choix s’additionnent au cours d’une vie, et sur la part de ce qui arrive qui ne dépend pas de la personne qui la vit.
+La leçon 1, [*Chemins et choix*](../the-paths-we-make/), est un parcours guidé et illustré sur la façon dont les choix s’additionnent au cours d’une vie, et sur la part de ce qui arrive qui ne dépend pas de la personne qui la vit.
 
 Elle s’ouvre sur une large carte de nombreux chemins possibles, puis se resserre sur une histoire concrète : une randonnée qui rencontre deux fois des difficultés, une fois à cause de leur propre préparation et une fois à cause du temps. Ensuite, un explorateur libre permet au lecteur de construire une vie d’exemple, de trois à soixante-dix ans. Elle se termine par deux idées à retenir et un lien vers la leçon 2, L’entraînement.
 
