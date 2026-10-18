@@ -99,4 +99,6 @@ Limits: 50 a step, 450 in total. Step 01 is at the limit. Without the optional s
 
 ## Quote to check
 
-As in v01: step 06's "We are the rider, and we are the elephant," writes Jonathan Haidt (*The Happiness Hypothesis*, 2006, reported as page 22) is **to check** in the book before it ships. Plain-words version: "You are the rider, and you are the elephant too."
+As in v01: step 06's "We are the rider, and we are the elephant," writes Jonathan Haidt (*The Happiness Hypothesis*, 2006, reported as page 22) was to check in the book before it ships. Plain-words version: "You are the rider, and you are the elephant too."
+
+Checked 2026-10-18: it ships as written, "We are the rider, and we are the elephant" (*The Happiness Hypothesis*, 2006, ch. 1, p. 22). Source: stafforini.com/quotes/?p=2955, which quotes the surrounding passage, including "But really we are the whole thing." The edition was not seen.
