@@ -22,7 +22,7 @@ Accepted storyboard direction is [v07 — Hiking lesson storyboard](001-choices-
 
 ## Lesson 2 — Practice
 
-[003 — Lesson 2](003-lesson-two/README.md) is now Lesson 2 · Practice: [v03 — Practice on paper](003-lesson-two/v03-practice-paper/README.md), the story and three activity ideas as static frames, in review; [v01 — Game directions](003-lesson-two/v01-game-directions/README.md) belongs to Lesson 4 (habits).
+[003 — Lesson 2](003-lesson-two/README.md) is now Lesson 2 · Practice: [v04 — Practice build](003-lesson-two/v04-practice-build/README.md), the lesson built on the site (unlinked, noindex), in review, from [v03 — Practice on paper](003-lesson-two/v03-practice-paper/README.md), the story and three activity ideas as static frames, where the owner picked activity A; [v01 — Game directions](003-lesson-two/v01-game-directions/README.md) belongs to Lesson 4 (habits).
 
 ## Naming and versioning
 
