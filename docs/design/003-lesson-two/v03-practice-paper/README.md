@@ -1,6 +1,6 @@
 # v03 — Practice on paper
 
-Created: 2026-10-17. Status: proposal for review. Static frames only: nothing here is playable, and nothing is in `src/`.
+Created: 2026-10-17. Status: reviewed 2026-10-17; the owner picked activity A (Ten afternoons), and the story frames and `copy.md` are the approved basis for the build. Static frames only: nothing here is playable, and nothing is in `src/`.
 
 ## Question
 

@@ -1,6 +1,6 @@
 # 016 — Lessons 2 to 4: practice, the elephant and the rider, habits
 
-Status: Proposal. Direction set by the owner on 2026-10-17; no copy, art or activity approved. Created: 2026-10-17. Updated: 2026-10-17.
+Status: Proposal. Direction set by the owner on 2026-10-17; Lesson 2's story and activity were picked on paper on 2026-10-17 ([003, v03](../design/003-lesson-two/v03-practice-paper/README.md)); nothing for Lessons 3 and 4 is approved. Created: 2026-10-17. Updated: 2026-10-18.
 
 Related: [lesson roadmap](../README.md#lesson-roadmap) · [015 — Lesson 2 structure C](015-lesson-two-proposal.md) (superseded in part) · [004 — Habits](004-habits-and-daily-practice.md) · [013 — Lesson 1](013-choices-guided-journey.md) · [habits research](../research/habits/README.md) · [learning research](../research/learning/README.md)
 
@@ -28,7 +28,7 @@ Maya carries Lessons 2 to 4, so the reader follows one person through all three.
 - **Boundary:** effort makes a good result much more likely, not certain. Lesson 1's line "Practice helps, but it doesn't guarantee a result" stays, said once ([learning findings](../research/learning/README.md)).
 - **Hero picture:** one of Lesson 1's long green paths, then a zoom in. The path is made of footprints, and each footprint is one small choice.
 - **Beats:** Maya wants to be good at soccer, and going to practice is the choice she can make today · the small choices · a long time when nothing seems to happen · skills build on skills · the same holds for anything, such as maths · basketball at eleven, where some skills carry over · one line on practised things taking less effort (a seed for Lesson 3) · never too late, and real life is messier.
-- **Activity:** ten afternoons, three picture choices a day, skill boxes that grow; a second activity opens later with its boxes partly filled, so related skills are seen to carry over.
+- **Activity:** ten afternoons, three picture choices a day, skill boxes that grow; a second activity opens later with its boxes partly filled, so related skills are seen to carry over. Picked on 2026-10-17 from three drawn ideas.
 
 ## Lesson 3 · The elephant and the rider
 

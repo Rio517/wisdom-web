@@ -175,3 +175,13 @@ At the end of that 2026-09-07 pass, the redesigned short lesson, owner visual se
 - Restored the earlier home page and sidebar; the lesson opens on its own cover.
 - Redrew the hike's water, reworded the lesson in whole plain sentences in all four languages, and had the three translations read afresh.
 - Verified: 277 tests pass and the build produces 25 pages; stories, what-ifs, labels and the adds page checked in Chromium and WebKit at seven sizes in all four languages.
+
+## 2026-10-17
+
+- Planned Lessons 2 to 4 (practice, the elephant and the rider, habits) in [016](docs/product/016-lessons-two-to-four.md) and renumbered the roadmap.
+- Drew Lesson 2 on paper: eleven story frames and three activity ideas ([003 v03](docs/design/003-lesson-two/v03-practice-paper/README.md)); the owner picked the ten-afternoon activity.
+
+## 2026-10-18
+
+- Fitted Lesson 1 to laptops and iPads in all four languages: steps beside the map tighten until they fit, the takeaways sit in a band under the map, upright tablets keep Back and Next in a bottom bar, and the hike's labels keep clear of each other ([002 v04](docs/design/002-site/v04-lesson1-fit/README.md)). Deployed as v2026.10.18.
+- Verified: 277 tests pass; the fit sweep (WebKit, 8 sizes × 4 languages) shows no scrolling story column, no button off screen and no overlapping labels on the fitted steps. Two German map labels on the takeaways stay at 13 px at 990 and 1024 px wide.
