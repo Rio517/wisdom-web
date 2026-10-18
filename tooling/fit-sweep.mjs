@@ -1,4 +1,5 @@
-// Usage: node tooling/fit-sweep.mjs [--step id] [--lang en] [--size 1133x744] [--out file.json] [--shot dir [--wait ms]]
+// Usage: node tooling/fit-sweep.mjs [--lesson choices|practice] [--step id] [--lang en] [--size 1133x744] [--out file.json] [--shot dir [--wait ms]]
+//   --lesson practice sweeps Lesson 2 (its activity measured three times: afternoon 1, afternoon 7, the end card)
 //   env: BASE (preview URL), ENGINE=chromium, STRESS=wide (adds ?stress=wide), REDUCED=1 (reducedMotion: reduce)
 import { webkit, chromium } from 'playwright';
 import fs from 'node:fs';
@@ -8,6 +9,13 @@ const LANGS = ['en','de','fr','es'];
 const sizes = arg('size') ? [arg('size')] : SIZES, langs = arg('lang') ? [arg('lang')] : LANGS;
 const only = arg('step'); const out = arg('out') || 'results.json';
 const BASE = process.env.BASE || 'http://127.0.0.1:4646';
+// Each lesson's address and its page hook (go, beats); `states` adds stills of a step after a setup.
+const PLAYED = ['soccerPractice', 'kickBall', 'celloPractice', 'hallway', 'soccerPractice', 'soccerPractice', 'basketball', 'friend', 'trick', 'match'];
+const LESSONS = {
+  choices: { path: '/choices/the-paths-we-make/', hook: 'opening', states: {} },
+  practice: { path: '/practice/small-choices/', hook: 'journey', states: { afternoons: [['-a2', PLAYED.slice(0, 6)], ['-a3', PLAYED]] } },
+};
+const lesson = LESSONS[arg('lesson') || process.env.LESSON || 'choices'];
 const measure = () => {
   const vw = innerWidth, vh = innerHeight, r = {};
   const body = document.querySelector('#narration-body');
@@ -61,7 +69,7 @@ const measure = () => {
     else if (b.l < stage.left - 0.5 || b.r > stage.right + 0.5 || b.t < stage.top - 0.5 || b.b > stage.bottom + 0.5) r.cut.push(l.t + ' (map box)');
   }
   for (let i = 0; i < labels.length; i++) for (let j = i + 1; j < labels.length; j++) {
-    if (labels[i].el.parentElement === labels[j].el.parentElement) continue;
+    if (labels[i].el.parentElement === labels[j].el.parentElement && !(labels[i].el.matches('.pl-label') && labels[j].el.matches('.pl-label'))) continue;
     const a = labels[i].b, c = labels[j].b;
     const ox = Math.min(a.r, c.r) - Math.max(a.l, c.l), oy = Math.min(a.b, c.b) - Math.max(a.t, c.t);
     if (ox > 2 && oy > 2) r.overlap.push(`${labels[i].t} x ${labels[j].t}`);
@@ -80,24 +88,26 @@ for (const lang of langs) for (const size of sizes) {
   page.on('console', m => m.type() === 'error' && errs.push(m.text().slice(0, 120)));
   page.on('pageerror', e => errs.push('pageerror ' + String(e).slice(0, 120)));
   try {
-    await page.goto(`${BASE}${lang === 'en' ? '' : '/' + lang}/choices/the-paths-we-make/${process.env.STRESS ? '?stress=' + process.env.STRESS : ''}`);
-    await page.waitForFunction(() => globalThis.opening?.beats, null, { timeout: 15000 });
-    const ids = await page.evaluate(() => opening.beats.map(b => b.beat.id));
-    for (let i = 0; i < ids.length; i++) {
-      if (only && ids[i] !== only) continue;
+    await page.goto(`${BASE}${lang === 'en' ? '' : '/' + lang}${lesson.path}${process.env.STRESS ? '?stress=' + process.env.STRESS : ''}`);
+    await page.waitForFunction(hook => globalThis[hook]?.beats, lesson.hook, { timeout: 15000 });
+    const ids = await page.evaluate(hook => globalThis[hook].beats.map(b => b.beat.id), lesson.hook);
+    const runs = ids.flatMap((id, i) => [[id, i, null], ...(lesson.states[id] ?? []).map(([suffix, picks]) => [id + suffix, i, picks])]);
+    for (const [step, i, picks] of runs) {
+      if (only && step !== only && ids[i] !== only) continue;
       errs.length = 0;
       let res;
       try {
-        await page.evaluate(i => opening.go(i, { animate: false }), i);
+        await page.evaluate(([hook, i]) => globalThis[hook].go(i, { animate: false }), [lesson.hook, i]);
+        if (picks) await page.evaluate(picks => globalThis.journey.afternoons.playThrough(picks), picks);
         await page.evaluate(() => document.fonts.ready);
         let last = '', same = 0; const t0 = Date.now();
         while (Date.now() - t0 < 1500 && same < 3) { await page.waitForTimeout(100); const s = await page.evaluate(sig); same = s === last ? same + 1 : 0; last = s; }
         res = await page.evaluate(measure);
         res.settled = same >= 3;
         if (arg('shot')) await page.waitForTimeout(Number(arg('wait') || 0)); // --wait ms: let arrival animations end before a still
-        if (arg('shot')) await page.screenshot({ path: `${arg('shot')}/${lang}-${ids[i]}-${size}.png` });
+        if (arg('shot')) await page.screenshot({ path: `${arg('shot')}/${lang}-${step}-${size}.png` });
       } catch (e) { res = { error: String(e).slice(0, 150) }; }
-      results.push({ step: ids[i], lang, size, ...res, errors: [...errs] });
+      results.push({ step, lang, size, ...res, errors: [...errs] });
     }
   } catch (e) { results.push({ step: '*', lang, size, error: String(e).slice(0, 150) }); }
   await ctx.close();
