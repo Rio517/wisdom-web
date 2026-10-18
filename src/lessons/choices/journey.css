@@ -614,11 +614,11 @@ dialog::backdrop { background: #23302d66; }
 @media (width < 990px) {
   body { overflow: auto; }
   /* The trail sits right under the controls here, so their tips open to the left, beside the brand. */
-  .journey-header .lesson-controls, .lesson-controls-dialog { position: relative; }
-  .lesson-controls-dialog { position: fixed; }
+  .journey-header .lesson-controls { position: relative; } /* the dialog's copy is fixed, which anchors too */
   :is(.journey-header, #reading-dialog) :is(.control-slot, .lang-menu) { position: static; }
   :is(.journey-header, #reading-dialog) .control-tip { top: 50%; right: calc(100% + 10px); margin-top: -20px; }
   :is(.journey-header, #reading-dialog) .control-tip::before { top: 50%; right: -4px; margin-top: -5px; }
+  :is(.journey-header, #reading-dialog) .lang-menu-list { min-width: 0; width: max-content; }
   /* The trail takes the full width on its own row, so every chapter name fits on one line. */
   .journey-header { grid-template-columns: 1fr auto; height: auto; row-gap: 0; padding-top: 8px; }
   .chapter-trail { grid-column: 1 / -1; grid-row: 2; max-width: none; }
