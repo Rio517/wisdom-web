@@ -8,6 +8,7 @@ import BaseLayout from '../../../../layouts/BaseLayout.astro';
 import SiteNav from '../../../../components/SiteNav.astro';
 import LessonControls from '../../../../components/LessonControls.astro';
 import { renderPracticeReading } from '../../../../lessons/practice/practice-story.js';
+import { ELEPHANT_PATH } from '../../../../lessons/elephant/elephant-story.js';
 import { UI, href } from '../../../../data/site.js';
 import { getTranslator } from '../../../../i18n/index.js';
 import { localeStaticPaths } from '../../../../i18n/config.js';
@@ -35,7 +36,7 @@ const reading = renderPracticeReading({ t });
     <LessonControls locale={locale} id="header-controls" />
   </header>
 
-  <main class="journey practice" id="journey">
+  <main class="journey practice" id="journey" data-next-lesson={href(locale, ELEPHANT_PATH)}>
     <section class="stage" id="stage" aria-label={t('lesson.ui.illustration')}>
       <div class="scene scene-practice" id="scene-practice" data-scene="practice" hidden></div>
       <div class="scene scene-play" id="scene-afternoons" data-scene="afternoons" hidden></div>

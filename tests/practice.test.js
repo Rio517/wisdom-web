@@ -139,7 +139,7 @@ test('Lesson 2 is linked like Lesson 1: the roadmap, the menu, its overview page
   const { lessonsFor } = await import('../src/data/site.js');
   const lessons = lessonsFor(en);
   assert.deepEqual(lessons.map(lesson => lesson.id), ['choices', 'practice', 'deciding', 'habits', 'happiness', 'relationships', 'learning']);
-  assert.deepEqual(lessons.filter(lesson => lesson.href).map(lesson => lesson.href), ['/choices/', '/practice/']);
+  assert.deepEqual(lessons.filter(lesson => lesson.href).map(lesson => lesson.href), ['/choices/', '/practice/', '/deciding/elephant-and-rider/']);
   assert.equal(lessons[1].title, en('practice.ui.title'));
   const dist = new URL('../dist/', import.meta.url);
   if (!existsSync(new URL('index.html', dist))) return; // the built pages are checked after `npm run build`

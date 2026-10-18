@@ -3,6 +3,7 @@
 // inside the full-screen lesson. Only written lessons get links.
 import { SITE, LESSON_PATH, UI, href, lessonsFor } from '../data/site.js';
 import { PRACTICE_PATH, PRACTICE_READ_PATH } from '../lessons/practice/practice-story.js';
+import { ELEPHANT_PATH, ELEPHANT_READ_PATH, ELEPHANT_TITLE } from '../lessons/elephant/elephant-story.js';
 import { getTranslator } from '../i18n/index.js';
 import LanguageSwitch from './LanguageSwitch.astro';
 import DraftNote from './DraftNote.astro';
@@ -22,6 +23,10 @@ const written = [
     { key: 'practice', label: t('nav.aboutLesson'), path: '/practice/' },
     { key: 'practice-lesson', label: t('nav.journey'), path: PRACTICE_PATH },
     { key: 'practice-read', label: t('nav.read'), path: PRACTICE_READ_PATH },
+  ] },
+  { number: '03', title: t(ELEPHANT_TITLE), open: ['elephant-lesson', 'elephant-read'], pages: [
+    { key: 'elephant-lesson', label: t('nav.journey'), path: ELEPHANT_PATH },
+    { key: 'elephant-read', label: t('nav.read'), path: ELEPHANT_READ_PATH },
   ] },
 ];
 ---

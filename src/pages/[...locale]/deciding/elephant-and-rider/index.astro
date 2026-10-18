@@ -1,0 +1,87 @@
+---
+// Lesson 3 · The elephant and the rider: the guided journey (design 004 v03). Its address is a working name,
+// held in one place (ELEPHANT_PATH in elephant-story.js; the folder follows it).
+import '../../../../lessons/choices/journey.css';
+import '../../../../lessons/choices/journey-play.css';
+import '../../../../lessons/practice/practice.css';
+import '../../../../lessons/elephant/elephant.css';
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import SiteNav from '../../../../components/SiteNav.astro';
+import LessonControls from '../../../../components/LessonControls.astro';
+import { renderElephantReading, ELEPHANT_TITLE } from '../../../../lessons/elephant/elephant-story.js';
+import { UI, href } from '../../../../data/site.js';
+import { getTranslator } from '../../../../i18n/index.js';
+import { localeStaticPaths } from '../../../../i18n/config.js';
+
+export const getStaticPaths = localeStaticPaths;
+const { locale } = Astro.props;
+const t = getTranslator(locale);
+const reading = renderElephantReading({ t });
+---
+<BaseLayout title={t(ELEPHANT_TITLE)} description={t('elephant.ui.description')} locale={locale} clientMessages>
+  <a class="skip-link" href="#narration">{t('lesson.ui.skipToStory')}</a>
+  <SiteNav current="elephant-lesson" mode="drawer" locale={locale} />
+  <header class="journey-header">
+    <div class="journey-home">
+      <button class="journey-menu" type="button" data-nav-open aria-label={t('lesson.ui.openIndex')}><Fragment set:html={UI.menu} /></button>
+      <a class="journey-brand" href={href(locale, '/')}>{t('site.name')} <span>{t('site.tagline')}</span></a>
+    </div>
+    <nav class="chapter-trail" aria-label={t('lesson.ui.chapters')}>
+      <svg class="trail-line" viewBox="0 0 1000 40" preserveAspectRatio="none" aria-hidden="true">
+        <path id="trail-base"/>
+        <path id="trail-done"/>
+      </svg>
+      <ol id="chapter-list"></ol>
+    </nav>
+    <LessonControls locale={locale} id="header-controls" />
+  </header>
+
+  <main class="journey practice elephant" id="journey">
+    <section class="stage" id="stage" aria-label={t('lesson.ui.illustration')}>
+      <div class="scene scene-practice scene-elephant" id="scene-elephant" data-scene="elephant" hidden></div>
+      <div class="scene scene-sort" id="scene-sort" data-scene="sort" hidden></div>
+      <p class="sr-only" id="stage-description" aria-live="polite"></p>
+    </section>
+
+    <aside class="narration" id="narration" aria-labelledby="beat-heading" tabindex="-1">
+      <div class="narration-body" id="narration-body">
+        <p class="beat-kicker" id="beat-kicker"></p>
+        <h1 id="beat-heading" tabindex="-1"></h1>
+        <div class="beat-text" id="beat-text"></div>
+        <div class="beat-extra" id="beat-extra"></div>
+      </div>
+      <footer class="narration-controls">
+        <ol class="beat-dots" id="beat-dots" aria-label={t('lesson.ui.stepsInChapter')}></ol>
+        <div class="nav-buttons">
+          <button class="back-button" id="back" type="button">{t('lesson.ui.back')}</button>
+          <button class="next-button" id="next" type="button">{t('lesson.ui.next')}</button>
+        </div>
+        <p class="key-hint">{t('lesson.ui.keyHint')}</p>
+      </footer>
+    </aside>
+  </main>
+
+  <p class="sr-only" id="announcer" role="status" aria-live="polite"></p>
+
+  <dialog id="reading-dialog" aria-labelledby="journey-reading-title" tabindex="-1" autofocus>
+    <LessonControls locale={locale} id="dialog-controls" view="text" inDialog />
+    <button class="quiet-link dialog-close" type="button" data-close>{t('lesson.ui.backToJourney')}</button>
+    <div class="nojs-note">{t('lesson.ui.noJs')}</div>
+    <Fragment set:html={reading} />
+  </dialog>
+  <noscript>
+    <style>
+      .journey-header, .journey, .skip-link, .site-nav { display: none !important; }
+      body { overflow: auto !important; }
+      #reading-dialog { display: block !important; position: static !important; margin: 0 auto !important; border: 0 !important; max-height: none !important; }
+      #reading-dialog .dialog-close { display: none !important; }
+      #reading-dialog .nojs-note { display: block !important; }
+    </style>
+  </noscript>
+
+  <script>
+    import '../../../../lessons/elephant/elephant.js';
+    import { initSiteNav } from '../../../../components/site-nav.js';
+    initSiteNav();
+  </script>
+</BaseLayout>

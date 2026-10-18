@@ -52,7 +52,8 @@ function renderNarration(item, { animate, keepPanel = false }) {
     extra.innerHTML = `<ul class="takeaways">${beat.takeaways.map(entry => `<li>${TAKEAWAY_ICONS[entry.icon]}<div><strong>${escapeHTML(entry.heading)}</strong><span>${escapeHTML(entry.text)}</span></div></li>`).join('')}</ul>`;
   }
   if (index === beats.length - 1) {
-    extra.innerHTML = `<div class="end-actions"><button class="pill-button" type="button" data-end="restart">${escapeHTML(t('lesson.ui.restart'))}</button></div>`;
+    extra.innerHTML = `<div class="end-actions"><a class="solid-pill next-lesson" href="${escapeHTML(journeyRoot.dataset.nextLesson ?? '')}">${escapeHTML(t('practice.ui.nextLesson', { title: t('elephant.ui.title') }))}</a>
+      <button class="pill-button" type="button" data-end="restart">${escapeHTML(t('lesson.ui.restart'))}</button></div>`;
   }
   sizeBand();
   fitNarration();

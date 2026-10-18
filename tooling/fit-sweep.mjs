@@ -1,5 +1,7 @@
-// Usage: node tooling/fit-sweep.mjs [--lesson choices|practice] [--step id] [--lang en] [--size 1133x744] [--out file.json] [--shot dir [--wait ms]]
+// Usage: node tooling/fit-sweep.mjs [--lesson choices|practice|elephant] [--step id] [--lang en] [--size 1133x744] [--out file.json] [--shot dir [--wait ms]]
 //   --lesson practice sweeps Lesson 2 (its activity measured three times: afternoon 1, afternoon 7, the end card)
+//   --lesson elephant sweeps Lesson 3 (its sort measured three times: the start, three cards sorted with one
+//   sent to the other side, and the end with every card sorted)
 //   env: BASE (preview URL), ENGINE=chromium, STRESS=wide (adds ?stress=wide), REDUCED=1 (reducedMotion: reduce)
 import { webkit, chromium } from 'playwright';
 import fs from 'node:fs';
@@ -11,9 +13,19 @@ const only = arg('step'); const out = arg('out') || 'results.json';
 const BASE = process.env.BASE || 'http://127.0.0.1:4646';
 // Each lesson's address and its page hook (go, beats); `states` adds stills of a step after a setup.
 const PLAYED = ['soccerPractice', 'kickBall', 'celloPractice', 'hallway', 'soccerPractice', 'soccerPractice', 'basketball', 'friend', 'trick', 'match'];
+// Lesson 3's sort: [card, side] taps, the third one on the other side (it slides across).
+const SORTED = [['m1', 'elephant'], ['m4', 'rider'], ['m2', 'rider'], ['m3', 'elephant'], ['m5', 'rider'], ['m6', 'rider']];
 const LESSONS = {
   choices: { path: '/choices/the-paths-we-make/', hook: 'opening', states: {} },
-  practice: { path: '/practice/small-choices/', hook: 'journey', states: { afternoons: [['-a2', PLAYED.slice(0, 6)], ['-a3', PLAYED]] } },
+  practice: { path: '/practice/small-choices/', hook: 'journey', states: { afternoons: [['-a2', PLAYED.slice(0, 6)], ['-a3', PLAYED]] },
+    setup: picks => globalThis.journey.afternoons.playThrough(picks) },
+  elephant: { path: '/deciding/elephant-and-rider/', hook: 'journey', states: { partners: [['-mid', SORTED.slice(0, 3)], ['-end', SORTED]] },
+    setup: taps => {
+      const labels = Object.fromEntries([...document.querySelectorAll('.sort-pile .sort-card')].map(card => [card.dataset.id, card]));
+      for (const [id, side] of taps) { (labels[id] ?? document.querySelector(`.sort-card[data-id="${id}"]`)).click(); document.querySelector(`.sort-bin-${side}`).click(); }
+      return Promise.all(document.getAnimations().map(animation => animation.finished.catch(() => {}))); // the slide across, settled
+    },
+    reset: () => globalThis.journey.sort.restart() },
 };
 const lesson = LESSONS[arg('lesson') || process.env.LESSON || 'choices'];
 const measure = () => {
@@ -42,7 +54,7 @@ const measure = () => {
     const el = n.parentElement; const txt = n.textContent.trim();
     if (!txt || seen.has(el)) continue; seen.add(el);
     if (['SCRIPT','STYLE','NOSCRIPT','TITLE'].includes(el.tagName)) continue;
-    if (el.closest('dialog:not([open])') || el.closest('#stage-description, #announcer')) continue;
+    if (el.closest('dialog:not([open])') || el.closest('#stage-description, #announcer, .sr-only')) continue;
     if (!el.checkVisibility({ opacityProperty: true, visibilityProperty: true, checkOpacity: true, checkVisibilityCSS: true })) continue;
     const b = el.getBoundingClientRect(); if (b.width < 1 || b.height < 1) continue;
     const cs = getComputedStyle(el); let fs = parseFloat(cs.fontSize);
@@ -97,8 +109,9 @@ for (const lang of langs) for (const size of sizes) {
       errs.length = 0;
       let res;
       try {
+        if (lesson.reset) await page.evaluate(lesson.reset);
         await page.evaluate(([hook, i]) => globalThis[hook].go(i, { animate: false }), [lesson.hook, i]);
-        if (picks) await page.evaluate(picks => globalThis.journey.afternoons.playThrough(picks), picks);
+        if (picks) await page.evaluate(lesson.setup, picks);
         await page.evaluate(() => document.fonts.ready);
         let last = '', same = 0; const t0 = Date.now();
         while (Date.now() - t0 < 1500 && same < 3) { await page.waitForTimeout(100); const s = await page.evaluate(sig); same = s === last ? same + 1 : 0; last = s; }
