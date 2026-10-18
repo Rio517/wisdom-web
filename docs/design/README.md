@@ -26,7 +26,7 @@ Accepted storyboard direction is [v07 — Hiking lesson storyboard](001-choices-
 
 ## Lesson 3 — The elephant and the rider
 
-[004 — Lesson 3](004-lesson-three/README.md) is Lesson 3 · The elephant and the rider ([016](../product/016-lessons-two-to-four.md)). Its first round, [v01 — On paper](004-lesson-three/v01-paper/README.md), draws the story and three activity ideas as static frames for the owner's pick.
+[004 — Lesson 3](004-lesson-three/README.md) is Lesson 3 · The elephant and the rider ([016](../product/016-lessons-two-to-four.md)). Its first round, [v01 — On paper](004-lesson-three/v01-paper/README.md), draws the story and three activity ideas as static frames for the owner's pick. The owner picked activity B, a plain sort; [v02 — Sort](004-lesson-three/v02-sort/README.md) redraws the changed steps and the sort.
 
 ## Naming and versioning
 
