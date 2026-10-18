@@ -1,6 +1,6 @@
 # 017 — Thinking tools and deciding
 
-Status: proposal. Nothing here is approved or built. Created: 2026-10-18.
+Status: proposal. The shape (tool cards, and three Deciding lessons) was approved by the owner on 2026-10-18; nothing is built. Created: 2026-10-18.
 
 Related: [016 — Lessons 2 to 4](016-lessons-two-to-four.md) · [013 — Lesson 1](013-choices-guided-journey.md)
 
