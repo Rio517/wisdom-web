@@ -6,13 +6,13 @@ import { t } from '../../i18n/runtime.js';
 import { createSortBoard } from '../choices/journey-sort.js';
 import { momentsFor } from './elephant-story.js';
 import { sortScene } from './elephant-pictures.js';
-import { elephant, rider } from './elephant-draw.js';
+import { elephant, rider, RIDER_LOOK } from './elephant-draw.js';
 
 // Small pictures beside each side's name: the elephant alone and the rider alone, the delivered art scaled down.
 const mini = (body, box) => `<svg class="sort-side-icon" viewBox="${box}" aria-hidden="true" focusable="false">${body}</svg>`;
 const ICON = {
   elephant: mini(`<g style="--elephant-gap: white">${elephant()}</g>`, '-48 -66 92 70'),
-  rider: mini(rider(), '-7 -24 16 33'),
+  rider: mini(rider({ look: RIDER_LOOK }), '-7 -24 16 33'),
 };
 
 const sideFor = id => ({
