@@ -3,6 +3,8 @@
 
 /* ——— Pictures ——— */
 .scene-elephant { --elephant-gap: var(--color-paper-deep); }
+/* A front view's trunk tip on a path: its edge takes the path's colour (sage at 22%, TRAIL in elephant-draw.js). */
+.el-trunk-on-path .trunk-swing { --elephant-gap: color-mix(in srgb, var(--color-sage) 22%, var(--color-paper-deep)); }
 .elephant .pl-label { font-weight: 600; }
 .pl-label.is-on-white { --halo: white; }
 /* A label on a white chip (the frames' chips), centred on its point. */

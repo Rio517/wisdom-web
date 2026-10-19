@@ -46,14 +46,19 @@ export function chip(x, y, text, { size = 16, icon = '' } = {}) {
 export const chipWidth = (text, size = 16, icon = false) => textWidth(text, size, 600) + 26 + (icon ? 26 : 0);
 
 // ——— The pair ———
+// Lesson 3's rider: the neutral child Mario picked (asset-factory look `n3`, card da54), so it never reads as Alfredo.
+export const RIDER_LOOK = 'n3';
 /**
- * The elephant, feet at (x, y), its body `height` px tall (64 units), facing right. `rider` puts the rider on
- * its neck; `reins` adds the head strap and the slack rein; `gap` is the colour under its legs.
+ * The elephant, feet at (x, y), its body `height` px tall (64 units). `pose` is any shared/elephant.js pose
+ * (side views face right, `left` faces left, `away` and `toward` are seen from behind and in front). `rider` puts
+ * the rider on its neck, in `look` and `riderPose` (unset: the pose's own); `reins` adds the head strap and the
+ * rein (taut on `pulled`); `gap` is the colour under its legs. `trunkOnPath` gives the front view's trunk
+ * edge the path's colour (elephant.css), for a trunk tip that rests on a path while the legs' gaps don't.
  */
-export function pair(x, y, height, { pose = 'stand', rider: withRider = true, reins = false, gap = GROUND_GAP } = {}) {
+export function pair(x, y, height, { pose = 'stand', rider: withRider = true, reins = false, look = RIDER_LOOK, riderPose, gap = GROUND_GAP, trunkOnPath = false } = {}) {
   const s = height / 64;
-  const body = withRider ? elephantWithRider({ pose, reins }) : elephant({ pose });
-  return `<g style="--elephant-gap: ${gap}" transform="translate(${f(x)} ${f(y)}) scale(${+s.toFixed(4)})">${body}</g>`;
+  const body = withRider ? elephantWithRider({ pose, reins, look, riderPose }) : elephant({ pose });
+  return `<g${trunkOnPath ? ' class="el-trunk-on-path"' : ''} style="--elephant-gap: ${gap}" transform="translate(${f(x)} ${f(y)}) scale(${+s.toFixed(4)})">${body}</g>`;
 }
 /** Where the rider sits, in px, for labels. */
 export const riderAt = (x, y, height) => { const s = height / 64; return { x: x + 1 * s, y: y - 74 * s }; };

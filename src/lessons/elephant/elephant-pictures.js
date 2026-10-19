@@ -1,9 +1,6 @@
 // Lesson 3's pictures, one function a step, ported from the approved frames (prototype/lesson3-elephant/
 // storyboard.js, design 004 v02, lane A). Each returns the stage's markup for a stage of w × h px: the
 // drawing as SVG and its words as HTML (elephant-draw.js). Words come from the catalog (elephant.*).
-//
-// Poses: asset-studio's new poses and the neutral rider are not delivered yet, so each step takes today's
-// elephant.js poses. POSES holds every step's choice in one place, so the swap is a small change here.
 import { t } from '../../i18n/runtime.js';
 import {
   art, svg, label, chip, pair, riderAt, ground, horizon, sun, hills, tree, tuft, path, trace, arrowEnd, elephantPrints,
@@ -12,21 +9,21 @@ import {
 } from './elephant-draw.js';
 
 /**
- * Each step's elephant: the pose it uses today, and the delivered pose it waits for (asset-factory request
- * 2026-10-17-elephant). `rider: false` leaves the rider off (step 02: Maya's own elephant, while the delivered
- * rider still looks like Alfredo).
+ * Each step's elephant (shared/elephant.js poses, asset-factory request 2026-10-17-elephant). Every rider is
+ * the neutral one (RIDER_LOOK, set in pair()); `riderPose` overrides the pose's own rider. `trunkOnPath`
+ * where a front view's trunk tip rests on the path.
  */
 export const POSES = {
   pair: { pose: 'stand' },
-  quick: { pose: 'walk1', rider: false },
+  quick: { pose: 'walk1' },
   slow: { pose: 'stand' },
   now: { pose: 'walk1' },
-  reins: { pose: 'stand', reins: true, wants: 'pulled by the reins: head and trunk turned toward the friend, the rein taut' },
-  path: { pose: 'stand', wants: 'seen from a little above on the side path' },
-  team: { pose: 'walk2', wants: 'walking up the path, seen from a little above' },
-  first: { pose: 'stand', wants: 'facing left, its back turned on the plate; a rider who explains, one hand raised' },
+  reins: { pose: 'pulled', reins: true },
+  path: { pose: 'toward1' },
+  team: { pose: 'away1' },
+  first: { pose: 'left', riderPose: 'explain' },
   keep: { pose: 'walk1' },
-  next: { pose: 'walk1', wants: 'walking along the trail, seen from a little above' },
+  next: { pose: 'toward1', trunkOnPath: true },
   partners: { pose: 'stand' },
 };
 const at = (id, extra = {}) => ({ ...POSES[id], ...extra });
@@ -173,9 +170,10 @@ function first(w, h) {
     const eh = Math.min(h * 0.32, w * 0.28); const s = eh / 64;
     const ex = w * 0.56;
     const r = riderAt(ex, gy, eh);
-    const px = Math.max(80, ex - 46 * s - 100);
+    const ps = Math.min(1.3, h / 600);
+    const px = Math.min(w - 50 * ps - 16, ex + 41 * s + 50 * ps + 24); // behind it: it has turned its back on the plate
     chip(r.x - 2 * s, r.y - 17 * s, W('elephant.beat.first.reason'));
-    return svg(w, h, `${ground(w, gy, h)}${plate(px, gy, Math.min(1.3, h / 600))}
+    return svg(w, h, `${ground(w, gy, h)}${plate(px, gy, ps)}
       ${pair(ex, gy, eh, at('first'))}`);
   });
 }
