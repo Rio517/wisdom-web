@@ -48,7 +48,7 @@ Add a lesson folder when there is a first idea or research question to put in it
 | [product/](product/README.md) | Numbered proposals and decisions for the guide and its lessons. IDs and filenames stay stable. |
 | [research/](research/README.md) | The shared research library: findings by topic, with source ledgers. |
 | [design/](design/README.md) | Registered design studies, with numbered rounds and versioned artifacts. |
-| [content/](content/) | Content samples. |
+| [content/](content/) | Content samples, including the [Four hellos video script](content/video-001-four-hellos.md). |
 | [brief.md](brief.md) | The project brief. |
 
 [BACKLOG.md](../BACKLOG.md) is the current handoff; [COMPLETED.md](../COMPLETED.md) is the log.
