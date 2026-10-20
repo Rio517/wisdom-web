@@ -36,7 +36,7 @@ A short video about first hellos for YouTube and the site: a landscape (16:9) vi
 | 1:24–1:31 | Ben sees Sam coming, slows down, steps aside with a sweep of the arm: “Go ahead, Sam!” | “And Sam. Ben slows down. Steps aside. Go ahead, Sam! No bump. No oof. Just room.” | “✓ made room”. Sam thinks: “Thanks, Ben!” |
 | 1:31–1:39 | The same lineup, everyone smiling. Thoughts pop up one by one. | “Same four kids. How do you think they felt this time?” (one beat) “Yeah.” | “My friend!” · “Nice.” · “Ben’s cool.” · “Thanks!” |
 | 1:39–1:45 | Fast-forward the week again; then the playground: Ben is in the game with all four. | “Same Ben. Same feelings. Now they can see them.” | ▶▶ |
-| 1:45–1:58 | End card with the moves; the kids clap twice. | “Look up. Say their name. Make room. And say it like you’re glad to see them, because you are.” Then, to the tune everyone knows: “If you’re happy to see your friends and you know it…” (clap clap) “…show it!” | If you’re happy to see them, show it! · 1 Look up · 2 Say their name · 3 Make room · Say it like you’re glad to see them · Ask: how did each kid feel? · wiseupkids.org |
+| 1:45–1:58 | End card with the moves; the kids clap twice. | “Look up. Say their name. Make room. And say it like you’re glad to see them, because you are.” Then, to the tune everyone knows: “If you’re happy to see your friends and you know it…” (clap clap) “…show it!” | If you’re happy to see them, show it! · 1 Look up · 2 Say their name · 3 Make room · Say it like you’re glad to see them · Ask: how did each kid feel? · allthewiser.org |
 
 ## Rules for the words
 
