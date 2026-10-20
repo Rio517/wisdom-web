@@ -25,7 +25,7 @@ A short video about greetings for YouTube (a 9:16 Short, then a 16:9 cut) and th
 | 0:10–0:14 | Jo walks straight past with a ball, no look. | “Number two. No look. No word.” | Maya’s thought: “Am I invisible?” |
 | 0:14–0:18 | Kai, arms crossed: “’sup” out of the side of his mouth, eyes away. | “Number three. Side of the mouth. Eyes on… anything else.” | Arrow from Kai’s eyes away. Maya’s thought: “He doesn’t like me.” |
 | 0:18–0:24 | Sam looks up, grins, waves big: “Maya! Hi!” | “Number four.” (beat) “Ah.” | Maya’s thought: “He’s happy I’m here!” |
-| 0:24–0:32 | Rewind to Ben. A bubble opens: inside, Ben jumps for joy. | “Now here’s the thing. Ben was glad. Very glad. It just didn’t make it out.” | Inside / outside: the two Leos side by side |
+| 0:24–0:32 | Rewind to Ben. A bubble opens: inside, Ben jumps for joy. | “Now here’s the thing. Ben was glad. Very glad. It just didn’t make it out.” | Inside / outside: the two Bens side by side |
 | 0:32–0:42 | The moves appear one at a time over Ben and Maya. | “Look up. Say their name. One notch louder. Not a talker? A wave counts. So does a smile.” | 1 Look up · 2 Say the name · 3 One notch louder · (or wave, or smile) |
 | 0:42–0:50 | Same morning, again: Ben looks up, “Maya! Hey!” She grins back. | “Same Ben. Same feelings. Now Maya can see them.” | Maya’s thought: “He’s happy I’m here!” |
 | 0:50–0:55 | End card. | “Glad inside? Let it show.” | Glad inside? Let it show. · Ask: which hello would feel best to get? · wisdom.knyflores.com |
