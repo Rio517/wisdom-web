@@ -1,6 +1,6 @@
 # Video 001 · Ben's morning (script)
 
-Status: draft script, v05. Created 2026-10-19; updated 2026-10-20.
+Status: draft script, v06. Created 2026-10-19; updated 2026-10-20.
 A short video about first hellos for YouTube and the site: a landscape (16:9) video first, and 2–3 minutes is fine; a Short cut comes later and doesn't shape the content. Ben likes his classmates, but one morning his hellos say the opposite: a mumble, an ignore, a side-mouth "'sup" and a bump. We see how each classmate felt, what happens if he does it every day, and then a redo. Storyboard: landscape line drawings (v04) in the wisdom mockup shelf round `20261019-hello-wireframes`. Timings in the table are a guide; the long cut can breathe. Earlier drafts were "Four hellos" (v01–v02) and a separate "The bump" (v02), now merged into this one.
 
 ## Cast
@@ -27,12 +27,16 @@ A short video about first hellos for YouTube and the site: a landscape (16:9) vi
 | 0:24–0:32 | Lineup: Ben on the left; Maya, Jo, Kai and Sam on the right. Their thoughts pop up one by one. | “Four hellos. How do you think they felt?” (one beat) “Yeah.” | The four thoughts, one at a time |
 | 0:32–0:38 | Inside Ben: a bubble shows him laughing and playing with all four. | “Here’s the thing. Ben likes these kids. It just didn’t make it out.” | Inside / outside: the two Bens |
 | 0:38–0:46 | Fast-forward through the week: Mon, Tue, Wed, Thu, Fri. Same hellos; one by one the kids turn away when Ben comes. | “Now imagine Ben did this every single day.” | ▶▶ calendar flips Mon → Fri |
-| 0:46–0:52 | Playground: the four play together; Ben sits alone on a bench. | “How you treat people changes how much they want to be around you.” | (no graphics) |
-| 0:52–0:58 | Freeze on the gate, empty, morning light. | “The first hello of the day is a big moment. It’s the first thing they learn about how you feel about them today. Everything after builds on it.” | First impression of the day |
+| 0:46–0:52 | Playground: the four play together; Ben sits alone on a bench. | “How you treat people changes how much they want to be around you. How much they want to be your friend.” | (no graphics) |
+| 0:52–0:58 | Freeze on the gate, empty, morning light. | “The first hello of the day is a big moment. It’s the first thing they learn about how you feel about them today. Every good impression builds connections and friendships.” | First impression of the day |
 | 0:58–1:01 | Rewind back to the gate. | “In real life, there’s no rewind. But let’s see what a redo looks like.” | ◀◀ |
-| 1:01–1:14 | The redo, four quick shots: Ben looks up, “Maya! Hey!” · waves back, “Hi Jo!” · smiles, “Morning, Kai!” · sees Sam, steps aside, “Go ahead!” | “Look up. Say their name. Make room. A wave counts. So does a smile.” | Each kid’s thought: “He’s happy I’m here!” · “He saw me!” · “He’s nice.” · “Thanks, Ben!” |
-| 1:14–1:20 | Fast-forward the week again; then the playground: Ben is in the game with all four. | “Same Ben. Same feelings. Now they can see them.” | ▶▶ |
-| 1:20–1:28 | End card with the moves. | “Look up. Say their name. Make room. A hello is where it starts.” | A hello is where it starts. · 1 Look up · 2 Say their name · 3 Make room (or wave, or smile) · Ask: how did each kid feel? · wisdom.knyflores.com |
+| 1:01–1:09 | Take two. Maya: “Hi Ben!” Ben looks up, eyes off his shoes, big smile: “Maya! Hey!” | “Take two. Maya says hi. And Ben… looks up! Eyes off the shoes. He says her name. And listen to that: he sounds glad.” | Pen ticks “✓ looked up · said her name”. Maya thinks: “He’s my friend!” |
+| 1:09–1:16 | Jo waves. Ben spots it and waves back, big: “Hi Jo!” | “Jo waves. Ben sees it… and waves right back. Big wave. That wave says: I see you, and I’m glad.” | “✓ waved back”. Jo thinks: “Ha! Nice.” |
+| 1:16–1:24 | Kai: “Morning!” Ben turns his whole body to Kai, grins: “Morning, Kai!” | “Kai: Morning! Ben turns around. The whole body, not just the mouth. Big grin. Morning, Kai! Now that’s a hello.” | “✓ turned to him · said it back”. Kai thinks: “Ben’s cool.” |
+| 1:24–1:31 | Ben sees Sam coming, slows down, steps aside with a sweep of the arm: “Go ahead, Sam!” | “And Sam. Ben slows down. Steps aside. Go ahead, Sam! No bump. No oof. Just room.” | “✓ made room”. Sam thinks: “Thanks, Ben!” |
+| 1:31–1:39 | The same lineup, everyone smiling. Thoughts pop up one by one. | “Same four kids. How do you think they felt this time?” (one beat) “Yeah.” | “My friend!” · “Nice.” · “Ben’s cool.” · “Thanks!” |
+| 1:39–1:45 | Fast-forward the week again; then the playground: Ben is in the game with all four. | “Same Ben. Same feelings. Now they can see them.” | ▶▶ |
+| 1:45–1:58 | End card with the moves; the kids clap twice. | “Look up. Say their name. Make room. And say it like you’re glad to see them, because you are.” Then, to the tune everyone knows: “If you’re happy to see your friends and you know it…” (clap clap) “…show it!” | If you’re happy to see them, show it! · 1 Look up · 2 Say their name · 3 Make room · Say it like you’re glad to see them · Ask: how did each kid feel? · wisdom.knyflores.com |
 
 ## Rules for the words
 
