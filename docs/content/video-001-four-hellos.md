@@ -15,7 +15,7 @@ Look: photo cut-out people in a paper and felt world, with felt graphics. Every 
 |---|---|---|---|
 | 0:00–0:02 | Cold open: Leo's mumble, frozen, Maya looking at him. | (no words; a record-scratch stop) | REPLAY bug. Chip: **"What did she hear?"** |
 | 0:02–0:05 | School gate, morning. Maya walks in, backpack, looking for her friends. | Ray: "Big morning at the gate. Maya's here. Let's watch the hellos." | Hello cam (a little "REC" dot) |
-| 0:03–0:10 | Leo, eyes on his shoes, shoulders down. A flat, quiet "hi…" | Pat: "Let's go to the replay. Eyes on the shoes. Volume at about two." | Pen circles the eyes and draws a tiny volume bar. Chip: **"You're bothering me."** |
+| 0:05–0:10 | Leo, eyes on his shoes, shoulders down. A flat, quiet "hi…" | Pat: "Let's go to the replay. Eyes on the shoes. Volume at about two." | Pen circles the eyes and draws a tiny volume bar. Chip: **"You're bothering me."** |
 | 0:10–0:16 | Jo walks straight past, bouncing a ball, no look. | Ray: "Ooh. Jo walks right by." Pat: "No look, no word. That's a hello too, just a sad one." | Chip: **"You don't count."** |
 | 0:16–0:23 | Kai stands against the wall, arms crossed, chin flick, "'sup", talking out of the side of his mouth, eyes elsewhere. | Pat: "Chin flick. Side of the mouth. Eyes on anything but Maya." | Pen arrow from Kai's eyes pointing away. Chip: **"You're not my friend."** |
 | 0:23–0:31 | Sam looks up, grins, waves big: "Maya! Hi!" Maya lights up. | Ray: "And here's Sam!" Pat: "Eyes up. Her name. A real smile. Textbook." | Chip: **"Glad you're here!"** |
