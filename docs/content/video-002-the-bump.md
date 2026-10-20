@@ -9,7 +9,7 @@ A short video about bumping into people. Theo walks through a crowd without look
 |---|---|
 | Narrator | One voice, never on screen. Warm, unhurried and wry (persona reference: a funny Morgan Freeman; our own voice, no imitation). Owns the replays and the pen. |
 | Maya | About 8, ponytail, green top. Every hello in video 1 is aimed at her. The girl from Lessons 2 and 3. |
-| Leo | About 8, curly hair, rust sweater. Glad to see Maya but mumbles “hi…” to his shoes. Hero of video 1. |
+| Ben | About 8, curly hair, rust sweater. Glad to see Maya but mumbles “hi…” to his shoes. Hero of video 1. |
 | Jo | Striped shirt, orange ball. Walks past without a look. |
 | Kai | Sage hoodie. The “’sup” in video 1; the angry one in video 2. |
 | Sam | Blue jacket. The hello that lands. |
