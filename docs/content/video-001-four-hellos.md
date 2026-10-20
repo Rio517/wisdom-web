@@ -1,7 +1,7 @@
 # Video 001 · Ben's morning (script)
 
-Status: draft script, v03. Created 2026-10-19; updated 2026-10-20.
-A short video about first hellos for YouTube (a vertical Short, then a 16:9 cut) and the site later. Ben likes his classmates, but one morning his hellos say the opposite: a mumble, an ignore, a side-mouth "'sup" and a bump. We see how each classmate felt, what happens if he does it every day, and then a redo. Storyboard: line drawings in the wisdom mockup shelf round `20261019-hello-wireframes`. Earlier drafts were "Four hellos" (v01–v02) and a separate "The bump" (v02), now merged into this one.
+Status: draft script, v04. Created 2026-10-19; updated 2026-10-20.
+A short video about first hellos for YouTube and the site: a landscape (16:9) video first, and 2–3 minutes is fine; a Short cut comes later and doesn't shape the content. Ben likes his classmates, but one morning his hellos say the opposite: a mumble, an ignore, a side-mouth "'sup" and a bump. We see how each classmate felt, what happens if he does it every day, and then a redo. Storyboard: landscape line drawings (v04) in the wisdom mockup shelf round `20261019-hello-wireframes`. Timings in the table are a guide; the long cut can breathe. Earlier drafts were "Four hellos" (v01–v02) and a separate "The bump" (v02), now merged into this one.
 
 ## Cast
 
