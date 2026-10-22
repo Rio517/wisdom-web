@@ -13,7 +13,7 @@ Read `BACKLOG.md`, `docs/brief.md`, and the relevant research and proposal befor
 - Explain mechanisms and trade-offs. Avoid guaranteed success, invented probabilities, fixed life trajectories, and unsupported age cutoffs.
 - Skills, qualifications, support, circumstances, and chance all matter. Academic performance is not a measure of human worth. Describe occupations respectfully.
 - Use clear language with substantive reasoning; introduce useful vocabulary in context. Include recovery, asking for help, and changing strategy.
-- Keep family names, private anecdotes, and the originating conversation out of public material. The owner approved Rio and Lenny as character names in the videos (2026-10-21); use them only as names, with no other details.
+- Keep family names, private anecdotes, and the originating conversation out of public material. The owner approved Rio, Lenny, Klara and Flora as character names in the videos (2026-10-21 and 2026-10-22); use them only as names, with no other details.
 
 ## Documentation
 
